@@ -81,6 +81,12 @@ button{cursor:pointer}
 .login-error{min-height:18px;color:#ff6b86;font-size:11px;margin-top:8px}.login-submit{width:100%;margin-top:4px;height:42px}
 .form{display:grid;grid-template-columns:1fr 1fr;gap:12px}.full{grid-column:1/-1}
 .form label{display:block;font-size:10px;color:var(--muted);margin-bottom:5px}.form input,.form select,.form textarea{width:100%;background:#020b1b;color:#fff;border:1px solid #21436d;border-radius:7px;padding:10px;outline:none}.form textarea{min-height:90px;resize:vertical}
+.multi-cat{display:flex;flex-wrap:wrap;gap:7px;padding:10px;background:#020b1b;border:1px solid #21436d;border-radius:7px;max-height:180px;overflow:auto}
+.multi-cat label{display:inline-flex;align-items:center;gap:5px!important;margin:0!important;padding:6px 8px;background:#071a31;border:1px solid #1c3d65;border-radius:6px;color:#b9c9e6!important;font-size:10px!important;cursor:pointer}
+.multi-cat label:has(input:checked){border-color:#0877ff;background:#0b2b55;color:#fff!important}
+.multi-cat input{accent-color:#0877ff}
+.category-list{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.category-chip{font-size:8px!important;color:#2f9aff;background:#061a33;border:1px solid #173d67;border-radius:4px;padding:3px 5px}
 .rating-buttons{display:flex;gap:2px}.rating-buttons button{background:none;border:0;color:#4a6387;font-size:29px;padding:0}.rating-buttons button.on{color:var(--blue)}
 .cover-preview{display:block;width:180px;height:240px;object-fit:cover;margin:15px auto;border-radius:8px}.hint{font-size:11px;color:#7890b2;line-height:1.5}
 .toast{position:fixed;right:20px;bottom:20px;background:#09264a;border:1px solid #167cff;padding:12px 16px;border-radius:7px;display:none;z-index:300;box-shadow:0 10px 30px #000}
@@ -191,7 +197,7 @@ button{cursor:pointer}
     <form class="form" id="gameForm">
       <input type="hidden" id="gid">
       <div class="full"><label>Nome do jogo</label><input id="gname" required></div>
-      <div><label>Categoria</label><select id="gcat" required></select></div>
+      <div class="full"><label>Categorias <span style="color:#7187a8">(selecione uma ou mais)</span></label><div id="gcat" class="multi-cat"></div></div>
       <div><label>Plataforma</label><select id="gplatform"><option>PS5</option><option selected>PS4</option><option>PS3</option><option>PS2</option><option>PS1</option></select></div>
       <div><label>Ano</label><input id="gyear" type="number" min="1980" max="2100"></div>
       <div><label>URL da capa</label><input id="gcover" placeholder="https://..."></div>
@@ -230,6 +236,16 @@ const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
 const metaKey=id=>"ng_game_meta_"+id;
 function getMeta(id){try{return JSON.parse(localStorage.getItem(metaKey(id))||"{}")}catch{return{}}}
+function getGameCategories(g){
+ return String(g?.categoria||"").split(/\\s*,\\s*|\\s*\\|\\s*/).map(x=>x.trim()).filter(Boolean);
+}
+function setGameCategoriesSelected(list){
+ const selected=new Set(list);
+ document.querySelectorAll('#gcat input[type="checkbox"]').forEach(i=>i.checked=selected.has(i.value));
+}
+function selectedGameCategories(){
+ return [...document.querySelectorAll('#gcat input[type="checkbox"]:checked')].map(i=>i.value);
+}
 function saveMeta(id){localStorage.setItem(metaKey(id),JSON.stringify({edition:$("gedition").value.trim(),date:$("gdate").value,location:$("glocation").value.trim(),notes:$("gnotes").value.trim()}))}
 async function api(path,opt={}){const r=await fetch(API+path,opt),d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error||"Falha na API.");return d}
 async function load(){
@@ -241,7 +257,10 @@ async function load(){
   fillCats();renderNav();renderCategoryFilters();render();updateAdmin();renderAdmin();renderStatsPanel();
  }catch(e){$("grid").innerHTML=`<div class="empty">${esc(e.message)}</div>`}
 }
-function fillCats(){$("adminCat").innerHTML='<option value="">Todas as categorias</option>'+categories.map(c=>`<option value="${esc(c.nome)}">${esc(c.nome)}</option>`).join("");$("gcat").innerHTML='<option value="">Selecione...</option>'+categories.map(c=>`<option value="${esc(c.nome)}">${esc(c.nome)}</option>`).join("")}
+function fillCats(){
+ $("adminCat").innerHTML='<option value="">Todas as categorias</option>'+categories.map(c=>`<option value="${esc(c.nome)}">${esc(c.nome)}</option>`).join("");
+ $("gcat").innerHTML=categories.map((c,i)=>`<label><input type="checkbox" value="${esc(c.nome)}"> ${ICONS[c.nome]||"🎮"} ${esc(c.nome)}</label>`).join("")
+}
 function renderNav(){
  const n=$("nav");n.innerHTML="";
  [["🏠","Início",""],["🎮","Minha Coleção",""],["♡","Favoritos","fav"],["✓","Jogados","played"],["◷","Não Jogados","not"],["☆","Avaliados","rated"]].forEach(x=>{
@@ -262,13 +281,13 @@ function renderCategoryFilters(){
 }
 function filteredGames(){
  const q=$("search").value.toLowerCase().trim();
- return games.filter(g=>(!q||(g.nome+" "+g.categoria).toLowerCase().includes(q))&&(!filter||g.categoria===filter)&&(!special||(special==="fav"?Number(g.favorito)===1:special==="played"?Number(g.jogado)===1:special==="not"?Number(g.jogado)===0:Number(g.nota)>0)));
+ return games.filter(g=>(!q||(g.nome+" "+g.categoria).toLowerCase().includes(q))&&(!filter||getGameCategories(g).includes(filter))&&(!special||(special==="fav"?Number(g.favorito)===1:special==="played"?Number(g.jogado)===1:special==="not"?Number(g.jogado)===0:Number(g.nota)>0)));
 }
 function render(){
  let list=filteredGames();const s=$("sort").value;
- if(s==="name")list.sort((a,b)=>a.nome.localeCompare(b.nome));if(s==="category")list.sort((a,b)=>a.categoria.localeCompare(b.categoria)||a.nome.localeCompare(b.nome));if(s==="rating")list.sort((a,b)=>Number(b.nota)-Number(a.nota));if(s==="recent")list.sort((a,b)=>Number(b.id)-Number(a.id));
+ if(s==="name")list.sort((a,b)=>a.nome.localeCompare(b.nome));if(s==="category")list.sort((a,b)=>(a.categoria||"").localeCompare(b.categoria||"")||a.nome.localeCompare(b.nome));if(s==="rating")list.sort((a,b)=>Number(b.nota)-Number(a.nota));if(s==="recent")list.sort((a,b)=>Number(b.id)-Number(a.id));
  $("result").textContent=list.length+" jogo(s)";
- $("grid").innerHTML=list.map(g=>`<div class="card" onclick="openDetail(${g.id})"><div class="cover"><div class="platform">◉ ${esc(g.plataforma||"PS4")}</div>${g.capa_url?`<img src="${esc(g.capa_url)}" alt="${esc(g.nome)}">`:`<div class="placeholder"><span class="big">${ICONS[g.categoria]||"🎮"}</span>CAPA DO JOGO</div>`}</div><div class="card-body"><div class="category">${esc(g.categoria)}</div><h3>${esc(g.nome)}</h3><div class="meta">${g.ano||"Ano não informado"}</div><div class="stars">${"★★★★★".split("").map((x,i)=>`<span class="star ${i<Number(g.nota||0)?"on":""}">${x}</span>`).join("")}</div><div class="status ${Number(g.jogado)?"played":"notplayed"}">${Number(g.jogado)?"✓ JOGADO":"◷ NÃO JOGADO"} <span class="fav ${Number(g.favorito)?"on":""}">${Number(g.favorito)?"♥":"♡"}</span></div></div></div>`).join("")||`<div class="empty">Nenhum jogo encontrado.</div>`;
+ $("grid").innerHTML=list.map(g=>`<div class="card" onclick="openDetail(${g.id})"><div class="cover"><div class="platform">◉ ${esc(g.plataforma||"PS4")}</div>${g.capa_url?`<img src="${esc(g.capa_url)}" alt="${esc(g.nome)}">`:`<div class="placeholder"><span class="big">${ICONS[g.categoria]||"🎮"}</span>CAPA DO JOGO</div>`}</div><div class="card-body"><div class="category-list">${getGameCategories(g).map(c=>`<span class="category-chip">${ICONS[c]||"🎮"} ${esc(c)}</span>`).join("")}</div><h3>${esc(g.nome)}</h3><div class="meta">${g.ano||"Ano não informado"}</div><div class="stars">${"★★★★★".split("").map((x,i)=>`<span class="star ${i<Number(g.nota||0)?"on":""}">${x}</span>`).join("")}</div><div class="status ${Number(g.jogado)?"played":"notplayed"}">${Number(g.jogado)?"✓ JOGADO":"◷ NÃO JOGADO"} <span class="fav ${Number(g.favorito)?"on":""}">${Number(g.favorito)?"♥":"♡"}</span></div></div></div>`).join("")||`<div class="empty">Nenhum jogo encontrado.</div>`;
 }
 function setFilter(x){filter=x;special="";renderNav();renderCategoryFilters();render()}
 function setSpecial(x){special=x;filter="";renderNav();renderCategoryFilters();render()}
@@ -293,19 +312,19 @@ function setAF(x){adminFilter=x;["afAll","afWith","afWithout"].forEach(i=>$(i).c
 function updateAdmin(){const w=games.filter(g=>String(g.capa_url||"").trim()).length;$("aTotal").textContent=games.length;$("aWith").textContent=w;$("aWithout").textContent=games.length-w}
 function renderAdmin(){
  const q=$("adminSearch").value.toLowerCase().trim(),c=$("adminCat").value;
- const list=games.filter(g=>{const has=!!String(g.capa_url||"").trim();return(!q||g.nome.toLowerCase().includes(q))&&(!c||g.categoria===c)&&(adminFilter==="all"||(adminFilter==="with"&&has)||(adminFilter==="without"&&!has))});
+ const list=games.filter(g=>{const has=!!String(g.capa_url||"").trim();return(!q||g.nome.toLowerCase().includes(q))&&(!c||getGameCategories(g).includes(c))&&(adminFilter==="all"||(adminFilter==="with"&&has)||(adminFilter==="without"&&!has))});
  $("adminResult").textContent=list.length+" jogo(s)";
- $("adminBody").innerHTML=list.map(g=>{const has=!!String(g.capa_url||"").trim();return`<tr><td>${has?`<img class="thumb" src="${esc(g.capa_url)}">`:"🎮"}</td><td><b>${esc(g.nome)}</b><br><small class="muted">${esc(g.plataforma||"PS4")}</small></td><td>${esc(g.categoria)}</td><td>${g.ano||"-"}</td><td class="stars">${"★★★★★".split("").map((x,i)=>`<span class="star ${i<Number(g.nota||0)?"on":""}">${x}</span>`).join("")}</td><td>${Number(g.jogado)?"✓ Jogado":"◷ Não jogado"}</td><td><div class="actions"><button class="btn" onclick="event.stopPropagation();openDetail(${g.id})">Ver</button><button class="btn" onclick="event.stopPropagation();openCover(${g.id})">${has?"🔄 Capa":"🖼️ Capa"}</button><button class="btn" onclick="event.stopPropagation();gameModal(${g.id})">Editar</button><button class="btn danger" onclick="event.stopPropagation();delGame(${g.id})">Excluir</button></div></td></tr>`}).join("")||`<tr><td colspan="7" class="muted">Nenhum jogo encontrado.</td></tr>`
+ $("adminBody").innerHTML=list.map(g=>{const has=!!String(g.capa_url||"").trim();return`<tr><td>${has?`<img class="thumb" src="${esc(g.capa_url)}">`:"🎮"}</td><td><b>${esc(g.nome)}</b><br><small class="muted">${esc(g.plataforma||"PS4")}</small></td><td><div class="category-list">${getGameCategories(g).map(c=>`<span class="category-chip">${ICONS[c]||"🎮"} ${esc(c)}</span>`).join("")}</div></td><td>${g.ano||"-"}</td><td class="stars">${"★★★★★".split("").map((x,i)=>`<span class="star ${i<Number(g.nota||0)?"on":""}">${x}</span>`).join("")}</td><td>${Number(g.jogado)?"✓ Jogado":"◷ Não jogado"}</td><td><div class="actions"><button class="btn" onclick="event.stopPropagation();openDetail(${g.id})">Ver</button><button class="btn" onclick="event.stopPropagation();openCover(${g.id})">${has?"🔄 Capa":"🖼️ Capa"}</button><button class="btn" onclick="event.stopPropagation();gameModal(${g.id})">Editar</button><button class="btn danger" onclick="event.stopPropagation();delGame(${g.id})">Excluir</button></div></td></tr>`}).join("")||`<tr><td colspan="7" class="muted">Nenhum jogo encontrado.</td></tr>`
 }
 function renderStatsPanel(){
  const platforms={};const cats={};
- games.forEach(g=>{const p=g.plataforma||"PS4";platforms[p]=(platforms[p]||0)+1;cats[g.categoria]=(cats[g.categoria]||0)+1});
+ games.forEach(g=>{const p=g.plataforma||"PS4";platforms[p]=(platforms[p]||0)+1;getGameCategories(g).forEach(c=>{cats[c]=(cats[c]||0)+1})});
  const bars=(obj)=>{const arr=Object.entries(obj).sort((a,b)=>b[1]-a[1]).slice(0,8),max=Math.max(1,...arr.map(x=>x[1]));return arr.map(([n,v])=>`<div class="bar-row"><span>${esc(n)}</span><div class="bar"><i style="width:${v/max*100}%"></i></div><b>${v}</b></div>`).join("")||'<div class="hint">Sem dados.</div>'};
  $("platformBars").innerHTML=bars(platforms);$("categoryBars").innerHTML=bars(cats);
 }
 function openDetail(id){
  const g=games.find(x=>Number(x.id)===Number(id));if(!g)return;detailId=id;
- $("detailName").textContent=g.nome;$("detailCat").textContent=g.categoria||"";
+ $("detailName").textContent=g.nome;$("detailCat").innerHTML=getGameCategories(g).map(c=>`${ICONS[c]||"🎮"} ${esc(c)}`).join(" &nbsp;•&nbsp; ");
  $("detailMeta").textContent=(g.plataforma||"PS4")+" • "+(g.ano||"Ano não informado");
  $("detailCover").innerHTML=g.capa_url?`<img src="${esc(g.capa_url)}" alt="${esc(g.nome)}">`:`<div class="placeholder"><span class="big">${ICONS[g.categoria]||"🎮"}</span>CAPA DO JOGO</div>`;
  $("detailStars").innerHTML="★★★★★".split("").map((x,i)=>`<span class="star ${i<Number(g.nota||0)?"on":""}">${x}</span>`).join("");
@@ -319,14 +338,14 @@ function closeDetail(){$("detailModal").classList.remove("open");detailId=null}
 function drawRating(){$("grating").innerHTML=[1,2,3,4,5].map(n=>`<button type="button" class="${n<=rating?"on":""}" onclick="rating=${n};drawRating()">★</button>`).join("")}
 function gameModal(id=null){
  editingId=id;const g=id?games.find(x=>Number(x.id)===Number(id)):null;const m=id?getMeta(id):{};
- $("gmTitle").textContent=g?"Editar jogo":"Cadastrar jogo";$("gid").value=g?.id||"";$("gname").value=g?.nome||"";$("gcat").value=g?.categoria||"";$("gplatform").value=g?.plataforma||"PS4";$("gyear").value=g?.ano||"";$("gcover").value=g?.capa_url||"";$("gdesc").value=g?.descricao||"";$("gplayed").checked=Number(g?.jogado)===1;$("gfav").checked=Number(g?.favorito)===1;
+ $("gmTitle").textContent=g?"Editar jogo":"Cadastrar jogo";$("gid").value=g?.id||"";$("gname").value=g?.nome||"";setGameCategoriesSelected(g?getGameCategories(g):[]);$("gplatform").value=g?.plataforma||"PS4";$("gyear").value=g?.ano||"";$("gcover").value=g?.capa_url||"";$("gdesc").value=g?.descricao||"";$("gplayed").checked=Number(g?.jogado)===1;$("gfav").checked=Number(g?.favorito)===1;
  $("gedition").value=m.edition||"";$("gdate").value=m.date||"";$("glocation").value=m.location||"";$("gnotes").value=m.notes||"";rating=Number(g?.nota||0);drawRating();$("gameModal").classList.add("open")
 }
 function closeGameModal(){$("gameModal").classList.remove("open")}
 $("gameForm").addEventListener("submit",async e=>{
  e.preventDefault();
  try{
-  const d={nome:$("gname").value.trim(),categoria:$("gcat").value,plataforma:$("gplatform").value,ano:$("gyear").value,capa_url:$("gcover").value.trim(),descricao:$("gdesc").value.trim()};
+  const selectedCats=selectedGameCategories();if(!selectedCats.length)throw Error("Selecione pelo menos uma categoria.");const d={nome:$("gname").value.trim(),categoria:selectedCats.join(", "),plataforma:$("gplatform").value,ano:$("gyear").value,capa_url:$("gcover").value.trim(),descricao:$("gdesc").value.trim()};
   let id=editingId;if(id)await write("/api/jogos/"+id,"PUT",d);else id=(await write("/api/jogos","POST",d)).id;
   await write("/api/jogos/"+id+"/avaliacao","PUT",{nota:rating,jogado:$("gplayed").checked,favorito:$("gfav").checked});
   saveMeta(id);closeGameModal();await load();openAdmin();toast("Jogo salvo com sucesso.")
