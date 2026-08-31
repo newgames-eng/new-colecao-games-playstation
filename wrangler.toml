@@ -1,1 +1,8 @@
+name = "new-colecao-games-api"
+main = "worker.js"
+compatibility_date = "2026-08-31"
 
+[[d1_databases]]
+binding = "DB"
+database_name = "new-colecao-games-db"
+database_id = "f2757a92-3c0d-436f-a961-bca64181eee9"
