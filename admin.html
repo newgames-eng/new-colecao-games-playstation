@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-
 <title>NEW COLEÇÃO GAMES — Administração</title>
 
 <style>
@@ -28,41 +27,18 @@ body{
   margin:0;
   font-family:Arial,Helvetica,sans-serif;
   background:
-    radial-gradient(
-      circle at 75% -10%,
-      rgba(0,110,255,.25),
-      transparent 30%
-    ),
-    linear-gradient(
-      180deg,
-      #020817,
-      #030a15 70%
-    );
+    radial-gradient(circle at 75% -10%,rgba(0,110,255,.25),transparent 30%),
+    linear-gradient(180deg,#020817,#030a15 70%);
   color:var(--text);
 }
-
-.app{
-  display:flex;
-  min-height:100vh;
-}
-
-/* =========================
-   MENU LATERAL
-========================= */
 
 .side{
   width:240px;
   position:fixed;
   inset:0 auto 0 0;
-  background:
-    linear-gradient(
-      180deg,
-      #041534,
-      #020b1c
-    );
+  background:linear-gradient(180deg,#041534,#020b1c);
   border-right:1px solid #0754c9;
   padding:22px 15px;
-  overflow-y:auto;
 }
 
 .brand{
@@ -109,10 +85,6 @@ body{
   background:#075bd8;
 }
 
-/* =========================
-   ÁREA PRINCIPAL
-========================= */
-
 .main{
   margin-left:240px;
   width:calc(100% - 240px);
@@ -145,9 +117,7 @@ body{
   font-size:12px;
 }
 
-/* =========================
-   ESTATÍSTICAS
-========================= */
+/* ESTATÍSTICAS */
 
 .stats{
   display:grid;
@@ -173,9 +143,55 @@ body{
   color:var(--muted);
 }
 
-/* =========================
-   PAINEL
-========================= */
+/* PAINEL DE CAPAS */
+
+.cover-panel{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-bottom:18px;
+}
+
+.cover-card{
+  background:#071426;
+  border:1px solid var(--line);
+  border-radius:9px;
+  padding:15px;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.cover-card:hover{
+  border-color:#0877ff;
+  transform:translateY(-1px);
+}
+
+.cover-card.active{
+  border-color:#0877ff;
+  box-shadow:0 0 0 1px #0877ff inset;
+}
+
+.cover-card strong{
+  display:block;
+  font-size:24px;
+}
+
+.cover-card span{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  margin-top:4px;
+}
+
+.cover-card.green strong{
+  color:var(--green);
+}
+
+.cover-card.gray strong{
+  color:#b4c2d8;
+}
+
+/* PAINEL */
 
 .panel{
   background:#071426;
@@ -189,10 +205,6 @@ body{
   font-size:17px;
   margin:0 0 15px;
 }
-
-/* =========================
-   BARRA DE FERRAMENTAS
-========================= */
 
 .toolbar{
   display:flex;
@@ -220,10 +232,6 @@ body{
 .toolbar select{
   min-width:190px;
 }
-
-/* =========================
-   BOTÕES
-========================= */
 
 button.primary,
 button.danger,
@@ -254,17 +262,13 @@ button.cover-button{
 }
 
 .primary:hover,
-.cover-button:hover{
+.cover-button:hover,
+.secondary:hover,
+.danger:hover{
   filter:brightness(1.15);
 }
 
-.danger:hover{
-  filter:brightness(1.12);
-}
-
-/* =========================
-   TABELA
-========================= */
+/* TABELA */
 
 .table-wrap{
   overflow:auto;
@@ -296,6 +300,7 @@ button.cover-button{
   object-fit:cover;
   border-radius:4px;
   background:#102743;
+  border:1px solid #21436d;
   display:block;
 }
 
@@ -307,7 +312,21 @@ button.cover-button{
   justify-content:center;
   background:#102743;
   border-radius:4px;
-  font-size:20px;
+  font-size:19px;
+}
+
+.cover-label{
+  display:block;
+  margin-top:4px;
+  font-size:9px;
+}
+
+.cover-label.ok{
+  color:var(--green);
+}
+
+.cover-label.none{
+  color:var(--muted);
 }
 
 .stars{
@@ -324,9 +343,7 @@ button.cover-button{
   gap:6px;
 }
 
-/* =========================
-   MODAL
-========================= */
+/* MODAIS */
 
 .modal{
   position:fixed;
@@ -372,10 +389,6 @@ button.cover-button{
   cursor:pointer;
 }
 
-/* =========================
-   FORMULÁRIO
-========================= */
-
 .form{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -404,10 +417,6 @@ button.cover-button{
   resize:vertical;
 }
 
-/* =========================
-   AVALIAÇÃO
-========================= */
-
 .rating button{
   background:none;
   border:0;
@@ -420,10 +429,6 @@ button.cover-button{
 .rating button.on{
   color:#0877ff;
 }
-
-/* =========================
-   CHECKBOX
-========================= */
 
 .check{
   display:flex;
@@ -443,19 +448,28 @@ button.cover-button{
   margin:0;
 }
 
-/* =========================
-   MODAL DE CAPA
-========================= */
+/* MODAL CAPA */
+
+.cover-modal-game{
+  text-align:center;
+  font-size:18px;
+  font-weight:bold;
+  margin-bottom:12px;
+}
 
 .cover-preview{
+  display:block;
   width:180px;
   height:240px;
   object-fit:cover;
+  margin:15px auto;
   border-radius:8px;
   background:#102743;
-  display:none;
-  margin:15px auto;
   border:1px solid #21436d;
+}
+
+.cover-preview.hidden{
+  display:none;
 }
 
 .cover-placeholder{
@@ -466,16 +480,26 @@ button.cover-button{
   align-items:center;
   justify-content:center;
   text-align:center;
+  color:var(--muted);
   background:#020b1b;
   border:1px dashed #21436d;
   border-radius:8px;
-  color:var(--muted);
-  font-size:12px;
 }
 
-/* =========================
-   LOGIN
-========================= */
+.cover-placeholder.hidden{
+  display:none;
+}
+
+.cover-file{
+  width:100%;
+  background:#020b1b;
+  color:white;
+  border:1px solid #21436d;
+  border-radius:7px;
+  padding:10px;
+}
+
+/* LOGIN */
 
 .login{
   position:fixed;
@@ -519,10 +543,6 @@ button.cover-button{
   line-height:1.5;
 }
 
-/* =========================
-   TOAST
-========================= */
-
 .toast{
   position:fixed;
   right:20px;
@@ -535,9 +555,7 @@ button.cover-button{
   z-index:300;
 }
 
-/* =========================
-   RESPONSIVO
-========================= */
+/* RESPONSIVO */
 
 @media(max-width:900px){
 
@@ -553,6 +571,10 @@ button.cover-button{
 
   .stats{
     grid-template-columns:repeat(2,1fr);
+  }
+
+  .cover-panel{
+    grid-template-columns:1fr;
   }
 
   .form{
@@ -589,16 +611,26 @@ button.cover-button{
 
 <body>
 
-<!-- =========================
-     MENU
-========================= -->
+<!-- =====================================================
+     MENU LATERAL
+===================================================== -->
 
 <aside class="side">
 
   <div class="brand">
-    <div class="ps">PS</div>
-    <h1>NEW COLEÇÃO</h1>
-    <p>GAMES PLAYSTATION</p>
+
+    <div class="ps">
+      PS
+    </div>
+
+    <h1>
+      NEW COLEÇÃO
+    </h1>
+
+    <p>
+      GAMES PLAYSTATION
+    </p>
+
   </div>
 
   <div class="nav">
@@ -623,15 +655,16 @@ button.cover-button{
 
 </aside>
 
-<!-- =========================
+<!-- =====================================================
      PRINCIPAL
-========================= -->
+===================================================== -->
 
 <main class="main">
 
   <div class="top">
 
     <div>
+
       <div class="title">
         Área Administrativa
       </div>
@@ -639,6 +672,7 @@ button.cover-button{
       <div class="sub">
         Gerencie sua coleção PlayStation
       </div>
+
     </div>
 
     <div class="badge">
@@ -647,7 +681,10 @@ button.cover-button{
 
   </div>
 
-  <!-- ESTATÍSTICAS -->
+
+  <!-- =====================================================
+       ESTATÍSTICAS PRINCIPAIS
+  ===================================================== -->
 
   <div class="stats">
 
@@ -673,7 +710,69 @@ button.cover-button{
 
   </div>
 
-  <!-- GERENCIAR JOGOS -->
+
+  <!-- =====================================================
+       PAINEL DE CAPAS
+  ===================================================== -->
+
+  <div class="cover-panel">
+
+    <div
+      class="cover-card active"
+      id="filterAll"
+      onclick="setCoverFilter('all')"
+    >
+
+      <strong id="coverTotal">
+        0
+      </strong>
+
+      <span>
+        🎮 Todos os jogos
+      </span>
+
+    </div>
+
+
+    <div
+      class="cover-card green"
+      id="filterWith"
+      onclick="setCoverFilter('with')"
+    >
+
+      <strong id="coverWith">
+        0
+      </strong>
+
+      <span>
+        🟢 Jogos com capa
+      </span>
+
+    </div>
+
+
+    <div
+      class="cover-card gray"
+      id="filterWithout"
+      onclick="setCoverFilter('without')"
+    >
+
+      <strong id="coverWithout">
+        0
+      </strong>
+
+      <span>
+        ⚪ Jogos sem capa
+      </span>
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       GERENCIAR JOGOS
+  ===================================================== -->
 
   <section class="panel">
 
@@ -689,9 +788,11 @@ button.cover-button{
       >
 
       <select id="cat">
+
         <option value="">
           Todas as categorias
         </option>
+
       </select>
 
       <button
@@ -703,6 +804,7 @@ button.cover-button{
 
     </div>
 
+
     <div class="table-wrap">
 
       <table class="table">
@@ -710,13 +812,35 @@ button.cover-button{
         <thead>
 
           <tr>
-            <th>Capa</th>
-            <th>Jogo</th>
-            <th>Categoria</th>
-            <th>Ano</th>
-            <th>Nota</th>
-            <th>Status</th>
-            <th>Ações</th>
+
+            <th>
+              Capa
+            </th>
+
+            <th>
+              Jogo
+            </th>
+
+            <th>
+              Categoria
+            </th>
+
+            <th>
+              Ano
+            </th>
+
+            <th>
+              Nota
+            </th>
+
+            <th>
+              Status
+            </th>
+
+            <th>
+              Ações
+            </th>
+
           </tr>
 
         </thead>
@@ -724,12 +848,14 @@ button.cover-button{
         <tbody id="tbody">
 
           <tr>
+
             <td
               colspan="7"
               class="muted"
             >
               Carregando...
             </td>
+
           </tr>
 
         </tbody>
@@ -742,9 +868,10 @@ button.cover-button{
 
 </main>
 
-<!-- =========================
-     MODAL CADASTRO / EDIÇÃO
-========================= -->
+
+<!-- =====================================================
+     MODAL JOGO
+===================================================== -->
 
 <div
   class="modal"
@@ -768,6 +895,7 @@ button.cover-button{
 
     </div>
 
+
     <form
       class="form"
       id="form"
@@ -777,6 +905,7 @@ button.cover-button{
         type="hidden"
         id="id"
       >
+
 
       <div class="full">
 
@@ -791,6 +920,7 @@ button.cover-button{
 
       </div>
 
+
       <div>
 
         <label>
@@ -803,6 +933,7 @@ button.cover-button{
         ></select>
 
       </div>
+
 
       <div>
 
@@ -836,6 +967,7 @@ button.cover-button{
 
       </div>
 
+
       <div>
 
         <label>
@@ -851,6 +983,7 @@ button.cover-button{
 
       </div>
 
+
       <div>
 
         <label>
@@ -864,6 +997,7 @@ button.cover-button{
 
       </div>
 
+
       <div class="full">
 
         <label>
@@ -875,6 +1009,7 @@ button.cover-button{
         ></textarea>
 
       </div>
+
 
       <div class="full">
 
@@ -889,6 +1024,7 @@ button.cover-button{
 
       </div>
 
+
       <div class="check">
 
         <input
@@ -901,6 +1037,7 @@ button.cover-button{
         </label>
 
       </div>
+
 
       <div class="check">
 
@@ -915,9 +1052,14 @@ button.cover-button{
 
       </div>
 
+
       <div
         class="full"
-        style="display:flex;gap:8px;justify-content:flex-end"
+        style="
+          display:flex;
+          gap:8px;
+          justify-content:flex-end
+        "
       >
 
         <button
@@ -942,9 +1084,10 @@ button.cover-button{
 
 </div>
 
-<!-- =========================
-     MODAL DE CAPA
-========================= -->
+
+<!-- =====================================================
+     MODAL CAPA
+===================================================== -->
 
 <div
   class="modal"
@@ -968,70 +1111,70 @@ button.cover-button{
 
     </div>
 
-    <div style="text-align:center">
 
-      <div
-        id="coverGameName"
-        style="
-          font-size:18px;
-          font-weight:bold;
-          margin-bottom:10px;
-        "
-      ></div>
+    <div class="cover-modal-game">
+      <span id="coverGameName"></span>
+    </div>
 
-      <div
-        id="coverPlaceholder"
-        class="cover-placeholder"
+
+    <div
+      id="coverPlaceholder"
+      class="cover-placeholder"
+    >
+      🎮<br>
+      Este jogo ainda não possui capa.
+    </div>
+
+
+    <img
+      id="coverPreview"
+      class="cover-preview hidden"
+      alt="Capa do jogo"
+    >
+
+
+    <input
+      id="coverFile"
+      class="cover-file"
+      type="file"
+      accept="image/jpeg,image/png,image/webp"
+    >
+
+
+    <div
+      id="coverStatus"
+      class="hint"
+      style="margin-top:10px"
+    >
+      Escolha uma imagem JPG, PNG ou WEBP.
+    </div>
+
+
+    <div
+      style="
+        display:flex;
+        gap:8px;
+        justify-content:flex-end;
+        margin-top:18px
+      "
+    >
+
+      <button
+        type="button"
+        class="secondary"
+        onclick="closeCoverModal()"
       >
-        Selecione uma imagem
-      </div>
+        Cancelar
+      </button>
 
-      <img
-        id="coverPreview"
-        class="cover-preview"
-        alt="Pré-visualização da capa"
+      <button
+        type="button"
+        class="primary"
+        id="uploadCoverButton"
+        onclick="uploadCover()"
       >
-
-      <input
-        type="file"
-        id="coverFile"
-        accept="image/jpeg,image/png,image/webp"
-        style="width:100%;margin:15px 0"
-      >
-
-      <div
-        id="coverStatus"
-        class="hint"
-      >
-        JPG, PNG ou WEBP.
-      </div>
-
-      <div
-        style="
-          display:flex;
-          gap:8px;
-          justify-content:flex-end;
-          margin-top:18px;
-        "
-      >
-
-        <button
-          type="button"
-          class="secondary"
-          onclick="closeCoverModal()"
-        >
-          Cancelar
-        </button>
-
-        <button
-          type="button"
-          class="primary"
-          onclick="uploadCover()"
-        >
-          🖼️ Enviar capa
-        </button>
-
-      </div>
+        🖼️ Enviar capa
+      </button>
 
     </div>
 
@@ -1039,9 +1182,10 @@ button.cover-button{
 
 </div>
 
-<!-- =========================
+
+<!-- =====================================================
      LOGIN
-========================= -->
+===================================================== -->
 
 <div
   class="login"
@@ -1067,7 +1211,10 @@ button.cover-button{
 
     <button
       class="primary"
-      style="width:100%;margin-top:8px"
+      style="
+        width:100%;
+        margin-top:8px
+      "
       onclick="login()"
     >
       Entrar
@@ -1077,53 +1224,68 @@ button.cover-button{
 
 </div>
 
-<!-- TOAST -->
+
+<!-- =====================================================
+     TOAST
+===================================================== -->
 
 <div
   class="toast"
   id="toast"
 ></div>
 
+
 <script>
 
 /* =====================================================
-   CONFIGURAÇÃO DA API
+   CONFIGURAÇÃO
 ===================================================== */
 
 const API =
   "https://new-colecao-games-api.parqueclube1bloco2d.workers.dev";
+
 
 /* =====================================================
    ESTADO
 ===================================================== */
 
 let games = [];
+
 let cats = [];
+
 let editRating = 0;
 
 let token =
   sessionStorage.getItem("ng_admin_token") || "";
 
+let coverFilter = "all";
+
 let coverGameId = null;
 
+
 /* =====================================================
-   FUNÇÕES AUXILIARES
+   AUXILIARES
 ===================================================== */
 
-const $ = id =>
-  document.getElementById(id);
+const $ =
+  id => document.getElementById(id);
 
-const esc = s =>
-  String(s ?? "").replace(
-    /[&<>"']/g,
-    m => ({
-      "&":"&amp;",
-      "<":"&lt;",
-      ">":"&gt;",
-      '"':"&quot;",
-      "'":"&#39;"
-    }[m])
-  );
+
+const esc =
+  s =>
+    String(s ?? "")
+      .replace(
+        /[&<>"']/g,
+        m =>
+          ({
+            "&":"&amp;",
+            "<":"&lt;",
+            ">":"&gt;",
+            '"':"&quot;",
+            "'":"&#39;"
+          }[m])
+      );
+
 
 /* =====================================================
    GET
@@ -1131,27 +1293,34 @@ const esc = s =>
 
 async function get(path){
 
-  const r =
-    await fetch(API + path);
+  const response =
+    await fetch(
+      API + path
+    );
 
-  if(!r.ok){
 
-    let d = {};
+  const data =
+    await response
+      .json()
+      .catch(() => ({}));
 
-    try{
-      d = await r.json();
-    }catch(e){}
+
+  if(!response.ok){
 
     throw Error(
-      d.error || "Falha na API"
+      data.error ||
+      "Falha na API."
     );
+
   }
 
-  return r.json();
+
+  return data;
 }
 
+
 /* =====================================================
-   POST / PUT / DELETE JSON
+   ESCRITA NA API
 ===================================================== */
 
 async function write(
@@ -1162,97 +1331,167 @@ async function write(
 
   if(!token){
 
-    $("login").classList.add("show");
+    $("login")
+      .classList
+      .add("show");
 
     throw Error(
       "Faça login administrativo."
     );
+
   }
 
-  const r =
+
+  const response =
     await fetch(
       API + path,
       {
         method,
+
         headers:{
           "Content-Type":
             "application/json",
+
           "Authorization":
             "Bearer " + token
         },
+
         body:
           JSON.stringify(data)
       }
     );
 
-  const d =
-    await r.json()
+
+  const result =
+    await response
+      .json()
       .catch(() => ({}));
 
-  if(!r.ok){
+
+  if(!response.ok){
 
     throw Error(
-      d.error ||
-      "Operação não autorizada"
+      result.error ||
+      "Operação não autorizada."
     );
+
   }
 
-  return d;
+
+  return result;
 }
 
+
 /* =====================================================
-   ENVIO DE ARQUIVO
+   UPLOAD PARA R2
 ===================================================== */
 
-async function uploadFile(
-  path,
-  file
-){
+async function uploadImage(file){
 
   if(!token){
 
-    $("login").classList.add("show");
+    $("login")
+      .classList
+      .add("show");
 
     throw Error(
       "Faça login administrativo."
     );
+
   }
+
+
+  if(!file){
+
+    throw Error(
+      "Selecione uma imagem."
+    );
+
+  }
+
+
+  const tipos = [
+    "image/jpeg",
+    "image/png",
+    "image/webp"
+  ];
+
+
+  if(!tipos.includes(file.type)){
+
+    throw Error(
+      "Use uma imagem JPG, PNG ou WEBP."
+    );
+
+  }
+
+
+  if(
+    file.size >
+    10 * 1024 * 1024
+  ){
+
+    throw Error(
+      "A imagem deve ter no máximo 10 MB."
+    );
+
+  }
+
 
   const form =
     new FormData();
 
+
   form.append(
-    "capa",
+    "file",
     file
   );
 
-  const r =
+
+  const response =
     await fetch(
-      API + path,
+      API + "/api/capas",
       {
         method:"POST",
+
         headers:{
           "Authorization":
             "Bearer " + token
         },
+
         body:form
       }
     );
 
-  const d =
-    await r.json()
+
+  const result =
+    await response
+      .json()
       .catch(() => ({}));
 
-  if(!r.ok){
+
+  if(!response.ok){
 
     throw Error(
-      d.error ||
-      "Não foi possível enviar a capa."
+      result.error ||
+      "Falha ao enviar a capa."
     );
+
   }
 
-  return d;
+
+  if(!result.url){
+
+    throw Error(
+      "O servidor não retornou a URL da capa."
+    );
+
+  }
+
+
+  return result.url;
 }
+
 
 /* =====================================================
    CARREGAR DADOS
@@ -1277,11 +1516,13 @@ async function load(){
 
       ]);
 
+
     games =
       g.jogos || [];
 
     cats =
       c.categorias || [];
+
 
     $("total").textContent =
       d.jogos ?? games.length;
@@ -1295,19 +1536,98 @@ async function load(){
     $("rated").textContent =
       d.avaliados ?? 0;
 
+
+    updateCoverCounters();
+
     fillCats();
 
     render();
 
-  }catch(e){
+  }catch(error){
 
     toast(
-      e.message
+      error.message
     );
 
   }
 
 }
+
+
+/* =====================================================
+   CONTADORES DE CAPAS
+===================================================== */
+
+function updateCoverCounters(){
+
+  const total =
+    games.length;
+
+
+  const withCover =
+    games.filter(
+      g =>
+        String(
+          g.capa_url || ""
+        ).trim() !== ""
+    ).length;
+
+
+  const withoutCover =
+    total -
+    withCover;
+
+
+  $("coverTotal").textContent =
+    total;
+
+  $("coverWith").textContent =
+    withCover;
+
+  $("coverWithout").textContent =
+    withoutCover;
+
+}
+
+
+/* =====================================================
+   FILTRO DE CAPAS
+===================================================== */
+
+function setCoverFilter(filter){
+
+  coverFilter =
+    filter;
+
+
+  $("filterAll")
+    .classList
+    .toggle(
+      "active",
+      filter === "all"
+    );
+
+
+  $("filterWith")
+    .classList
+    .toggle(
+      "active",
+      filter === "with"
+    );
+
+
+  $("filterWithout")
+    .classList
+    .toggle(
+      "active",
+      filter === "without"
+    );
+
+
+  render();
+
+}
+
 
 /* =====================================================
    CATEGORIAS
@@ -1318,25 +1638,33 @@ function fillCats(){
   $("cat").innerHTML =
     '<option value="">Todas as categorias</option>' +
 
-    cats.map(c =>
-      `<option value="${esc(c.nome)}">
-        ${esc(c.nome)}
-      </option>`
-    ).join("");
+    cats
+      .map(
+        c =>
+          `<option value="${esc(c.nome)}">
+            ${esc(c.nome)}
+          </option>`
+      )
+      .join("");
+
 
   $("categoria").innerHTML =
     '<option value="">Selecione...</option>' +
 
-    cats.map(c =>
-      `<option value="${esc(c.nome)}">
-        ${esc(c.nome)}
-      </option>`
-    ).join("");
+    cats
+      .map(
+        c =>
+          `<option value="${esc(c.nome)}">
+            ${esc(c.nome)}
+          </option>`
+      )
+      .join("");
 
 }
 
+
 /* =====================================================
-   RENDER DA TABELA
+   RENDER
 ===================================================== */
 
 function render(){
@@ -1347,519 +1675,379 @@ function render(){
       .toLowerCase()
       .trim();
 
-  const c =
+
+  const category =
     $("cat").value;
 
-  const list =
-    games.filter(g =>
 
-      (
-        !q ||
-        String(g.nome || "")
-          .toLowerCase()
-          .includes(q)
-      )
+  let list =
+    games.filter(
+      g => {
 
-      &&
+        const searchOK =
+          !q ||
+          String(g.nome || "")
+            .toLowerCase()
+            .includes(q);
 
-      (
-        !c ||
-        g.categoria === c
-      )
 
+        const categoryOK =
+          !category ||
+          g.categoria === category;
+
+
+        const hasCover =
+          String(
+            g.capa_url || ""
+          ).trim() !== "";
+
+
+        let coverOK =
+          true;
+
+
+        if(
+          coverFilter === "with"
+        ){
+
+          coverOK =
+            hasCover;
+
+        }
+
+
+        if(
+          coverFilter === "without"
+        ){
+
+          coverOK =
+            !hasCover;
+
+        }
+
+
+        return (
+          searchOK &&
+          categoryOK &&
+          coverOK
+        );
+
+      }
     );
+
 
   $("tbody").innerHTML =
     list.length
 
-    ?
+      ?
 
-    list.map(g => {
-
-      const n =
-        Number(g.nota || 0);
-
-      const stars =
-        "★★★★★"
-          .split("")
+        list
           .map(
-            (x,i) =>
-              `<span class="${
-                i < n ? "" : "muted"
-              }">${x}</span>`
+            game => {
+
+              const n =
+                Number(
+                  game.nota || 0
+                );
+
+
+              const hasCover =
+                String(
+                  game.capa_url || ""
+                ).trim() !== "";
+
+
+              const starsHTML =
+                "★★★★★"
+                  .split("")
+                  .map(
+                    (x,index) =>
+                      `<span class="${
+                        index < n
+                          ? ""
+                          : "muted"
+                      }">${x}</span>`
+                  )
+                  .join("");
+
+
+              const coverHTML =
+                hasCover
+
+                  ?
+
+                    `
+                    <div>
+
+                      <img
+                        class="thumb"
+                        src="${esc(game.capa_url)}"
+                        alt="${esc(game.nome)}"
+                        onerror="
+                          this.style.display='none';
+                          this.nextElementSibling.style.display='flex';
+                        "
+                      >
+
+                      <div
+                        class="no-cover"
+                        style="display:none"
+                      >
+                        🎮
+                      </div>
+
+                      <span
+                        class="cover-label ok"
+                      >
+                        ✓ Com capa
+                      </span>
+
+                    </div>
+                    `
+
+                  :
+
+                    `
+                    <div>
+
+                      <div class="no-cover">
+                        🎮
+                      </div>
+
+                      <span
+                        class="cover-label none"
+                      >
+                        ○ Sem capa
+                      </span>
+
+                    </div>
+                    `;
+
+
+              const coverButton =
+                hasCover
+
+                  ?
+
+                    `
+                    <button
+                      class="cover-button"
+                      onclick="openCoverModal(${game.id})"
+                    >
+                      🔄 Trocar capa
+                    </button>
+                    `
+
+                  :
+
+                    `
+                    <button
+                      class="cover-button"
+                      onclick="openCoverModal(${game.id})"
+                    >
+                      🖼️ Adicionar capa
+                    </button>
+                    `;
+
+
+              return `
+
+                <tr>
+
+                  <td>
+                    ${coverHTML}
+                  </td>
+
+
+                  <td>
+
+                    <b>
+                      ${esc(game.nome)}
+                    </b>
+
+                    <br>
+
+                    <small class="muted">
+                      ${esc(
+                        game.plataforma ||
+                        "PS4"
+                      )}
+                    </small>
+
+                  </td>
+
+
+                  <td>
+                    ${esc(
+                      game.categoria ||
+                      "-"
+                    )}
+                  </td>
+
+
+                  <td>
+                    ${game.ano || "-"}
+                  </td>
+
+
+                  <td class="stars">
+                    ${starsHTML}
+                  </td>
+
+
+                  <td>
+
+                    ${
+                      Number(game.jogado)
+                        ? "✓ Jogado"
+                        : "◷ Não jogado"
+                    }
+
+                  </td>
+
+
+                  <td>
+
+                    <div class="actions">
+
+                      ${coverButton}
+
+                      <button
+                        class="secondary"
+                        onclick="edit(${game.id})"
+                      >
+                        Editar
+                      </button>
+
+                      <button
+                        class="danger"
+                        onclick="removeGame(${game.id})"
+                      >
+                        Excluir
+                      </button>
+
+                    </div>
+
+                  </td>
+
+                </tr>
+
+              `;
+
+            }
           )
-          .join("");
+          .join("")
 
-      const cover =
-        g.capa_url
-
-        ?
+      :
 
         `
-        <div>
-          <img
-            class="thumb"
-            src="${esc(g.capa_url)}"
-            alt="${esc(g.nome)}"
-            onerror="
-              this.style.display='none';
-              this.nextElementSibling.style.display='flex';
-            "
-          >
-
-          <div
-            class="no-cover"
-            style="display:none"
-          >
-            🎮
-          </div>
-
-          <small
-            class="muted"
-            style="display:block;margin-top:4px"
-          >
-            Capa
-          </small>
-        </div>
-        `
-
-        :
-
-        `
-        <div>
-          <div class="no-cover">
-            🎮
-          </div>
-
-          <small
-            class="muted"
-            style="display:block;margin-top:4px"
-          >
-            Sem capa
-          </small>
-        </div>
-        `;
-
-      return `
-
         <tr>
 
-          <td>
-            ${cover}
-          </td>
+          <td
+            colspan="7"
+            class="muted"
+          >
 
-          <td>
-
-            <b>
-              ${esc(g.nome)}
-            </b>
-
-            <br>
-
-            <small class="muted">
-              ${esc(g.plataforma || "PS4")}
-            </small>
-
-          </td>
-
-          <td>
-            ${esc(g.categoria)}
-          </td>
-
-          <td>
-            ${g.ano || "-"}
-          </td>
-
-          <td class="stars">
-            ${stars}
-          </td>
-
-          <td>
             ${
-              Number(g.jogado)
-              ? "✓ Jogado"
-              : "◷ Não jogado"
+              coverFilter === "without"
+
+                ? "Nenhum jogo sem capa encontrado."
+
+                : coverFilter === "with"
+
+                  ? "Nenhum jogo com capa encontrado."
+
+                  : "Nenhum jogo encontrado."
             }
-          </td>
-
-          <td>
-
-            <div class="actions">
-
-              <button
-                class="cover-button"
-                onclick="openCoverModal(${g.id})"
-              >
-                🖼️ Capa
-              </button>
-
-              <button
-                class="secondary"
-                onclick="edit(${g.id})"
-              >
-                Editar
-              </button>
-
-              <button
-                class="danger"
-                onclick="removeGame(${g.id})"
-              >
-                Excluir
-              </button>
-
-            </div>
 
           </td>
 
         </tr>
-
-      `;
-
-    }).join("")
-
-    :
-
-    `
-      <tr>
-        <td
-          colspan="7"
-          class="muted"
-        >
-          Nenhum jogo encontrado.
-        </td>
-      </tr>
-    `;
+        `;
 
 }
 
-/* =====================================================
-   BUSCA
-===================================================== */
-
-function focusSearch(){
-
-  $("search").focus();
-
-}
 
 /* =====================================================
-   ESTRELAS
-===================================================== */
-
-function stars(){
-
-  $("rating").innerHTML =
-    [1,2,3,4,5]
-      .map(n =>
-        `
-        <button
-          type="button"
-          class="${n <= editRating ? "on" : ""}"
-          onclick="setRating(${n})"
-        >
-          ★
-        </button>
-        `
-      )
-      .join("");
-
-}
-
-function setRating(n){
-
-  editRating = n;
-
-  stars();
-
-}
-
-/* =====================================================
-   ABRIR MODAL JOGO
-===================================================== */
-
-function openModal(g = null){
-
-  $("modalTitle").textContent =
-    g
-      ? "Editar jogo"
-      : "Cadastrar jogo";
-
-  $("id").value =
-    g?.id || "";
-
-  $("nome").value =
-    g?.nome || "";
-
-  $("categoria").value =
-    g?.categoria || "";
-
-  $("plataforma").value =
-    g?.plataforma || "PS4";
-
-  $("ano").value =
-    g?.ano || "";
-
-  $("capa").value =
-    g?.capa_url || "";
-
-  $("descricao").value =
-    g?.descricao || "";
-
-  $("jogado").checked =
-    Number(g?.jogado) === 1;
-
-  $("favorito").checked =
-    Number(g?.favorito) === 1;
-
-  editRating =
-    Number(g?.nota || 0);
-
-  stars();
-
-  $("modal")
-    .classList
-    .add("open");
-
-}
-
-/* =====================================================
-   FECHAR MODAL JOGO
-===================================================== */
-
-function closeModal(){
-
-  $("modal")
-    .classList
-    .remove("open");
-
-}
-
-/* =====================================================
-   EDITAR
-===================================================== */
-
-async function edit(id){
-
-  const g =
-    games.find(
-      x => Number(x.id) === Number(id)
-    );
-
-  if(g){
-
-    openModal(g);
-
-  }
-
-}
-
-/* =====================================================
-   EXCLUIR
-===================================================== */
-
-async function removeGame(id){
-
-  const g =
-    games.find(
-      x => Number(x.id) === Number(id)
-    );
-
-  if(!g)
-    return;
-
-  if(
-    !confirm(
-      `Excluir "${g.nome}"?\n\nEssa ação não pode ser desfeita.`
-    )
-  ){
-
-    return;
-
-  }
-
-  try{
-
-    await write(
-      "/api/jogos/" + id,
-      "DELETE"
-    );
-
-    toast(
-      "Jogo excluído."
-    );
-
-    await load();
-
-  }catch(e){
-
-    toast(
-      e.message
-    );
-
-  }
-
-}
-
-/* =====================================================
-   SALVAR JOGO
-===================================================== */
-
-$("form")
-.addEventListener(
-  "submit",
-  async e => {
-
-    e.preventDefault();
-
-    const data = {
-
-      nome:
-        $("nome").value.trim(),
-
-      categoria:
-        $("categoria").value,
-
-      plataforma:
-        $("plataforma").value,
-
-      ano:
-        $("ano").value,
-
-      capa_url:
-        $("capa").value.trim(),
-
-      descricao:
-        $("descricao").value.trim()
-
-    };
-
-    try{
-
-      const id =
-        $("id").value;
-
-      let gameId;
-
-      if(id){
-
-        await write(
-          "/api/jogos/" + id,
-          "PUT",
-          data
-        );
-
-        gameId =
-          id;
-
-      }else{
-
-        const r =
-          await write(
-            "/api/jogos",
-            "POST",
-            data
-          );
-
-        gameId =
-          r.id;
-
-      }
-
-      await write(
-        "/api/jogos/" +
-        gameId +
-        "/avaliacao",
-        "PUT",
-        {
-          nota:editRating,
-          jogado:
-            $("jogado").checked,
-          favorito:
-            $("favorito").checked
-        }
-      );
-
-      closeModal();
-
-      toast(
-        "Salvo com sucesso."
-      );
-
-      await load();
-
-    }catch(e){
-
-      toast(
-        e.message
-      );
-
-    }
-
-  }
-);
-
-/* =====================================================
-   MODAL DE CAPA
+   ABRIR MODAL DE CAPA
 ===================================================== */
 
 function openCoverModal(id){
 
-  const g =
+  const game =
     games.find(
-      x => Number(x.id) === Number(id)
+      g =>
+        Number(g.id) ===
+        Number(id)
     );
 
-  if(!g)
+
+  if(!game)
     return;
+
 
   coverGameId =
     id;
 
+
   $("coverGameName")
     .textContent =
-    g.nome;
+    game.nome;
+
 
   $("coverFile").value =
     "";
 
+
   $("coverStatus")
     .textContent =
-    "Selecione uma imagem JPG, PNG ou WEBP.";
+    game.capa_url
+
+      ? "Capa atual. Escolha outra imagem para substituí-la."
+
+      : "Este jogo ainda não possui capa.";
+
 
   const preview =
     $("coverPreview");
 
+
   const placeholder =
     $("coverPlaceholder");
 
-  if(g.capa_url){
+
+  if(game.capa_url){
 
     preview.src =
-      g.capa_url;
+      game.capa_url;
 
-    preview.style.display =
-      "block";
+    preview.classList
+      .remove("hidden");
 
-    placeholder.style.display =
-      "none";
+    placeholder.classList
+      .add("hidden");
 
   }else{
 
-    preview.removeAttribute("src");
+    preview.removeAttribute(
+      "src"
+    );
 
-    preview.style.display =
-      "none";
+    preview.classList
+      .add("hidden");
 
-    placeholder.style.display =
-      "flex";
+    placeholder.classList
+      .remove("hidden");
 
   }
+
 
   $("coverModal")
     .classList
     .add("open");
 
 }
+
 
 /* =====================================================
    FECHAR MODAL CAPA
@@ -1876,58 +2064,87 @@ function closeCoverModal(){
 
 }
 
+
 /* =====================================================
-   PRÉ-VISUALIZAÇÃO
+   PRÉVIA DA CAPA
 ===================================================== */
 
 $("coverFile")
-.addEventListener(
-  "change",
-  function(){
+  .addEventListener(
+    "change",
+    function(){
 
-    const file =
-      this.files?.[0];
+      const file =
+        this.files?.[0];
 
-    if(!file)
-      return;
 
-    if(
-      ![
+      if(!file)
+        return;
+
+
+      const tipos = [
         "image/jpeg",
         "image/png",
         "image/webp"
-      ].includes(file.type)
-    ){
+      ];
 
-      toast(
-        "Escolha JPG, PNG ou WEBP."
-      );
 
-      this.value =
-        "";
+      if(!tipos.includes(file.type)){
 
-      return;
+        toast(
+          "Use JPG, PNG ou WEBP."
+        );
+
+        this.value =
+          "";
+
+        return;
+
+      }
+
+
+      if(
+        file.size >
+        10 * 1024 * 1024
+      ){
+
+        toast(
+          "A imagem deve ter no máximo 10 MB."
+        );
+
+        this.value =
+          "";
+
+        return;
+
+      }
+
+
+      const localURL =
+        URL.createObjectURL(file);
+
+
+      $("coverPreview").src =
+        localURL;
+
+
+      $("coverPreview")
+        .classList
+        .remove("hidden");
+
+
+      $("coverPlaceholder")
+        .classList
+        .add("hidden");
+
+
+      $("coverStatus")
+        .textContent =
+        file.name;
 
     }
+  );
 
-    const url =
-      URL.createObjectURL(file);
-
-    $("coverPreview").src =
-      url;
-
-    $("coverPreview").style.display =
-      "block";
-
-    $("coverPlaceholder").style.display =
-      "none";
-
-    $("coverStatus")
-      .textContent =
-      file.name;
-
-  }
-);
 
 /* =====================================================
    ENVIAR CAPA
@@ -1945,9 +2162,11 @@ async function uploadCover(){
 
   }
 
+
   const file =
     $("coverFile")
       .files?.[0];
+
 
   if(!file){
 
@@ -1959,68 +2178,471 @@ async function uploadCover(){
 
   }
 
+
+  const button =
+    $("uploadCoverButton");
+
+
   try{
+
+    button.disabled =
+      true;
+
+    button.textContent =
+      "Enviando...";
+
 
     $("coverStatus")
       .textContent =
-      "Enviando capa...";
+      "Enviando imagem para o R2...";
 
-    const result =
-      await uploadFile(
-        "/api/jogos/" +
-        coverGameId +
-        "/capa",
-        file
-      );
 
     /*
-      O Worker deve retornar
-      a URL da nova capa.
-    */
+     * 1. Envia a imagem para o R2.
+     */
 
-    const newUrl =
-      result.capa_url ||
-      result.url ||
-      result.capa ||
-      "";
+    const url =
+      await uploadImage(file);
 
-    if(newUrl){
 
-      $("coverPreview").src =
-        newUrl;
+    /*
+     * 2. Busca os dados atuais do jogo.
+     */
 
-      $("coverPreview").style.display =
-        "block";
+    const game =
+      games.find(
+        g =>
+          Number(g.id) ===
+          Number(coverGameId)
+      );
 
-      $("coverPlaceholder").style.display =
-        "none";
 
-      $("capa").value =
-        newUrl;
+    if(!game){
+
+      throw Error(
+        "Jogo não encontrado."
+      );
 
     }
 
-    toast(
-      "Capa enviada com sucesso!"
+
+    /*
+     * 3. Atualiza somente
+     * os dados do jogo já existente,
+     * trocando a capa.
+     */
+
+    await write(
+      "/api/jogos/" +
+      coverGameId,
+      "PUT",
+      {
+        nome:
+          game.nome,
+
+        categoria:
+          game.categoria,
+
+        plataforma:
+          game.plataforma ||
+          "PS4",
+
+        ano:
+          game.ano || null,
+
+        capa_url:
+          url,
+
+        descricao:
+          game.descricao || ""
+      }
     );
 
-    closeCoverModal();
-
-    await load();
-
-  }catch(e){
 
     $("coverStatus")
       .textContent =
-      e.message;
+      "✓ Capa atualizada com sucesso!";
+
 
     toast(
-      e.message
+      "✓ Capa atualizada com sucesso!"
+    );
+
+
+    closeCoverModal();
+
+
+    await load();
+
+
+  }catch(error){
+
+    $("coverStatus")
+      .textContent =
+      error.message;
+
+
+    toast(
+      error.message
+    );
+
+
+  }finally{
+
+    button.disabled =
+      false;
+
+    button.textContent =
+      "🖼️ Enviar capa";
+
+  }
+
+}
+
+
+/* =====================================================
+   MODAL DE JOGO
+===================================================== */
+
+function openModal(game = null){
+
+  $("modalTitle")
+    .textContent =
+    game
+      ? "Editar jogo"
+      : "Cadastrar jogo";
+
+
+  $("id").value =
+    game?.id || "";
+
+
+  $("nome").value =
+    game?.nome || "";
+
+
+  $("categoria").value =
+    game?.categoria || "";
+
+
+  $("plataforma").value =
+    game?.plataforma ||
+    "PS4";
+
+
+  $("ano").value =
+    game?.ano || "";
+
+
+  $("capa").value =
+    game?.capa_url || "";
+
+
+  $("descricao").value =
+    game?.descricao || "";
+
+
+  $("jogado").checked =
+    Number(game?.jogado) === 1;
+
+
+  $("favorito").checked =
+    Number(game?.favorito) === 1;
+
+
+  editRating =
+    Number(
+      game?.nota || 0
+    );
+
+
+  stars();
+
+
+  $("modal")
+    .classList
+    .add("open");
+
+}
+
+
+function closeModal(){
+
+  $("modal")
+    .classList
+    .remove("open");
+
+}
+
+
+/* =====================================================
+   EDITAR
+===================================================== */
+
+async function edit(id){
+
+  const game =
+    games.find(
+      g =>
+        Number(g.id) ===
+        Number(id)
+    );
+
+
+  if(game){
+
+    openModal(game);
+
+  }
+
+}
+
+
+/* =====================================================
+   EXCLUIR
+===================================================== */
+
+async function removeGame(id){
+
+  const game =
+    games.find(
+      g =>
+        Number(g.id) ===
+        Number(id)
+    );
+
+
+  if(!game)
+    return;
+
+
+  if(
+    !confirm(
+      `Excluir "${game.nome}"?\n\nEssa ação não pode ser desfeita.`
+    )
+  ){
+
+    return;
+
+  }
+
+
+  try{
+
+    await write(
+      "/api/jogos/" +
+      id,
+      "DELETE"
+    );
+
+
+    toast(
+      "Jogo excluído."
+    );
+
+
+    await load();
+
+  }catch(error){
+
+    toast(
+      error.message
     );
 
   }
 
 }
+
+
+/* =====================================================
+   ESTRELAS
+===================================================== */
+
+function stars(){
+
+  $("rating").innerHTML =
+    [1,2,3,4,5]
+      .map(
+        n =>
+          `
+          <button
+            type="button"
+            class="${
+              n <= editRating
+                ? "on"
+                : ""
+            }"
+            onclick="setRating(${n})"
+          >
+            ★
+          </button>
+          `
+      )
+      .join("");
+
+}
+
+
+function setRating(n){
+
+  editRating =
+    n;
+
+  stars();
+
+}
+
+
+/* =====================================================
+   FORMULÁRIO
+===================================================== */
+
+$("form")
+  .addEventListener(
+    "submit",
+    async event => {
+
+      event.preventDefault();
+
+
+      const data = {
+
+        nome:
+          $("nome")
+            .value
+            .trim(),
+
+        categoria:
+          $("categoria")
+            .value,
+
+        plataforma:
+          $("plataforma")
+            .value,
+
+        ano:
+          $("ano")
+            .value,
+
+        capa_url:
+          $("capa")
+            .value
+            .trim(),
+
+        descricao:
+          $("descricao")
+            .value
+            .trim()
+
+      };
+
+
+      try{
+
+        const id =
+          $("id")
+            .value;
+
+
+        let gameId;
+
+
+        if(id){
+
+          await write(
+            "/api/jogos/" +
+            id,
+            "PUT",
+            data
+          );
+
+
+          gameId =
+            id;
+
+        }else{
+
+          const result =
+            await write(
+              "/api/jogos",
+              "POST",
+              data
+            );
+
+
+          gameId =
+            result.id;
+
+        }
+
+
+        await write(
+          "/api/jogos/" +
+          gameId +
+          "/avaliacao",
+          "PUT",
+          {
+            nota:
+              editRating,
+
+            jogado:
+              $("jogado")
+                .checked,
+
+            favorito:
+              $("favorito")
+                .checked
+          }
+        );
+
+
+        closeModal();
+
+
+        toast(
+          "Jogo salvo com sucesso!"
+        );
+
+
+        await load();
+
+      }catch(error){
+
+        toast(
+          error.message
+        );
+
+      }
+
+    }
+  );
+
+
+/* =====================================================
+   PESQUISA
+===================================================== */
+
+$("search")
+  .addEventListener(
+    "input",
+    render
+  );
+
+
+$("cat")
+  .addEventListener(
+    "change",
+    render
+  );
+
+
+function focusSearch(){
+
+  $("search")
+    .focus();
+
+}
+
 
 /* =====================================================
    LOGIN
@@ -2028,48 +2650,57 @@ async function uploadCover(){
 
 function login(){
 
-  const t =
+  const value =
     $("token")
       .value
       .trim();
 
-  if(!t)
+
+  if(!value)
     return;
 
+
   token =
-    t;
+    value;
+
 
   sessionStorage.setItem(
     "ng_admin_token",
-    t
+    value
   );
+
 
   $("login")
     .classList
     .remove("show");
 
+
   toast(
     "Sessão administrativa iniciada."
   );
+
 
   load();
 
 }
 
+
 /* =====================================================
    TOAST
 ===================================================== */
 
-function toast(msg){
+function toast(message){
 
   $("toast")
     .textContent =
-    msg;
+    message;
+
 
   $("toast")
     .style
     .display =
     "block";
+
 
   setTimeout(
     () => {
@@ -2085,21 +2716,6 @@ function toast(msg){
 
 }
 
-/* =====================================================
-   EVENTOS
-===================================================== */
-
-$("search")
-  .addEventListener(
-    "input",
-    render
-  );
-
-$("cat")
-  .addEventListener(
-    "change",
-    render
-  );
 
 /* =====================================================
    FECHAR MODAIS CLICANDO FORA
@@ -2108,10 +2724,11 @@ $("cat")
 $("modal")
   .addEventListener(
     "click",
-    e => {
+    event => {
 
       if(
-        e.target === $("modal")
+        event.target ===
+        $("modal")
       ){
 
         closeModal();
@@ -2121,13 +2738,15 @@ $("modal")
     }
   );
 
+
 $("coverModal")
   .addEventListener(
     "click",
-    e => {
+    event => {
 
       if(
-        e.target === $("coverModal")
+        event.target ===
+        $("coverModal")
       ){
 
         closeCoverModal();
@@ -2137,15 +2756,18 @@ $("coverModal")
     }
   );
 
+
 /* =====================================================
-   ESC
+   ESC FECHA MODAIS
 ===================================================== */
 
 document.addEventListener(
   "keydown",
-  e => {
+  event => {
 
-    if(e.key === "Escape"){
+    if(
+      event.key === "Escape"
+    ){
 
       closeModal();
 
@@ -2155,6 +2777,7 @@ document.addEventListener(
 
   }
 );
+
 
 /* =====================================================
    INICIALIZAÇÃO
@@ -2167,6 +2790,7 @@ if(!token){
     .add("show");
 
 }
+
 
 load();
 
