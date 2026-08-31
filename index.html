@@ -13,16 +13,16 @@
 .top-nav button{white-space:nowrap;border:0;background:transparent;color:#aebfda;padding:10px 12px;border-radius:7px;font-size:12px;font-weight:bold}.top-nav button:hover,.top-nav button.active{background:#075bd8;color:#fff}.top-nav .count{margin-left:5px;color:#55b5ff}
 .account{white-space:nowrap;border:1px solid #146ed4!important;background:#071f40!important;color:#fff!important;padding:10px 15px!important;border-radius:8px!important;font-weight:bold!important}.account:hover{background:#075bd8!important}
 .main{margin:0 auto;width:100%;max-width:1450px;padding:26px 28px 50px}
-.top{margin-bottom:22px}.title{font-size:28px;letter-spacing:-.5px}.sub{font-size:12px}
+.top{margin-bottom:20px}.title{font-size:28px;letter-spacing:-.5px}.sub{font-size:12px}
 .stats{grid-template-columns:repeat(5,1fr);gap:14px}.stat{padding:15px;background:linear-gradient(145deg,#071426,#061225);transition:.2s}.stat:hover{border-color:#236db5;transform:translateY(-1px)}
-.tools{background:#061226;border:1px solid #18365f;border-radius:9px;padding:8px;margin-bottom:13px}.tools .search input,.tools select{border:0;background:transparent}.filters{padding-bottom:3px}
+.tools{display:flex;gap:10px;align-items:center;background:transparent;border:0;padding:0;margin-bottom:14px}.tools .search{flex:1}.tools .search input{width:100%;height:46px;background:#061226;color:#fff;border:1px solid #2a4f7d!important;border-radius:9px;padding:0 15px;outline:none;box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}.tools .search input::placeholder{color:#8da3c5;opacity:1}.tools .search input:focus{border-color:#0877ff!important;box-shadow:0 0 0 2px rgba(8,119,255,.16)}.tools select{height:46px;min-width:210px;background:#061226;color:#fff;border:1px solid #2a4f7d!important;border-radius:9px;padding:0 12px;outline:none}.tools select:focus{border-color:#0877ff!important}.filters{display:flex;flex-wrap:wrap;gap:8px;overflow:visible;margin-bottom:15px;padding:0}.filters button{white-space:nowrap;background:#061226;color:#b9c9e6;border:1px solid #23466f;padding:9px 13px;border-radius:7px}.filters button:hover{border-color:#0877ff;color:#fff}.filters button.active{background:#075bd8;color:#fff;border-color:#0877ff}
 .grid{grid-template-columns:repeat(5,minmax(180px,1fr));gap:16px}.card{transition:transform .2s,border-color .2s,box-shadow .2s}.card:hover{transform:translateY(-4px);border-color:#1976d2;box-shadow:0 12px 28px rgba(0,0,0,.28)}
 .cover{height:270px}
 .section-head{margin-top:18px}
 .admin{max-width:1600px;margin:auto}
 @media(max-width:1250px){.header-inner{gap:15px}.brand-mini{min-width:190px}.grid{grid-template-columns:repeat(4,1fr)}}
 @media(max-width:1000px){.header-inner{padding:0 18px;flex-wrap:wrap;min-height:70px}.brand-mini{min-width:auto}.top-nav{order:3;flex-basis:100%;padding-bottom:8px}.main{padding:22px 18px 40px}.grid{grid-template-columns:repeat(3,1fr)}.cover{height:250px}}
-@media(max-width:760px){.header-inner{padding:10px 12px}.brand-mini{flex:1}.brand-mini strong{font-size:11px}.brand-mini small{font-size:8px}.ps-mini{font-size:25px}.account{padding:8px 10px!important;font-size:11px!important}.main{padding:18px 12px 35px}.stats{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:repeat(2,1fr);gap:9px}.cover{height:220px}.title{font-size:23px}}
+@media(max-width:760px){.header-inner{padding:10px 12px}.brand-mini{flex:1}.brand-mini strong{font-size:11px}.brand-mini small{font-size:8px}.ps-mini{font-size:25px}.account{padding:8px 10px!important;font-size:11px!important}.main{padding:18px 12px 35px}.stats{grid-template-columns:repeat(2,1fr)}.tools{flex-direction:column;align-items:stretch}.tools select{width:100%;min-width:0}.grid{grid-template-columns:repeat(2,1fr);gap:9px}.cover{height:220px}.title{font-size:23px}}
 
 :root{--bg:#020817;--panel:#071426;--line:#18365f;--blue:#0877ff;--text:#f5f8ff;--muted:#8da3c5;--green:#00e676;--red:#ff3158}
 *{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(180deg,#020817,#030a15);color:var(--text)}
@@ -60,7 +60,7 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}.app{display:blo
 
 <main class="main">
 <section id="public" class="public">
-<div class="top"><div><div class="title">Olá, jogador! 🎮</div><div class="sub">Bem-vindo à sua coleção PlayStation</div></div><button class="account" onclick="openAdminLogin()" title="Abrir Minha Conta"><span>Minha Conta</span></button></div>
+<div class="top"><div><div class="title">Olá, jogador! 🎮</div><div class="sub">Bem-vindo à sua coleção PlayStation</div></div></div>
 <div class="stats">
 <div class="stat"><strong id="stTotal">0</strong><span>Total de Jogos</span></div><div class="stat"><strong id="stPlayed">0</strong><span>Jogados</span></div><div class="stat"><strong id="stNot">0</strong><span>Não Jogados</span></div><div class="stat"><strong id="stAvg">0.0</strong><span>Média de Avaliações</span></div><div class="stat"><strong id="stFav">0</strong><span>Favoritos</span></div>
 </div>
