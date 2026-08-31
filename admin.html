@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
 <title>NEW COLEÇÃO GAMES — Administração</title>
 
 <style>
@@ -16,53 +17,78 @@
   --muted:#8da3c5;
   --red:#ff3158;
   --green:#00e676;
-  --yellow:#ffc107
+  --yellow:#ffc107;
 }
 
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
 
 body{
   margin:0;
   font-family:Arial,Helvetica,sans-serif;
   background:
-    radial-gradient(circle at 75% -10%,rgba(0,110,255,.25),transparent 30%),
-    linear-gradient(180deg,#020817,#030a15 70%);
-  color:var(--text)
+    radial-gradient(
+      circle at 75% -10%,
+      rgba(0,110,255,.25),
+      transparent 30%
+    ),
+    linear-gradient(
+      180deg,
+      #020817,
+      #030a15 70%
+    );
+  color:var(--text);
 }
+
+.app{
+  display:flex;
+  min-height:100vh;
+}
+
+/* =========================
+   MENU LATERAL
+========================= */
 
 .side{
   width:240px;
   position:fixed;
   inset:0 auto 0 0;
-  background:linear-gradient(180deg,#041534,#020b1c);
+  background:
+    linear-gradient(
+      180deg,
+      #041534,
+      #020b1c
+    );
   border-right:1px solid #0754c9;
-  padding:22px 15px
+  padding:22px 15px;
+  overflow-y:auto;
 }
 
 .brand{
   text-align:center;
   border-bottom:1px solid #17345b;
-  padding-bottom:20px
+  padding-bottom:20px;
 }
 
 .brand .ps{
   font-size:42px;
-  font-weight:bold
+  font-weight:bold;
 }
 
 .brand h1{
   font-size:17px;
-  margin:8px 0
+  margin:8px 0;
 }
 
 .brand p{
   font-size:11px;
   color:#0b91ff;
-  font-weight:bold
+  font-weight:bold;
 }
 
 .nav{
-  margin-top:20px
+  margin-top:20px;
 }
 
 .nav button{
@@ -74,36 +100,41 @@ body{
   padding:11px;
   border-radius:7px;
   margin:3px 0;
-  cursor:pointer
+  cursor:pointer;
+  font-size:13px;
 }
 
 .nav button.active,
 .nav button:hover{
-  background:#075bd8
+  background:#075bd8;
 }
+
+/* =========================
+   ÁREA PRINCIPAL
+========================= */
 
 .main{
   margin-left:240px;
   width:calc(100% - 240px);
-  padding:28px 35px
+  padding:28px 35px;
 }
 
 .top{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin-bottom:20px
+  margin-bottom:20px;
 }
 
 .title{
   font-size:26px;
-  font-weight:bold
+  font-weight:bold;
 }
 
 .sub{
   color:var(--muted);
   font-size:13px;
-  margin-top:5px
+  margin-top:5px;
 }
 
 .badge{
@@ -111,50 +142,62 @@ body{
   border:1px solid #146ed4;
   padding:9px 12px;
   border-radius:7px;
-  font-size:12px
+  font-size:12px;
 }
+
+/* =========================
+   ESTATÍSTICAS
+========================= */
 
 .stats{
   display:grid;
   grid-template-columns:repeat(4,1fr);
   gap:12px;
-  margin-bottom:18px
+  margin-bottom:18px;
 }
 
 .stat{
   background:#071426;
   border:1px solid var(--line);
   padding:14px;
-  border-radius:8px
+  border-radius:8px;
 }
 
 .stat strong{
   font-size:25px;
-  display:block
+  display:block;
 }
 
 .stat span{
   font-size:11px;
-  color:var(--muted)
+  color:var(--muted);
 }
+
+/* =========================
+   PAINEL
+========================= */
 
 .panel{
   background:#071426;
   border:1px solid var(--line);
   border-radius:9px;
   padding:18px;
-  margin-bottom:18px
+  margin-bottom:18px;
 }
 
 .panel h2{
   font-size:17px;
-  margin:0 0 15px
+  margin:0 0 15px;
 }
+
+/* =========================
+   BARRA DE FERRAMENTAS
+========================= */
 
 .toolbar{
   display:flex;
   gap:9px;
-  margin-bottom:15px
+  margin-bottom:15px;
 }
 
 .toolbar input,
@@ -167,65 +210,70 @@ body{
   border:1px solid #21436d;
   border-radius:7px;
   padding:11px;
-  outline:none
+  outline:none;
 }
 
 .toolbar input{
-  flex:1
+  flex:1;
 }
 
 .toolbar select{
-  min-width:190px
+  min-width:190px;
 }
+
+/* =========================
+   BOTÕES
+========================= */
 
 button.primary,
 button.danger,
 button.secondary,
-button.cover-btn{
+button.cover-button{
   border:0;
   border-radius:7px;
-  padding:9px 12px;
+  padding:10px 14px;
   color:white;
   font-weight:bold;
-  cursor:pointer
+  cursor:pointer;
 }
 
 .primary{
-  background:#0877ff
+  background:#0877ff;
 }
 
 .danger{
-  background:#a81635
+  background:#a81635;
 }
 
 .secondary{
-  background:#153154
+  background:#153154;
 }
 
-.cover-btn{
-  background:#0d4e91
+.cover-button{
+  background:#075ba8;
 }
 
-.cover-btn:hover,
 .primary:hover,
-.secondary:hover,
-.danger:hover{
-  filter:brightness(1.15)
+.cover-button:hover{
+  filter:brightness(1.15);
 }
 
-button:disabled{
-  opacity:.55;
-  cursor:not-allowed
+.danger:hover{
+  filter:brightness(1.12);
 }
+
+/* =========================
+   TABELA
+========================= */
 
 .table-wrap{
-  overflow:auto
+  overflow:auto;
 }
 
 .table{
   width:100%;
   border-collapse:collapse;
-  font-size:12px
+  font-size:12px;
 }
 
 .table th,
@@ -233,13 +281,13 @@ button:disabled{
   padding:10px;
   border-bottom:1px solid #153050;
   text-align:left;
-  white-space:nowrap
+  white-space:nowrap;
 }
 
 .table th{
   color:#72b8ff;
   font-size:10px;
-  text-transform:uppercase
+  text-transform:uppercase;
 }
 
 .thumb{
@@ -248,41 +296,37 @@ button:disabled{
   object-fit:cover;
   border-radius:4px;
   background:#102743;
-  border:1px solid #21436d
+  display:block;
 }
 
-.cover-status{
-  font-size:10px;
-  margin-top:4px;
-  display:block
-}
-
-.cover-status.ok{
-  color:var(--green)
-}
-
-.cover-status.none{
-  color:var(--muted)
+.no-cover{
+  width:38px;
+  height:50px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#102743;
+  border-radius:4px;
+  font-size:20px;
 }
 
 .stars{
   color:#0877ff;
-  letter-spacing:1px
+  letter-spacing:1px;
 }
 
 .muted{
-  color:var(--muted)
+  color:var(--muted);
 }
 
 .actions{
   display:flex;
   gap:6px;
-  align-items:center
 }
 
-.quick-file{
-  display:none
-}
+/* =========================
+   MODAL
+========================= */
 
 .modal{
   position:fixed;
@@ -292,11 +336,11 @@ button:disabled{
   align-items:center;
   justify-content:center;
   padding:20px;
-  z-index:100
+  z-index:100;
 }
 
 .modal.open{
-  display:flex
+  display:flex;
 }
 
 .modal-box{
@@ -307,13 +351,17 @@ button:disabled{
   border:1px solid #1c65b8;
   border-radius:10px;
   padding:20px;
-  box-shadow:0 20px 60px #000
+  box-shadow:0 20px 60px #000;
 }
 
 .modal-head{
   display:flex;
   justify-content:space-between;
-  align-items:center
+  align-items:center;
+}
+
+.modal-head h2{
+  margin-top:0;
 }
 
 .close{
@@ -321,36 +369,44 @@ button:disabled{
   border:0;
   color:white;
   font-size:25px;
-  cursor:pointer
+  cursor:pointer;
 }
+
+/* =========================
+   FORMULÁRIO
+========================= */
 
 .form{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:12px
+  gap:12px;
 }
 
 .form .full{
-  grid-column:1/-1
+  grid-column:1/-1;
 }
 
 .form label{
   display:block;
   font-size:10px;
   color:#8da3c5;
-  margin-bottom:5px
+  margin-bottom:5px;
 }
 
 .form input,
 .form select,
 .form textarea{
-  width:100%
+  width:100%;
 }
 
 .form textarea{
   min-height:90px;
-  resize:vertical
+  resize:vertical;
 }
+
+/* =========================
+   AVALIAÇÃO
+========================= */
 
 .rating button{
   background:none;
@@ -358,12 +414,16 @@ button:disabled{
   color:#526b90;
   font-size:28px;
   padding:0;
-  cursor:pointer
+  cursor:pointer;
 }
 
 .rating button.on{
-  color:#0877ff
+  color:#0877ff;
 }
+
+/* =========================
+   CHECKBOX
+========================= */
 
 .check{
   display:flex;
@@ -372,44 +432,50 @@ button:disabled{
   background:#061226;
   border:1px solid #18365f;
   border-radius:7px;
-  padding:11px
+  padding:11px;
 }
 
 .check input{
-  width:auto
+  width:auto;
 }
 
-.cover-upload{
-  background:#061226;
-  border:1px solid #18365f;
-  border-radius:8px;
-  padding:12px
+.check label{
+  margin:0;
 }
 
-.cover-upload input[type=file]{
-  width:100%;
-  background:#020b1b;
-  padding:10px;
-  cursor:pointer
-}
-
-.cover-status-large{
-  display:block;
-  margin-top:7px;
-  color:#8da3c5;
-  font-size:11px
-}
+/* =========================
+   MODAL DE CAPA
+========================= */
 
 .cover-preview{
-  display:none;
-  margin-top:10px;
-  width:120px;
-  height:160px;
+  width:180px;
+  height:240px;
   object-fit:cover;
-  border-radius:7px;
+  border-radius:8px;
+  background:#102743;
+  display:none;
+  margin:15px auto;
   border:1px solid #21436d;
-  background:#102743
 }
+
+.cover-placeholder{
+  width:180px;
+  height:240px;
+  margin:15px auto;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  background:#020b1b;
+  border:1px dashed #21436d;
+  border-radius:8px;
+  color:var(--muted);
+  font-size:12px;
+}
+
+/* =========================
+   LOGIN
+========================= */
 
 .login{
   position:fixed;
@@ -418,11 +484,11 @@ button:disabled{
   display:none;
   align-items:center;
   justify-content:center;
-  z-index:200
+  z-index:200;
 }
 
 .login.show{
-  display:flex
+  display:flex;
 }
 
 .login-box{
@@ -430,11 +496,11 @@ button:disabled{
   background:#071426;
   border:1px solid #146ed4;
   border-radius:12px;
-  padding:28px
+  padding:28px;
 }
 
 .login-box h2{
-  text-align:center
+  text-align:center;
 }
 
 .login-box input{
@@ -444,14 +510,18 @@ button:disabled{
   color:white;
   border:1px solid #21436d;
   padding:12px;
-  border-radius:7px
+  border-radius:7px;
 }
 
 .hint{
   font-size:11px;
   color:#7890b2;
-  line-height:1.5
+  line-height:1.5;
 }
+
+/* =========================
+   TOAST
+========================= */
 
 .toast{
   position:fixed;
@@ -462,44 +532,66 @@ button:disabled{
   padding:12px 16px;
   border-radius:7px;
   display:none;
-  z-index:300
+  z-index:300;
 }
 
+/* =========================
+   RESPONSIVO
+========================= */
+
 @media(max-width:900px){
+
   .side{
-    display:none
+    display:none;
   }
 
   .main{
     margin:0;
     width:100%;
-    padding:18px 12px 35px
+    padding:18px 12px 35px;
   }
 
   .stats{
-    grid-template-columns:repeat(2,1fr)
+    grid-template-columns:repeat(2,1fr);
   }
 
   .form{
-    grid-template-columns:1fr
+    grid-template-columns:1fr;
   }
 
   .form .full{
-    grid-column:auto
+    grid-column:auto;
   }
 
   .top{
-    gap:10px
+    gap:10px;
   }
 
   .title{
-    font-size:21px
+    font-size:21px;
+  }
+
+  .toolbar{
+    flex-wrap:wrap;
+  }
+
+  .toolbar input{
+    width:100%;
+    flex:auto;
+  }
+
+  .toolbar select{
+    flex:1;
   }
 }
 </style>
 </head>
 
 <body>
+
+<!-- =========================
+     MENU
+========================= -->
 
 <aside class="side">
 
@@ -510,6 +602,7 @@ button:disabled{
   </div>
 
   <div class="nav">
+
     <button class="active">
       ▣ &nbsp; Dashboard
     </button>
@@ -525,10 +618,14 @@ button:disabled{
     <button onclick="window.open('/','_self')">
       🌐 &nbsp; Área pública
     </button>
+
   </div>
 
 </aside>
 
+<!-- =========================
+     PRINCIPAL
+========================= -->
 
 <main class="main">
 
@@ -550,6 +647,7 @@ button:disabled{
 
   </div>
 
+  <!-- ESTATÍSTICAS -->
 
   <div class="stats">
 
@@ -575,6 +673,7 @@ button:disabled{
 
   </div>
 
+  <!-- GERENCIAR JOGOS -->
 
   <section class="panel">
 
@@ -603,7 +702,6 @@ button:disabled{
       </button>
 
     </div>
-
 
     <div class="table-wrap">
 
@@ -644,8 +742,9 @@ button:disabled{
 
 </main>
 
-
-<!-- MODAL DE CADASTRO / EDIÇÃO -->
+<!-- =========================
+     MODAL CADASTRO / EDIÇÃO
+========================= -->
 
 <div
   class="modal"
@@ -669,7 +768,6 @@ button:disabled{
 
     </div>
 
-
     <form
       class="form"
       id="form"
@@ -679,7 +777,6 @@ button:disabled{
         type="hidden"
         id="id"
       >
-
 
       <div class="full">
 
@@ -694,7 +791,6 @@ button:disabled{
 
       </div>
 
-
       <div>
 
         <label>
@@ -704,11 +800,9 @@ button:disabled{
         <select
           id="categoria"
           required
-        >
-        </select>
+        ></select>
 
       </div>
-
 
       <div>
 
@@ -718,16 +812,29 @@ button:disabled{
 
         <select id="plataforma">
 
-          <option>PS5</option>
-          <option selected>PS4</option>
-          <option>PS3</option>
-          <option>PS2</option>
-          <option>PS1</option>
+          <option>
+            PS5
+          </option>
+
+          <option selected>
+            PS4
+          </option>
+
+          <option>
+            PS3
+          </option>
+
+          <option>
+            PS2
+          </option>
+
+          <option>
+            PS1
+          </option>
 
         </select>
 
       </div>
-
 
       <div>
 
@@ -744,43 +851,6 @@ button:disabled{
 
       </div>
 
-
-      <!-- UPLOAD DE CAPA -->
-
-      <div>
-
-        <label>
-          Capa do jogo
-        </label>
-
-        <div class="cover-upload">
-
-          <input
-            id="capaFile"
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-          >
-
-          <small
-            id="capaStatus"
-            class="cover-status-large"
-          >
-            Selecione uma imagem para enviar.
-          </small>
-
-          <img
-            id="capaPreview"
-            class="cover-preview"
-            alt="Prévia da capa"
-          >
-
-        </div>
-
-      </div>
-
-
-      <!-- URL MANUAL -->
-
       <div>
 
         <label>
@@ -792,19 +862,7 @@ button:disabled{
           placeholder="https://..."
         >
 
-        <div
-          style="
-            text-align:center;
-            color:#7890b2;
-            font-size:11px;
-            margin-top:8px
-          "
-        >
-          ou informe uma URL manualmente
-        </div>
-
       </div>
-
 
       <div class="full">
 
@@ -817,7 +875,6 @@ button:disabled{
         ></textarea>
 
       </div>
-
 
       <div class="full">
 
@@ -832,7 +889,6 @@ button:disabled{
 
       </div>
 
-
       <div class="check">
 
         <input
@@ -845,7 +901,6 @@ button:disabled{
         </label>
 
       </div>
-
 
       <div class="check">
 
@@ -860,14 +915,9 @@ button:disabled{
 
       </div>
 
-
       <div
         class="full"
-        style="
-          display:flex;
-          gap:8px;
-          justify-content:flex-end
-        "
+        style="display:flex;gap:8px;justify-content:flex-end"
       >
 
         <button
@@ -880,7 +930,6 @@ button:disabled{
 
         <button
           class="primary"
-          id="saveButton"
         >
           Salvar
         </button>
@@ -893,8 +942,106 @@ button:disabled{
 
 </div>
 
+<!-- =========================
+     MODAL DE CAPA
+========================= -->
 
-<!-- LOGIN -->
+<div
+  class="modal"
+  id="coverModal"
+>
+
+  <div class="modal-box">
+
+    <div class="modal-head">
+
+      <h2>
+        Gerenciar capa
+      </h2>
+
+      <button
+        class="close"
+        onclick="closeCoverModal()"
+      >
+        ×
+      </button>
+
+    </div>
+
+    <div style="text-align:center">
+
+      <div
+        id="coverGameName"
+        style="
+          font-size:18px;
+          font-weight:bold;
+          margin-bottom:10px;
+        "
+      ></div>
+
+      <div
+        id="coverPlaceholder"
+        class="cover-placeholder"
+      >
+        Selecione uma imagem
+      </div>
+
+      <img
+        id="coverPreview"
+        class="cover-preview"
+        alt="Pré-visualização da capa"
+      >
+
+      <input
+        type="file"
+        id="coverFile"
+        accept="image/jpeg,image/png,image/webp"
+        style="width:100%;margin:15px 0"
+      >
+
+      <div
+        id="coverStatus"
+        class="hint"
+      >
+        JPG, PNG ou WEBP.
+      </div>
+
+      <div
+        style="
+          display:flex;
+          gap:8px;
+          justify-content:flex-end;
+          margin-top:18px;
+        "
+      >
+
+        <button
+          type="button"
+          class="secondary"
+          onclick="closeCoverModal()"
+        >
+          Cancelar
+        </button>
+
+        <button
+          type="button"
+          class="primary"
+          onclick="uploadCover()"
+        >
+          🖼️ Enviar capa
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- =========================
+     LOGIN
+========================= -->
 
 <div
   class="login"
@@ -920,10 +1067,7 @@ button:disabled{
 
     <button
       class="primary"
-      style="
-        width:100%;
-        margin-top:8px
-      "
+      style="width:100%;margin-top:8px"
       onclick="login()"
     >
       Entrar
@@ -933,17 +1077,25 @@ button:disabled{
 
 </div>
 
+<!-- TOAST -->
 
 <div
   class="toast"
   id="toast"
 ></div>
 
-
 <script>
+
+/* =====================================================
+   CONFIGURAÇÃO DA API
+===================================================== */
 
 const API =
   "https://new-colecao-games-api.parqueclube1bloco2d.workers.dev";
+
+/* =====================================================
+   ESTADO
+===================================================== */
 
 let games = [];
 let cats = [];
@@ -952,26 +1104,26 @@ let editRating = 0;
 let token =
   sessionStorage.getItem("ng_admin_token") || "";
 
+let coverGameId = null;
 
-const $ =
-  id => document.getElementById(id);
+/* =====================================================
+   FUNÇÕES AUXILIARES
+===================================================== */
 
+const $ = id =>
+  document.getElementById(id);
 
-const esc =
-  s =>
-    String(s ?? "")
-      .replace(
-        /[&<>"']/g,
-        m =>
-          ({
-            "&":"&amp;",
-            "<":"&lt;",
-            ">":"&gt;",
-            '"':"&quot;",
-            "'":"&#39;"
-          }[m])
-      );
-
+const esc = s =>
+  String(s ?? "").replace(
+    /[&<>"']/g,
+    m => ({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#39;"
+    }[m])
+  );
 
 /* =====================================================
    GET
@@ -983,15 +1135,23 @@ async function get(path){
     await fetch(API + path);
 
   if(!r.ok){
-    throw Error("Falha na API");
+
+    let d = {};
+
+    try{
+      d = await r.json();
+    }catch(e){}
+
+    throw Error(
+      d.error || "Falha na API"
+    );
   }
 
   return r.json();
 }
 
-
 /* =====================================================
-   WRITE
+   POST / PUT / DELETE JSON
 ===================================================== */
 
 async function write(
@@ -1002,41 +1162,32 @@ async function write(
 
   if(!token){
 
-    $("login")
-      .classList
-      .add("show");
+    $("login").classList.add("show");
 
     throw Error(
       "Faça login administrativo."
     );
   }
 
-
   const r =
     await fetch(
       API + path,
       {
         method,
-
         headers:{
           "Content-Type":
             "application/json",
-
           "Authorization":
             "Bearer " + token
         },
-
         body:
           JSON.stringify(data)
       }
     );
 
-
   const d =
-    await r
-      .json()
-      .catch(()=>({}));
-
+    await r.json()
+      .catch(() => ({}));
 
   if(!r.ok){
 
@@ -1046,351 +1197,62 @@ async function write(
     );
   }
 
-
   return d;
 }
 
-
 /* =====================================================
-   UPLOAD DA CAPA
+   ENVIO DE ARQUIVO
 ===================================================== */
 
-async function uploadCapa(){
+async function uploadFile(
+  path,
+  file
+){
 
-  const file =
-    $("capaFile").files[0];
+  if(!token){
 
-
-  /*
-   * Sem arquivo:
-   * mantém a URL atual/manual.
-   */
-
-  if(!file){
-
-    return $("capa")
-      .value
-      .trim();
-  }
-
-
-  if(
-    file.size >
-    10 * 1024 * 1024
-  ){
+    $("login").classList.add("show");
 
     throw Error(
-      "A capa deve ter no máximo 10 MB."
+      "Faça login administrativo."
     );
   }
 
-
-  const permitidos = [
-    "image/jpeg",
-    "image/png",
-    "image/webp"
-  ];
-
-
-  if(
-    !permitidos.includes(file.type)
-  ){
-
-    throw Error(
-      "Use uma imagem JPG, PNG ou WEBP."
-    );
-  }
-
-
-  $("capaStatus")
-    .textContent =
-    "Enviando capa para o R2...";
-
-
-  const formData =
+  const form =
     new FormData();
 
-
-  formData.append(
-    "file",
+  form.append(
+    "capa",
     file
   );
 
-
-  const response =
+  const r =
     await fetch(
-      API + "/api/capas",
+      API + path,
       {
         method:"POST",
-
         headers:{
           "Authorization":
             "Bearer " + token
         },
-
-        body:formData
+        body:form
       }
     );
 
+  const d =
+    await r.json()
+      .catch(() => ({}));
 
-  const data =
-    await response
-      .json()
-      .catch(()=>({}));
-
-
-  if(!response.ok){
+  if(!r.ok){
 
     throw Error(
-      data.error ||
+      d.error ||
       "Não foi possível enviar a capa."
     );
   }
 
-
-  if(!data.url){
-
-    throw Error(
-      "O servidor não retornou a URL da capa."
-    );
-  }
-
-
-  $("capa").value =
-    data.url;
-
-
-  $("capaPreview").src =
-    data.url;
-
-
-  $("capaPreview")
-    .style
-    .display = "block";
-
-
-  $("capaStatus")
-    .textContent =
-    "✓ Capa enviada com sucesso.";
-
-
-  return data.url;
+  return d;
 }
-
-
-/* =====================================================
-   PRÉVIA DA CAPA
-===================================================== */
-
-$("capaFile")
-  .addEventListener(
-    "change",
-    function(){
-
-      const file =
-        this.files[0];
-
-
-      if(!file){
-
-        $("capaPreview")
-          .style
-          .display = "none";
-
-        $("capaStatus")
-          .textContent =
-          "Selecione uma imagem para enviar.";
-
-        return;
-      }
-
-
-      const localURL =
-        URL.createObjectURL(file);
-
-
-      $("capaPreview").src =
-        localURL;
-
-
-      $("capaPreview")
-        .style
-        .display = "block";
-
-
-      $("capaStatus")
-        .textContent =
-        "Imagem selecionada. Clique em Salvar para enviar.";
-    }
-  );
-
-
-/* =====================================================
-   UPLOAD RÁPIDO DE CAPA
-===================================================== */
-
-async function quickUploadCapa(id,file){
-
-  if(!token){
-
-    $("login")
-      .classList
-      .add("show");
-
-    return;
-  }
-
-
-  if(!file){
-    return;
-  }
-
-
-  if(
-    file.size >
-    10 * 1024 * 1024
-  ){
-
-    toast(
-      "A capa deve ter no máximo 10 MB."
-    );
-
-    return;
-  }
-
-
-  const permitidos = [
-    "image/jpeg",
-    "image/png",
-    "image/webp"
-  ];
-
-
-  if(
-    !permitidos.includes(file.type)
-  ){
-
-    toast(
-      "Use uma imagem JPG, PNG ou WEBP."
-    );
-
-    return;
-  }
-
-
-  try{
-
-    toast(
-      "Enviando capa..."
-    );
-
-
-    const formData =
-      new FormData();
-
-
-    formData.append(
-      "file",
-      file
-    );
-
-
-    const response =
-      await fetch(
-        API + "/api/capas",
-        {
-          method:"POST",
-
-          headers:{
-            "Authorization":
-              "Bearer " + token
-          },
-
-          body:formData
-        }
-      );
-
-
-    const upload =
-      await response
-        .json()
-        .catch(()=>({}));
-
-
-    if(!response.ok){
-
-      throw Error(
-        upload.error ||
-        "Falha no upload da capa."
-      );
-    }
-
-
-    if(!upload.url){
-
-      throw Error(
-        "O servidor não retornou a URL."
-      );
-    }
-
-
-    /*
-     * Atualiza somente a capa
-     * do jogo existente.
-     */
-
-    await write(
-      "/api/jogos/" + id,
-      "PUT",
-      {
-        nome:
-          getGame(id).nome,
-
-        categoria:
-          getGame(id).categoria,
-
-        plataforma:
-          getGame(id).plataforma,
-
-        ano:
-          getGame(id).ano,
-
-        capa_url:
-          upload.url,
-
-        descricao:
-          getGame(id).descricao
-      }
-    );
-
-
-    toast(
-      "✓ Capa atualizada com sucesso!"
-    );
-
-
-    await load();
-
-  }catch(e){
-
-    toast(
-      e.message
-    );
-  }
-}
-
-
-/* =====================================================
-   LOCALIZAR JOGO
-===================================================== */
-
-function getGame(id){
-
-  return games.find(
-    g => Number(g.id) === Number(id)
-  );
-}
-
 
 /* =====================================================
    CARREGAR DADOS
@@ -1406,18 +1268,20 @@ async function load(){
       d
     ] =
       await Promise.all([
-        get("/api/jogos"),
-        get("/api/categorias"),
-        get("/api/dashboard")
-      ]);
 
+        get("/api/jogos"),
+
+        get("/api/categorias"),
+
+        get("/api/dashboard")
+
+      ]);
 
     games =
       g.jogos || [];
 
     cats =
       c.categorias || [];
-
 
     $("total").textContent =
       d.jogos ?? games.length;
@@ -1431,7 +1295,6 @@ async function load(){
     $("rated").textContent =
       d.avaliados ?? 0;
 
-
     fillCats();
 
     render();
@@ -1441,9 +1304,10 @@ async function load(){
     toast(
       e.message
     );
-  }
-}
 
+  }
+
+}
 
 /* =====================================================
    CATEGORIAS
@@ -1454,25 +1318,22 @@ function fillCats(){
   $("cat").innerHTML =
     '<option value="">Todas as categorias</option>' +
 
-    cats
-      .map(
-        c =>
-          `<option value="${esc(c.nome)}">${esc(c.nome)}</option>`
-      )
-      .join("");
-
+    cats.map(c =>
+      `<option value="${esc(c.nome)}">
+        ${esc(c.nome)}
+      </option>`
+    ).join("");
 
   $("categoria").innerHTML =
     '<option value="">Selecione...</option>' +
 
-    cats
-      .map(
-        c =>
-          `<option value="${esc(c.nome)}">${esc(c.nome)}</option>`
-      )
-      .join("");
-}
+    cats.map(c =>
+      `<option value="${esc(c.nome)}">
+        ${esc(c.nome)}
+      </option>`
+    ).join("");
 
+}
 
 /* =====================================================
    RENDER DA TABELA
@@ -1483,262 +1344,203 @@ function render(){
   const q =
     $("search")
       .value
-      .toLowerCase();
-
+      .toLowerCase()
+      .trim();
 
   const c =
     $("cat").value;
 
-
   const list =
-    games.filter(
-      g =>
+    games.filter(g =>
 
-        (
-          !q ||
+      (
+        !q ||
+        String(g.nome || "")
+          .toLowerCase()
+          .includes(q)
+      )
 
-          String(g.nome || "")
-            .toLowerCase()
-            .includes(q)
-        )
+      &&
 
-        &&
+      (
+        !c ||
+        g.categoria === c
+      )
 
-        (
-          !c ||
-          g.categoria === c
-        )
     );
-
 
   $("tbody").innerHTML =
     list.length
 
-      ?
+    ?
 
-        list
+    list.map(g => {
+
+      const n =
+        Number(g.nota || 0);
+
+      const stars =
+        "★★★★★"
+          .split("")
           .map(
-            g => {
-
-              const n =
-                Number(g.nota || 0);
-
-
-              const stars =
-                "★★★★★"
-                  .split("")
-                  .map(
-                    (x,i) =>
-                      `<span class="${
-                        i < n
-                          ? ""
-                          : "muted"
-                      }">${x}</span>`
-                  )
-                  .join("");
-
-
-              const capa =
-                g.capa_url
-
-                  ?
-
-                    `
-                    <img
-                      class="thumb"
-                      src="${esc(g.capa_url)}"
-                      alt="${esc(g.nome)}"
-                      onerror="this.style.display='none'"
-                    >
-                    `
-
-                  :
-
-                    "🎮";
-
-
-              const statusCapa =
-                g.capa_url
-
-                  ?
-
-                    `
-                    <span class="cover-status ok">
-                      ✓ Com capa
-                    </span>
-                    `
-
-                  :
-
-                    `
-                    <span class="cover-status none">
-                      ○ Sem capa
-                    </span>
-                    `;
-
-
-              return `
-
-                <tr>
-
-                  <td>
-
-                    ${capa}
-
-                    ${statusCapa}
-
-                  </td>
-
-
-                  <td>
-
-                    <b>
-                      ${esc(g.nome)}
-                    </b>
-
-                    <br>
-
-                    <small class="muted">
-                      ${esc(g.plataforma || "PS4")}
-                    </small>
-
-                  </td>
-
-
-                  <td>
-                    ${esc(g.categoria || "-")}
-                  </td>
-
-
-                  <td>
-                    ${g.ano || "-"}
-                  </td>
-
-
-                  <td class="stars">
-                    ${stars}
-                  </td>
-
-
-                  <td>
-
-                    ${
-                      Number(g.jogado)
-
-                        ? "✓ Jogado"
-
-                        : "◷ Não jogado"
-                    }
-
-                  </td>
-
-
-                  <td>
-
-                    <div class="actions">
-
-                      <button
-                        class="cover-btn"
-                        onclick="chooseQuickCover(${g.id})"
-                        title="Adicionar ou trocar capa"
-                      >
-                        🖼️ Capa
-                      </button>
-
-
-                      <input
-                        type="file"
-                        accept="image/jpeg,image/png,image/webp"
-                        class="quick-file"
-                        id="quickFile-${g.id}"
-                        onchange="quickCoverSelected(${g.id},this.files[0])"
-                      >
-
-
-                      <button
-                        class="secondary"
-                        onclick="edit(${g.id})"
-                      >
-                        Editar
-                      </button>
-
-
-                      <button
-                        class="danger"
-                        onclick="removeGame(${g.id})"
-                      >
-                        Excluir
-                      </button>
-
-                    </div>
-
-                  </td>
-
-                </tr>
-              `;
-            }
+            (x,i) =>
+              `<span class="${
+                i < n ? "" : "muted"
+              }">${x}</span>`
           )
-          .join("")
+          .join("");
 
-      :
+      const cover =
+        g.capa_url
+
+        ?
 
         `
+        <div>
+          <img
+            class="thumb"
+            src="${esc(g.capa_url)}"
+            alt="${esc(g.nome)}"
+            onerror="
+              this.style.display='none';
+              this.nextElementSibling.style.display='flex';
+            "
+          >
+
+          <div
+            class="no-cover"
+            style="display:none"
+          >
+            🎮
+          </div>
+
+          <small
+            class="muted"
+            style="display:block;margin-top:4px"
+          >
+            Capa
+          </small>
+        </div>
+        `
+
+        :
+
+        `
+        <div>
+          <div class="no-cover">
+            🎮
+          </div>
+
+          <small
+            class="muted"
+            style="display:block;margin-top:4px"
+          >
+            Sem capa
+          </small>
+        </div>
+        `;
+
+      return `
+
         <tr>
 
-          <td
-            colspan="7"
-            class="muted"
-          >
-            Nenhum jogo encontrado.
+          <td>
+            ${cover}
+          </td>
+
+          <td>
+
+            <b>
+              ${esc(g.nome)}
+            </b>
+
+            <br>
+
+            <small class="muted">
+              ${esc(g.plataforma || "PS4")}
+            </small>
+
+          </td>
+
+          <td>
+            ${esc(g.categoria)}
+          </td>
+
+          <td>
+            ${g.ano || "-"}
+          </td>
+
+          <td class="stars">
+            ${stars}
+          </td>
+
+          <td>
+            ${
+              Number(g.jogado)
+              ? "✓ Jogado"
+              : "◷ Não jogado"
+            }
+          </td>
+
+          <td>
+
+            <div class="actions">
+
+              <button
+                class="cover-button"
+                onclick="openCoverModal(${g.id})"
+              >
+                🖼️ Capa
+              </button>
+
+              <button
+                class="secondary"
+                onclick="edit(${g.id})"
+              >
+                Editar
+              </button>
+
+              <button
+                class="danger"
+                onclick="removeGame(${g.id})"
+              >
+                Excluir
+              </button>
+
+            </div>
+
           </td>
 
         </tr>
-        `;
-}
 
+      `;
+
+    }).join("")
+
+    :
+
+    `
+      <tr>
+        <td
+          colspan="7"
+          class="muted"
+        >
+          Nenhum jogo encontrado.
+        </td>
+      </tr>
+    `;
+
+}
 
 /* =====================================================
-   ESCOLHER CAPA RAPIDAMENTE
-===================================================== */
-
-function chooseQuickCover(id){
-
-  const input =
-    $("quickFile-" + id);
-
-  if(input){
-
-    input.click();
-  }
-}
-
-
-async function quickCoverSelected(
-  id,
-  file
-){
-
-  if(!file){
-    return;
-  }
-
-
-  await quickUploadCapa(
-    id,
-    file
-  );
-}
-
-
-/* =====================================================
-   PESQUISA
+   BUSCA
 ===================================================== */
 
 function focusSearch(){
 
   $("search").focus();
-}
 
+}
 
 /* =====================================================
    ESTRELAS
@@ -1748,128 +1550,80 @@ function stars(){
 
   $("rating").innerHTML =
     [1,2,3,4,5]
-      .map(
-        n =>
-          `
-          <button
-            type="button"
-            class="${
-              n <= editRating
-                ? "on"
-                : ""
-            }"
-            onclick="setRating(${n})"
-          >
-            ★
-          </button>
-          `
+      .map(n =>
+        `
+        <button
+          type="button"
+          class="${n <= editRating ? "on" : ""}"
+          onclick="setRating(${n})"
+        >
+          ★
+        </button>
+        `
       )
       .join("");
-}
 
+}
 
 function setRating(n){
 
-  editRating =
-    n;
+  editRating = n;
 
   stars();
+
 }
 
-
 /* =====================================================
-   ABRIR MODAL
+   ABRIR MODAL JOGO
 ===================================================== */
 
-function openModal(g=null){
+function openModal(g = null){
 
-  $("modalTitle")
-    .textContent =
+  $("modalTitle").textContent =
     g
       ? "Editar jogo"
       : "Cadastrar jogo";
 
-
   $("id").value =
     g?.id || "";
-
 
   $("nome").value =
     g?.nome || "";
 
-
   $("categoria").value =
     g?.categoria || "";
-
 
   $("plataforma").value =
     g?.plataforma || "PS4";
 
-
   $("ano").value =
     g?.ano || "";
-
 
   $("capa").value =
     g?.capa_url || "";
 
-
   $("descricao").value =
     g?.descricao || "";
-
 
   $("jogado").checked =
     Number(g?.jogado) === 1;
 
-
   $("favorito").checked =
     Number(g?.favorito) === 1;
-
 
   editRating =
     Number(g?.nota || 0);
 
-
-  $("capaFile").value =
-    "";
-
-
-  if(g?.capa_url){
-
-    $("capaPreview").src =
-      g.capa_url;
-
-    $("capaPreview")
-      .style
-      .display = "block";
-
-    $("capaStatus")
-      .textContent =
-      "Capa atual carregada. Selecione outra para substituir.";
-
-  }else{
-
-    $("capaPreview")
-      .style
-      .display = "none";
-
-    $("capaStatus")
-      .textContent =
-      "Selecione uma imagem para enviar.";
-  }
-
-
   stars();
-
 
   $("modal")
     .classList
     .add("open");
+
 }
 
-
 /* =====================================================
-   FECHAR MODAL
+   FECHAR MODAL JOGO
 ===================================================== */
 
 function closeModal(){
@@ -1877,8 +1631,8 @@ function closeModal(){
   $("modal")
     .classList
     .remove("open");
-}
 
+}
 
 /* =====================================================
    EDITAR
@@ -1887,14 +1641,17 @@ function closeModal(){
 async function edit(id){
 
   const g =
-    getGame(id);
+    games.find(
+      x => Number(x.id) === Number(id)
+    );
 
   if(g){
 
     openModal(g);
-  }
-}
 
+  }
+
+}
 
 /* =====================================================
    EXCLUIR
@@ -1903,23 +1660,22 @@ async function edit(id){
 async function removeGame(id){
 
   const g =
-    getGame(id);
+    games.find(
+      x => Number(x.id) === Number(id)
+    );
 
-
-  if(!g){
+  if(!g)
     return;
-  }
-
 
   if(
     !confirm(
-      `Excluir "${g.nome}"? Essa ação não pode ser desfeita.`
+      `Excluir "${g.nome}"?\n\nEssa ação não pode ser desfeita.`
     )
   ){
 
     return;
-  }
 
+  }
 
   try{
 
@@ -1928,11 +1684,9 @@ async function removeGame(id){
       "DELETE"
     );
 
-
     toast(
       "Jogo excluído."
     );
-
 
     await load();
 
@@ -1941,209 +1695,332 @@ async function removeGame(id){
     toast(
       e.message
     );
+
   }
+
 }
 
-
 /* =====================================================
-   SALVAR
+   SALVAR JOGO
 ===================================================== */
 
 $("form")
-  .addEventListener(
-    "submit",
-    async e => {
+.addEventListener(
+  "submit",
+  async e => {
 
-      e.preventDefault();
+    e.preventDefault();
 
+    const data = {
 
-      if(!token){
+      nome:
+        $("nome").value.trim(),
 
-        $("login")
-          .classList
-          .add("show");
+      categoria:
+        $("categoria").value,
 
-        return;
-      }
+      plataforma:
+        $("plataforma").value,
 
+      ano:
+        $("ano").value,
 
-      const saveButton =
-        $("saveButton");
+      capa_url:
+        $("capa").value.trim(),
 
+      descricao:
+        $("descricao").value.trim()
 
-      try{
+    };
 
-        saveButton.disabled =
-          true;
+    try{
 
-        saveButton.textContent =
-          "Salvando...";
+      const id =
+        $("id").value;
 
+      let gameId;
 
-        const capa_url =
-          await uploadCapa();
+      if(id){
 
+        await write(
+          "/api/jogos/" + id,
+          "PUT",
+          data
+        );
 
-        const data = {
+        gameId =
+          id;
 
-          nome:
-            $("nome")
-              .value
-              .trim(),
+      }else{
 
-          categoria:
-            $("categoria").value,
-
-          plataforma:
-            $("plataforma").value,
-
-          ano:
-            $("ano").value,
-
-          capa_url:
-            capa_url,
-
-          descricao:
-            $("descricao")
-              .value
-              .trim()
-        };
-
-
-        if(!data.nome){
-
-          throw Error(
-            "O nome do jogo é obrigatório."
-          );
-        }
-
-
-        if(!data.categoria){
-
-          throw Error(
-            "Selecione uma categoria."
-          );
-        }
-
-
-        const id =
-          $("id").value;
-
-
-        if(id){
-
+        const r =
           await write(
-            "/api/jogos/" + id,
-            "PUT",
+            "/api/jogos",
+            "POST",
             data
           );
 
+        gameId =
+          r.id;
 
-          await write(
-            "/api/jogos/" +
-              id +
-              "/avaliacao",
-            "PUT",
-            {
-              nota:
-                editRating,
-
-              jogado:
-                $("jogado")
-                  .checked,
-
-              favorito:
-                $("favorito")
-                  .checked
-            }
-          );
-
-        }else{
-
-          const r =
-            await write(
-              "/api/jogos",
-              "POST",
-              data
-            );
-
-
-          if(!r.id){
-
-            throw Error(
-              "O servidor não retornou o ID do jogo."
-            );
-          }
-
-
-          await write(
-            "/api/jogos/" +
-              r.id +
-              "/avaliacao",
-            "PUT",
-            {
-              nota:
-                editRating,
-
-              jogado:
-                $("jogado")
-                  .checked,
-
-              favorito:
-                $("favorito")
-                  .checked
-            }
-          );
-        }
-
-
-        closeModal();
-
-
-        toast(
-          "Jogo salvo com sucesso!"
-        );
-
-
-        await load();
-
-
-      }catch(e){
-
-        toast(
-          e.message
-        );
-
-      }finally{
-
-        saveButton.disabled =
-          false;
-
-        saveButton.textContent =
-          "Salvar";
       }
 
-    }
-  );
+      await write(
+        "/api/jogos/" +
+        gameId +
+        "/avaliacao",
+        "PUT",
+        {
+          nota:editRating,
+          jogado:
+            $("jogado").checked,
+          favorito:
+            $("favorito").checked
+        }
+      );
 
+      closeModal();
+
+      toast(
+        "Salvo com sucesso."
+      );
+
+      await load();
+
+    }catch(e){
+
+      toast(
+        e.message
+      );
+
+    }
+
+  }
+);
 
 /* =====================================================
-   FILTROS
+   MODAL DE CAPA
 ===================================================== */
 
-$("search")
-  .addEventListener(
-    "input",
-    render
-  );
+function openCoverModal(id){
 
+  const g =
+    games.find(
+      x => Number(x.id) === Number(id)
+    );
 
-$("cat")
-  .addEventListener(
-    "change",
-    render
-  );
+  if(!g)
+    return;
 
+  coverGameId =
+    id;
+
+  $("coverGameName")
+    .textContent =
+    g.nome;
+
+  $("coverFile").value =
+    "";
+
+  $("coverStatus")
+    .textContent =
+    "Selecione uma imagem JPG, PNG ou WEBP.";
+
+  const preview =
+    $("coverPreview");
+
+  const placeholder =
+    $("coverPlaceholder");
+
+  if(g.capa_url){
+
+    preview.src =
+      g.capa_url;
+
+    preview.style.display =
+      "block";
+
+    placeholder.style.display =
+      "none";
+
+  }else{
+
+    preview.removeAttribute("src");
+
+    preview.style.display =
+      "none";
+
+    placeholder.style.display =
+      "flex";
+
+  }
+
+  $("coverModal")
+    .classList
+    .add("open");
+
+}
+
+/* =====================================================
+   FECHAR MODAL CAPA
+===================================================== */
+
+function closeCoverModal(){
+
+  $("coverModal")
+    .classList
+    .remove("open");
+
+  coverGameId =
+    null;
+
+}
+
+/* =====================================================
+   PRÉ-VISUALIZAÇÃO
+===================================================== */
+
+$("coverFile")
+.addEventListener(
+  "change",
+  function(){
+
+    const file =
+      this.files?.[0];
+
+    if(!file)
+      return;
+
+    if(
+      ![
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+      ].includes(file.type)
+    ){
+
+      toast(
+        "Escolha JPG, PNG ou WEBP."
+      );
+
+      this.value =
+        "";
+
+      return;
+
+    }
+
+    const url =
+      URL.createObjectURL(file);
+
+    $("coverPreview").src =
+      url;
+
+    $("coverPreview").style.display =
+      "block";
+
+    $("coverPlaceholder").style.display =
+      "none";
+
+    $("coverStatus")
+      .textContent =
+      file.name;
+
+  }
+);
+
+/* =====================================================
+   ENVIAR CAPA
+===================================================== */
+
+async function uploadCover(){
+
+  if(!coverGameId){
+
+    toast(
+      "Nenhum jogo selecionado."
+    );
+
+    return;
+
+  }
+
+  const file =
+    $("coverFile")
+      .files?.[0];
+
+  if(!file){
+
+    toast(
+      "Selecione uma imagem."
+    );
+
+    return;
+
+  }
+
+  try{
+
+    $("coverStatus")
+      .textContent =
+      "Enviando capa...";
+
+    const result =
+      await uploadFile(
+        "/api/jogos/" +
+        coverGameId +
+        "/capa",
+        file
+      );
+
+    /*
+      O Worker deve retornar
+      a URL da nova capa.
+    */
+
+    const newUrl =
+      result.capa_url ||
+      result.url ||
+      result.capa ||
+      "";
+
+    if(newUrl){
+
+      $("coverPreview").src =
+        newUrl;
+
+      $("coverPreview").style.display =
+        "block";
+
+      $("coverPlaceholder").style.display =
+        "none";
+
+      $("capa").value =
+        newUrl;
+
+    }
+
+    toast(
+      "Capa enviada com sucesso!"
+    );
+
+    closeCoverModal();
+
+    await load();
+
+  }catch(e){
+
+    $("coverStatus")
+      .textContent =
+      e.message;
+
+    toast(
+      e.message
+    );
+
+  }
+
+}
 
 /* =====================================================
    LOGIN
@@ -2156,32 +2033,28 @@ function login(){
       .value
       .trim();
 
-
-  if(!t){
+  if(!t)
     return;
-  }
-
 
   token =
     t;
-
 
   sessionStorage.setItem(
     "ng_admin_token",
     t
   );
 
-
   $("login")
     .classList
     .remove("show");
 
-
   toast(
     "Sessão administrativa iniciada."
   );
-}
 
+  load();
+
+}
 
 /* =====================================================
    TOAST
@@ -2193,24 +2066,95 @@ function toast(msg){
     .textContent =
     msg;
 
-
   $("toast")
     .style
     .display =
     "block";
 
-
   setTimeout(
-    () =>
+    () => {
+
       $("toast")
         .style
         .display =
-        "none",
+        "none";
 
+    },
     2800
   );
+
 }
 
+/* =====================================================
+   EVENTOS
+===================================================== */
+
+$("search")
+  .addEventListener(
+    "input",
+    render
+  );
+
+$("cat")
+  .addEventListener(
+    "change",
+    render
+  );
+
+/* =====================================================
+   FECHAR MODAIS CLICANDO FORA
+===================================================== */
+
+$("modal")
+  .addEventListener(
+    "click",
+    e => {
+
+      if(
+        e.target === $("modal")
+      ){
+
+        closeModal();
+
+      }
+
+    }
+  );
+
+$("coverModal")
+  .addEventListener(
+    "click",
+    e => {
+
+      if(
+        e.target === $("coverModal")
+      ){
+
+        closeCoverModal();
+
+      }
+
+    }
+  );
+
+/* =====================================================
+   ESC
+===================================================== */
+
+document.addEventListener(
+  "keydown",
+  e => {
+
+    if(e.key === "Escape"){
+
+      closeModal();
+
+      closeCoverModal();
+
+    }
+
+  }
+);
 
 /* =====================================================
    INICIALIZAÇÃO
@@ -2221,8 +2165,8 @@ if(!token){
   $("login")
     .classList
     .add("show");
-}
 
+}
 
 load();
 
