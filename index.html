@@ -71,7 +71,7 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}.app{display:blo
 </section>
 
 <section id="admin" class="admin">
-<div class="admin-head"><div><div class="admin-title">🔐 Área Administrativa</div><div class="sub">Gerencie sua coleção PlayStation</div></div><div class="buttons"><button class="btn" onclick="closeAdmin()">🌐 Área pública</button><button class="btn danger" onclick="logout()">Sair</button></div></div>
+<div class="admin-head"><div><div class="admin-title">🔐 MINHA CONTA </div><div class="sub">Gerencie sua coleção PlayStation</div></div><div class="buttons"><button class="btn" onclick="closeAdmin()">🌐 Área pública</button><button class="btn danger" onclick="logout()">Sair</button></div></div>
 <div class="admin-cards">
 <div class="admin-card active" id="afAll" onclick="setAF('all')"><strong id="aTotal">0</strong><span>🎮 Todos os jogos</span></div>
 <div class="admin-card" id="afWith" onclick="setAF('with')"><strong id="aWith">0</strong><span>🟢 Com capa</span></div>
@@ -86,7 +86,7 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}.app{display:blo
 </main>
 </div>
 
-<div class="modal" id="loginModal"><div class="box" style="max-width:400px"><h2>🔐 Acesso administrativo</h2><p class="hint">Digite o ADMIN_TOKEN configurado no Worker.</p><input id="token" type="password" placeholder="ADMIN_TOKEN" style="width:100%;background:#020b1b;color:white;border:1px solid #21436d;padding:12px;border-radius:7px"><button class="btn primary" style="width:100%;margin-top:12px" onclick="login()">Entrar</button></div></div>
+<div class="modal" id="loginModal"><div class="box" style="max-width:400px"><h2>🔐 MINHA CONTA </h2><p class="hint"> Acesso restrito </p><input id="token" type="password" placeholder="ADMIN_TOKEN" style="width:100%;background:#020b1b;color:white;border:1px solid #21436d;padding:12px;border-radius:7px"><button class="btn primary" style="width:100%;margin-top:12px" onclick="login()">Entrar</button></div></div>
 
 <div class="modal" id="gameModal"><div class="box"><div class="section-head"><h2 id="gmTitle">Cadastrar jogo</h2><button class="btn" onclick="closeGameModal()">×</button></div><form class="form" id="gameForm"><input type="hidden" id="gid"><div class="full"><label>Nome do jogo</label><input id="gname" required></div><div><label>Categoria</label><select id="gcat" required></select></div><div><label>Plataforma</label><select id="gplatform"><option>PS5</option><option selected>PS4</option><option>PS3</option><option>PS2</option><option>PS1</option></select></div><div><label>Ano</label><input id="gyear" type="number"></div><div><label>URL da capa</label><input id="gcover"></div><div class="full"><label>Descrição</label><textarea id="gdesc"></textarea></div><div class="full"><label>Classificação</label><div id="grating"></div></div><label><input type="checkbox" id="gplayed"> ✓ Jogado</label><label><input type="checkbox" id="gfav"> ♥ Favorito</label><div class="full buttons"><button type="button" class="btn" onclick="closeGameModal()">Cancelar</button><button class="btn primary">Salvar</button></div></form></div></div>
 
