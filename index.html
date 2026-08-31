@@ -1,237 +1,106 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>NEW COLEÇÃO GAMES PLAYSTATION</title>
 <style>
-:root{
-  --bg:#020817;--panel:#071426;--panel2:#0a1930;--line:#18365f;
-  --blue:#0868ff;--blue2:#00a3ff;--text:#f5f8ff;--muted:#8da3c5;
-  --green:#00e676;--yellow:#ffc107;--red:#ff3158;
-}
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,Helvetica,sans-serif;background:
-radial-gradient(circle at 75% -10%,rgba(0,110,255,.25),transparent 30%),
-linear-gradient(180deg,#020817,#030a15 70%);color:var(--text)}
-button,input,select{font:inherit}button{cursor:pointer}
-.app{display:flex;min-height:100vh}
-.sidebar{position:fixed;inset:0 auto 0 0;width:245px;padding:22px 15px;background:
-linear-gradient(180deg,#041534,#020b1c);border-right:1px solid #0754c9;
-box-shadow:8px 0 35px rgba(0,80,255,.08);z-index:20;overflow:auto}
-.brand{text-align:center;padding:8px 5px 24px;border-bottom:1px solid rgba(50,100,170,.25)}
-.psmark{font-size:42px;font-weight:bold;line-height:1}
-.brand h1{font-size:17px;margin:12px 0 4px}.brand b{color:#0b91ff;font-size:13px}
-.nav{padding-top:18px}.nav-title{font-size:10px;color:#0b8cff;text-transform:uppercase;margin:18px 10px 8px;font-weight:bold}
-.nav button{width:100%;border:0;background:transparent;color:#dce7fa;text-align:left;padding:10px 11px;border-radius:7px;margin:2px 0;font-size:13px}
-.nav button:hover,.nav button.active{background:linear-gradient(90deg,#064fc7,#073991);color:white}
-.nav .count{float:right;color:#18a1ff}
-.main{margin-left:245px;width:calc(100% - 245px);padding:28px 38px}
-.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
-.title{font-size:26px;font-weight:bold}.subtitle{color:var(--muted);margin-top:5px;font-size:13px}
-.account{display:flex;align-items:center;gap:12px;color:#c7d6ed;font-size:13px}
-.avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#0649aa;border:1px solid #1687ff;font-weight:bold}
-.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px}
-.stat{background:linear-gradient(145deg,rgba(10,30,57,.96),rgba(5,18,35,.96));border:1px solid var(--line);border-radius:8px;padding:13px 15px;display:flex;gap:12px;align-items:center}
-.stat-icon{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#092f68;font-size:20px}
-.stat strong{display:block;font-size:23px}.stat span{font-size:11px;color:var(--muted)}
-.tools{display:flex;gap:10px;margin-bottom:12px}.search{flex:1;position:relative}
-.search input{width:100%;padding:13px 16px 13px 42px;border-radius:7px;border:1px solid var(--line);background:#061226;color:white;outline:none}
-.search input:focus{border-color:#1687ff}.search .glass{position:absolute;left:15px;top:11px;font-size:19px;color:#88a4cc}
-select{background:#061226;color:white;border:1px solid var(--line);border-radius:7px;padding:0 14px;min-width:180px}
-.filters{display:flex;gap:7px;overflow:auto;padding-bottom:10px;margin-bottom:10px}
-.filters button{white-space:nowrap;background:#061226;color:#b9c9e6;border:1px solid var(--line);padding:8px 13px;border-radius:6px;font-size:12px}
-.filters button.active,.filters button:hover{background:#075bd8;color:white;border-color:#1687ff}
-.section-head{display:flex;justify-content:space-between;align-items:center;margin:7px 0 12px}
-.section-head h2{font-size:18px;margin:0}.result{font-size:11px;color:var(--muted)}
-.grid{display:grid;grid-template-columns:repeat(6,minmax(150px,1fr));gap:13px}
-.card{background:linear-gradient(180deg,#081a34,#041021);border:1px solid #17365e;border-radius:7px;overflow:hidden;transition:.2s}
-.card:hover{transform:translateY(-3px);border-color:#167cff;box-shadow:0 12px 25px rgba(0,75,255,.18)}
-.cover{height:235px;background:linear-gradient(145deg,#0b254b,#020813);position:relative;display:flex;align-items:center;justify-content:center}
-.cover img{width:100%;height:100%;object-fit:cover}.platform{position:absolute;top:0;left:0;right:0;background:linear-gradient(180deg,#0b7bda,#0758aa);padding:5px 8px;font-size:11px;font-weight:bold;z-index:2}
-.placeholder{text-align:center;color:#6d8bb7}.placeholder .big{font-size:45px;display:block;margin-bottom:8px}
-.card-body{padding:9px}.category{font-size:9px;color:#2f9aff;text-transform:uppercase;font-weight:bold}
-.card h3{font-size:13px;line-height:1.25;margin:5px 0 3px;min-height:32px}.meta{font-size:10px;color:#7187a8}
-.stars{margin-top:7px;display:flex;align-items:center;justify-content:space-between}.star{color:#4a6387;font-size:14px;letter-spacing:1px}
-.star.on{color:#0877ff}.rating{font-size:10px;color:#a4b7d6}
-.status-row{display:flex;justify-content:space-between;align-items:center;margin-top:7px}
-.status{font-size:8px;padding:4px 6px;border-radius:4px;font-weight:bold}
-.played{color:#00e676;background:rgba(0,230,118,.1);border:1px solid #087f4d}
-.notplayed{color:#ffc107;background:rgba(255,193,7,.08);border:1px solid #775d13}
-.fav{font-size:18px;color:#8094b4}.fav.on{color:var(--red)}
-.empty{grid-column:1/-1;padding:60px;text-align:center;border:1px solid var(--line);border-radius:8px;color:var(--muted)}
-.loading{padding:40px;text-align:center;color:var(--muted)}
-.mobile{display:none}
-@media(max-width:1250px){.grid{grid-template-columns:repeat(5,1fr)}.stats{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:1000px){.grid{grid-template-columns:repeat(4,1fr)}.sidebar{width:210px}.main{margin-left:210px;width:calc(100% - 210px);padding:22px}}
-@media(max-width:760px){
-.sidebar{display:none}.main{margin-left:0;width:100%;padding:18px 12px 78px}.top{margin-bottom:16px}
-.title{font-size:22px}.account span{display:none}.stats{grid-template-columns:repeat(2,1fr);gap:8px}
-.stat{padding:10px}.stat strong{font-size:20px}.stat-icon{width:37px;height:37px}.tools{flex-direction:column}
-.tools select{height:42px}.grid{grid-template-columns:repeat(2,1fr);gap:9px}.cover{height:210px}
-.mobile{display:flex;position:fixed;left:0;right:0;bottom:0;height:60px;background:#06152b;border-top:1px solid #164b8c;z-index:50;justify-content:space-around}
-.mobile button{background:none;border:0;color:#a7bad6;font-size:9px}.mobile span{display:block;font-size:19px;margin-bottom:2px}
-}
+:root{--bg:#020817;--panel:#071426;--line:#18365f;--blue:#0877ff;--text:#f5f8ff;--muted:#8da3c5;--green:#00e676;--red:#ff3158}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(180deg,#020817,#030a15);color:var(--text)}
+button,input,select,textarea{font:inherit}button{cursor:pointer}.app{display:flex;min-height:100vh}
+.sidebar{position:fixed;inset:0 auto 0 0;width:245px;padding:22px 15px;background:linear-gradient(180deg,#041534,#020b1c);border-right:1px solid #0754c9;overflow:auto}
+.brand{text-align:center;padding-bottom:22px;border-bottom:1px solid #17345b}.ps{font-size:42px;font-weight:bold}.brand h1{font-size:17px;margin:10px 0 4px}.brand b{color:#0b91ff;font-size:13px}
+.nav{padding-top:18px}.nav button{width:100%;border:0;background:transparent;color:#dce7fa;text-align:left;padding:10px;border-radius:7px;margin:2px 0;font-size:13px}.nav button:hover,.nav button.active{background:#075bd8}.count{float:right;color:#18a1ff}
+.admin-link{margin-top:18px!important;border:1px solid #146ed4!important}
+.main{margin-left:245px;width:calc(100% - 245px);padding:28px 38px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.title{font-size:26px;font-weight:bold}.sub{color:var(--muted);font-size:13px;margin-top:5px}
+.avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#0649aa;border:1px solid #1687ff}.account{display:flex;align-items:center;gap:10px}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px}.stat{background:#071426;border:1px solid var(--line);border-radius:8px;padding:13px}.stat strong{display:block;font-size:23px}.stat span{font-size:11px;color:var(--muted)}
+.tools{display:flex;gap:10px;margin-bottom:12px}.search{flex:1}.search input,select{width:100%;background:#061226;color:#fff;border:1px solid var(--line);border-radius:7px;padding:12px}select{min-width:180px}
+.filters{display:flex;gap:7px;overflow:auto;margin-bottom:12px}.filters button{white-space:nowrap;background:#061226;color:#b9c9e6;border:1px solid var(--line);padding:8px 13px;border-radius:6px}.filters button.active{background:#075bd8;color:#fff}
+.section-head{display:flex;justify-content:space-between;align-items:center;margin:8px 0 12px}.section-head h2{font-size:18px;margin:0}.result{font-size:11px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(6,minmax(150px,1fr));gap:13px}.card{background:#071426;border:1px solid #17365e;border-radius:7px;overflow:hidden}.cover{height:235px;background:#0b254b;position:relative;display:flex;align-items:center;justify-content:center}.cover img{width:100%;height:100%;object-fit:cover}.platform{position:absolute;top:0;left:0;right:0;background:#0758aa;padding:5px 8px;font-size:11px;z-index:2}.placeholder{text-align:center;color:#6d8bb7}.placeholder .big{font-size:45px;display:block}.card-body{padding:9px}.category{font-size:9px;color:#2f9aff;text-transform:uppercase;font-weight:bold}.card h3{font-size:13px;margin:5px 0;min-height:32px}.meta{font-size:10px;color:#7187a8}.stars{margin-top:7px}.star{color:#4a6387}.star.on{color:#0877ff}.status{font-size:8px;padding:4px 6px;border-radius:4px}.played{color:#00e676}.notplayed{color:#ffc107}.fav{float:right;color:#8094b4}.fav.on{color:var(--red)}
+.admin{display:none}.admin.open{display:block}.public.hidden{display:none}.admin-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:18px}.admin-title{font-size:25px;font-weight:bold}.buttons{display:flex;gap:6px;flex-wrap:wrap}.btn{border:0;border-radius:7px;padding:9px 12px;background:#153154;color:#fff;font-weight:bold}.primary{background:#0877ff}.danger{background:#a81635}.green{background:#087f4d}
+.admin-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}.admin-card{background:#071426;border:1px solid var(--line);border-radius:9px;padding:15px;cursor:pointer}.admin-card strong{display:block;font-size:25px}.admin-card span{font-size:11px;color:var(--muted)}.admin-card.active{border-color:#0877ff}
+.table-wrap{background:#071426;border:1px solid var(--line);border-radius:9px;padding:18px;overflow:auto}.table{width:100%;border-collapse:collapse;font-size:12px}.table th,.table td{padding:10px;border-bottom:1px solid #153050;text-align:left;white-space:nowrap}.table th{font-size:10px;color:#72b8ff;text-transform:uppercase}.thumb{width:38px;height:50px;object-fit:cover;border-radius:4px}.actions{display:flex;gap:5px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;padding:20px;z-index:100}.modal.open{display:flex}.box{width:min(620px,100%);max-height:92vh;overflow:auto;background:#071426;border:1px solid #1c65b8;border-radius:10px;padding:20px}.box h2{margin-top:0}.form{display:grid;grid-template-columns:1fr 1fr;gap:12px}.full{grid-column:1/-1}.form label{display:block;font-size:10px;color:var(--muted);margin-bottom:5px}.form input,.form select,.form textarea{width:100%;background:#020b1b;color:#fff;border:1px solid #21436d;border-radius:7px;padding:10px}.form textarea{min-height:90px}
+.cover-preview{display:block;width:180px;height:240px;object-fit:cover;margin:15px auto;border-radius:8px}.hint{font-size:11px;color:#7890b2;line-height:1.5}.toast{position:fixed;right:20px;bottom:20px;background:#09264a;border:1px solid #167cff;padding:12px 16px;border-radius:7px;display:none;z-index:300}
+@media(max-width:1250px){.grid{grid-template-columns:repeat(5,1fr)}.stats{grid-template-columns:repeat(3,1fr)}}@media(max-width:1000px){.grid{grid-template-columns:repeat(4,1fr)}.sidebar{width:210px}.main{margin-left:210px;width:calc(100% - 210px);padding:22px}}@media(max-width:760px){.sidebar{display:none}.main{margin:0;width:100%;padding:18px 12px 70px}.top{align-items:flex-start}.title{font-size:22px}.account span{display:none}.stats{grid-template-columns:repeat(2,1fr)}.tools{flex-direction:column}.grid{grid-template-columns:repeat(2,1fr);gap:9px}.cover{height:210px}.admin-cards{grid-template-columns:1fr}.admin-head{flex-wrap:wrap}.form{grid-template-columns:1fr}.full{grid-column:auto}}
 </style>
 </head>
 <body>
 <div class="app">
 <aside class="sidebar">
-  <div class="brand"><div class="psmark">PS</div><h1>NEW COLEÇÃO</h1><b>GAMES PLAYSTATION</b></div>
-  <div class="nav" id="nav"></div>
+<div class="brand"><div class="ps">PS</div><h1>NEW COLEÇÃO</h1><b>GAMES PLAYSTATION</b></div>
+<div class="nav" id="nav"></div>
+<button class="nav admin-link" onclick="openAdminLogin()">🔐 &nbsp; Administração</button>
 </aside>
 
 <main class="main">
-  <div class="top">
-    <div><div class="title">Olá, jogador! 🎮</div><div class="subtitle">Bem-vindo à sua coleção PlayStation</div></div>
-    <div class="account"><div class="avatar">NG</div><span>Área de consulta</span></div>
-  </div>
+<section id="public" class="public">
+<div class="top"><div><div class="title">Olá, jogador! 🎮</div><div class="sub">Bem-vindo à sua coleção PlayStation</div></div><div class="account"><div class="avatar">NG</div><span>Área de consulta</span></div></div>
+<div class="stats">
+<div class="stat"><strong id="stTotal">0</strong><span>Total de Jogos</span></div><div class="stat"><strong id="stPlayed">0</strong><span>Jogados</span></div><div class="stat"><strong id="stNot">0</strong><span>Não Jogados</span></div><div class="stat"><strong id="stAvg">0.0</strong><span>Média de Avaliações</span></div><div class="stat"><strong id="stFav">0</strong><span>Favoritos</span></div>
+</div>
+<div class="tools"><div class="search"><input id="search" placeholder="Pesquisar jogo..."></div><select id="sort"><option value="recent">Mais Recentes</option><option value="name">Nome A-Z</option><option value="rating">Melhor Avaliados</option><option value="category">Categoria</option></select></div>
+<div class="filters" id="filters"></div>
+<div class="section-head"><h2>🎮 Minha Coleção</h2><div class="result" id="result"></div></div>
+<div class="grid" id="grid"></div>
+</section>
 
-  <div class="stats">
-    <div class="stat"><div class="stat-icon">🎮</div><div><strong id="stTotal">0</strong><span>Total de Jogos</span></div></div>
-    <div class="stat"><div class="stat-icon">✓</div><div><strong id="stPlayed">0</strong><span>Jogados</span></div></div>
-    <div class="stat"><div class="stat-icon">◷</div><div><strong id="stNot">0</strong><span>Não Jogados</span></div></div>
-    <div class="stat"><div class="stat-icon">☆</div><div><strong id="stAvg">0.0</strong><span>Média de Avaliações</span></div></div>
-    <div class="stat"><div class="stat-icon">♡</div><div><strong id="stFav">0</strong><span>Favoritos</span></div></div>
-  </div>
-
-  <div class="tools">
-    <div class="search"><span class="glass">⌕</span><input id="search" placeholder="Pesquisar jogo..."></div>
-    <select id="sort"><option value="recent">Mais Recentes</option><option value="name">Nome A-Z</option><option value="rating">Melhor Avaliados</option><option value="category">Categoria</option></select>
-  </div>
-  <div class="filters" id="filters"></div>
-  <div class="section-head"><h2>🎮 Minha Coleção</h2><div class="result" id="result">Carregando...</div></div>
-  <div class="grid" id="grid"><div class="loading">Carregando sua coleção...</div></div>
+<section id="admin" class="admin">
+<div class="admin-head"><div><div class="admin-title">🔐 Área Administrativa</div><div class="sub">Gerencie sua coleção PlayStation</div></div><div class="buttons"><button class="btn" onclick="closeAdmin()">🌐 Área pública</button><button class="btn danger" onclick="logout()">Sair</button></div></div>
+<div class="admin-cards">
+<div class="admin-card active" id="afAll" onclick="setAF('all')"><strong id="aTotal">0</strong><span>🎮 Todos os jogos</span></div>
+<div class="admin-card" id="afWith" onclick="setAF('with')"><strong id="aWith">0</strong><span>🟢 Com capa</span></div>
+<div class="admin-card" id="afWithout" onclick="setAF('without')"><strong id="aWithout">0</strong><span>⚪ Sem capa</span></div>
+</div>
+<div class="table-wrap">
+<div class="tools"><div class="search"><input id="adminSearch" placeholder="Pesquisar jogo..."></div><select id="adminCat"></select><button class="btn primary" onclick="gameModal()">＋ Cadastrar</button></div>
+<div class="section-head"><h2>Gerenciar jogos</h2><div class="result" id="adminResult"></div></div>
+<table class="table"><thead><tr><th>Capa</th><th>Jogo</th><th>Categoria</th><th>Ano</th><th>Nota</th><th>Status</th><th>Ações</th></tr></thead><tbody id="adminBody"></tbody></table>
+</div>
+</section>
 </main>
 </div>
 
-<div class="mobile">
-  <button onclick="setFilter('')"><span>⌂</span>Início</button>
-  <button onclick="setFilter('')"><span>🎮</span>Jogos</button>
-  <button onclick="setSpecial('rated')"><span>☆</span>Avaliados</button>
-  <button onclick="setSpecial('fav')"><span>♡</span>Favoritos</button>
-</div>
+<div class="modal" id="loginModal"><div class="box" style="max-width:400px"><h2>🔐 Acesso administrativo</h2><p class="hint">Digite o ADMIN_TOKEN configurado no Worker.</p><input id="token" type="password" placeholder="ADMIN_TOKEN" style="width:100%;background:#020b1b;color:white;border:1px solid #21436d;padding:12px;border-radius:7px"><button class="btn primary" style="width:100%;margin-top:12px" onclick="login()">Entrar</button></div></div>
+
+<div class="modal" id="gameModal"><div class="box"><div class="section-head"><h2 id="gmTitle">Cadastrar jogo</h2><button class="btn" onclick="closeGameModal()">×</button></div><form class="form" id="gameForm"><input type="hidden" id="gid"><div class="full"><label>Nome do jogo</label><input id="gname" required></div><div><label>Categoria</label><select id="gcat" required></select></div><div><label>Plataforma</label><select id="gplatform"><option>PS5</option><option selected>PS4</option><option>PS3</option><option>PS2</option><option>PS1</option></select></div><div><label>Ano</label><input id="gyear" type="number"></div><div><label>URL da capa</label><input id="gcover"></div><div class="full"><label>Descrição</label><textarea id="gdesc"></textarea></div><div class="full"><label>Classificação</label><div id="grating"></div></div><label><input type="checkbox" id="gplayed"> ✓ Jogado</label><label><input type="checkbox" id="gfav"> ♥ Favorito</label><div class="full buttons"><button type="button" class="btn" onclick="closeGameModal()">Cancelar</button><button class="btn primary">Salvar</button></div></form></div></div>
+
+<div class="modal" id="coverModal"><div class="box" style="max-width:430px;text-align:center"><div class="section-head"><h2>🖼️ Gerenciar capa</h2><button class="btn" onclick="closeCover()">×</button></div><b id="coverName"></b><img id="coverPreview" class="cover-preview" style="display:none"><div id="coverEmpty" class="hint" style="padding:35px;border:1px dashed #21436d;margin:15px 0">🎮<br>Este jogo ainda não possui capa.</div><input id="coverFile" type="file" accept="image/jpeg,image/png,image/webp" style="width:100%"><p id="coverStatus" class="hint"></p><div class="buttons" style="justify-content:flex-end"><button class="btn" onclick="closeCover()">Cancelar</button><button class="btn primary" id="coverBtn" onclick="uploadCover()">🖼️ Salvar capa</button></div></div></div>
+<div class="toast" id="toast"></div>
 
 <script>
-const API = "https://new-colecao-games-api.parqueclube1bloco2d.workers.dev";
-const ICONS = {
- "Horror / Survival Horror":"🧟","Ação / Aventura":"⚔️","Tiro / FPS":"🔫","Luta":"🥊",
- "Esportes":"⚽","Corrida / Velocidade":"🏎️","RPG":"🗺️","Anime / Mangá":"🥷",
- "LEGO / Família":"🧱","Plataforma / Arcade":"🎮","Narrativa / História":"📖",
- "Stealth / Tático":"🕵️","Ficção Científica":"🚀","Cooperativo":"🤝",
- "Estratégia / Casual":"🧩","Simulação":"🎯"
-};
-
-let games=[], categories=[], filter="", special="";
-
+const API="https://new-colecao-games-api.parqueclube1bloco2d.workers.dev";
+const ICONS={"Horror / Survival Horror":"🧟","Ação / Aventura":"⚔️","Tiro / FPS":"🔫","Luta":"🥊","Esportes":"⚽","Corrida / Velocidade":"🏎️","RPG":"🗺️","Anime / Mangá":"🥷","LEGO / Família":"🧱","Plataforma / Arcade":"🎮","Narrativa / História":"📖","Stealth / Tático":"🕵️","Ficção Científica":"🚀","Cooperativo":"🤝","Estratégia / Casual":"🧩","Simulação":"🎯"};
+let games=[],categories=[],filter="",special="",adminFilter="all",adminToken=sessionStorage.getItem("ng_admin_token")||"",editingId=null,rating=0,coverId=null;
+const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
-
-async function api(path){
-  const r=await fetch(API+path);
-  if(!r.ok) throw new Error("Não foi possível consultar a API.");
-  return r.json();
-}
-
-async function load(){
-  try{
-    const [g,c,d]=await Promise.all([
-      api("/api/jogos"),
-      api("/api/categorias"),
-      api("/api/dashboard")
-    ]);
-    games=g.jogos||[];
-    categories=c.categorias||[];
-    document.getElementById("stTotal").textContent=d.jogos??games.length;
-    document.getElementById("stPlayed").textContent=d.jogados??0;
-    document.getElementById("stNot").textContent=Math.max(0,(d.jogos??games.length)-(d.jogados??0));
-    document.getElementById("stAvg").textContent=games.length?(
-      games.reduce((s,x)=>s+Number(x.nota||0),0)/games.length
-    ).toFixed(1):"0.0";
-    document.getElementById("stFav").textContent=d.favoritos??0;
-    renderNav();render();
-  }catch(e){
-    document.getElementById("result").textContent="Erro";
-    document.getElementById("grid").innerHTML=`<div class="empty"><h2>⚠️ Não foi possível carregar a coleção</h2><p>${esc(e.message)}</p></div>`;
-  }
-}
-
-function renderNav(){
-  const nav=document.getElementById("nav");nav.innerHTML="";
-  [["🏠","Início",""],["🎮","Minha Coleção",""],["♡","Favoritos","fav"],["✓","Jogados","played"],["◷","Não Jogados","not"],["☆","Avaliados","rated"]].forEach(x=>{
-    const b=document.createElement("button");
-    b.className=(!filter&&!special&&x[1]=="Início")||special===x[2]?"active":"";
-    b.innerHTML=x[0]+" &nbsp; "+x[1];
-    b.onclick=()=>x[2]?setSpecial(x[2]):setFilter("");
-    nav.appendChild(b);
-  });
-  const t=document.createElement("div");t.className="nav-title";t.textContent="Categorias";nav.appendChild(t);
-  const all=document.createElement("button");all.className=!filter?"active":"";
-  all.innerHTML=`▦ &nbsp; Todos os Jogos <span class="count">${games.length}</span>`;
-  all.onclick=()=>setFilter("");nav.appendChild(all);
-  categories.forEach(c=>{
-    const b=document.createElement("button");b.className=filter===c.nome?"active":"";
-    b.innerHTML=`${ICONS[c.nome]||"🎮"} &nbsp; ${esc(c.nome)} <span class="count">${c.quantidade}</span>`;
-    b.onclick=()=>setFilter(c.nome);nav.appendChild(b);
-  });
-}
-
-function renderFilters(){
-  const box=document.getElementById("filters");box.innerHTML="";
-  const make=(label,value)=>{const b=document.createElement("button");b.textContent=label;b.className=filter===value&&!special?"active":"";b.onclick=()=>setFilter(value);box.appendChild(b)};
-  make("Todos","");
-  categories.slice(0,8).forEach(c=>make((ICONS[c.nome]||"")+" "+c.nome.replace(" / Survival Horror","").replace(" / Velocidade",""),c.nome));
-  const more=document.createElement("button");more.textContent="Mais ▾";more.onclick=()=>{filter="";special="";render()};box.appendChild(more);
-}
-
-function render(){
-  renderNav();renderFilters();
-  const q=document.getElementById("search").value.toLowerCase().trim();
-  let list=games.filter(g=>{
-    let ok=(g.nome+" "+g.categoria).toLowerCase().includes(q);
-    if(filter)ok=ok&&g.categoria===filter;
-    if(special==="fav")ok=ok&&Number(g.favorito)===1;
-    if(special==="played")ok=ok&&Number(g.jogado)===1;
-    if(special==="not")ok=ok&&Number(g.jogado)===0;
-    if(special==="rated")ok=ok&&Number(g.nota)>0;
-    return ok;
-  });
-  const sort=document.getElementById("sort").value;
-  if(sort==="name")list.sort((a,b)=>a.nome.localeCompare(b.nome));
-  if(sort==="category")list.sort((a,b)=>a.categoria.localeCompare(b.categoria)||a.nome.localeCompare(b.nome));
-  if(sort==="rating")list.sort((a,b)=>Number(b.nota)-Number(a.nota));
-  if(sort==="recent")list.sort((a,b)=>Number(b.id)-Number(a.id));
-  document.getElementById("result").textContent=list.length+" jogo(s)";
-  const grid=document.getElementById("grid");grid.innerHTML="";
-  if(!list.length){grid.innerHTML="<div class='empty'><h2>🎮 Nenhum jogo encontrado</h2><p>Tente outra pesquisa ou categoria.</p></div>";return}
-  list.forEach(g=>{
-    const card=document.createElement("div");card.className="card";
-    const nota=Number(g.nota||0),played=Number(g.jogado)===1,fav=Number(g.favorito)===1;
-    const stars="★★★★★".split("").map((s,i)=>`<span class="star ${i<nota?"on":""}">${s}</span>`).join("");
-    card.innerHTML=`
-      <div class="cover">
-        <div class="platform">◉ ${esc(g.plataforma||"PS4")}</div>
-        ${g.capa_url
-          ? `<img src="${esc(g.capa_url)}" alt="${esc(g.nome)}">`
-          : `<div class="placeholder"><span class="big">${ICONS[g.categoria]||"🎮"}</span>CAPA DO JOGO</div>`}
-      </div>
-      <div class="card-body">
-        <div class="category">${esc(g.categoria)}</div>
-        <h3>${esc(g.nome)}</h3>
-        <div class="meta">${g.ano||"Ano não informado"}</div>
-        <div class="stars"><div>${stars}</div><span class="rating">${nota?nota+".0":"-"}</span></div>
-        <div class="status-row">
-          <span class="status ${played?"played":"notplayed"}">${played?"✓ JOGADO":"◷ NÃO JOGADO"}</span>
-          <span class="fav ${fav?"on":""}">${fav?"♥":"♡"}</span>
-        </div>
-      </div>`;
-    grid.appendChild(card);
-  });
-}
-
-function setFilter(c){filter=c;special="";render()}
-function setSpecial(s){special=s;filter="";render()}
-document.getElementById("search").addEventListener("input",render);
-document.getElementById("sort").addEventListener("change",render);
+async function api(path,opt={}){const r=await fetch(API+path,opt),d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error||"Falha na API.");return d}
+async function load(){try{const[g,c,d]=await Promise.all([api("/api/jogos"),api("/api/categorias"),api("/api/dashboard")]);games=g.jogos||[];categories=c.categorias||[];$("stTotal").textContent=d.jogos??games.length;$("stPlayed").textContent=d.jogados??0;$("stNot").textContent=Math.max(0,(d.jogos??games.length)-(d.jogados??0));$("stAvg").textContent=games.length?(games.reduce((s,x)=>s+Number(x.nota||0),0)/games.length).toFixed(1):"0.0";$("stFav").textContent=d.favoritos??0;fillCats();renderNav();render();updateAdmin();renderAdmin()}catch(e){$("grid").innerHTML=`<div class="empty">${esc(e.message)}</div>`}}
+function fillCats(){$("adminCat").innerHTML='<option value="">Todas as categorias</option>'+categories.map(c=>`<option>${esc(c.nome)}</option>`).join("");$("gcat").innerHTML='<option value="">Selecione...</option>'+categories.map(c=>`<option>${esc(c.nome)}</option>`).join("")}
+function renderNav(){const n=$("nav");n.innerHTML="";[["🏠","Início",""],["🎮","Minha Coleção",""],["♡","Favoritos","fav"],["✓","Jogados","played"],["◷","Não Jogados","not"],["☆","Avaliados","rated"]].forEach(x=>{const b=document.createElement("button");b.className=(!filter&&!special&&x[1]=="Início")||special===x[2]?"active":"";b.innerHTML=x[0]+" &nbsp; "+x[1];b.onclick=()=>x[2]?setSpecial(x[2]):setFilter("");n.appendChild(b)});const t=document.createElement("div");t.className="nav-title";t.textContent="Categorias";n.appendChild(t);categories.forEach(c=>{const b=document.createElement("button");b.className=filter===c.nome?"active":"";b.innerHTML=`${ICONS[c.nome]||"🎮"} &nbsp; ${esc(c.nome)} <span class="count">${c.quantidade}</span>`;b.onclick=()=>setFilter(c.nome);n.appendChild(b)})}
+function render(){const q=$("search").value.toLowerCase().trim();let list=games.filter(g=>(!q||(g.nome+" "+g.categoria).toLowerCase().includes(q))&&(!filter||g.categoria===filter)&&(!special||(special==="fav"?Number(g.favorito)===1:special==="played"?Number(g.jogado)===1:special==="not"?Number(g.jogado)===0:Number(g.nota)>0)));const s=$("sort").value;if(s==="name")list.sort((a,b)=>a.nome.localeCompare(b.nome));if(s==="category")list.sort((a,b)=>a.categoria.localeCompare(b.categoria)||a.nome.localeCompare(b.nome));if(s==="rating")list.sort((a,b)=>Number(b.nota)-Number(a.nota));if(s==="recent")list.sort((a,b)=>Number(b.id)-Number(a.id));$("result").textContent=list.length+" jogo(s)";$("grid").innerHTML=list.map(g=>`<div class="card"><div class="cover"><div class="platform">◉ ${esc(g.plataforma||"PS4")}</div>${g.capa_url?`<img src="${esc(g.capa_url)}" alt="${esc(g.nome)}">`:`<div class="placeholder"><span class="big">${ICONS[g.categoria]||"🎮"}</span>CAPA DO JOGO</div>`}</div><div class="card-body"><div class="category">${esc(g.categoria)}</div><h3>${esc(g.nome)}</h3><div class="meta">${g.ano||"Ano não informado"}</div><div class="stars">${"★★★★★".split("").map((x,i)=>`<span class="star ${i<Number(g.nota||0)?"on":""}">${x}</span>`).join("")}</div><div class="status ${Number(g.jogado)?"played":"notplayed"}">${Number(g.jogado)?"✓ JOGADO":"◷ NÃO JOGADO"} <span class="fav ${Number(g.favorito)?"on":""}">${Number(g.favorito)?"♥":"♡"}</span></div></div></div>`).join("")||`<div class="empty">Nenhum jogo encontrado.</div>`}
+function setFilter(x){filter=x;special="";renderNav();render()}function setSpecial(x){special=x;filter="";renderNav();render()}
+function openAdminLogin(){if(adminToken)return openAdmin();$("loginModal").classList.add("open");$("token").focus()}
+async function login(){const t=$("token").value.trim();if(!t)return;try{const r=await fetch(API+"/api/jogos",{headers:{Authorization:"Bearer "+t}});if(r.status===401)throw Error("Token administrativo inválido.");adminToken=t;sessionStorage.setItem("ng_admin_token",t);$("loginModal").classList.remove("open");openAdmin();toast("Acesso liberado.")}catch(e){toast(e.message)}}
+function openAdmin(){$("public").classList.add("hidden");$("admin").classList.add("open");updateAdmin();renderAdmin()}function closeAdmin(){$("admin").classList.remove("open");$("public").classList.remove("hidden")}function logout(){adminToken="";sessionStorage.removeItem("ng_admin_token");closeAdmin()}
+function setAF(x){adminFilter=x;["afAll","afWith","afWithout"].forEach(i=>$(i).classList.remove("active"));$(x==="all"?"afAll":x==="with"?"afWith":"afWithout").classList.add("active");renderAdmin()}
+function updateAdmin(){const w=games.filter(g=>String(g.capa_url||"").trim()).length;$("aTotal").textContent=games.length;$("aWith").textContent=w;$("aWithout").textContent=games.length-w}
+function renderAdmin(){const q=$("adminSearch").value.toLowerCase().trim(),c=$("adminCat").value;const list=games.filter(g=>{const has=!!String(g.capa_url||"").trim();return(!q||g.nome.toLowerCase().includes(q))&&(!c||g.categoria===c)&&(adminFilter==="all"||(adminFilter==="with"&&has)||(adminFilter==="without"&&!has))});$("adminResult").textContent=list.length+" jogo(s)";$("adminBody").innerHTML=list.map(g=>{const has=!!String(g.capa_url||"").trim();return`<tr><td>${has?`<img class="thumb" src="${esc(g.capa_url)}">`:"🎮"}</td><td><b>${esc(g.nome)}</b><br><small class="muted">${esc(g.plataforma||"PS4")}</small></td><td>${esc(g.categoria)}</td><td>${g.ano||"-"}</td><td>${"★★★★★".slice(0,Number(g.nota||0))}</td><td>${Number(g.jogado)?"✓ Jogado":"◷ Não jogado"}</td><td><div class="actions"><button class="btn" onclick="openCover(${g.id})">${has?"🔄 Trocar":"🖼️ Capa"}</button><button class="btn" onclick="gameModal(${g.id})">Editar</button><button class="btn danger" onclick="delGame(${g.id})">Excluir</button></div></td></tr>`}).join("")||`<tr><td colspan="7" class="muted">Nenhum jogo encontrado.</td></tr>`}
+$("adminSearch").addEventListener("input",renderAdmin);$("adminCat").addEventListener("change",renderAdmin);$("search").addEventListener("input",render);$("sort").addEventListener("change",render)
+function drawRating(){$("grating").innerHTML=[1,2,3,4,5].map(n=>`<button type="button" class="star ${n<=rating?"on":""}" onclick="rating=${n};drawRating()">★</button>`).join("")}
+function gameModal(id=null){editingId=id;const g=id?games.find(x=>Number(x.id)===Number(id)):null;$("gmTitle").textContent=g?"Editar jogo":"Cadastrar jogo";$("gid").value=g?.id||"";$("gname").value=g?.nome||"";$("gcat").value=g?.categoria||"";$("gplatform").value=g?.plataforma||"PS4";$("gyear").value=g?.ano||"";$("gcover").value=g?.capa_url||"";$("gdesc").value=g?.descricao||"";$("gplayed").checked=Number(g?.jogado)===1;$("gfav").checked=Number(g?.favorito)===1;rating=Number(g?.nota||0);drawRating();$("gameModal").classList.add("open")}
+function closeGameModal(){$("gameModal").classList.remove("open")}
+$("gameForm").addEventListener("submit",async e=>{e.preventDefault();try{const d={nome:$("gname").value.trim(),categoria:$("gcat").value,plataforma:$("gplatform").value,ano:$("gyear").value,capa_url:$("gcover").value.trim(),descricao:$("gdesc").value.trim()};let id=editingId;if(id)await write("/api/jogos/"+id,"PUT",d);else id=(await write("/api/jogos","POST",d)).id;await write("/api/jogos/"+id+"/avaliacao","PUT",{nota:rating,jogado:$("gplayed").checked,favorito:$("gfav").checked});closeGameModal();await load();openAdmin();toast("Jogo salvo.")}catch(e){toast(e.message)}})
+async function write(path,method,data){if(!adminToken)throw Error("Sessão expirada.");return api(path,{method,headers:{"Content-Type":"application/json",Authorization:"Bearer "+adminToken},body:JSON.stringify(data)})}
+async function delGame(id){const g=games.find(x=>Number(x.id)===Number(id));if(!g||!confirm(`Excluir "${g.nome}"?`))return;try{await write("/api/jogos/"+id,"DELETE");await load();openAdmin();toast("Jogo excluído.")}catch(e){toast(e.message)}}
+function openCover(id){const g=games.find(x=>Number(x.id)===Number(id));if(!g)return;coverId=id;$("coverName").textContent=g.nome;$("coverFile").value="";$("coverStatus").textContent="";if(g.capa_url){$("coverPreview").src=g.capa_url;$("coverPreview").style.display="block";$("coverEmpty").style.display="none"}else{$("coverPreview").style.display="none";$("coverEmpty").style.display="block"}$("coverModal").classList.add("open")}
+function closeCover(){$("coverModal").classList.remove("open");coverId=null}
+$("coverFile").addEventListener("change",()=>{const f=$("coverFile").files[0];if(!f)return;const u=URL.createObjectURL(f);$("coverPreview").src=u;$("coverPreview").style.display="block";$("coverEmpty").style.display="none";$("coverStatus").textContent=f.name})
+async function uploadCover(){const f=$("coverFile").files[0];if(!coverId||!f)return toast("Selecione uma imagem.");try{$("coverBtn").disabled=true;$("coverBtn").textContent="Enviando...";const form=new FormData();form.append("file",f);const r=await fetch(API+"/api/capas",{method:"POST",headers:{Authorization:"Bearer "+adminToken},body:form}),d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error||"Falha no upload.");const url=d.url||d.capa_url||d.capa;if(!url)throw Error("URL da capa não retornada.");const g=games.find(x=>Number(x.id)===Number(coverId));await write("/api/jogos/"+coverId,"PUT",{nome:g.nome,categoria:g.categoria,plataforma:g.plataforma||"PS4",ano:g.ano||null,capa_url:url,descricao:g.descricao||""});closeCover();await load();openAdmin();toast("Capa atualizada.")}catch(e){toast(e.message)}finally{$("coverBtn").disabled=false;$("coverBtn").textContent="🖼️ Salvar capa"}}
+function toast(m){$("toast").textContent=m;$("toast").style.display="block";setTimeout(()=>$("toast").style.display="none",2800)}
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){document.querySelectorAll(".modal").forEach(m=>m.classList.remove("open"))}})
 load();
 </script>
 </body>
