@@ -26,6 +26,7 @@ button{cursor:pointer}
 .top-nav button:hover,.top-nav button.active{background:var(--blue2);color:#fff}
 .account{white-space:nowrap;border:1px solid #146ed4!important;background:#071f40!important;color:#fff!important;padding:10px 15px!important;border-radius:8px!important;font-weight:bold!important}
 .account:hover{background:var(--blue2)!important}
+.top-nav button{transition:background .18s,color .18s,transform .18s}.top-nav button:active{transform:scale(.98)}
 .main{width:100%;max-width:1500px;margin:auto;padding:28px 24px 60px}
 .top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
 .title{font-size:28px;font-weight:800;letter-spacing:-.5px}.sub{color:var(--muted);font-size:12px;margin-top:6px}
@@ -265,7 +266,17 @@ function renderNav(){
  const n=$("nav");n.innerHTML="";
  [["🏠","Início",""],["🎮","Minha Coleção",""],["♡","Favoritos","fav"],["✓","Jogados","played"],["◷","Não Jogados","not"],["☆","Avaliados","rated"]].forEach(x=>{
   const b=document.createElement("button");b.className=(!filter&&!special&&x[1]=="Início")||special===x[2]?"active":"";
-  b.innerHTML=x[0]+" "+x[1];b.onclick=()=>x[2]?setSpecial(x[2]):setFilter("");n.appendChild(b);
+  b.innerHTML=x[0]+" "+x[1];b.onclick=()=>{
+  if(x[1]==="Minha Coleção" || x[1]==="Início"){
+    closeAdmin();
+    if(x[1]==="Minha Coleção"){filter="";special="";}
+    else {filter="";special="";}
+    renderNav();renderCategoryFilters();render();
+  }else{
+    closeAdmin();
+    if(x[2]) setSpecial(x[2]); else setFilter("");
+  }
+};n.appendChild(b);
  });
 }
 function renderCategoryFilters(){
