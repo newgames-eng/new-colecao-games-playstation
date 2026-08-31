@@ -132,8 +132,58 @@ function renderCategoryFilters(){
 
 function render(){const q=$("search").value.toLowerCase().trim();let list=games.filter(g=>(!q||(g.nome+" "+g.categoria).toLowerCase().includes(q))&&(!filter||g.categoria===filter)&&(!special||(special==="fav"?Number(g.favorito)===1:special==="played"?Number(g.jogado)===1:special==="not"?Number(g.jogado)===0:Number(g.nota)>0)));const s=$("sort").value;if(s==="name")list.sort((a,b)=>a.nome.localeCompare(b.nome));if(s==="category")list.sort((a,b)=>a.categoria.localeCompare(b.categoria)||a.nome.localeCompare(b.nome));if(s==="rating")list.sort((a,b)=>Number(b.nota)-Number(a.nota));if(s==="recent")list.sort((a,b)=>Number(b.id)-Number(a.id));$("result").textContent=list.length+" jogo(s)";$("grid").innerHTML=list.map(g=>`<div class="card"><div class="cover"><div class="platform">◉ ${esc(g.plataforma||"PS4")}</div>${g.capa_url?`<img src="${esc(g.capa_url)}" alt="${esc(g.nome)}">`:`<div class="placeholder"><span class="big">${ICONS[g.categoria]||"🎮"}</span>CAPA DO JOGO</div>`}</div><div class="card-body"><div class="category">${esc(g.categoria)}</div><h3>${esc(g.nome)}</h3><div class="meta">${g.ano||"Ano não informado"}</div><div class="stars">${"★★★★★".split("").map((x,i)=>`<span class="star ${i<Number(g.nota||0)?"on":""}">${x}</span>`).join("")}</div><div class="status ${Number(g.jogado)?"played":"notplayed"}">${Number(g.jogado)?"✓ JOGADO":"◷ NÃO JOGADO"} <span class="fav ${Number(g.favorito)?"on":""}">${Number(g.favorito)?"♥":"♡"}</span></div></div></div>`).join("")||`<div class="empty">Nenhum jogo encontrado.</div>`}
 function setFilter(x){filter=x;special="";renderNav();render();renderCategoryFilters()}function setSpecial(x){special=x;filter="";renderNav();renderCategoryFilters();render()}
-function openAdminLogin(){if(adminToken)return openAdmin();$("loginModal").classList.add("open");$("token").focus()}
-async function login(){const t=$("token").value.trim();if(!t)return;try{const r=await fetch(API+"/api/jogos",{headers:{Authorization:"Bearer "+t}});if(r.status===401)throw Error("Token administrativo inválido.");adminToken=t;sessionStorage.setItem("ng_admin_token",t);$("loginModal").classList.remove("open");openAdmin();toast("Acesso liberado.")}catch(e){toast(e.message)}}
+async function validateAdminToken(t){
+  if(!t) return false;
+  try{
+    const r=await fetch(API+"/api/admin/login",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({token:t})
+    });
+    const d=await r.json().catch(()=>({}));
+    return r.ok && d.ok===true;
+  }catch(e){
+    return false;
+  }
+}
+
+async function openAdminLogin(){
+  if(adminToken){
+    const valid=await validateAdminToken(adminToken);
+    if(valid){
+      openAdmin();
+      return;
+    }
+    adminToken="";
+    sessionStorage.removeItem("ng_admin_token");
+  }
+  $("loginModal").classList.add("open");
+  $("token").value="";
+  $("token").focus();
+}
+
+async function login(){
+  const t=$("token").value.trim();
+  if(!t){
+    toast("Digite a senha administrativa.");
+    return;
+  }
+
+  const valid=await validateAdminToken(t);
+
+  if(!valid){
+    toast("Senha administrativa incorreta.");
+    $("token").select();
+    return;
+  }
+
+  adminToken=t;
+  sessionStorage.setItem("ng_admin_token",t);
+  $("loginModal").classList.remove("open");
+  $("token").value="";
+  openAdmin();
+  toast("Acesso liberado.");
+}
 function openAdmin(){$("public").classList.add("hidden");$("admin").classList.add("open");updateAdmin();renderAdmin()}function closeAdmin(){$("admin").classList.remove("open");$("public").classList.remove("hidden")}function logout(){adminToken="";sessionStorage.removeItem("ng_admin_token");closeAdmin()}
 function setAF(x){adminFilter=x;["afAll","afWith","afWithout"].forEach(i=>$(i).classList.remove("active"));$(x==="all"?"afAll":x==="with"?"afWith":"afWithout").classList.add("active");renderAdmin()}
 function updateAdmin(){const w=games.filter(g=>String(g.capa_url||"").trim()).length;$("aTotal").textContent=games.length;$("aWith").textContent=w;$("aWithout").textContent=games.length-w}
