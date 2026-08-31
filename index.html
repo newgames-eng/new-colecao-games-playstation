@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>NEW COLEÇÃO GAMES PLAYSTATION</title>
 <style>
 :root{
@@ -14,37 +14,30 @@
 body{margin:0;font-family:Arial,Helvetica,sans-serif;background:
 radial-gradient(circle at 75% -10%,rgba(0,110,255,.25),transparent 30%),
 linear-gradient(180deg,#020817,#030a15 70%);color:var(--text)}
-button,input,select{font:inherit}
-button{cursor:pointer}
+button,input,select{font:inherit}button{cursor:pointer}
 .app{display:flex;min-height:100vh}
 .sidebar{position:fixed;inset:0 auto 0 0;width:245px;padding:22px 15px;background:
 linear-gradient(180deg,#041534,#020b1c);border-right:1px solid #0754c9;
 box-shadow:8px 0 35px rgba(0,80,255,.08);z-index:20;overflow:auto}
 .brand{text-align:center;padding:8px 5px 24px;border-bottom:1px solid rgba(50,100,170,.25)}
 .psmark{font-size:42px;font-weight:bold;line-height:1}
-.brand h1{font-size:17px;margin:12px 0 4px}
-.brand b{color:#0b91ff;font-size:13px}
-.nav{padding-top:18px}
-.nav-title{font-size:10px;color:#0b8cff;text-transform:uppercase;margin:18px 10px 8px;font-weight:bold}
-.nav button{width:100%;border:0;background:transparent;color:#dce7fa;text-align:left;padding:10px 11px;
-border-radius:7px;margin:2px 0;font-size:13px}
+.brand h1{font-size:17px;margin:12px 0 4px}.brand b{color:#0b91ff;font-size:13px}
+.nav{padding-top:18px}.nav-title{font-size:10px;color:#0b8cff;text-transform:uppercase;margin:18px 10px 8px;font-weight:bold}
+.nav button{width:100%;border:0;background:transparent;color:#dce7fa;text-align:left;padding:10px 11px;border-radius:7px;margin:2px 0;font-size:13px}
 .nav button:hover,.nav button.active{background:linear-gradient(90deg,#064fc7,#073991);color:white}
 .nav .count{float:right;color:#18a1ff}
-.add{width:100%;margin-top:22px;border:1px solid #1687ff;border-radius:7px;padding:12px;
-background:linear-gradient(135deg,#0877ff,#0647b9);color:white;font-weight:bold}
 .main{margin-left:245px;width:calc(100% - 245px);padding:28px 38px}
 .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
 .title{font-size:26px;font-weight:bold}.subtitle{color:var(--muted);margin-top:5px;font-size:13px}
 .account{display:flex;align-items:center;gap:12px;color:#c7d6ed;font-size:13px}
 .avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#0649aa;border:1px solid #1687ff;font-weight:bold}
 .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px}
-.stat{background:linear-gradient(145deg,rgba(10,30,57,.96),rgba(5,18,35,.96));border:1px solid var(--line);
-border-radius:8px;padding:13px 15px;display:flex;gap:12px;align-items:center}
+.stat{background:linear-gradient(145deg,rgba(10,30,57,.96),rgba(5,18,35,.96));border:1px solid var(--line);border-radius:8px;padding:13px 15px;display:flex;gap:12px;align-items:center}
 .stat-icon{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#092f68;font-size:20px}
 .stat strong{display:block;font-size:23px}.stat span{font-size:11px;color:var(--muted)}
-.tools{display:flex;gap:10px;margin-bottom:12px}
-.search{flex:1;position:relative}.search input{width:100%;padding:13px 16px 13px 42px;border-radius:7px;border:1px solid var(--line);
-background:#061226;color:white;outline:none}.search input:focus{border-color:#1687ff}.search .glass{position:absolute;left:15px;top:11px;font-size:19px;color:#88a4cc}
+.tools{display:flex;gap:10px;margin-bottom:12px}.search{flex:1;position:relative}
+.search input{width:100%;padding:13px 16px 13px 42px;border-radius:7px;border:1px solid var(--line);background:#061226;color:white;outline:none}
+.search input:focus{border-color:#1687ff}.search .glass{position:absolute;left:15px;top:11px;font-size:19px;color:#88a4cc}
 select{background:#061226;color:white;border:1px solid var(--line);border-radius:7px;padding:0 14px;min-width:180px}
 .filters{display:flex;gap:7px;overflow:auto;padding-bottom:10px;margin-bottom:10px}
 .filters button{white-space:nowrap;background:#061226;color:#b9c9e6;border:1px solid var(--line);padding:8px 13px;border-radius:6px;font-size:12px}
@@ -55,67 +48,43 @@ select{background:#061226;color:white;border:1px solid var(--line);border-radius
 .card{background:linear-gradient(180deg,#081a34,#041021);border:1px solid #17365e;border-radius:7px;overflow:hidden;transition:.2s}
 .card:hover{transform:translateY(-3px);border-color:#167cff;box-shadow:0 12px 25px rgba(0,75,255,.18)}
 .cover{height:235px;background:linear-gradient(145deg,#0b254b,#020813);position:relative;display:flex;align-items:center;justify-content:center}
-.cover img{width:100%;height:100%;object-fit:cover;display:none}
-.cover.ready img{display:block}
-.cover-placeholder{text-align:center;padding:10px;color:#6d8bb7}
-.cover-placeholder .big{font-size:45px;display:block;margin-bottom:8px}
-.platform{position:absolute;top:0;left:0;right:0;background:linear-gradient(180deg,#0b7bda,#0758aa);
-padding:5px 8px;font-size:11px;font-weight:bold;z-index:2}
-.card-body{padding:9px}
-.category{font-size:9px;color:#2f9aff;text-transform:uppercase;font-weight:bold}
-.card h3{font-size:13px;line-height:1.25;margin:5px 0 3px;min-height:32px}
-.meta{font-size:10px;color:#7187a8}
-.stars{margin-top:7px;display:flex;align-items:center;justify-content:space-between}
-.star{border:0;background:none;padding:0 1px;color:#4a6387;font-size:14px}.star.on{color:#0877ff}
-.rating{font-size:10px;color:#a4b7d6}
+.cover img{width:100%;height:100%;object-fit:cover}.platform{position:absolute;top:0;left:0;right:0;background:linear-gradient(180deg,#0b7bda,#0758aa);padding:5px 8px;font-size:11px;font-weight:bold;z-index:2}
+.placeholder{text-align:center;color:#6d8bb7}.placeholder .big{font-size:45px;display:block;margin-bottom:8px}
+.card-body{padding:9px}.category{font-size:9px;color:#2f9aff;text-transform:uppercase;font-weight:bold}
+.card h3{font-size:13px;line-height:1.25;margin:5px 0 3px;min-height:32px}.meta{font-size:10px;color:#7187a8}
+.stars{margin-top:7px;display:flex;align-items:center;justify-content:space-between}.star{color:#4a6387;font-size:14px;letter-spacing:1px}
+.star.on{color:#0877ff}.rating{font-size:10px;color:#a4b7d6}
 .status-row{display:flex;justify-content:space-between;align-items:center;margin-top:7px}
 .status{font-size:8px;padding:4px 6px;border-radius:4px;font-weight:bold}
 .played{color:#00e676;background:rgba(0,230,118,.1);border:1px solid #087f4d}
 .notplayed{color:#ffc107;background:rgba(255,193,7,.08);border:1px solid #775d13}
-.fav{border:0;background:none;color:#8094b4;font-size:18px}.fav.on{color:var(--red)}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:8px}
-.actions button{border:1px solid #1c3b65;background:#07162b;color:#9db2d2;border-radius:4px;padding:5px 3px;font-size:9px}
-.actions button:hover{border-color:#1687ff;color:#fff}
+.fav{font-size:18px;color:#8094b4}.fav.on{color:var(--red)}
 .empty{grid-column:1/-1;padding:60px;text-align:center;border:1px solid var(--line);border-radius:8px;color:var(--muted)}
+.loading{padding:40px;text-align:center;color:var(--muted)}
 .mobile{display:none}
-.modal{display:none;position:fixed;inset:0;background:rgba(0,5,15,.88);z-index:100;padding:20px;overflow:auto}
-.modal-box{max-width:520px;margin:30px auto;background:#07172d;border:1px solid #1760b7;border-radius:10px;padding:22px}
-.modal-box h2{margin:0 0 16px}.form label{display:block;font-size:11px;color:#a9bddb;margin:11px 0 5px}
-.form input,.form select{width:100%;height:40px;padding:0 10px;min-width:0}
-.modal-buttons{display:flex;gap:8px;margin-top:20px}.modal-buttons button{flex:1;padding:10px;border:0;border-radius:6px}
-.save{background:#0877ff;color:white}.cancel{background:#26364e;color:white}
 @media(max-width:1250px){.grid{grid-template-columns:repeat(5,1fr)}.stats{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:1000px){.grid{grid-template-columns:repeat(4,1fr)}.sidebar{width:210px}.main{margin-left:210px;width:calc(100% - 210px);padding:22px}}
 @media(max-width:760px){
-.sidebar{display:none}.main{margin-left:0;width:100%;padding:18px 12px 78px}
-.top{margin-bottom:16px}.title{font-size:22px}.account span{display:none}
-.stats{grid-template-columns:repeat(2,1fr);gap:8px}.stat{padding:10px}.stat strong{font-size:20px}.stat-icon{width:37px;height:37px}
-.tools{flex-direction:column}.tools select{height:42px}.grid{grid-template-columns:repeat(2,1fr);gap:9px}.cover{height:210px}
+.sidebar{display:none}.main{margin-left:0;width:100%;padding:18px 12px 78px}.top{margin-bottom:16px}
+.title{font-size:22px}.account span{display:none}.stats{grid-template-columns:repeat(2,1fr);gap:8px}
+.stat{padding:10px}.stat strong{font-size:20px}.stat-icon{width:37px;height:37px}.tools{flex-direction:column}
+.tools select{height:42px}.grid{grid-template-columns:repeat(2,1fr);gap:9px}.cover{height:210px}
 .mobile{display:flex;position:fixed;left:0;right:0;bottom:0;height:60px;background:#06152b;border-top:1px solid #164b8c;z-index:50;justify-content:space-around}
 .mobile button{background:none;border:0;color:#a7bad6;font-size:9px}.mobile span{display:block;font-size:19px;margin-bottom:2px}
 }
 </style>
 </head>
 <body>
-
 <div class="app">
 <aside class="sidebar">
-  <div class="brand">
-    <div class="psmark">PS</div>
-    <h1>NEW COLEÇÃO</h1>
-    <b>GAMES PLAYSTATION</b>
-  </div>
+  <div class="brand"><div class="psmark">PS</div><h1>NEW COLEÇÃO</h1><b>GAMES PLAYSTATION</b></div>
   <div class="nav" id="nav"></div>
-  <button class="add" onclick="openModal()">＋ Cadastrar Jogo</button>
 </aside>
 
 <main class="main">
   <div class="top">
-    <div>
-      <div class="title">Olá, jogador! 🎮</div>
-      <div class="subtitle">Bem-vindo à sua coleção PlayStation</div>
-    </div>
-    <div class="account"><div class="avatar">NG</div><span>Minha Conta⌄</span></div>
+    <div><div class="title">Olá, jogador! 🎮</div><div class="subtitle">Bem-vindo à sua coleção PlayStation</div></div>
+    <div class="account"><div class="avatar">NG</div><span>Área de consulta</span></div>
   </div>
 
   <div class="stats">
@@ -130,11 +99,9 @@ padding:5px 8px;font-size:11px;font-weight:bold;z-index:2}
     <div class="search"><span class="glass">⌕</span><input id="search" placeholder="Pesquisar jogo..."></div>
     <select id="sort"><option value="recent">Mais Recentes</option><option value="name">Nome A-Z</option><option value="rating">Melhor Avaliados</option><option value="category">Categoria</option></select>
   </div>
-
   <div class="filters" id="filters"></div>
-
-  <div class="section-head"><h2>🎮 Minha Coleção</h2><div class="result" id="result"></div></div>
-  <div class="grid" id="grid"></div>
+  <div class="section-head"><h2>🎮 Minha Coleção</h2><div class="result" id="result">Carregando...</div></div>
+  <div class="grid" id="grid"><div class="loading">Carregando sua coleção...</div></div>
 </main>
 </div>
 
@@ -143,26 +110,10 @@ padding:5px 8px;font-size:11px;font-weight:bold;z-index:2}
   <button onclick="setFilter('')"><span>🎮</span>Jogos</button>
   <button onclick="setSpecial('rated')"><span>☆</span>Avaliados</button>
   <button onclick="setSpecial('fav')"><span>♡</span>Favoritos</button>
-  <button onclick="openModal()"><span>＋</span>Adicionar</button>
-</div>
-
-<div class="modal" id="modal">
- <div class="modal-box">
-  <h2 id="modalTitle">＋ Cadastrar Jogo</h2>
-  <form class="form" id="form">
-   <label>Nome do jogo</label><input id="fName" required>
-   <label>Categoria</label><select id="fCat" required></select>
-   <label>Plataforma</label><select id="fPlatform"><option>PS4</option><option>PS5</option><option>PS4 / PS5</option></select>
-   <label>Ano</label><input id="fYear" type="number">
-   <label>Capa</label><input id="fCover" type="file" accept="image/*">
-   <div class="modal-buttons"><button type="button" class="cancel" onclick="closeModal()">Cancelar</button><button class="save">Salvar Jogo</button></div>
-  </form>
- </div>
 </div>
 
 <script>
-const BASE_GAMES = [{"id": 1, "nome": "A WAY OUT", "categoria": "Cooperativo", "plataforma": "PS4", "ano": ""}, {"id": 2, "nome": "AGENTS OF MAYHEM", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 3, "nome": "ANGRY BIRDS STAR WARS", "categoria": "Plataforma / Arcade", "plataforma": "PS4", "ano": ""}, {"id": 4, "nome": "ANTHEM", "categoria": "Ficção Científica", "plataforma": "PS4", "ano": ""}, {"id": 5, "nome": "ASSASSIN'S CREED BLACK FLAG", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 6, "nome": "ASSASSINS CREED ODYSSEY", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 7, "nome": "ASSASSIN'S CREED ORIGINS", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 8, "nome": "ASSASSIN'S CREED ROGUE", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 9, "nome": "ASSASSIN'S CREED SYNDICATE", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 10, "nome": "ASSASSIN'S CREED UNITY", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 11, "nome": "ASSETO CORSA", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 12, "nome": "BATMAN ARKHAM KNIGHT", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 13, "nome": "BATMAN RETURN TO ARKHAM", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 14, "nome": "BATTLEBORN", "categoria": "Tiro / FPS", "plataforma": "PS4", "ano": ""}, {"id": 15, "nome": "BATTLEFIELD 1", "categoria": "Tiro / FPS", "plataforma": "PS4", "ano": ""}, {"id": 16, "nome": "BATTLEFIELD 4", "categoria": "Tiro / FPS", "plataforma": "PS4", "ano": ""}, {"id": 17, "nome": "BATTLEFIELD HARDLINE", "categoria": "Tiro / FPS", "plataforma": "PS4", "ano": ""}, {"id": 18, "nome": "BATTLEFIELD V", "categoria": "Tiro / FPS", "plataforma": "PS4", "ano": ""}, {"id": 19, "nome": "BLOODBORNE", "categoria": "RPG", "plataforma": "PS4", "ano": ""}, {"id": 20, "nome": "BURNOUT PARADISE", "categoria": "Corrida / Velocidade", "plataforma": "PS4", "ano": ""}, {"id": 21, "nome": "CALL OF DUTY  WWII", "categoria": "Tiro / FPS", "plataforma": "PS4", "ano": ""}, {"id": 22, "nome": "CALL OF DUTY ADVANCED WARFARE", "categoria": "Tiro / FPS", "plataforma": "PS4", "ano": ""}, {"id": 23, "nome": "CALL OF DUTY BLACK OPS III", "categoria": "Tiro / FPS", "plataforma": "PS4", "ano": ""}, {"id": 24, "nome": "CALL OF DUTY BLACK OPS IV", "categoria": "Tiro / FPS", "plataforma": "PS4", "ano": ""}, {"id": 25, "nome": "CALL OF DUTY GHOSTS", "categoria": "Tiro / FPS", "plataforma": "PS4", "ano": ""}, {"id": 26, "nome": "CALL OF DUTY INFINITE WARFARE", "categoria": "Tiro / FPS", "plataforma": "PS4", "ano": ""}, {"id": 27, "nome": "CAVALEIROS DO ZODIÁCO ALMA DOS SOLDADOS", "categoria": "Luta", "plataforma": "PS4", "ano": ""}, {"id": 28, "nome": "CRASH BANDICOOT", "categoria": "Plataforma / Arcade", "plataforma": "PS4", "ano": ""}, {"id": 29, "nome": "DAKAR 18", "categoria": "Corrida / Velocidade", "plataforma": "PS4", "ano": ""}, {"id": 30, "nome": "DARK SOULS III", "categoria": "RPG", "plataforma": "PS4", "ano": ""}, {"id": 31, "nome": "DAYS GONE", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 32, "nome": "DEAD BY DAYLIGHT", "categoria": "Horror / Survival Horror", "plataforma": "PS4", "ano": ""}, {"id": 33, "nome": "DEAD ISLAND DEFINITIVE COLLECTION", "categoria": "Horror / Survival Horror", "plataforma": "PS4", "ano": ""}, {"id": 34, "nome": "DEADRISING", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 35, "nome": "DEADRISING 2", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 36, "nome": "DEADRISING FRANK'S BIG PACKAGE 4", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 37, "nome": "DESTINY 2", "categoria": "Tiro / FPS", "plataforma": "PS4", "ano": ""}, {"id": 38, "nome": "DETROIT BECOME HUMAN", "categoria": "Narrativa / História", "plataforma": "PS4", "ano": ""}, {"id": 39, "nome": "DEUS EX", "categoria": "Stealth / Tático", "plataforma": "PS4", "ano": ""}, {"id": 40, "nome": "DEVIL MAY CRY", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 41, "nome": "DISHONORED DEATH OF THE OUTSIDER", "categoria": "Stealth / Tático", "plataforma": "PS4", "ano": ""}, {"id": 42, "nome": "DISSIDIA FINAL FANTASY", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 43, "nome": "DOOM", "categoria": "Tiro / FPS", "plataforma": "PS4", "ano": ""}, {"id": 44, "nome": "DRAGON AGE INQUISITION", "categoria": "RPG", "plataforma": "PS4", "ano": ""}, {"id": 45, "nome": "DRAGON BALL 2 XENOVERSE", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 46, "nome": "DRAGON BALL FIGHTER Z", "categoria": "Luta", "plataforma": "PS4", "ano": ""}, {"id": 47, "nome": "DRIVECLUB", "categoria": "Corrida / Velocidade", "plataforma": "PS4", "ano": ""}, {"id": 48, "nome": "DYNG LIGHT", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 49, "nome": "DYNG LIGHT THE FOLLOWING", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 50, "nome": "EVERYBODY'S GOLF", "categoria": "Esportes", "plataforma": "PS4", "ano": ""}, {"id": 51, "nome": "F 1 2016", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 52, "nome": "F1 2017", "categoria": "Corrida / Velocidade", "plataforma": "PS4", "ano": ""}, {"id": 53, "nome": "F1 2019 MÍDIA DIGITAL", "categoria": "Corrida / Velocidade", "plataforma": "PS4", "ano": ""}, {"id": 54, "nome": "FALLOUT 4", "categoria": "RPG", "plataforma": "PS4", "ano": ""}, {"id": 55, "nome": "FALLOUT 4 GOTY", "categoria": "RPG", "plataforma": "PS4", "ano": ""}, {"id": 56, "nome": "FALLOUT 76", "categoria": "RPG", "plataforma": "PS4", "ano": ""}, {"id": 57, "nome": "FAR CRY 4", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 58, "nome": "FAR CRY NEW DAWN", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 59, "nome": "FAR CRY PRIMAL", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 60, "nome": "FARCRY 3", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 61, "nome": "FARCRY 5", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 62, "nome": "FIFA 15", "categoria": "Esportes", "plataforma": "PS4", "ano": ""}, {"id": 63, "nome": "FIFA 17", "categoria": "Esportes", "plataforma": "PS4", "ano": ""}, {"id": 64, "nome": "FIFA 18", "categoria": "Esportes", "plataforma": "PS4", "ano": ""}, {"id": 65, "nome": "FIFA 19", "categoria": "Esportes", "plataforma": "PS4", "ano": ""}, {"id": 66, "nome": "FOR HONOR MARCHING FIRE EDITION", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 67, "nome": "GHOSTBUSTERS", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 68, "nome": "GOOD OF WAR 3", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 69, "nome": "GOOD OF WAR 4", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 70, "nome": "GRAN TURISMO SPORT", "categoria": "Corrida / Velocidade", "plataforma": "PS4", "ano": ""}, {"id": 71, "nome": "GRAVITY RUSH 2", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 72, "nome": "GTA V", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 73, "nome": "HEAVY RAIN COLLECTION BEYOND TWO SOULS", "categoria": "Narrativa / História", "plataforma": "PS4", "ano": ""}, {"id": 74, "nome": "HELL NEIGHBOR ESCONDE-ESCONDE", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 75, "nome": "HITMAN 2", "categoria": "Stealth / Tático", "plataforma": "PS4", "ano": ""}, {"id": 76, "nome": "HITMAN DEFINITIVE EDITION", "categoria": "Stealth / Tático", "plataforma": "PS4", "ano": ""}, {"id": 77, "nome": "HOMEFRONT  THE REVOLUTION", "categoria": "Tiro / FPS", "plataforma": "PS4", "ano": ""}, {"id": 78, "nome": "HORIZON CHASE TURBO", "categoria": "Corrida / Velocidade", "plataforma": "PS4", "ano": ""}, {"id": 79, "nome": "HORIZON ZERO DAWN", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 80, "nome": "INJUSTICE", "categoria": "Luta", "plataforma": "PS4", "ano": ""}, {"id": 81, "nome": "INJUSTICE 2", "categoria": "Luta", "plataforma": "PS4", "ano": ""}, {"id": 82, "nome": "J-STARS VICTORY VS+", "categoria": "Anime / Mangá", "plataforma": "PS4", "ano": ""}, {"id": 83, "nome": "JUMP FORCE", "categoria": "Anime / Mangá", "plataforma": "PS4", "ano": ""}, {"id": 84, "nome": "JUST CAUSE 3", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 85, "nome": "JUST CAUSE 4", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 86, "nome": "KILLZONE SHADOW FALL", "categoria": "Tiro / FPS", "plataforma": "PS4", "ano": ""}, {"id": 87, "nome": "KNACK 1", "categoria": "Plataforma / Arcade", "plataforma": "PS4", "ano": ""}, {"id": 88, "nome": "LEGO BATMAN 3", "categoria": "LEGO / Família", "plataforma": "PS4", "ano": ""}, {"id": 89, "nome": "LEGO HOBBIT", "categoria": "LEGO / Família", "plataforma": "PS4", "ano": ""}, {"id": 90, "nome": "LEGO JURRASSIC WORLD", "categoria": "LEGO / Família", "plataforma": "PS4", "ano": ""}, {"id": 91, "nome": "LEGO WORDS", "categoria": "LEGO / Família", "plataforma": "PS4", "ano": ""}, {"id": 92, "nome": "LORDS OF THE FALLEN", "categoria": "RPG", "plataforma": "PS4", "ano": ""}, {"id": 93, "nome": "MAD MAX", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 94, "nome": "MAFIA III", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 95, "nome": "MARVEL VS. CAPCOM INFINITE", "categoria": "Luta", "plataforma": "PS4", "ano": ""}, {"id": 96, "nome": "MEGAMAN 11", "categoria": "Plataforma / Arcade", "plataforma": "PS4", "ano": ""}, {"id": 97, "nome": "MEGAMAN LEGACY COLLECTION", "categoria": "Plataforma / Arcade", "plataforma": "PS4", "ano": ""}, {"id": 98, "nome": "METAL GEAR SOLID V", "categoria": "Stealth / Tático", "plataforma": "PS4", "ano": ""}, {"id": 99, "nome": "METAL GEAR SURVIVE", "categoria": "Stealth / Tático", "plataforma": "PS4", "ano": ""}, {"id": 100, "nome": "METRO EXODUS", "categoria": "Ficção Científica", "plataforma": "PS4", "ano": ""}, {"id": 101, "nome": "METRO REDUX", "categoria": "Ficção Científica", "plataforma": "PS4", "ano": ""}, {"id": 102, "nome": "MICROMACHINES WORD SERIES", "categoria": "Corrida / Velocidade", "plataforma": "PS4", "ano": ""}, {"id": 103, "nome": "MIRROR'S EDGE CATALYST", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 104, "nome": "MORTAL KOMBAT 11", "categoria": "Luta", "plataforma": "PS4", "ano": ""}, {"id": 105, "nome": "MORTAL KOMBAT XL", "categoria": "Luta", "plataforma": "PS4", "ano": ""}, {"id": 106, "nome": "MOTOGP17", "categoria": "Esportes", "plataforma": "PS4", "ano": ""}, {"id": 107, "nome": "MY HERO ONES JUSTICE", "categoria": "Luta", "plataforma": "PS4", "ano": ""}, {"id": 108, "nome": "NARUTO TO BORUTO SHINOBI STRIKER", "categoria": "Anime / Mangá", "plataforma": "PS4", "ano": ""}, {"id": 109, "nome": "NBA 2K 18", "categoria": "Esportes", "plataforma": "PS4", "ano": ""}, {"id": 110, "nome": "NBA2K 15", "categoria": "Esportes", "plataforma": "PS4", "ano": ""}, {"id": 111, "nome": "NEED FOR SPEED 2015", "categoria": "Corrida / Velocidade", "plataforma": "PS4", "ano": ""}, {"id": 112, "nome": "NEED FOR SPEED RIVALS", "categoria": "Corrida / Velocidade", "plataforma": "PS4", "ano": ""}, {"id": 113, "nome": "NHL 16", "categoria": "Esportes", "plataforma": "PS4", "ano": ""}, {"id": 114, "nome": "NIOH", "categoria": "RPG", "plataforma": "PS4", "ano": ""}, {"id": 115, "nome": "ONE PIECE BURNING BLOOD", "categoria": "Anime / Mangá", "plataforma": "PS4", "ano": ""}, {"id": 116, "nome": "ONRUSH", "categoria": "Corrida / Velocidade", "plataforma": "PS4", "ano": ""}, {"id": 117, "nome": "OUTLAST TRINITY", "categoria": "Horror / Survival Horror", "plataforma": "PS4", "ano": ""}, {"id": 118, "nome": "OVERWATCH", "categoria": "Tiro / FPS", "plataforma": "PS4", "ano": ""}, {"id": 119, "nome": "PAYDAY 2", "categoria": "Tiro / FPS", "plataforma": "PS4", "ano": ""}, {"id": 120, "nome": "PES 17", "categoria": "Esportes", "plataforma": "PS4", "ano": ""}, {"id": 121, "nome": "PES 18", "categoria": "Esportes", "plataforma": "PS4", "ano": ""}, {"id": 122, "nome": "PES 19", "categoria": "Esportes", "plataforma": "PS4", "ano": ""}, {"id": 123, "nome": "PES 2020", "categoria": "Esportes", "plataforma": "PS4", "ano": ""}, {"id": 124, "nome": "PLANTS VS ZOMBIES GW 2", "categoria": "Estratégia / Casual", "plataforma": "PS4", "ano": ""}, {"id": 125, "nome": "PREY", "categoria": "Ficção Científica", "plataforma": "PS4", "ano": ""}, {"id": 126, "nome": "PROJECT CARS", "categoria": "Corrida / Velocidade", "plataforma": "PS4", "ano": ""}, {"id": 127, "nome": "PROJECT CARS 2", "categoria": "Corrida / Velocidade", "plataforma": "PS4", "ano": ""}, {"id": 128, "nome": "RAID WORLD WAR 2", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 129, "nome": "RATCHET CLANK", "categoria": "Plataforma / Arcade", "plataforma": "PS4", "ano": ""}, {"id": 130, "nome": "RED DEAD REDEMPTION II", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 131, "nome": "RESIDENT EVIL 2", "categoria": "Horror / Survival Horror", "plataforma": "PS4", "ano": ""}, {"id": 132, "nome": "RESIDENT EVIL 2 REVELATIONS", "categoria": "Horror / Survival Horror", "plataforma": "PS4", "ano": ""}, {"id": 133, "nome": "RESIDENT EVIL 4", "categoria": "Horror / Survival Horror", "plataforma": "PS4", "ano": ""}, {"id": 134, "nome": "RESIDENT EVIL 5", "categoria": "Horror / Survival Horror", "plataforma": "PS4", "ano": ""}, {"id": 135, "nome": "RESIDENT EVIL 6", "categoria": "Horror / Survival Horror", "plataforma": "PS4", "ano": ""}, {"id": 136, "nome": "RESIDENT EVIL BIOHAZARD", "categoria": "Horror / Survival Horror", "plataforma": "PS4", "ano": ""}, {"id": 137, "nome": "RESIDENT EVIL ORIGINS COLLECTION", "categoria": "Horror / Survival Horror", "plataforma": "PS4", "ano": ""}, {"id": 138, "nome": "RESIDENT EVIL REVELATIONS", "categoria": "Horror / Survival Horror", "plataforma": "PS4", "ano": ""}, {"id": 139, "nome": "SECOND SON", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 140, "nome": "SHADOW OF THE COLOSSUS", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 141, "nome": "SLEEPING DOGS", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 142, "nome": "SNIPER ELITE III", "categoria": "Tiro / FPS", "plataforma": "PS4", "ano": ""}, {"id": 143, "nome": "SNIPER ELITE4", "categoria": "Tiro / FPS", "plataforma": "PS4", "ano": ""}, {"id": 144, "nome": "SOMBRAS DA GUERRA", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 145, "nome": "SOMBRAS DE MORDOR", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 146, "nome": "SONIC FORCES", "categoria": "Plataforma / Arcade", "plataforma": "PS4", "ano": ""}, {"id": 147, "nome": "SOULCALIBUR VI", "categoria": "Luta", "plataforma": "PS4", "ano": ""}, {"id": 148, "nome": "SOUTH PARK A FENDA QUE ABUNDA FORÇA", "categoria": "Narrativa / História", "plataforma": "PS4", "ano": ""}, {"id": 149, "nome": "SPIDER MAN", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 150, "nome": "STAR WARS BATTLEFRONT", "categoria": "Tiro / FPS", "plataforma": "PS4", "ano": ""}, {"id": 151, "nome": "STAR WARS BATTLEFRONT II", "categoria": "Tiro / FPS", "plataforma": "PS4", "ano": ""}, {"id": 152, "nome": "STREET FIGHTER COLLECTION", "categoria": "Luta", "plataforma": "PS4", "ano": ""}, {"id": 153, "nome": "Street Fighter V", "categoria": "Luta", "plataforma": "PS4", "ano": ""}, {"id": 154, "nome": "THE AMAZING SPIDER MAN 2", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 155, "nome": "THE CREW", "categoria": "Corrida / Velocidade", "plataforma": "PS4", "ano": ""}, {"id": 156, "nome": "THE CREW 2", "categoria": "Corrida / Velocidade", "plataforma": "PS4", "ano": ""}, {"id": 157, "nome": "THE DIVISION 2", "categoria": "Tiro / FPS", "plataforma": "PS4", "ano": ""}, {"id": 158, "nome": "THE EVIL WITHIN", "categoria": "Horror / Survival Horror", "plataforma": "PS4", "ano": ""}, {"id": 159, "nome": "THE EVIL WITHIN 2", "categoria": "Horror / Survival Horror", "plataforma": "PS4", "ano": ""}, {"id": 160, "nome": "THE LAST GUARDIAN", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 161, "nome": "THE LAST OF US", "categoria": "Narrativa / História", "plataforma": "PS4", "ano": ""}, {"id": 162, "nome": "THE ORDER 1886", "categoria": "Narrativa / História", "plataforma": "PS4", "ano": ""}, {"id": 163, "nome": "THE SHOW18", "categoria": "Esportes", "plataforma": "PS4", "ano": ""}, {"id": 164, "nome": "THE SIMS 4", "categoria": "Simulação", "plataforma": "PS4", "ano": ""}, {"id": 165, "nome": "THE WALKING DEAD A TELLTALE GAMES SERIES", "categoria": "Horror / Survival Horror", "plataforma": "PS4", "ano": ""}, {"id": 166, "nome": "THE WALKING DEAD COLLECTION", "categoria": "Horror / Survival Horror", "plataforma": "PS4", "ano": ""}, {"id": 167, "nome": "THE WALKING DEAD SEASON A NEW FRONTIER", "categoria": "Horror / Survival Horror", "plataforma": "PS4", "ano": ""}, {"id": 168, "nome": "THE WALKING DEAD SEASON TWO", "categoria": "Horror / Survival Horror", "plataforma": "PS4", "ano": ""}, {"id": 169, "nome": "THE WITCHER WILD HUNT", "categoria": "RPG", "plataforma": "PS4", "ano": ""}, {"id": 170, "nome": "TITANFALL 2", "categoria": "Tiro / FPS", "plataforma": "PS4", "ano": ""}, {"id": 171, "nome": "TOM CLANCY'S GHOST RECON WILDLANDS", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 172, "nome": "TOM CLANCY'S RAINBOW SIX SIEGE", "categoria": "Tiro / FPS", "plataforma": "PS4", "ano": ""}, {"id": 173, "nome": "TOM CLANCY'S THE DIVISION", "categoria": "Tiro / FPS", "plataforma": "PS4", "ano": ""}, {"id": 174, "nome": "TOMB RAIDER", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 175, "nome": "TOMB RAIDER RISE", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 176, "nome": "UFC 1", "categoria": "Esportes", "plataforma": "PS4", "ano": ""}, {"id": 177, "nome": "UFC 2", "categoria": "Esportes", "plataforma": "PS4", "ano": ""}, {"id": 178, "nome": "UFC 3", "categoria": "Esportes", "plataforma": "PS4", "ano": ""}, {"id": 179, "nome": "UNCHARTED 4", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 180, "nome": "UNCHARTED COLLECTION", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 181, "nome": "Uncharted The Lost Legacy", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 182, "nome": "UNTIL DAWN", "categoria": "Horror / Survival Horror", "plataforma": "PS4", "ano": ""}, {"id": 183, "nome": "W2K 17", "categoria": "Esportes", "plataforma": "PS4", "ano": ""}, {"id": 184, "nome": "W2K18", "categoria": "Esportes", "plataforma": "PS4", "ano": ""}, {"id": 185, "nome": "WATCH DOGS", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 186, "nome": "WATCH DOGS 2", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 187, "nome": "WE HAPPY FEW", "categoria": "Narrativa / História", "plataforma": "PS4", "ano": ""}, {"id": 188, "nome": "WOLFENSTEIN", "categoria": "Tiro / FPS", "plataforma": "PS4", "ano": ""}, {"id": 189, "nome": "WORD WAR Z", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 190, "nome": "YAKUSA THE SONG OF LIFE 6", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 191, "nome": "YAKUSA ZERO 0", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 192, "nome": "LIFE IS STRANGE BEFORE THE STORM", "categoria": "Narrativa / História", "plataforma": "PS4", "ano": ""}, {"id": 193, "nome": "BATMAN THE ENEMY WITHIN", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 194, "nome": "W2C 6", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}, {"id": 195, "nome": "WASTELAND 2 DIRECTOR'S CUT", "categoria": "RPG", "plataforma": "PS4", "ano": ""}, {"id": 196, "nome": "LEGO STAR WARS O DESPERTAR DA FORÇA", "categoria": "LEGO / Família", "plataforma": "PS4", "ano": ""}, {"id": 197, "nome": "LEGO MARVEL SUPER HEROES", "categoria": "LEGO / Família", "plataforma": "PS4", "ano": ""}, {"id": 198, "nome": "MARVEL GUARDIÕES DA GALAXIA", "categoria": "Ação / Aventura", "plataforma": "PS4", "ano": ""}];
-const CATEGORIES = ["Anime / Mangá", "Ação / Aventura", "Cooperativo", "Corrida / Velocidade", "Esportes", "Estratégia / Casual", "Ficção Científica", "Horror / Survival Horror", "LEGO / Família", "Luta", "Narrativa / História", "Plataforma / Arcade", "RPG", "Simulação", "Stealth / Tático", "Tiro / FPS"];
+const API = "https://new-colecao-games-api.parqueclube1bloco2d.workers.dev";
 const ICONS = {
  "Horror / Survival Horror":"🧟","Ação / Aventura":"⚔️","Tiro / FPS":"🔫","Luta":"🥊",
  "Esportes":"⚽","Corrida / Velocidade":"🏎️","RPG":"🗺️","Anime / Mangá":"🥷",
@@ -171,55 +122,64 @@ const ICONS = {
  "Estratégia / Casual":"🧩","Simulação":"🎯"
 };
 
-let games = JSON.parse(localStorage.getItem("nc_games_v2") || "null") || BASE_GAMES;
-let state = JSON.parse(localStorage.getItem("nc_state_v2") || "{}");
-let filter = "", special = "", editing = null;
+let games=[], categories=[], filter="", special="";
 
-function info(name){
-  if(!state[name]) state[name]={rating:0,played:false,fav:false};
-  return state[name];
+const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+
+async function api(path){
+  const r=await fetch(API+path);
+  if(!r.ok) throw new Error("Não foi possível consultar a API.");
+  return r.json();
 }
-function save(){localStorage.setItem("nc_games_v2",JSON.stringify(games));localStorage.setItem("nc_state_v2",JSON.stringify(state));}
-function esc(s){return String(s).replace(/\\/g,"\\\\").replace(/'/g,"\\'").replace(/"/g,"&quot;")}
+
+async function load(){
+  try{
+    const [g,c,d]=await Promise.all([
+      api("/api/jogos"),
+      api("/api/categorias"),
+      api("/api/dashboard")
+    ]);
+    games=g.jogos||[];
+    categories=c.categorias||[];
+    document.getElementById("stTotal").textContent=d.jogos??games.length;
+    document.getElementById("stPlayed").textContent=d.jogados??0;
+    document.getElementById("stNot").textContent=Math.max(0,(d.jogos??games.length)-(d.jogados??0));
+    document.getElementById("stAvg").textContent=games.length?(
+      games.reduce((s,x)=>s+Number(x.nota||0),0)/games.length
+    ).toFixed(1):"0.0";
+    document.getElementById("stFav").textContent=d.favoritos??0;
+    renderNav();render();
+  }catch(e){
+    document.getElementById("result").textContent="Erro";
+    document.getElementById("grid").innerHTML=`<div class="empty"><h2>⚠️ Não foi possível carregar a coleção</h2><p>${esc(e.message)}</p></div>`;
+  }
+}
 
 function renderNav(){
-  const nav=document.getElementById("nav");
-  nav.innerHTML="";
-  const items=[
-    ["🏠","Início",""],
-    ["🎮","Minha Coleção",""],
-    ["♡","Favoritos","fav"],
-    ["✓","Jogados","played"],
-    ["◷","Não Jogados","not"],
-    ["☆","Avaliados","rated"]
-  ];
-  items.forEach(x=>{
+  const nav=document.getElementById("nav");nav.innerHTML="";
+  [["🏠","Início",""],["🎮","Minha Coleção",""],["♡","Favoritos","fav"],["✓","Jogados","played"],["◷","Não Jogados","not"],["☆","Avaliados","rated"]].forEach(x=>{
     const b=document.createElement("button");
-    b.className=(!filter && !special && x[1]=="Início") || special==x[2] ? "active":"";
+    b.className=(!filter&&!special&&x[1]=="Início")||special===x[2]?"active":"";
     b.innerHTML=x[0]+" &nbsp; "+x[1];
-    b.onclick=()=>x[2]?setSpecial(x[2],b):setFilter("");
+    b.onclick=()=>x[2]?setSpecial(x[2]):setFilter("");
     nav.appendChild(b);
   });
   const t=document.createElement("div");t.className="nav-title";t.textContent="Categorias";nav.appendChild(t);
-  const all=document.createElement("button");
-  all.className=filter===""?"active":"";
-  all.innerHTML="▦ &nbsp; Todos os Jogos <span class='count'>"+games.length+"</span>";
-  all.onclick=()=>setFilter("");
-  nav.appendChild(all);
-  CATEGORIES.forEach(c=>{
-    const b=document.createElement("button");
-    b.className=filter===c?"active":"";
-    b.innerHTML=(ICONS[c]||"🎮")+" &nbsp; "+c+" <span class='count'>"+games.filter(g=>g.categoria===c).length+"</span>";
-    b.onclick=()=>setFilter(c,b);
-    nav.appendChild(b);
+  const all=document.createElement("button");all.className=!filter?"active":"";
+  all.innerHTML=`▦ &nbsp; Todos os Jogos <span class="count">${games.length}</span>`;
+  all.onclick=()=>setFilter("");nav.appendChild(all);
+  categories.forEach(c=>{
+    const b=document.createElement("button");b.className=filter===c.nome?"active":"";
+    b.innerHTML=`${ICONS[c.nome]||"🎮"} &nbsp; ${esc(c.nome)} <span class="count">${c.quantidade}</span>`;
+    b.onclick=()=>setFilter(c.nome);nav.appendChild(b);
   });
 }
 
 function renderFilters(){
   const box=document.getElementById("filters");box.innerHTML="";
-  const make=(label,value)=>{const b=document.createElement("button");b.textContent=label;b.className=filter===value&&!special?"active":"";b.onclick=()=>setFilter(value,b);box.appendChild(b)};
+  const make=(label,value)=>{const b=document.createElement("button");b.textContent=label;b.className=filter===value&&!special?"active":"";b.onclick=()=>setFilter(value);box.appendChild(b)};
   make("Todos","");
-  CATEGORIES.slice(0,8).forEach(c=>make((ICONS[c]||"")+" "+c.replace(" / Survival Horror","").replace(" / Velocidade",""),c));
+  categories.slice(0,8).forEach(c=>make((ICONS[c.nome]||"")+" "+c.nome.replace(" / Survival Horror","").replace(" / Velocidade",""),c.nome));
   const more=document.createElement("button");more.textContent="Mais ▾";more.onclick=()=>{filter="";special="";render()};box.appendChild(more);
 }
 
@@ -227,105 +187,52 @@ function render(){
   renderNav();renderFilters();
   const q=document.getElementById("search").value.toLowerCase().trim();
   let list=games.filter(g=>{
-    const d=info(g.nome);
     let ok=(g.nome+" "+g.categoria).toLowerCase().includes(q);
-    if(filter) ok=ok&&g.categoria===filter;
-    if(special==="fav") ok=ok&&d.fav;
-    if(special==="played") ok=ok&&d.played;
-    if(special==="not") ok=ok&&!d.played;
-    if(special==="rated") ok=ok&&d.rating>0;
+    if(filter)ok=ok&&g.categoria===filter;
+    if(special==="fav")ok=ok&&Number(g.favorito)===1;
+    if(special==="played")ok=ok&&Number(g.jogado)===1;
+    if(special==="not")ok=ok&&Number(g.jogado)===0;
+    if(special==="rated")ok=ok&&Number(g.nota)>0;
     return ok;
   });
   const sort=document.getElementById("sort").value;
-  if(sort==="name") list.sort((a,b)=>a.nome.localeCompare(b.nome));
-  if(sort==="category") list.sort((a,b)=>a.categoria.localeCompare(b.categoria)||a.nome.localeCompare(b.nome));
-  if(sort==="rating") list.sort((a,b)=>info(b.nome).rating-info(a.nome).rating);
+  if(sort==="name")list.sort((a,b)=>a.nome.localeCompare(b.nome));
+  if(sort==="category")list.sort((a,b)=>a.categoria.localeCompare(b.categoria)||a.nome.localeCompare(b.nome));
+  if(sort==="rating")list.sort((a,b)=>Number(b.nota)-Number(a.nota));
+  if(sort==="recent")list.sort((a,b)=>Number(b.id)-Number(a.id));
   document.getElementById("result").textContent=list.length+" jogo(s)";
   const grid=document.getElementById("grid");grid.innerHTML="";
-  if(!list.length){grid.innerHTML="<div class='empty'><h2>🎮 Nenhum jogo encontrado</h2><p>Tente outra pesquisa ou categoria.</p></div>";}
+  if(!list.length){grid.innerHTML="<div class='empty'><h2>🎮 Nenhum jogo encontrado</h2><p>Tente outra pesquisa ou categoria.</p></div>";return}
   list.forEach(g=>{
-    const d=info(g.nome), card=document.createElement("div");card.className="card";
-    let stars="";for(let i=1;i<=5;i++)stars+=`<button class="star ${i<=d.rating?'on':''}" onclick="rate('${esc(g.nome)}',${i})">★</button>`;
+    const card=document.createElement("div");card.className="card";
+    const nota=Number(g.nota||0),played=Number(g.jogado)===1,fav=Number(g.favorito)===1;
+    const stars="★★★★★".split("").map((s,i)=>`<span class="star ${i<nota?"on":""}">${s}</span>`).join("");
     card.innerHTML=`
-      <div class="cover ${g.capa?'ready':''}">
-        <div class="platform">◉ ${g.plataforma||"PS4"}</div>
-        ${g.capa?`<img src="${g.capa}" alt="${esc(g.nome)}">`:"<div class='cover-placeholder'><span class='big'>"+(ICONS[g.categoria]||"🎮")+"</span>CAPA DO JOGO</div>"}
+      <div class="cover">
+        <div class="platform">◉ ${esc(g.plataforma||"PS4")}</div>
+        ${g.capa_url
+          ? `<img src="${esc(g.capa_url)}" alt="${esc(g.nome)}">`
+          : `<div class="placeholder"><span class="big">${ICONS[g.categoria]||"🎮"}</span>CAPA DO JOGO</div>`}
       </div>
       <div class="card-body">
-        <div class="category">${g.categoria}</div>
-        <h3>${g.nome}</h3>
+        <div class="category">${esc(g.categoria)}</div>
+        <h3>${esc(g.nome)}</h3>
         <div class="meta">${g.ano||"Ano não informado"}</div>
-        <div class="stars"><div>${stars}</div><span class="rating">${d.rating?d.rating+".0":"-"}</span></div>
-        <div class="status-row"><span class="status ${d.played?'played':'notplayed'}">${d.played?'✓ JOGADO':'◷ NÃO JOGADO'}</span>
-        <button class="fav ${d.fav?'on':''}" onclick="favorite('${esc(g.nome)}')">${d.fav?'♥':'♡'}</button></div>
-        <div class="actions">
-          <button onclick="togglePlayed('${esc(g.nome)}')">${d.played?'↩ Desmarcar':'✓ Jogado'}</button>
-          <button onclick="editGame('${esc(g.nome)}')">✏ Editar</button>
-          <button onclick="viewGame('${esc(g.nome)}')">👁 Ver</button>
-          <button onclick="deleteGame('${esc(g.nome)}')">🗑 Excluir</button>
+        <div class="stars"><div>${stars}</div><span class="rating">${nota?nota+".0":"-"}</span></div>
+        <div class="status-row">
+          <span class="status ${played?"played":"notplayed"}">${played?"✓ JOGADO":"◷ NÃO JOGADO"}</span>
+          <span class="fav ${fav?"on":""}">${fav?"♥":"♡"}</span>
         </div>
       </div>`;
     grid.appendChild(card);
   });
-  updateStats();save();
 }
 
-function updateStats(){
- let played=0,fav=0,sum=0,n=0;
- games.forEach(g=>{const d=info(g.nome);if(d.played)played++;if(d.fav)fav++;if(d.rating){sum+=d.rating;n++;}});
- document.getElementById("stTotal").textContent=games.length;
- document.getElementById("stPlayed").textContent=played;
- document.getElementById("stNot").textContent=games.length-played;
- document.getElementById("stAvg").textContent=n?(sum/n).toFixed(1):"0.0";
- document.getElementById("stFav").textContent=fav;
-}
 function setFilter(c){filter=c;special="";render()}
 function setSpecial(s){special=s;filter="";render()}
-function rate(n,r){info(n).rating=r;render()}
-function favorite(n){info(n).fav=!info(n).fav;render()}
-function togglePlayed(n){info(n).played=!info(n).played;render()}
-function viewGame(n){const g=games.find(x=>x.nome===n),d=info(n);alert("🎮 "+g.nome+"\\n\\nCategoria: "+g.categoria+"\\nPlataforma: "+g.plataforma+"\\nAvaliação: "+(d.rating?("★".repeat(d.rating)): "Sem avaliação")+"\\nStatus: "+(d.played?"Jogado":"Não jogado"))}
-function deleteGame(n){if(!confirm("Excluir "+n+" da coleção?"))return;games=games.filter(g=>g.nome!==n);delete state[n];render()}
-
-function fillCats(selected=""){
- const s=document.getElementById("fCat");s.innerHTML="<option value=''>Selecione</option>";
- CATEGORIES.forEach(c=>s.innerHTML+=`<option value="${c}" ${c===selected?"selected":""}>${ICONS[c]||"🎮"} ${c}</option>`);
-}
-function openModal(name=null){
- editing=name;
- document.getElementById("modalTitle").textContent=name?"✏ Editar Jogo":"＋ Cadastrar Jogo";
- fillCats(name?games.find(g=>g.nome===name).categoria:"");
- document.getElementById("fName").value=name?games.find(g=>g.nome===name).nome:"";
- document.getElementById("fPlatform").value=name?games.find(g=>g.nome===name).plataforma:"PS4";
- document.getElementById("fYear").value=name?games.find(g=>g.nome===name).ano:"";
- document.getElementById("fCover").value="";
- document.getElementById("modal").style.display="block";
-}
-function closeModal(){document.getElementById("modal").style.display="none"}
-function editGame(n){openModal(n)}
-
-document.getElementById("form").addEventListener("submit",e=>{
- e.preventDefault();
- const nome=document.getElementById("fName").value.trim(),cat=document.getElementById("fCat").value;
- const platform=document.getElementById("fPlatform").value,year=document.getElementById("fYear").value;
- const file=document.getElementById("fCover").files[0];
- if(!nome||!cat)return;
- if(editing){
-   const g=games.find(x=>x.nome===editing),old=g.nome;
-   g.nome=nome;g.categoria=cat;g.plataforma=platform;g.ano=year;
-   if(old!==nome){state[nome]=state[old]||{rating:0,played:false,fav:false};delete state[old]}
-   if(file){const r=new FileReader();r.onload=ev=>{g.capa=ev.target.result;closeModal();render()};r.readAsDataURL(file)}
-   else{closeModal();render()}
- }else{
-   if(games.some(g=>g.nome.toLowerCase()===nome.toLowerCase())){alert("Esse jogo já está cadastrado.");return}
-   const add=g=>{games.push({id:Date.now(),nome,categoria:cat,plataforma:platform,ano:year,capa:g||""});closeModal();render()};
-   if(file){const r=new FileReader();r.onload=ev=>add(ev.target.result);r.readAsDataURL(file)}else add("");
- }
-});
 document.getElementById("search").addEventListener("input",render);
 document.getElementById("sort").addEventListener("change",render);
-document.getElementById("modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal()});
-fillCats();render();
+load();
 </script>
 </body>
 </html>
