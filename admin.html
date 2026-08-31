@@ -30,11 +30,6 @@ body{
   color:var(--text)
 }
 
-.app{
-  display:flex;
-  min-height:100vh
-}
-
 .side{
   width:240px;
   position:fixed;
@@ -185,10 +180,11 @@ body{
 
 button.primary,
 button.danger,
-button.secondary{
+button.secondary,
+button.cover-btn{
   border:0;
   border-radius:7px;
-  padding:10px 14px;
+  padding:9px 12px;
   color:white;
   font-weight:bold;
   cursor:pointer
@@ -206,8 +202,20 @@ button.secondary{
   background:#153154
 }
 
-.primary:hover{
+.cover-btn{
+  background:#0d4e91
+}
+
+.cover-btn:hover,
+.primary:hover,
+.secondary:hover,
+.danger:hover{
   filter:brightness(1.15)
+}
+
+button:disabled{
+  opacity:.55;
+  cursor:not-allowed
 }
 
 .table-wrap{
@@ -239,7 +247,22 @@ button.secondary{
   height:50px;
   object-fit:cover;
   border-radius:4px;
-  background:#102743
+  background:#102743;
+  border:1px solid #21436d
+}
+
+.cover-status{
+  font-size:10px;
+  margin-top:4px;
+  display:block
+}
+
+.cover-status.ok{
+  color:var(--green)
+}
+
+.cover-status.none{
+  color:var(--muted)
 }
 
 .stars{
@@ -253,7 +276,12 @@ button.secondary{
 
 .actions{
   display:flex;
-  gap:6px
+  gap:6px;
+  align-items:center
+}
+
+.quick-file{
+  display:none
 }
 
 .modal{
@@ -351,6 +379,38 @@ button.secondary{
   width:auto
 }
 
+.cover-upload{
+  background:#061226;
+  border:1px solid #18365f;
+  border-radius:8px;
+  padding:12px
+}
+
+.cover-upload input[type=file]{
+  width:100%;
+  background:#020b1b;
+  padding:10px;
+  cursor:pointer
+}
+
+.cover-status-large{
+  display:block;
+  margin-top:7px;
+  color:#8da3c5;
+  font-size:11px
+}
+
+.cover-preview{
+  display:none;
+  margin-top:10px;
+  width:120px;
+  height:160px;
+  object-fit:cover;
+  border-radius:7px;
+  border:1px solid #21436d;
+  background:#102743
+}
+
 .login{
   position:fixed;
   inset:0;
@@ -405,46 +465,6 @@ button.secondary{
   z-index:300
 }
 
-/* CAPA */
-.cover-upload{
-  background:#061226;
-  border:1px solid #18365f;
-  border-radius:8px;
-  padding:12px
-}
-
-.cover-upload input[type="file"]{
-  background:#020b1b;
-  padding:10px;
-  cursor:pointer
-}
-
-.cover-status{
-  display:block;
-  margin-top:7px;
-  color:#8da3c5;
-  font-size:11px;
-  line-height:1.4
-}
-
-.cover-preview{
-  display:none;
-  margin-top:10px;
-  width:120px;
-  height:160px;
-  object-fit:cover;
-  border-radius:7px;
-  border:1px solid #21436d;
-  background:#102743
-}
-
-.cover-or{
-  text-align:center;
-  color:#7890b2;
-  font-size:11px;
-  margin:8px 0
-}
-
 @media(max-width:900px){
   .side{
     display:none
@@ -490,26 +510,46 @@ button.secondary{
   </div>
 
   <div class="nav">
-    <button class="active">▣ &nbsp; Dashboard</button>
-    <button onclick="openModal()">＋ &nbsp; Cadastrar jogo</button>
-    <button onclick="focusSearch()">▤ &nbsp; Gerenciar jogos</button>
-    <button onclick="window.open('/','_self')">🌐 &nbsp; Área pública</button>
+    <button class="active">
+      ▣ &nbsp; Dashboard
+    </button>
+
+    <button onclick="openModal()">
+      ＋ &nbsp; Cadastrar jogo
+    </button>
+
+    <button onclick="focusSearch()">
+      ▤ &nbsp; Gerenciar jogos
+    </button>
+
+    <button onclick="window.open('/','_self')">
+      🌐 &nbsp; Área pública
+    </button>
   </div>
 
 </aside>
+
 
 <main class="main">
 
   <div class="top">
 
     <div>
-      <div class="title">Área Administrativa</div>
-      <div class="sub">Gerencie sua coleção PlayStation</div>
+      <div class="title">
+        Área Administrativa
+      </div>
+
+      <div class="sub">
+        Gerencie sua coleção PlayStation
+      </div>
     </div>
 
-    <div class="badge">🔐 ADMIN</div>
+    <div class="badge">
+      🔐 ADMIN
+    </div>
 
   </div>
+
 
   <div class="stats">
 
@@ -535,9 +575,12 @@ button.secondary{
 
   </div>
 
+
   <section class="panel">
 
-    <h2>Gerenciar jogos</h2>
+    <h2>
+      Gerenciar jogos
+    </h2>
 
     <div class="toolbar">
 
@@ -547,7 +590,9 @@ button.secondary{
       >
 
       <select id="cat">
-        <option value="">Todas as categorias</option>
+        <option value="">
+          Todas as categorias
+        </option>
       </select>
 
       <button
@@ -558,6 +603,7 @@ button.secondary{
       </button>
 
     </div>
+
 
     <div class="table-wrap">
 
@@ -580,7 +626,10 @@ button.secondary{
         <tbody id="tbody">
 
           <tr>
-            <td colspan="7" class="muted">
+            <td
+              colspan="7"
+              class="muted"
+            >
               Carregando...
             </td>
           </tr>
@@ -596,9 +645,12 @@ button.secondary{
 </main>
 
 
-<!-- MODAL -->
+<!-- MODAL DE CADASTRO / EDIÇÃO -->
 
-<div class="modal" id="modal">
+<div
+  class="modal"
+  id="modal"
+>
 
   <div class="modal-box">
 
@@ -618,7 +670,10 @@ button.secondary{
     </div>
 
 
-    <form class="form" id="form">
+    <form
+      class="form"
+      id="form"
+    >
 
       <input
         type="hidden"
@@ -690,7 +745,7 @@ button.secondary{
       </div>
 
 
-      <!-- CAPA -->
+      <!-- UPLOAD DE CAPA -->
 
       <div>
 
@@ -708,9 +763,9 @@ button.secondary{
 
           <small
             id="capaStatus"
-            class="cover-status"
+            class="cover-status-large"
           >
-            Selecione uma imagem para enviar como capa.
+            Selecione uma imagem para enviar.
           </small>
 
           <img
@@ -724,6 +779,8 @@ button.secondary{
       </div>
 
 
+      <!-- URL MANUAL -->
+
       <div>
 
         <label>
@@ -735,7 +792,14 @@ button.secondary{
           placeholder="https://..."
         >
 
-        <div class="cover-or">
+        <div
+          style="
+            text-align:center;
+            color:#7890b2;
+            font-size:11px;
+            margin-top:8px
+          "
+        >
           ou informe uma URL manualmente
         </div>
 
@@ -799,7 +863,11 @@ button.secondary{
 
       <div
         class="full"
-        style="display:flex;gap:8px;justify-content:flex-end"
+        style="
+          display:flex;
+          gap:8px;
+          justify-content:flex-end
+        "
       >
 
         <button
@@ -852,7 +920,10 @@ button.secondary{
 
     <button
       class="primary"
-      style="width:100%;margin-top:8px"
+      style="
+        width:100%;
+        margin-top:8px
+      "
       onclick="login()"
     >
       Entrar
@@ -902,9 +973,9 @@ const esc =
       );
 
 
-/* =========================
-   GET API
-========================= */
+/* =====================================================
+   GET
+===================================================== */
 
 async function get(path){
 
@@ -919,11 +990,15 @@ async function get(path){
 }
 
 
-/* =========================
-   WRITE API
-========================= */
+/* =====================================================
+   WRITE
+===================================================== */
 
-async function write(path,method,data){
+async function write(
+  path,
+  method,
+  data
+){
 
   if(!token){
 
@@ -935,6 +1010,7 @@ async function write(path,method,data){
       "Faça login administrativo."
     );
   }
+
 
   const r =
     await fetch(
@@ -955,10 +1031,12 @@ async function write(path,method,data){
       }
     );
 
+
   const d =
     await r
       .json()
       .catch(()=>({}));
+
 
   if(!r.ok){
 
@@ -968,35 +1046,38 @@ async function write(path,method,data){
     );
   }
 
+
   return d;
 }
 
 
-/* =========================
+/* =====================================================
    UPLOAD DA CAPA
-========================= */
+===================================================== */
 
 async function uploadCapa(){
 
   const file =
     $("capaFile").files[0];
 
+
   /*
-    Se nenhuma imagem foi selecionada,
-    mantém a URL existente/manual.
-  */
+   * Sem arquivo:
+   * mantém a URL atual/manual.
+   */
 
   if(!file){
 
-    return $("capa").value.trim();
+    return $("capa")
+      .value
+      .trim();
   }
 
 
-  /*
-    Limite de 10 MB.
-  */
-
-  if(file.size > 10 * 1024 * 1024){
+  if(
+    file.size >
+    10 * 1024 * 1024
+  ){
 
     throw Error(
       "A capa deve ter no máximo 10 MB."
@@ -1004,18 +1085,15 @@ async function uploadCapa(){
   }
 
 
-  /*
-    Verificação básica do formato.
-  */
-
-  const tiposPermitidos = [
+  const permitidos = [
     "image/jpeg",
     "image/png",
     "image/webp"
   ];
 
+
   if(
-    !tiposPermitidos.includes(file.type)
+    !permitidos.includes(file.type)
   ){
 
     throw Error(
@@ -1024,12 +1102,14 @@ async function uploadCapa(){
   }
 
 
-  $("capaStatus").textContent =
-    "Enviando capa...";
+  $("capaStatus")
+    .textContent =
+    "Enviando capa para o R2...";
 
 
   const formData =
     new FormData();
+
 
   formData.append(
     "file",
@@ -1076,10 +1156,6 @@ async function uploadCapa(){
   }
 
 
-  /*
-    Guarda a URL retornada pelo Worker.
-  */
-
   $("capa").value =
     data.url;
 
@@ -1087,11 +1163,14 @@ async function uploadCapa(){
   $("capaPreview").src =
     data.url;
 
-  $("capaPreview").style.display =
-    "block";
+
+  $("capaPreview")
+    .style
+    .display = "block";
 
 
-  $("capaStatus").textContent =
+  $("capaStatus")
+    .textContent =
     "✓ Capa enviada com sucesso.";
 
 
@@ -1099,9 +1178,9 @@ async function uploadCapa(){
 }
 
 
-/* =========================
-   PRÉVIA LOCAL DA CAPA
-========================= */
+/* =====================================================
+   PRÉVIA DA CAPA
+===================================================== */
 
 $("capaFile")
   .addEventListener(
@@ -1111,6 +1190,7 @@ $("capaFile")
       const file =
         this.files[0];
 
+
       if(!file){
 
         $("capaPreview")
@@ -1119,7 +1199,7 @@ $("capaFile")
 
         $("capaStatus")
           .textContent =
-          "Selecione uma imagem para enviar como capa.";
+          "Selecione uma imagem para enviar.";
 
         return;
       }
@@ -1132,6 +1212,7 @@ $("capaFile")
       $("capaPreview").src =
         localURL;
 
+
       $("capaPreview")
         .style
         .display = "block";
@@ -1139,14 +1220,181 @@ $("capaFile")
 
       $("capaStatus")
         .textContent =
-        "Imagem selecionada. Clique em Salvar para enviar ao servidor.";
+        "Imagem selecionada. Clique em Salvar para enviar.";
     }
   );
 
 
-/* =========================
-   LOAD
-========================= */
+/* =====================================================
+   UPLOAD RÁPIDO DE CAPA
+===================================================== */
+
+async function quickUploadCapa(id,file){
+
+  if(!token){
+
+    $("login")
+      .classList
+      .add("show");
+
+    return;
+  }
+
+
+  if(!file){
+    return;
+  }
+
+
+  if(
+    file.size >
+    10 * 1024 * 1024
+  ){
+
+    toast(
+      "A capa deve ter no máximo 10 MB."
+    );
+
+    return;
+  }
+
+
+  const permitidos = [
+    "image/jpeg",
+    "image/png",
+    "image/webp"
+  ];
+
+
+  if(
+    !permitidos.includes(file.type)
+  ){
+
+    toast(
+      "Use uma imagem JPG, PNG ou WEBP."
+    );
+
+    return;
+  }
+
+
+  try{
+
+    toast(
+      "Enviando capa..."
+    );
+
+
+    const formData =
+      new FormData();
+
+
+    formData.append(
+      "file",
+      file
+    );
+
+
+    const response =
+      await fetch(
+        API + "/api/capas",
+        {
+          method:"POST",
+
+          headers:{
+            "Authorization":
+              "Bearer " + token
+          },
+
+          body:formData
+        }
+      );
+
+
+    const upload =
+      await response
+        .json()
+        .catch(()=>({}));
+
+
+    if(!response.ok){
+
+      throw Error(
+        upload.error ||
+        "Falha no upload da capa."
+      );
+    }
+
+
+    if(!upload.url){
+
+      throw Error(
+        "O servidor não retornou a URL."
+      );
+    }
+
+
+    /*
+     * Atualiza somente a capa
+     * do jogo existente.
+     */
+
+    await write(
+      "/api/jogos/" + id,
+      "PUT",
+      {
+        nome:
+          getGame(id).nome,
+
+        categoria:
+          getGame(id).categoria,
+
+        plataforma:
+          getGame(id).plataforma,
+
+        ano:
+          getGame(id).ano,
+
+        capa_url:
+          upload.url,
+
+        descricao:
+          getGame(id).descricao
+      }
+    );
+
+
+    toast(
+      "✓ Capa atualizada com sucesso!"
+    );
+
+
+    await load();
+
+  }catch(e){
+
+    toast(
+      e.message
+    );
+  }
+}
+
+
+/* =====================================================
+   LOCALIZAR JOGO
+===================================================== */
+
+function getGame(id){
+
+  return games.find(
+    g => Number(g.id) === Number(id)
+  );
+}
+
+
+/* =====================================================
+   CARREGAR DADOS
+===================================================== */
 
 async function load(){
 
@@ -1190,14 +1438,16 @@ async function load(){
 
   }catch(e){
 
-    toast(e.message);
+    toast(
+      e.message
+    );
   }
 }
 
 
-/* =========================
+/* =====================================================
    CATEGORIAS
-========================= */
+===================================================== */
 
 function fillCats(){
 
@@ -1207,9 +1457,7 @@ function fillCats(){
     cats
       .map(
         c =>
-          `<option value="${esc(c.nome)}">
-            ${esc(c.nome)}
-          </option>`
+          `<option value="${esc(c.nome)}">${esc(c.nome)}</option>`
       )
       .join("");
 
@@ -1220,17 +1468,15 @@ function fillCats(){
     cats
       .map(
         c =>
-          `<option value="${esc(c.nome)}">
-            ${esc(c.nome)}
-          </option>`
+          `<option value="${esc(c.nome)}">${esc(c.nome)}</option>`
       )
       .join("");
 }
 
 
-/* =========================
-   RENDER
-========================= */
+/* =====================================================
+   RENDER DA TABELA
+===================================================== */
 
 function render(){
 
@@ -1239,6 +1485,7 @@ function render(){
       .value
       .toLowerCase();
 
+
   const c =
     $("cat").value;
 
@@ -1246,13 +1493,19 @@ function render(){
   const list =
     games.filter(
       g =>
-        (!q ||
+
+        (
+          !q ||
+
           String(g.nome || "")
             .toLowerCase()
             .includes(q)
-        ) &&
+        )
 
-        (!c ||
+        &&
+
+        (
+          !c ||
           g.categoria === c
         )
     );
@@ -1261,7 +1514,9 @@ function render(){
   $("tbody").innerHTML =
     list.length
 
-      ? list
+      ?
+
+        list
           .map(
             g => {
 
@@ -1286,54 +1541,119 @@ function render(){
               const capa =
                 g.capa_url
 
-                  ? `<img
-                       class="thumb"
-                       src="${esc(g.capa_url)}"
-                       alt="${esc(g.nome)}"
-                       onerror="this.style.display='none'"
-                     >`
+                  ?
 
-                  : "🎮";
+                    `
+                    <img
+                      class="thumb"
+                      src="${esc(g.capa_url)}"
+                      alt="${esc(g.nome)}"
+                      onerror="this.style.display='none'"
+                    >
+                    `
+
+                  :
+
+                    "🎮";
+
+
+              const statusCapa =
+                g.capa_url
+
+                  ?
+
+                    `
+                    <span class="cover-status ok">
+                      ✓ Com capa
+                    </span>
+                    `
+
+                  :
+
+                    `
+                    <span class="cover-status none">
+                      ○ Sem capa
+                    </span>
+                    `;
 
 
               return `
+
                 <tr>
 
                   <td>
+
                     ${capa}
+
+                    ${statusCapa}
+
                   </td>
 
+
                   <td>
-                    <b>${esc(g.nome)}</b>
+
+                    <b>
+                      ${esc(g.nome)}
+                    </b>
+
                     <br>
+
                     <small class="muted">
                       ${esc(g.plataforma || "PS4")}
                     </small>
+
                   </td>
+
 
                   <td>
                     ${esc(g.categoria || "-")}
                   </td>
 
+
                   <td>
                     ${g.ano || "-"}
                   </td>
+
 
                   <td class="stars">
                     ${stars}
                   </td>
 
+
                   <td>
+
                     ${
                       Number(g.jogado)
+
                         ? "✓ Jogado"
+
                         : "◷ Não jogado"
                     }
+
                   </td>
+
 
                   <td>
 
                     <div class="actions">
+
+                      <button
+                        class="cover-btn"
+                        onclick="chooseQuickCover(${g.id})"
+                        title="Adicionar ou trocar capa"
+                      >
+                        🖼️ Capa
+                      </button>
+
+
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        class="quick-file"
+                        id="quickFile-${g.id}"
+                        onchange="quickCoverSelected(${g.id},this.files[0])"
+                      >
+
 
                       <button
                         class="secondary"
@@ -1341,6 +1661,7 @@ function render(){
                       >
                         Editar
                       </button>
+
 
                       <button
                         class="danger"
@@ -1363,20 +1684,55 @@ function render(){
 
         `
         <tr>
+
           <td
             colspan="7"
             class="muted"
           >
             Nenhum jogo encontrado.
           </td>
+
         </tr>
         `;
 }
 
 
-/* =========================
+/* =====================================================
+   ESCOLHER CAPA RAPIDAMENTE
+===================================================== */
+
+function chooseQuickCover(id){
+
+  const input =
+    $("quickFile-" + id);
+
+  if(input){
+
+    input.click();
+  }
+}
+
+
+async function quickCoverSelected(
+  id,
+  file
+){
+
+  if(!file){
+    return;
+  }
+
+
+  await quickUploadCapa(
+    id,
+    file
+  );
+}
+
+
+/* =====================================================
    PESQUISA
-========================= */
+===================================================== */
 
 function focusSearch(){
 
@@ -1384,9 +1740,9 @@ function focusSearch(){
 }
 
 
-/* =========================
+/* =====================================================
    ESTRELAS
-========================= */
+===================================================== */
 
 function stars(){
 
@@ -1414,19 +1770,21 @@ function stars(){
 
 function setRating(n){
 
-  editRating = n;
+  editRating =
+    n;
 
   stars();
 }
 
 
-/* =========================
+/* =====================================================
    ABRIR MODAL
-========================= */
+===================================================== */
 
 function openModal(g=null){
 
-  $("modalTitle").textContent =
+  $("modalTitle")
+    .textContent =
     g
       ? "Editar jogo"
       : "Cadastrar jogo";
@@ -1472,17 +1830,9 @@ function openModal(g=null){
     Number(g?.nota || 0);
 
 
-  /*
-    Limpa seleção de arquivo
-  */
+  $("capaFile").value =
+    "";
 
-  $("capaFile").value = "";
-
-
-  /*
-    Se já existe capa,
-    mostra a prévia.
-  */
 
   if(g?.capa_url){
 
@@ -1505,7 +1855,7 @@ function openModal(g=null){
 
     $("capaStatus")
       .textContent =
-      "Selecione uma imagem para enviar como capa.";
+      "Selecione uma imagem para enviar.";
   }
 
 
@@ -1518,9 +1868,9 @@ function openModal(g=null){
 }
 
 
-/* =========================
+/* =====================================================
    FECHAR MODAL
-========================= */
+===================================================== */
 
 function closeModal(){
 
@@ -1530,16 +1880,14 @@ function closeModal(){
 }
 
 
-/* =========================
+/* =====================================================
    EDITAR
-========================= */
+===================================================== */
 
 async function edit(id){
 
   const g =
-    games.find(
-      x => x.id === id
-    );
+    getGame(id);
 
   if(g){
 
@@ -1548,19 +1896,19 @@ async function edit(id){
 }
 
 
-/* =========================
+/* =====================================================
    EXCLUIR
-========================= */
+===================================================== */
 
 async function removeGame(id){
 
   const g =
-    games.find(
-      x => x.id === id
-    );
+    getGame(id);
 
 
-  if(!g)return;
+  if(!g){
+    return;
+  }
 
 
   if(
@@ -1597,9 +1945,9 @@ async function removeGame(id){
 }
 
 
-/* =========================
-   SALVAR JOGO
-========================= */
+/* =====================================================
+   SALVAR
+===================================================== */
 
 $("form")
   .addEventListener(
@@ -1632,23 +1980,16 @@ $("form")
           "Salvando...";
 
 
-        /*
-          Primeiro envia a capa para o R2,
-          se o usuário selecionou uma.
-        */
-
         const capa_url =
           await uploadCapa();
 
 
-        /*
-          Dados do jogo
-        */
-
         const data = {
 
           nome:
-            $("nome").value.trim(),
+            $("nome")
+              .value
+              .trim(),
 
           categoria:
             $("categoria").value,
@@ -1663,7 +2004,9 @@ $("form")
             capa_url,
 
           descricao:
-            $("descricao").value.trim()
+            $("descricao")
+              .value
+              .trim()
         };
 
 
@@ -1687,10 +2030,6 @@ $("form")
           $("id").value;
 
 
-        /*
-          EDITAR
-        */
-
         if(id){
 
           await write(
@@ -1710,20 +2049,16 @@ $("form")
                 editRating,
 
               jogado:
-                $("jogado").checked,
+                $("jogado")
+                  .checked,
 
               favorito:
-                $("favorito").checked
+                $("favorito")
+                  .checked
             }
           );
 
-        }
-
-        /*
-          CADASTRAR
-        */
-
-        else{
+        }else{
 
           const r =
             await write(
@@ -1736,7 +2071,7 @@ $("form")
           if(!r.id){
 
             throw Error(
-              "O jogo foi cadastrado, mas o servidor não retornou o ID."
+              "O servidor não retornou o ID do jogo."
             );
           }
 
@@ -1751,10 +2086,12 @@ $("form")
                 editRating,
 
               jogado:
-                $("jogado").checked,
+                $("jogado")
+                  .checked,
 
               favorito:
-                $("favorito").checked
+                $("favorito")
+                  .checked
             }
           );
         }
@@ -1790,9 +2127,9 @@ $("form")
   );
 
 
-/* =========================
+/* =====================================================
    FILTROS
-========================= */
+===================================================== */
 
 $("search")
   .addEventListener(
@@ -1808,9 +2145,9 @@ $("cat")
   );
 
 
-/* =========================
+/* =====================================================
    LOGIN
-========================= */
+===================================================== */
 
 function login(){
 
@@ -1820,10 +2157,13 @@ function login(){
       .trim();
 
 
-  if(!t)return;
+  if(!t){
+    return;
+  }
 
 
-  token = t;
+  token =
+    t;
 
 
   sessionStorage.setItem(
@@ -1843,34 +2183,38 @@ function login(){
 }
 
 
-/* =========================
+/* =====================================================
    TOAST
-========================= */
+===================================================== */
 
 function toast(msg){
 
   $("toast")
-    .textContent = msg;
+    .textContent =
+    msg;
 
 
   $("toast")
     .style
-    .display = "block";
+    .display =
+    "block";
 
 
   setTimeout(
     () =>
       $("toast")
         .style
-        .display = "none",
+        .display =
+        "none",
+
     2800
   );
 }
 
 
-/* =========================
+/* =====================================================
    INICIALIZAÇÃO
-========================= */
+===================================================== */
 
 if(!token){
 
