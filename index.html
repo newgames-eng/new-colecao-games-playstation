@@ -1117,7 +1117,7 @@ $("coverFile").addEventListener("change",()=>{const f=$("coverFile").files[0];if
 async function uploadCover(){
  const f=$("coverFile").files[0];if(!coverId||!f)return toast("Selecione uma imagem.");
  try{
-  $("coverBtn").disabled=true;$("coverBtn").textContent="Enviando...";const form=new FormData();form.append("file",f);
+  $("coverBtn").disabled=true;$("coverBtn").textContent="Enviando...";const form=new FormData();form.append("jogo_id",String(coverId));form.append("file",f);
   const r=await fetch(API+"/api/capas",{method:"POST",headers:{Authorization:"Bearer "+adminToken},body:form}),d=await r.json().catch(()=>({}));
   if(!r.ok)throw Error(d.error||"Falha no upload.");
   const url=d.url||d.capa_url||d.capa;if(!url)throw Error("URL da capa não retornada.");
