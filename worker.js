@@ -132,6 +132,7 @@ export default {
       ) {
         const busca = url.searchParams.get("q") || "";
         const categoria = url.searchParams.get("categoria") || "";
+        const plataforma = url.searchParams.get("plataforma") || "";
 
         let sql = `
           SELECT
@@ -168,6 +169,13 @@ export default {
             AND c.nome = ?
           `;
           params.push(categoria);
+        }
+
+        if (plataforma) {
+          sql += `
+            AND UPPER(j.plataforma) = UPPER(?)
+          `;
+          params.push(plataforma);
         }
 
         sql += `
