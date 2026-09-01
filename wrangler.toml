@@ -6,3 +6,7 @@ compatibility_date = "2026-08-31"
 binding = "DB"
 database_name = "new-colecao-games-db"
 database_id = "f2757a92-3c0d-436f-a961-bca64181eee9"
+
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "new-colecao-games-capas"
