@@ -673,6 +673,10 @@ body{
 .platform.other{background:rgba(7,24,48,.9)!important;color:#dcecff!important}
 .completed{color:#ffd54a!important;font-weight:800}
 .completed .trophy{display:inline-block;font-size:13px;margin-left:4px;filter:drop-shadow(0 0 4px rgba(255,213,74,.4))}
+.completed-badge{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:8px;padding:6px 8px;border:1px solid rgba(255,213,74,.55);border-radius:7px;background:linear-gradient(135deg,rgba(255,213,74,.12),rgba(255,170,0,.05));color:#ffd54a;font-size:10px;font-weight:900;letter-spacing:.2px;box-shadow:0 0 12px rgba(255,213,74,.12),inset 0 0 10px rgba(255,213,74,.04)}
+.completed-badge .trophy-icon{font-size:17px;line-height:1;filter:drop-shadow(0 0 5px rgba(255,213,74,.65))}
+.completed-badge .trophy-text{font-size:10px}
+
 .detail-favorite{font-size:23px;font-weight:900;vertical-align:-2px;margin-right:5px}
 .detail-favorite.on{color:#ff3158;text-shadow:0 0 10px rgba(255,49,88,.42)}
 .detail-completed{border-color:#6d5720!important;background:rgba(55,42,7,.55)!important;color:#ffd54a!important;font-weight:800}
@@ -918,9 +922,9 @@ function selectedGameCategories(){
  return [...document.querySelectorAll('#gcat input[type="checkbox"]:checked')].map(i=>i.value);
 }
 function saveMeta(id){localStorage.setItem(metaKey(id),JSON.stringify({
- edition:$("gedition").value.trim(),date:$("gdate").value,location:$("glocation").value.trim(),notes:$("gnotes").value.trim(),
- borrowed:$("gborrowed").checked,borrowedTo:$("gborrowedTo").value.trim(),borrowedDate:$("gborrowedDate").value,returnDate:$("greturnDate").value,
- rentalStatus:$("grentalStatus").value,copies:Math.max(1,Number($("gcopies").value||1))
+ edition:$('"'"'gedition'"'"').value.trim(),date:$('"'"'gdate'"'"').value,location:$('"'"'glocation'"'"').value.trim(),notes:$('"'"'gnotes'"'"').value.trim(),
+ borrowed:$('"'"'gborrowed'"'"').checked,borrowedTo:$('"'"'gborrowedTo'"'"').value.trim(),borrowedDate:$('"'"'gborrowedDate'"'"').value,returnDate:$('"'"'greturnDate'"'"').value,
+ rentalStatus:$('"'"'grentalStatus'"'"').value,copies:Math.max(1,Number($('"'"'gcopies'"'"').value||1)),zerado:$('"'"'gzerado'"'"').checked
 }))}
 async function api(path,opt={}){const r=await fetch(API+path,opt),d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error||"Falha na API.");return d}
 async function load(){
@@ -972,7 +976,7 @@ function render(){
  let list=filteredGames();const s=$("sort").value;
  if(s==="name")list.sort((a,b)=>a.nome.localeCompare(b.nome));if(s==="category")list.sort((a,b)=>(a.categoria||"").localeCompare(b.categoria||"")||a.nome.localeCompare(b.nome));if(s==="rating")list.sort((a,b)=>Number(b.nota)-Number(a.nota));if(s==="recent")list.sort((a,b)=>Number(b.id)-Number(a.id));
  $("result").textContent=list.length+" jogo(s)";
- $("grid").innerHTML=list.map(g=>`<div class="card" onclick="event.stopPropagation();openDetail(${g.id})"><div class="cover">${g.capa_url?`<img src="${esc(g.capa_url)}" alt="${esc(g.nome)}">`:`<div class="placeholder"><span class="big">${ICONS[g.categoria]||"🎮"}</span>CAPA DO JOGO</div>`}</div><div class="card-body"><div class="platform ${String(g.plataforma||"PS4").toUpperCase()==="PS5"?"ps5":String(g.plataforma||"PS4").toUpperCase()==="PS4"?"ps4":"other"}">🎮 ${esc(g.plataforma||"PS4")}</div><div class="category-list">${getGameCategories(g).map(c=>`<span class="category-chip">${ICONS[c]||"🎮"} ${esc(c)}</span>`).join("")}</div><h3>${esc(g.nome)}</h3><div class="meta">${g.ano||"Ano não informado"}</div><div class="stars">${"★★★★★".split("").map((x,i)=>`<span class="star ${i<Number(g.nota||0)?"on":""}">${x}</span>`).join("")}</div><div class="status ${getMeta(g.id).borrowed?"borrowed":(getMeta(g.id).zerado?"completed":(Number(g.jogado)?"played":"notplayed"))}">${getMeta(g.id).borrowed?"📤 EMPRESTADO":(getMeta(g.id).zerado?"🏆 ZERADO":(Number(g.jogado)?"✓ JOGADO":"◷ NÃO JOGADO"))} ${getMeta(g.id).zerado?'<span class="trophy">🏆</span>':''}<span class="fav ${Number(g.favorito)?"on":""}">${Number(g.favorito)?"♥":"♡"}</span></div></div></div>`).join("")||`<div class="empty">Nenhum jogo encontrado.</div>`;
+ $("grid").innerHTML=list.map(g=>`<div class="card" onclick="event.stopPropagation();openDetail(${g.id})"><div class="cover">${g.capa_url?`<img src="${esc(g.capa_url)}" alt="${esc(g.nome)}">`:`<div class="placeholder"><span class="big">${ICONS[g.categoria]||"🎮"}</span>CAPA DO JOGO</div>`}</div><div class="card-body"><div class="platform ${String(g.plataforma||"PS4").toUpperCase()==="PS5"?"ps5":String(g.plataforma||"PS4").toUpperCase()==="PS4"?"ps4":"other"}">🎮 ${esc(g.plataforma||"PS4")}</div><div class="category-list">${getGameCategories(g).map(c=>`<span class="category-chip">${ICONS[c]||"🎮"} ${esc(c)}</span>`).join("")}</div><h3>${esc(g.nome)}</h3><div class="meta">${g.ano||"Ano não informado"}</div><div class="stars">${"★★★★★".split("").map((x,i)=>`<span class="star ${i<Number(g.nota||0)?"on":""}">${x}</span>`).join("")}</div><div class="status ${getMeta(g.id).borrowed?"borrowed":(Number(g.jogado)?"played":"notplayed")}">${getMeta(g.id).borrowed?"📤 EMPRESTADO":(Number(g.jogado)?"✓ JOGADO":"◷ NÃO JOGADO")}<span class="fav ${Number(g.favorito)?"on":""}">${Number(g.favorito)?"♥":"♡"}</span></div>${getMeta(g.id).zerado?'<div class="completed-badge"><span class="trophy-icon">🏆</span><span class="trophy-text">JOGO ZERADO</span></div>':''}</div></div>`).join("")||`<div class="empty">Nenhum jogo encontrado.</div>`;
 }
 function setFilter(x){filter=x;special="";renderNav();renderCategoryFilters();render()}
 function setSpecial(x){special=x;filter="";renderNav();renderCategoryFilters();render()}
