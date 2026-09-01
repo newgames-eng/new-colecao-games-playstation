@@ -53,7 +53,7 @@ button{cursor:pointer}
 .card-body{padding:10px}.category{font-size:9px;color:#2f9aff;text-transform:uppercase;font-weight:bold}
 .card h3{font-size:13px;margin:5px 0;min-height:32px}.meta{font-size:10px;color:#7187a8}
 .stars{margin-top:7px}.star{color:#4a6387}.star.on{color:var(--blue)}
-.status{font-size:8px;padding:5px 0;border-radius:4px}.played{color:var(--green)}.notplayed{color:var(--yellow)}
+.status{font-size:8px;padding:5px 0;border-radius:4px}.played{color:var(--green)}.notplayed{color:var(--yellow)}.borrowed{color:#ff8a3d}.borrowed-badge{color:#ff9b62!important;border-color:#74401f!important;background:#24160d!important}
 .fav{float:right;color:#8094b4}.fav.on{color:var(--red)}
 .empty{padding:45px;text-align:center;color:var(--muted);grid-column:1/-1;border:1px dashed #23466f;border-radius:10px}
 .admin{display:none}.admin.open{display:block}.public.hidden{display:none}
@@ -181,6 +181,10 @@ button{cursor:pointer}
         <div id="detailBadges" class="detail-badges"></div><div id="detailStars" class="stars"></div>
         <p id="detailDesc" class="detail-desc"></p>
         <div class="collection-info"><h3>📁 Dados da coleção</h3><div class="collection-grid">
+          <div class="collection-item">Status de empréstimo<b id="infoBorrowed">Não emprestado</b></div>
+          <div class="collection-item">Emprestado para<b id="infoBorrowedTo">Não informado</b></div>
+          <div class="collection-item">Data do empréstimo<b id="infoBorrowedDate">Não informado</b></div>
+          <div class="collection-item">Previsão de devolução<b id="infoReturnDate">Não informado</b></div>
           <div class="collection-item">Edição / mídia<b id="infoEdition">Não informado</b></div>
           <div class="collection-item">Data de aquisição<b id="infoDate">Não informado</b></div>
           <div class="collection-item">Localização<b id="infoLocation">Não informado</b></div>
@@ -205,6 +209,15 @@ button{cursor:pointer}
       <div class="full"><label>Descrição</label><textarea id="gdesc"></textarea></div>
       <div class="full"><label>Classificação</label><div id="grating" class="rating-buttons"></div></div>
       <label><input type="checkbox" id="gplayed"> ✓ Jogado</label><label><input type="checkbox" id="gfav"> ♥ Favorito</label>
+      <div class="full collection-info">
+        <h3>📤 Controle de empréstimo</h3>
+        <div class="collection-grid">
+          <div><label><input type="checkbox" id="gborrowed"> 📤 Jogo emprestado</label></div>
+          <div><label>Para quem foi emprestado</label><input id="gborrowedTo" placeholder="Nome da pessoa"></div>
+          <div><label>Data do empréstimo</label><input id="gborrowedDate" type="date"></div>
+          <div><label>Previsão de devolução</label><input id="greturnDate" type="date"></div>
+        </div>
+      </div>
       <div class="full collection-info">
         <h3>📁 Dados pessoais da coleção</h3>
         <div class="collection-grid">
@@ -247,7 +260,10 @@ function setGameCategoriesSelected(list){
 function selectedGameCategories(){
  return [...document.querySelectorAll('#gcat input[type="checkbox"]:checked')].map(i=>i.value);
 }
-function saveMeta(id){localStorage.setItem(metaKey(id),JSON.stringify({edition:$("gedition").value.trim(),date:$("gdate").value,location:$("glocation").value.trim(),notes:$("gnotes").value.trim()}))}
+function saveMeta(id){localStorage.setItem(metaKey(id),JSON.stringify({
+ edition:$("gedition").value.trim(),date:$("gdate").value,location:$("glocation").value.trim(),notes:$("gnotes").value.trim(),
+ borrowed:$("gborrowed").checked,borrowedTo:$("gborrowedTo").value.trim(),borrowedDate:$("gborrowedDate").value,returnDate:$("greturnDate").value
+}))}
 async function api(path,opt={}){const r=await fetch(API+path,opt),d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error||"Falha na API.");return d}
 async function load(){
  try{
@@ -298,7 +314,7 @@ function render(){
  let list=filteredGames();const s=$("sort").value;
  if(s==="name")list.sort((a,b)=>a.nome.localeCompare(b.nome));if(s==="category")list.sort((a,b)=>(a.categoria||"").localeCompare(b.categoria||"")||a.nome.localeCompare(b.nome));if(s==="rating")list.sort((a,b)=>Number(b.nota)-Number(a.nota));if(s==="recent")list.sort((a,b)=>Number(b.id)-Number(a.id));
  $("result").textContent=list.length+" jogo(s)";
- $("grid").innerHTML=list.map(g=>`<div class="card" onclick="openDetail(${g.id})"><div class="cover"><div class="platform">◉ ${esc(g.plataforma||"PS4")}</div>${g.capa_url?`<img src="${esc(g.capa_url)}" alt="${esc(g.nome)}">`:`<div class="placeholder"><span class="big">${ICONS[g.categoria]||"🎮"}</span>CAPA DO JOGO</div>`}</div><div class="card-body"><div class="category-list">${getGameCategories(g).map(c=>`<span class="category-chip">${ICONS[c]||"🎮"} ${esc(c)}</span>`).join("")}</div><h3>${esc(g.nome)}</h3><div class="meta">${g.ano||"Ano não informado"}</div><div class="stars">${"★★★★★".split("").map((x,i)=>`<span class="star ${i<Number(g.nota||0)?"on":""}">${x}</span>`).join("")}</div><div class="status ${Number(g.jogado)?"played":"notplayed"}">${Number(g.jogado)?"✓ JOGADO":"◷ NÃO JOGADO"} <span class="fav ${Number(g.favorito)?"on":""}">${Number(g.favorito)?"♥":"♡"}</span></div></div></div>`).join("")||`<div class="empty">Nenhum jogo encontrado.</div>`;
+ $("grid").innerHTML=list.map(g=>`<div class="card" onclick="openDetail(${g.id})"><div class="cover"><div class="platform">◉ ${esc(g.plataforma||"PS4")}</div>${g.capa_url?`<img src="${esc(g.capa_url)}" alt="${esc(g.nome)}">`:`<div class="placeholder"><span class="big">${ICONS[g.categoria]||"🎮"}</span>CAPA DO JOGO</div>`}</div><div class="card-body"><div class="category-list">${getGameCategories(g).map(c=>`<span class="category-chip">${ICONS[c]||"🎮"} ${esc(c)}</span>`).join("")}</div><h3>${esc(g.nome)}</h3><div class="meta">${g.ano||"Ano não informado"}</div><div class="stars">${"★★★★★".split("").map((x,i)=>`<span class="star ${i<Number(g.nota||0)?"on":""}">${x}</span>`).join("")}</div><div class="status ${getMeta(g.id).borrowed?"borrowed":(Number(g.jogado)?"played":"notplayed")}">${getMeta(g.id).borrowed?"📤 EMPRESTADO":(Number(g.jogado)?"✓ JOGADO":"◷ NÃO JOGADO")} <span class="fav ${Number(g.favorito)?"on":""}">${Number(g.favorito)?"♥":"♡"}</span></div></div></div>`).join("")||`<div class="empty">Nenhum jogo encontrado.</div>`;
 }
 function setFilter(x){filter=x;special="";renderNav();renderCategoryFilters();render()}
 function setSpecial(x){special=x;filter="";renderNav();renderCategoryFilters();render()}
@@ -325,7 +341,7 @@ function renderAdmin(){
  const q=$("adminSearch").value.toLowerCase().trim(),c=$("adminCat").value;
  const list=games.filter(g=>{const has=!!String(g.capa_url||"").trim();return(!q||g.nome.toLowerCase().includes(q))&&(!c||getGameCategories(g).includes(c))&&(adminFilter==="all"||(adminFilter==="with"&&has)||(adminFilter==="without"&&!has))});
  $("adminResult").textContent=list.length+" jogo(s)";
- $("adminBody").innerHTML=list.map(g=>{const has=!!String(g.capa_url||"").trim();return`<tr><td>${has?`<img class="thumb" src="${esc(g.capa_url)}">`:"🎮"}</td><td><b>${esc(g.nome)}</b><br><small class="muted">${esc(g.plataforma||"PS4")}</small></td><td><div class="category-list">${getGameCategories(g).map(c=>`<span class="category-chip">${ICONS[c]||"🎮"} ${esc(c)}</span>`).join("")}</div></td><td>${g.ano||"-"}</td><td class="stars">${"★★★★★".split("").map((x,i)=>`<span class="star ${i<Number(g.nota||0)?"on":""}">${x}</span>`).join("")}</td><td>${Number(g.jogado)?"✓ Jogado":"◷ Não jogado"}</td><td><div class="actions"><button class="btn" onclick="event.stopPropagation();openDetail(${g.id})">Ver</button><button class="btn" onclick="event.stopPropagation();openCover(${g.id})">${has?"🔄 Capa":"🖼️ Capa"}</button><button class="btn" onclick="event.stopPropagation();gameModal(${g.id})">Editar</button><button class="btn danger" onclick="event.stopPropagation();delGame(${g.id})">Excluir</button></div></td></tr>`}).join("")||`<tr><td colspan="7" class="muted">Nenhum jogo encontrado.</td></tr>`
+ $("adminBody").innerHTML=list.map(g=>{const has=!!String(g.capa_url||"").trim();return`<tr><td>${has?`<img class="thumb" src="${esc(g.capa_url)}">`:"🎮"}</td><td><b>${esc(g.nome)}</b><br><small class="muted">${esc(g.plataforma||"PS4")}</small></td><td><div class="category-list">${getGameCategories(g).map(c=>`<span class="category-chip">${ICONS[c]||"🎮"} ${esc(c)}</span>`).join("")}</div></td><td>${g.ano||"-"}</td><td class="stars">${"★★★★★".split("").map((x,i)=>`<span class="star ${i<Number(g.nota||0)?"on":""}">${x}</span>`).join("")}</td><td>${getMeta(g.id).borrowed?'<span class="borrowed">📤 Emprestado</span>':(Number(g.jogado)?"✓ Jogado":"◷ Não jogado")}</td><td><div class="actions"><button class="btn" onclick="event.stopPropagation();openDetail(${g.id})">Ver</button><button class="btn" onclick="event.stopPropagation();openCover(${g.id})">${has?"🔄 Capa":"🖼️ Capa"}</button><button class="btn" onclick="event.stopPropagation();gameModal(${g.id})">Editar</button><button class="btn danger" onclick="event.stopPropagation();delGame(${g.id})">Excluir</button></div></td></tr>`}).join("")||`<tr><td colspan="7" class="muted">Nenhum jogo encontrado.</td></tr>`
 }
 function renderStatsPanel(){
  const platforms={};const cats={};
@@ -340,8 +356,14 @@ function openDetail(id){
  $("detailCover").innerHTML=g.capa_url?`<img src="${esc(g.capa_url)}" alt="${esc(g.nome)}">`:`<div class="placeholder"><span class="big">${ICONS[g.categoria]||"🎮"}</span>CAPA DO JOGO</div>`;
  $("detailStars").innerHTML="★★★★★".split("").map((x,i)=>`<span class="star ${i<Number(g.nota||0)?"on":""}">${x}</span>`).join("");
  $("detailDesc").textContent=g.descricao||"Este jogo ainda não possui uma descrição cadastrada.";
- $("detailBadges").innerHTML=`<span class="detail-badge">${Number(g.jogado)?"✓ Jogado":"◷ Não jogado"}</span><span class="detail-badge">${Number(g.favorito)?"♥ Favorito":"♡ Não favorito"}</span>`;
- const m=getMeta(id);$("infoEdition").textContent=m.edition||"Não informado";$("infoDate").textContent=m.date?new Date(m.date+"T00:00:00").toLocaleDateString("pt-BR"):"Não informado";$("infoLocation").textContent=m.location||"Não informado";$("infoNotes").textContent=m.notes||"Não informado";
+ $("detailBadges").innerHTML=`<span class="detail-badge">${Number(g.jogado)?"✓ Jogado":"◷ Não jogado"}</span><span class="detail-badge">${Number(g.favorito)?"♥ Favorito":"♡ Não favorito"}</span>${m.borrowed?'<span class="detail-badge borrowed-badge">📤 Emprestado</span>':""}`;
+ const m=getMeta(id);
+$("infoBorrowed").textContent=m.borrowed?"📤 Emprestado":"Não emprestado";
+$("infoBorrowed").className=m.borrowed?"borrowed":"";
+$("infoBorrowedTo").textContent=m.borrowed?(m.borrowedTo||"Pessoa não informada"):"—";
+$("infoBorrowedDate").textContent=m.borrowed&&m.borrowedDate?new Date(m.borrowedDate+"T00:00:00").toLocaleDateString("pt-BR"):"—";
+$("infoReturnDate").textContent=m.borrowed&&m.returnDate?new Date(m.returnDate+"T00:00:00").toLocaleDateString("pt-BR"):"—";
+$("infoEdition").textContent=m.edition||"Não informado";$("infoDate").textContent=m.date?new Date(m.date+"T00:00:00").toLocaleDateString("pt-BR"):"Não informado";$("infoLocation").textContent=m.location||"Não informado";$("infoNotes").textContent=m.notes||"Não informado";
  const ab=$("detailAdminBtn");if(adminToken){ab.style.display="inline-block";ab.onclick=()=>{closeDetail();gameModal(id)}}else ab.style.display="none";
  $("detailModal").classList.add("open");
 }
@@ -350,7 +372,9 @@ function drawRating(){$("grating").innerHTML=[1,2,3,4,5].map(n=>`<button type="b
 function gameModal(id=null){
  editingId=id;const g=id?games.find(x=>Number(x.id)===Number(id)):null;const m=id?getMeta(id):{};
  $("gmTitle").textContent=g?"Editar jogo":"Cadastrar jogo";$("gid").value=g?.id||"";$("gname").value=g?.nome||"";setGameCategoriesSelected(g?getGameCategories(g):[]);$("gplatform").value=g?.plataforma||"PS4";$("gyear").value=g?.ano||"";$("gcover").value=g?.capa_url||"";$("gdesc").value=g?.descricao||"";$("gplayed").checked=Number(g?.jogado)===1;$("gfav").checked=Number(g?.favorito)===1;
- $("gedition").value=m.edition||"";$("gdate").value=m.date||"";$("glocation").value=m.location||"";$("gnotes").value=m.notes||"";rating=Number(g?.nota||0);drawRating();$("gameModal").classList.add("open")
+ $("gedition").value=m.edition||"";$("gdate").value=m.date||"";$("glocation").value=m.location||"";$("gnotes").value=m.notes||"";
+ $("gborrowed").checked=!!m.borrowed;$("gborrowedTo").value=m.borrowedTo||"";$("gborrowedDate").value=m.borrowedDate||"";$("greturnDate").value=m.returnDate||"";
+ rating=Number(g?.nota||0);drawRating();$("gameModal").classList.add("open")
 }
 function closeGameModal(){$("gameModal").classList.remove("open")}
 $("gameForm").addEventListener("submit",async e=>{
