@@ -704,7 +704,14 @@ body{
   </div>
   <div class="tools">
     <div class="search-box"><input id="search" placeholder="🔎 Pesquisar jogo..." type="search"></div>
-    <select id="sort"><option value="recent">Mais Recentes</option><option value="name">Nome A-Z</option><option value="rating">Melhor Avaliados</option><option value="category">Categoria</option></select>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <select id="platformFilter" aria-label="Filtrar por plataforma" style="flex:1;min-width:180px">
+        <option value="">Todas as plataformas</option>
+        <option value="PS4">PS4</option>
+        <option value="PS5">PS5</option>
+      </select>
+      <select id="sort" style="flex:1;min-width:180px"><option value="recent">Mais Recentes</option><option value="name">Nome A-Z</option><option value="rating">Melhor Avaliados</option><option value="category">Categoria</option></select>
+    </div>
   </div>
   <div class="filters" id="filters"></div>
   <div class="section-head"><h2>🎮 Minha Coleção</h2><div class="result" id="result"></div></div>
@@ -930,7 +937,9 @@ function saveMeta(id){localStorage.setItem(metaKey(id),JSON.stringify({
 async function api(path,opt={}){const r=await fetch(API+path,opt),d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error||"Falha na API.");return d}
 async function load(){
  try{
-  const[g,c,d]=await Promise.all([api("/api/jogos"),api("/api/categorias"),api("/api/dashboard")]);
+  const platform=$("platformFilter")?.value||"";
+  const jogosPath=platform?"/api/jogos?plataforma="+encodeURIComponent(platform):"/api/jogos";
+  const[g,c,d]=await Promise.all([api(jogosPath),api("/api/categorias"),api("/api/dashboard")]);
   games=g.jogos||[];categories=c.categorias||[];
   $("stTotal").textContent=d.jogos??games.length;$("stPlayed").textContent=d.jogados??0;$("stNot").textContent=Math.max(0,(d.jogos??games.length)-(d.jogados??0));
   $("stAvg").textContent=games.length?(games.reduce((s,x)=>s+Number(x.nota||0),0)/games.length).toFixed(1):"0.0";$("stFav").textContent=d.favoritos??0;
@@ -1157,6 +1166,7 @@ async function uploadCover(){
 }
 function toast(m){$("toast").textContent=m;$("toast").style.display="block";setTimeout(()=>$("toast").style.display="none",2800)}
 $("adminSearch").addEventListener("input",renderAdmin);$("adminCat").addEventListener("change",renderAdmin);$("rentalSearch").addEventListener("input",renderRentals);$("rentalFilter").addEventListener("change",renderRentals);$("search").addEventListener("input",render);$("sort").addEventListener("change",render);
+$("platformFilter").addEventListener("change",load);
 document.addEventListener("keydown",e=>{
  if(e.key==="Escape")document.querySelectorAll(".modal").forEach(m=>m.classList.remove("open"));
  if(e.key==="Enter"&&$("loginModal").classList.contains("open")&&document.activeElement===$("token"))login();
