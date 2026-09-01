@@ -416,7 +416,7 @@ $("gameForm").addEventListener("submit",async e=>{
  }catch(e){toast(e.message)}
 })
 async function write(path,method,data){if(!adminToken)throw Error("Sessão expirada.");const r=await fetch(API+path,{method,headers:{"Content-Type":"application/json",Authorization:"Bearer "+adminToken},body:JSON.stringify(data)});const d=await r.json().catch(()=>({}));if(r.status===401){logout();throw Error("Sessão administrativa expirada.")}if(!r.ok)throw Error(d.error||"Operação não autorizada.");return d}
-async async function delGame(id){const g=games.find(x=>Number(x.id)===Number(id));if(!g||!confirm(`Excluir "${g.nome}"? Essa ação não pode ser desfeita.`))return;try{await write("/api/jogos/"+id,"DELETE");localStorage.removeItem(metaKey(id));await load();openAdmin();toast("Jogo excluído.")}catch(e){toast(e.message)}}
+async function delGame(id){const g=games.find(x=>Number(x.id)===Number(id));if(!g||!confirm(`Excluir "${g.nome}"? Essa ação não pode ser desfeita.`))return;try{await write("/api/jogos/"+id,"DELETE");localStorage.removeItem(metaKey(id));await load();openAdmin();toast("Jogo excluído.")}catch(e){toast(e.message)}}
 function openCover(id){
  const g=games.find(x=>Number(x.id)===Number(id));if(!g)return;coverId=id;$("coverName").textContent=g.nome;$("coverFile").value="";$("coverStatus").textContent="";
  if(g.capa_url){$("coverPreview").src=g.capa_url;$("coverPreview").style.display="block";$("coverEmpty").style.display="none"}else{$("coverPreview").style.display="none";$("coverEmpty").style.display="block"}$("coverModal").classList.add("open")
