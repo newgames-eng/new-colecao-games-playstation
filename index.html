@@ -384,6 +384,274 @@ body{
   .stats{grid-template-columns:1fr!important}
 }
 
+
+/* ==========================================================
+   NEW GAMES — V12.2
+   Estante de jogos + capas em proporção de caixa PS4/PS5
+   ========================================================== */
+
+/* Área da coleção vira uma estante visual */
+#gamesGrid,
+.games-grid,
+.grid{
+  position:relative;
+  padding:30px 18px 34px!important;
+  border:1px solid rgba(117,76,35,.55)!important;
+  border-radius:12px!important;
+  background:
+    linear-gradient(to bottom,rgba(0,0,0,.16),rgba(0,0,0,.08)),
+    repeating-linear-gradient(
+      90deg,
+      rgba(105,64,28,.14) 0,
+      rgba(105,64,28,.14) 2px,
+      transparent 2px,
+      transparent 96px
+    ),
+    linear-gradient(180deg,#4a2b14 0%,#633b1c 44%,#3a210f 100%)!important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,190,90,.08),
+    inset 0 18px 35px rgba(0,0,0,.22),
+    0 18px 40px rgba(0,0,0,.25)!important;
+}
+
+/* Prateleiras horizontais */
+#gamesGrid:before,
+.games-grid:before,
+.grid:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  background:
+    linear-gradient(to bottom,
+      transparent 0,
+      transparent 31.5%,
+      rgba(20,10,4,.75) 31.5%,
+      rgba(124,75,32,.95) 32.8%,
+      rgba(211,142,65,.75) 33.6%,
+      rgba(42,21,8,.95) 35.1%,
+      transparent 35.8%,
+      transparent 65.2%,
+      rgba(20,10,4,.75) 65.2%,
+      rgba(124,75,32,.95) 66.5%,
+      rgba(211,142,65,.72) 67.2%,
+      rgba(42,21,8,.95) 68.7%,
+      transparent 69.4%
+    );
+}
+
+/* Pequenos focos de luz sobre cada prateleira */
+#gamesGrid:after,
+.games-grid:after,
+.grid:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  background:
+    radial-gradient(90px 55px at 9% 3%,rgba(255,218,150,.18),transparent 72%),
+    radial-gradient(90px 55px at 27% 3%,rgba(255,218,150,.15),transparent 72%),
+    radial-gradient(90px 55px at 45% 3%,rgba(255,218,150,.15),transparent 72%),
+    radial-gradient(90px 55px at 63% 3%,rgba(255,218,150,.15),transparent 72%),
+    radial-gradient(90px 55px at 81% 3%,rgba(255,218,150,.15),transparent 72%);
+}
+
+/* Cards ficam sobre a madeira */
+#gamesGrid > *,
+.games-grid > *,
+.grid > *{
+  position:relative;
+  z-index:1;
+}
+
+/* Caixa física do jogo */
+.card{
+  overflow:hidden!important;
+  background:linear-gradient(180deg,#07182e,#041022)!important;
+  border:2px solid rgba(12,19,28,.92)!important;
+  border-radius:5px!important;
+  box-shadow:
+    0 7px 13px rgba(0,0,0,.55),
+    0 0 0 1px rgba(255,255,255,.08),
+    inset 0 0 0 1px rgba(24,112,210,.32)!important;
+  transform-origin:center bottom;
+}
+
+/* Capa com proporção vertical de caixa física */
+.card .cover{
+  position:relative;
+  aspect-ratio:2 / 3!important;
+  height:auto!important;
+  min-height:0!important;
+  background:#071a33!important;
+  overflow:hidden!important;
+}
+
+/* Não distorcer as capas */
+.card .cover img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:center!important;
+  display:block!important;
+}
+
+/* Faixa superior PS4/PS5 */
+.card .cover:after{
+  content:"";
+  position:absolute;
+  left:0;right:0;top:0;
+  height:17%;
+  background:linear-gradient(180deg,rgba(255,255,255,.11),transparent);
+  pointer-events:none;
+}
+
+/* Base do card */
+.card .card-body{
+  min-height:76px;
+  background:linear-gradient(180deg,#061427,#030b18)!important;
+  padding:9px 10px!important;
+}
+
+/* Nome do jogo mais parecido com etiqueta de prateleira */
+.card .game-title{
+  font-size:12px!important;
+  line-height:1.25!important;
+  font-weight:800!important;
+  color:#f4f7ff!important;
+}
+
+/* Sombra de contato com a prateleira */
+.card:after{
+  content:"";
+  position:absolute;
+  left:7%;right:7%;bottom:-9px;
+  height:12px;
+  background:rgba(0,0,0,.55);
+  filter:blur(5px);
+  z-index:-1;
+}
+
+/* Hover: jogo sai levemente da prateleira */
+.card:hover{
+  transform:translateY(-7px) scale(1.015)!important;
+  border-color:#1685ff!important;
+  box-shadow:
+    0 15px 25px rgba(0,0,0,.62),
+    0 0 20px rgba(0,119,255,.18)!important;
+}
+
+/* Em telas menores, mantém a proporção das capas */
+@media(max-width:1200px){
+  #gamesGrid,.games-grid,.grid{padding:25px 13px 30px!important}
+}
+@media(max-width:900px){
+  #gamesGrid,.games-grid,.grid{padding:22px 10px 27px!important}
+}
+@media(max-width:600px){
+  #gamesGrid,.games-grid,.grid{padding:18px 7px 23px!important}
+  .card .card-body{min-height:68px!important;padding:7px!important}
+  .card .game-title{font-size:10px!important}
+}
+
+
+/* ==========================================================
+   NEW GAMES — V12.3
+   Base estrutural entre as prateleiras
+   ========================================================== */
+
+/* Transformamos cada separação em uma verdadeira base de madeira,
+   com espessura, frente, sombra e profundidade. */
+#gamesGrid,
+.games-grid,
+.grid{
+  background:
+    linear-gradient(to bottom,
+      transparent 0,
+      transparent 30.8%,
+      rgba(24,11,4,.96) 30.8%,
+      rgba(91,52,20,.98) 31.2%,
+      rgba(174,105,43,.98) 31.65%,
+      rgba(218,145,62,.92) 32.05%,
+      rgba(73,38,13,.99) 32.65%,
+      rgba(17,9,4,.98) 33.05%,
+      transparent 33.35%,
+      transparent 64.1%,
+      rgba(24,11,4,.96) 64.1%,
+      rgba(91,52,20,.98) 64.5%,
+      rgba(174,105,43,.98) 64.95%,
+      rgba(218,145,62,.92) 65.35%,
+      rgba(73,38,13,.99) 65.95%,
+      rgba(17,9,4,.98) 66.35%,
+      transparent 66.65%
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(105,64,28,.14) 0,
+      rgba(105,64,28,.14) 2px,
+      transparent 2px,
+      transparent 96px
+    ),
+    linear-gradient(180deg,#4a2b14 0%,#633b1c 44%,#3a210f 100%)!important;
+}
+
+/* A frente da madeira dá a impressão de uma prateleira espessa. */
+#gamesGrid:before,
+.games-grid:before,
+.grid:before{
+  background:
+    linear-gradient(to bottom,
+      transparent 0,
+      transparent 30.55%,
+      rgba(8,4,2,.72) 30.55%,
+      rgba(44,23,9,.96) 31.05%,
+      rgba(132,76,29,.98) 31.38%,
+      rgba(221,148,63,.95) 31.75%,
+      rgba(116,64,23,.98) 32.05%,
+      rgba(39,19,7,.99) 32.72%,
+      rgba(7,4,2,.9) 33.12%,
+      transparent 33.35%,
+      transparent 63.85%,
+      rgba(8,4,2,.72) 63.85%,
+      rgba(44,23,9,.96) 64.35%,
+      rgba(132,76,29,.98) 64.68%,
+      rgba(221,148,63,.95) 65.05%,
+      rgba(116,64,23,.98) 65.35%,
+      rgba(39,19,7,.99) 66.02%,
+      rgba(7,4,2,.9) 66.42%,
+      transparent 66.65%
+    );
+}
+
+/* Pequena sombra logo abaixo da base: os jogos parecem realmente apoiados. */
+#gamesGrid > *,
+.games-grid > *,
+.grid > *{
+  filter:drop-shadow(0 5px 3px rgba(0,0,0,.34));
+}
+
+/* A base fica visualmente à frente do fundo, sem cobrir os cards. */
+.card{
+  margin-bottom:4px;
+}
+
+/* Se houver somente uma fileira, não mostrar bases artificiais no meio. */
+.grid:has(> :nth-child(-n+5):last-child):before,
+.games-grid:has(> :nth-child(-n+5):last-child):before,
+#gamesGrid:has(> :nth-child(-n+5):last-child):before{
+  background:transparent;
+}
+
+/* Em telas menores, aumentamos a presença da madeira sem exagerar. */
+@media(max-width:900px){
+  #gamesGrid,.games-grid,.grid{
+    padding-top:24px!important;
+    padding-bottom:28px!important;
+  }
+}
+
 </style>
 </head>
 <body>
