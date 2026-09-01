@@ -922,9 +922,9 @@ function selectedGameCategories(){
  return [...document.querySelectorAll('#gcat input[type="checkbox"]:checked')].map(i=>i.value);
 }
 function saveMeta(id){localStorage.setItem(metaKey(id),JSON.stringify({
- edition:$('"'"'gedition'"'"').value.trim(),date:$('"'"'gdate'"'"').value,location:$('"'"'glocation'"'"').value.trim(),notes:$('"'"'gnotes'"'"').value.trim(),
- borrowed:$('"'"'gborrowed'"'"').checked,borrowedTo:$('"'"'gborrowedTo'"'"').value.trim(),borrowedDate:$('"'"'gborrowedDate'"'"').value,returnDate:$('"'"'greturnDate'"'"').value,
- rentalStatus:$('"'"'grentalStatus'"'"').value,copies:Math.max(1,Number($('"'"'gcopies'"'"').value||1)),zerado:$('"'"'gzerado'"'"').checked
+ edition:$("gedition").value.trim(),date:$("gdate").value,location:$("glocation").value.trim(),notes:$("gnotes").value.trim(),
+ borrowed:$("gborrowed").checked,borrowedTo:$("gborrowedTo").value.trim(),borrowedDate:$("gborrowedDate").value,returnDate:$("greturnDate").value,
+ rentalStatus:$("grentalStatus").value,copies:Math.max(1,Number($("gcopies").value||1)),zerado:$("gzerado").checked
 }))}
 async function api(path,opt={}){const r=await fetch(API+path,opt),d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error||"Falha na API.");return d}
 async function load(){
