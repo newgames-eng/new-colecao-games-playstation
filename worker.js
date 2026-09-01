@@ -25,17 +25,30 @@ function authOK(request, env) {
 
 function requireAdmin(request, env) {
   if (!authOK(request, env)) {
-    return json({
-      error: "Não autorizado"
-    }, 401);
+    return json({ error: "Não autorizado" }, 401);
   }
-
   return null;
 }
 
 function getId(path) {
   const match = path.match(/^\/api\/jogos\/(\d+)/);
   return match ? Number(match[1]) : null;
+}
+
+function extensionForType(type) {
+  if (type === "image/png") return "png";
+  if (type === "image/webp") return "webp";
+  return "jpg";
+}
+
+async function deleteCoverFiles(env, id) {
+  if (!env.BUCKET) return;
+
+  for (const ext of ["jpg", "png", "webp"]) {
+    try {
+      await env.BUCKET.delete(`capas/jogo-${id}.${ext}`);
+    } catch (_) {}
+  }
 }
 
 export default {
@@ -51,7 +64,14 @@ export default {
     const path = url.pathname;
     const db = env.DB;
 
+    if (!db) {
+      return json({
+        error: "Binding D1 'DB' não encontrado."
+      }, 500);
+    }
+
     try {
+
       // =====================================================
       // LOGIN ADMINISTRATIVO
       // =====================================================
@@ -87,7 +107,10 @@ export default {
       // =====================================================
       // TESTE DA API
       // =====================================================
-      if (request.method === "GET" && path === "/api/health") {
+      if (
+        request.method === "GET" &&
+        path === "/api/health"
+      ) {
         const result = await db
           .prepare("SELECT 1 AS ok")
           .first();
@@ -95,14 +118,18 @@ export default {
         return json({
           ok: result?.ok === 1,
           api: "new-colecao-games-api",
-          banco: "new-colecao-games-db"
+          banco: "new-colecao-games-db",
+          r2: !!env.BUCKET
         });
       }
 
       // =====================================================
       // LISTAR JOGOS
       // =====================================================
-      if (request.method === "GET" && path === "/api/jogos") {
+      if (
+        request.method === "GET" &&
+        path === "/api/jogos"
+      ) {
         const busca = url.searchParams.get("q") || "";
         const categoria = url.searchParams.get("categoria") || "";
 
@@ -230,6 +257,242 @@ export default {
       }
 
       // =====================================================
+      // SALVAR CAPA NO R2
+      // POST /api/capas
+      //
+      // Campo aceito pelo HTML: "file"
+      // =====================================================
+      if (
+        request.method === "POST" &&
+        path === "/api/capas"
+      ) {
+        const unauthorized = requireAdmin(request, env);
+        if (unauthorized) return unauthorized;
+
+        if (!env.BUCKET) {
+          return json({
+            error: "Binding R2 'BUCKET' não encontrado no Worker."
+          }, 500);
+        }
+
+        const contentType =
+          request.headers.get("content-type") || "";
+
+        if (!contentType.includes("multipart/form-data")) {
+          return json({
+            error: "Envie a capa usando multipart/form-data."
+          }, 400);
+        }
+
+        const form = await request.formData();
+
+        const jogoId = Number(
+          form.get("jogo_id") ||
+          form.get("id") ||
+          form.get("jogoId") ||
+          form.get("game_id") ||
+          0
+        );
+
+        const file =
+          form.get("file") ||
+          form.get("capa") ||
+          form.get("imagem");
+
+        if (!jogoId || !Number.isInteger(jogoId)) {
+          return json({
+            error:
+              "ID do jogo não informado. Envie jogo_id junto com a imagem."
+          }, 400);
+        }
+
+        if (!file || typeof file.arrayBuffer !== "function") {
+          return json({
+            error: "Nenhuma imagem foi enviada."
+          }, 400);
+        }
+
+        const jogo = await db
+          .prepare(`
+            SELECT id, nome
+            FROM jogos
+            WHERE id = ?
+            LIMIT 1
+          `)
+          .bind(jogoId)
+          .first();
+
+        if (!jogo) {
+          return json({
+            error: "Jogo não encontrado."
+          }, 404);
+        }
+
+        const tipo = String(file.type || "").toLowerCase();
+
+        const permitidos = [
+          "image/jpeg",
+          "image/jpg",
+          "image/png",
+          "image/webp"
+        ];
+
+        if (!permitidos.includes(tipo)) {
+          return json({
+            error:
+              "Formato não permitido. Use JPG, PNG ou WEBP."
+          }, 400);
+        }
+
+        if (file.size > 10 * 1024 * 1024) {
+          return json({
+            error:
+              "A capa não pode ter mais de 10 MB."
+          }, 400);
+        }
+
+        const ext = extensionForType(tipo);
+        const key = `capas/jogo-${jogoId}.${ext}`;
+
+        // Remove formatos antigos antes de gravar o novo.
+        await deleteCoverFiles(env, jogoId);
+
+        const buffer = await file.arrayBuffer();
+
+        await env.BUCKET.put(
+          key,
+          buffer,
+          {
+            httpMetadata: {
+              contentType:
+                tipo === "image/jpg"
+                  ? "image/jpeg"
+                  : tipo,
+              cacheControl:
+                "public, max-age=31536000"
+            }
+          }
+        );
+
+        // URL ABSOLUTA para funcionar no GitHub Pages.
+        const capaUrl =
+          `${url.origin}/api/capas/${jogoId}`;
+
+        await db
+          .prepare(`
+            UPDATE jogos
+            SET capa_url = ?
+            WHERE id = ?
+          `)
+          .bind(capaUrl, jogoId)
+          .run();
+
+        return json({
+          ok: true,
+          mensagem: "Capa salva com sucesso.",
+          jogo_id: jogoId,
+          capa_url: capaUrl,
+          url: capaUrl,
+          arquivo: key
+        });
+      }
+
+      // =====================================================
+      // EXIBIR CAPA DO R2
+      // GET /api/capas/:id
+      // =====================================================
+      if (
+        request.method === "GET" &&
+        /^\/api\/capas\/\d+$/.test(path)
+      ) {
+        if (!env.BUCKET) {
+          return json({
+            error: "Binding R2 'BUCKET' não encontrado."
+          }, 500);
+        }
+
+        const jogoId = Number(
+          path.match(/^\/api\/capas\/(\d+)$/)[1]
+        );
+
+        const arquivos = [
+          ["jpg", "image/jpeg"],
+          ["png", "image/png"],
+          ["webp", "image/webp"]
+        ];
+
+        for (const [ext, mime] of arquivos) {
+          const object = await env.BUCKET.get(
+            `capas/jogo-${jogoId}.${ext}`
+          );
+
+          if (object) {
+            const headers = new Headers(corsHeaders);
+            headers.set("Content-Type", mime);
+            headers.set(
+              "Cache-Control",
+              "public, max-age=31536000"
+            );
+
+            if (object.httpMetadata?.contentType) {
+              headers.set(
+                "Content-Type",
+                object.httpMetadata.contentType
+              );
+            }
+
+            if (object.httpEtag) {
+              headers.set("ETag", object.httpEtag);
+            }
+
+            return new Response(
+              object.body,
+              {
+                status: 200,
+                headers
+              }
+            );
+          }
+        }
+
+        return json({
+          error: "Capa não encontrada."
+        }, 404);
+      }
+
+      // =====================================================
+      // EXCLUIR CAPA
+      // DELETE /api/capas/:id
+      // =====================================================
+      if (
+        request.method === "DELETE" &&
+        /^\/api\/capas\/\d+$/.test(path)
+      ) {
+        const unauthorized = requireAdmin(request, env);
+        if (unauthorized) return unauthorized;
+
+        const jogoId = Number(
+          path.match(/^\/api\/capas\/(\d+)$/)[1]
+        );
+
+        await deleteCoverFiles(env, jogoId);
+
+        await db
+          .prepare(`
+            UPDATE jogos
+            SET capa_url = NULL
+            WHERE id = ?
+          `)
+          .bind(jogoId)
+          .run();
+
+        return json({
+          ok: true,
+          mensagem: "Capa removida com sucesso."
+        });
+      }
+
+      // =====================================================
       // CADASTRAR JOGO
       // =====================================================
       if (
@@ -237,19 +500,20 @@ export default {
         path === "/api/jogos"
       ) {
         const unauthorized = requireAdmin(request, env);
-
-        if (unauthorized) {
-          return unauthorized;
-        }
+        if (unauthorized) return unauthorized;
 
         const body = await request.json();
 
         const nome = String(body.nome || "").trim();
         const categoria = String(body.categoria || "").trim();
-        const plataforma = String(body.plataforma || "PS4").trim();
-        const ano = body.ano ? Number(body.ano) : null;
-        const capa_url = String(body.capa_url || "").trim();
-        const descricao = String(body.descricao || "").trim();
+        const plataforma =
+          String(body.plataforma || "PS4").trim();
+        const ano =
+          body.ano ? Number(body.ano) : null;
+        const capa_url =
+          String(body.capa_url || "").trim();
+        const descricao =
+          String(body.descricao || "").trim();
 
         if (!nome) {
           return json({
@@ -355,20 +619,22 @@ export default {
         /^\/api\/jogos\/\d+$/.test(path)
       ) {
         const unauthorized = requireAdmin(request, env);
-
-        if (unauthorized) {
-          return unauthorized;
-        }
+        if (unauthorized) return unauthorized;
 
         const id = getId(path);
         const body = await request.json();
 
         const nome = String(body.nome || "").trim();
-        const categoria = String(body.categoria || "").trim();
-        const plataforma = String(body.plataforma || "PS4").trim();
-        const ano = body.ano ? Number(body.ano) : null;
-        const capa_url = String(body.capa_url || "").trim();
-        const descricao = String(body.descricao || "").trim();
+        const categoria =
+          String(body.categoria || "").trim();
+        const plataforma =
+          String(body.plataforma || "PS4").trim();
+        const ano =
+          body.ano ? Number(body.ano) : null;
+        const capa_url =
+          String(body.capa_url || "").trim();
+        const descricao =
+          String(body.descricao || "").trim();
 
         if (!id) {
           return json({
@@ -441,15 +707,12 @@ export default {
         /^\/api\/jogos\/\d+$/.test(path)
       ) {
         const unauthorized = requireAdmin(request, env);
-
-        if (unauthorized) {
-          return unauthorized;
-        }
+        if (unauthorized) return unauthorized;
 
         const id = getId(path);
 
-        // Remove a avaliação primeiro para evitar erro de
-        // chave estrangeira, caso a tabela use FK.
+        await deleteCoverFiles(env, id);
+
         await db
           .prepare(`
             DELETE FROM avaliacoes
@@ -486,10 +749,7 @@ export default {
         /^\/api\/jogos\/\d+\/avaliacao$/.test(path)
       ) {
         const unauthorized = requireAdmin(request, env);
-
-        if (unauthorized) {
-          return unauthorized;
-        }
+        if (unauthorized) return unauthorized;
 
         const id = getId(path);
         const body = await request.json();
@@ -554,6 +814,8 @@ export default {
       }, 404);
 
     } catch (error) {
+      console.error("ERRO NO WORKER:", error);
+
       return json({
         error: "Erro no servidor",
         detalhe: error?.message || String(error)
