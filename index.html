@@ -53,7 +53,7 @@ button{cursor:pointer}
 .card-body{padding:10px}.category{font-size:9px;color:#2f9aff;text-transform:uppercase;font-weight:bold}
 .card h3{font-size:13px;margin:5px 0;min-height:32px}.meta{font-size:10px;color:#7187a8}
 .stars{margin-top:7px}.star{color:#4a6387}.star.on{color:var(--blue)}
-.status{font-size:8px;padding:5px 0;border-radius:4px}.played{color:var(--green)}.notplayed{color:var(--yellow)}.borrowed{color:#ff8a3d}.borrowed-badge{color:#ff9b62!important;border-color:#74401f!important;background:#24160d!important}.overdue-alert{display:none;margin:0 0 18px;padding:14px 16px;border:1px solid #8f2c2c;border-radius:9px;background:linear-gradient(135deg,#2a0e14,#180b12);box-shadow:0 6px 18px rgba(0,0,0,.18)}.overdue-alert.show{display:flex;align-items:center;justify-content:space-between;gap:14px}.overdue-alert-main{display:flex;align-items:center;gap:12px}.overdue-alert-icon{font-size:27px}.overdue-alert strong{display:block;color:#ff8d8d;font-size:14px}.overdue-alert span{display:block;color:#c8aeb2;font-size:11px;margin-top:3px}.overdue-list{margin-top:8px;color:#fff;font-size:11px}.overdue-list b{color:#ffb0b0}.overdue-alert .btn{white-space:nowrap}
+.status{font-size:8px;padding:5px 0;border-radius:4px}.played{color:var(--green)}.notplayed{color:var(--yellow)}.borrowed{color:#ff8a3d}.borrowed-badge{color:#ff9b62!important;border-color:#74401f!important;background:#24160d!important}.overdue-alert{display:none;margin:0 0 18px;padding:14px 16px;border:1px solid #8f2c2c;border-radius:9px;background:linear-gradient(135deg,#2a0e14,#180b12);box-shadow:0 6px 18px rgba(0,0,0,.18)}.overdue-alert.show{display:flex;align-items:center;justify-content:space-between;gap:14px}.overdue-alert-main{display:flex;align-items:center;gap:12px}.overdue-alert-icon{font-size:27px}.overdue-alert strong{display:block;color:#ff8d8d;font-size:14px}.overdue-alert span{display:block;color:#c8aeb2;font-size:11px;margin-top:3px}.overdue-list{margin-top:8px;color:#fff;font-size:11px}.overdue-list b{color:#ffb0b0}.overdue-alert .btn{white-space:nowrap}.rental-status{display:inline-flex;align-items:center;gap:5px;font-size:9px;padding:4px 7px;border-radius:5px;border:1px solid #23466f;background:#061a33}.rental-available{color:#52e69a}.rental-loaned{color:#63a9ff}.rental-reserved{color:#ffd05a}.rental-maintenance{color:#c0a0ff}.rental-overdue{color:#ff8d8d}
 .fav{float:right;color:#8094b4}.fav.on{color:var(--red)}
 .empty{padding:45px;text-align:center;color:var(--muted);grid-column:1/-1;border:1px dashed #23466f;border-radius:10px}
 .admin{display:none}.admin.open{display:block}.public.hidden{display:none}
@@ -154,7 +154,7 @@ button{cursor:pointer}
     <button class="btn danger" onclick="setAF('overdue')">Ver atrasados</button>
   </div>
   <div class="admin-toolbar-head">
-    <div><div class="admin-section-title">Gerenciamento da coleção</div><div class="admin-section-sub">Pesquise, edite, adicione capas, veja detalhes ou remova jogos.</div></div>
+    <div><div class="admin-section-title">Gerenciamento da coleção</div><div class="admin-section-sub">Pesquise, edite, adicione capas, veja detalhes ou remova jogos. Estrutura preparada para futuras locações.</div></div>
     <button class="btn primary" onclick="gameModal()">＋ Cadastrar jogo</button>
   </div>
   <div class="table-wrap">
@@ -184,6 +184,10 @@ button{cursor:pointer}
         <div id="detailCat" class="detail-cat"></div><h2 id="detailName"></h2><div id="detailMeta" class="detail-meta"></div>
         <div id="detailBadges" class="detail-badges"></div><div id="detailStars" class="stars"></div>
         <p id="detailDesc" class="detail-desc"></p>
+        <div class="collection-info"><h3>🏪 Disponibilidade</h3><div class="collection-grid">
+          <div class="collection-item">Status<b id="infoRentalStatus">Disponível</b></div>
+          <div class="collection-item">Cópias<b id="infoCopies">1</b></div>
+        </div></div>
         <div class="collection-info"><h3>📁 Dados da coleção</h3><div class="collection-grid">
           <div class="collection-item">Status de empréstimo<b id="infoBorrowed">Não emprestado</b></div>
           <div class="collection-item">Emprestado para<b id="infoBorrowedTo">Não informado</b></div>
@@ -221,6 +225,14 @@ button{cursor:pointer}
           <div><label>Data do empréstimo</label><input id="gborrowedDate" type="date"></div>
           <div><label>Previsão de devolução</label><input id="greturnDate" type="date"></div>
         </div>
+      </div>
+      <div class="full collection-info">
+        <h3>🏪 Status de disponibilidade</h3>
+        <div class="collection-grid">
+          <div><label>Status</label><select id="grentalStatus"><option value="available">🟢 Disponível</option><option value="loaned">🔵 Emprestado</option><option value="reserved">🟠 Reservado</option><option value="maintenance">⚫ Manutenção</option></select></div>
+          <div><label>Quantidade de cópias</label><input id="gcopies" type="number" min="1" value="1"></div>
+        </div>
+        <p class="hint">Estrutura preparada para uma futura versão de locadora, sem alterar o funcionamento atual da coleção.</p>
       </div>
       <div class="full collection-info">
         <h3>📁 Dados pessoais da coleção</h3>
@@ -266,7 +278,8 @@ function selectedGameCategories(){
 }
 function saveMeta(id){localStorage.setItem(metaKey(id),JSON.stringify({
  edition:$("gedition").value.trim(),date:$("gdate").value,location:$("glocation").value.trim(),notes:$("gnotes").value.trim(),
- borrowed:$("gborrowed").checked,borrowedTo:$("gborrowedTo").value.trim(),borrowedDate:$("gborrowedDate").value,returnDate:$("greturnDate").value
+ borrowed:$("gborrowed").checked,borrowedTo:$("gborrowedTo").value.trim(),borrowedDate:$("gborrowedDate").value,returnDate:$("greturnDate").value,
+ rentalStatus:$("grentalStatus").value,copies:Math.max(1,Number($("gcopies").value||1))
 }))}
 async function api(path,opt={}){const r=await fetch(API+path,opt),d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error||"Falha na API.");return d}
 async function load(){
@@ -284,7 +297,7 @@ function fillCats(){
 }
 function renderNav(){
  const n=$("nav");n.innerHTML="";
- [["🏠","Início",""],["🎮","Minha Coleção",""],["♡","Favoritos","fav"],["✓","Jogados","played"],["◷","Não Jogados","not"],["☆","Avaliados","rated"]].forEach(x=>{
+ [["🏠","Início",""],["🎮","Minha Coleção",""],["♡","Favoritos","fav"],["✓","Jogados","played"],["◷","Não Jogados","not"],["📤","Emprestados","loaned"],["⚠️","Atrasados","overdue"],["☆","Avaliados","rated"]].forEach(x=>{
   const b=document.createElement("button");b.className=(!filter&&!special&&x[1]=="Início")||special===x[2]?"active":"";
   b.innerHTML=x[0]+" "+x[1];b.onclick=()=>{
   if(x[1]==="Minha Coleção" || x[1]==="Início"){
@@ -312,7 +325,7 @@ function renderCategoryFilters(){
 }
 function filteredGames(){
  const q=$("search").value.toLowerCase().trim();
- return games.filter(g=>(!q||(g.nome+" "+g.categoria).toLowerCase().includes(q))&&(!filter||getGameCategories(g).includes(filter))&&(!special||(special==="fav"?Number(g.favorito)===1:special==="played"?Number(g.jogado)===1:special==="not"?Number(g.jogado)===0:Number(g.nota)>0)));
+ return games.filter(g=>(!q||(g.nome+" "+g.categoria).toLowerCase().includes(q))&&(!filter||getGameCategories(g).includes(filter))&&(!special||(special==="fav"?Number(g.favorito)===1:special==="played"?Number(g.jogado)===1:special==="not"?Number(g.jogado)===0:special==="loaned"?getMeta(g.id).borrowed:special==="overdue"?isOverdue(g):Number(g.nota)>0)));
 }
 function render(){
  let list=filteredGames();const s=$("sort").value;
@@ -365,9 +378,13 @@ function openDetail(id){
  $("detailDesc").textContent=g.descricao||"Este jogo ainda não possui uma descrição cadastrada.";
  $("detailBadges").innerHTML=`<span class="detail-badge">${Number(g.jogado)?"✓ Jogado":"◷ Não jogado"}</span><span class="detail-badge">${Number(g.favorito)?"♥ Favorito":"♡ Não favorito"}</span>${m.borrowed?'<span class="detail-badge borrowed-badge">📤 Emprestado</span>':""}`;
  const m=getMeta(id);
-$("infoBorrowed").textContent=m.borrowed?"📤 Emprestado":"Não emprestado";
-$("infoBorrowed").className=m.borrowed?"borrowed":"";
-$("infoBorrowedTo").textContent=m.borrowed?(m.borrowedTo||"Pessoa não informada"):"—";
+const rentalLabels={available:"🟢 Disponível",loaned:"🔵 Emprestado",reserved:"🟠 Reservado",maintenance:"⚫ Manutenção"};
+ const rentalStatus=m.rentalStatus||(m.borrowed?"loaned":"available");
+ $("infoRentalStatus").textContent=isOverdue(g)?"⚠️ Em atraso":(rentalLabels[rentalStatus]||"🟢 Disponível");
+ $("infoCopies").textContent=m.copies||1;
+ $("infoBorrowed").textContent=m.borrowed?"📤 Emprestado":"Não emprestado";
+ $("infoBorrowed").className=m.borrowed?"borrowed":"";
+ $("infoBorrowedTo").textContent=m.borrowed?(m.borrowedTo||"Pessoa não informada"):"—";
 $("infoBorrowedDate").textContent=m.borrowed&&m.borrowedDate?new Date(m.borrowedDate+"T00:00:00").toLocaleDateString("pt-BR"):"—";
 $("infoReturnDate").textContent=m.borrowed&&m.returnDate?new Date(m.returnDate+"T00:00:00").toLocaleDateString("pt-BR"):"—";
 $("infoEdition").textContent=m.edition||"Não informado";$("infoDate").textContent=m.date?new Date(m.date+"T00:00:00").toLocaleDateString("pt-BR"):"Não informado";$("infoLocation").textContent=m.location||"Não informado";$("infoNotes").textContent=m.notes||"Não informado";
@@ -381,13 +398,16 @@ function gameModal(id=null){
  $("gmTitle").textContent=g?"Editar jogo":"Cadastrar jogo";$("gid").value=g?.id||"";$("gname").value=g?.nome||"";setGameCategoriesSelected(g?getGameCategories(g):[]);$("gplatform").value=g?.plataforma||"PS4";$("gyear").value=g?.ano||"";$("gcover").value=g?.capa_url||"";$("gdesc").value=g?.descricao||"";$("gplayed").checked=Number(g?.jogado)===1;$("gfav").checked=Number(g?.favorito)===1;
  $("gedition").value=m.edition||"";$("gdate").value=m.date||"";$("glocation").value=m.location||"";$("gnotes").value=m.notes||"";
  $("gborrowed").checked=!!m.borrowed;$("gborrowedTo").value=m.borrowedTo||"";$("gborrowedDate").value=m.borrowedDate||"";$("greturnDate").value=m.returnDate||"";
+ $("grentalStatus").value=m.rentalStatus||(m.borrowed?"loaned":"available");$("gcopies").value=m.copies||1;
  rating=Number(g?.nota||0);drawRating();$("gameModal").classList.add("open")
 }
 function closeGameModal(){$("gameModal").classList.remove("open")}
 $("gameForm").addEventListener("submit",async e=>{
  e.preventDefault();
  try{
-  const selectedCats=selectedGameCategories();if(!selectedCats.length)throw Error("Selecione pelo menos uma categoria.");const d={nome:$("gname").value.trim(),categoria:selectedCats.join(", "),plataforma:$("gplatform").value,ano:$("gyear").value,capa_url:$("gcover").value.trim(),descricao:$("gdesc").value.trim()};
+  const selectedCats=selectedGameCategories();if(!selectedCats.length)throw Error("Selecione pelo menos uma categoria.");
+ if($("gborrowed").checked)$("grentalStatus").value="loaned";
+ const d={nome:$("gname").value.trim(),categoria:selectedCats.join(", "),plataforma:$("gplatform").value,ano:$("gyear").value,capa_url:$("gcover").value.trim(),descricao:$("gdesc").value.trim()};
   let id=editingId;if(id)await write("/api/jogos/"+id,"PUT",d);else id=(await write("/api/jogos","POST",d)).id;
   await write("/api/jogos/"+id+"/avaliacao","PUT",{nota:rating,jogado:$("gplayed").checked,favorito:$("gfav").checked});
   saveMeta(id);closeGameModal();await load();openAdmin();toast("Jogo salvo com sucesso.")
