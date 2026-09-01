@@ -99,7 +99,7 @@ button{cursor:pointer}
   .header-inner{padding:9px 12px;flex-wrap:wrap}.brand-mini{flex:1;min-width:0}.ps-mini{font-size:25px}.brand-mini strong{font-size:11px}.brand-mini small{font-size:8px}.account{padding:8px 10px!important;font-size:11px!important}
   .top-nav{order:3;flex-basis:100%;padding-bottom:2px}.top-nav button{font-size:11px;padding:8px 9px}
   .main{padding:20px 12px 40px}.title{font-size:23px}.stats{grid-template-columns:repeat(2,1fr)}.tools{grid-template-columns:1fr}.filters{gap:6px}.filters button{font-size:11px;padding:8px 10px}
-  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.cover{height:220px}.card h3{font-size:11px}.admin-cards{grid-template-columns:1fr}.admin-head,.admin-toolbar-head{align-items:flex-start;flex-wrap:wrap}.form,.collection-grid{grid-template-columns:1fr}.detail-grid{grid-template-columns:1fr}.detail-cover{height:330px}.detail-info h2{font-size:22px}.stat-columns{grid-template-columns:1fr}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.cover{height:220px}.card h3{font-size:11px}.admin-cards{grid-template-columns:repeat(2,1fr)}.admin-head,.admin-toolbar-head{align-items:flex-start;flex-wrap:wrap}.form,.collection-grid{grid-template-columns:1fr}.detail-grid{grid-template-columns:1fr}.detail-cover{height:330px}.detail-info h2{font-size:22px}.stat-columns{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -148,8 +148,10 @@ button{cursor:pointer}
     <div class="admin-card active" id="afAll" onclick="setAF('all')"><div class="admin-card-icon">🎮</div><div><strong id="aTotal">0</strong><span>Todos os jogos</span></div></div>
     <div class="admin-card" id="afWith" onclick="setAF('with')"><div class="admin-card-icon">🖼️</div><div><strong id="aWith">0</strong><span>Jogos com capa</span></div></div>
     <div class="admin-card" id="afWithout" onclick="setAF('without')"><div class="admin-card-icon">⚪</div><div><strong id="aWithout">0</strong><span>Jogos sem capa</span></div></div>
+    <div class="admin-card" id="afLoaned" onclick="setAF('loaned')"><div class="admin-card-icon">📤</div><div><strong id="aLoaned">0</strong><span>Emprestados</span></div></div>
+    <div class="admin-card" id="afOverdue" onclick="setAF('overdue')"><div class="admin-card-icon">⚠️</div><div><strong id="aOverdue">0</strong><span>Atrasados</span></div></div>
   </div>
-  <div class="overdue-alert" id="overdueAlert">
+  <div class="overdue-alert" id="overdueAlert" aria-label="Alertas administrativos de empréstimo">
     <div class="overdue-alert-main"><div class="overdue-alert-icon">⚠️</div><div><strong id="overdueTitle">Há empréstimos atrasados</strong><span id="overdueText"></span><div class="overdue-list" id="overdueList"></div></div></div>
     <button class="btn danger" onclick="setAF('overdue')">Ver atrasados</button>
   </div>
@@ -183,7 +185,7 @@ button{cursor:pointer}
       <div class="detail-info">
         <div id="detailCat" class="detail-cat"></div><h2 id="detailName"></h2><div id="detailMeta" class="detail-meta"></div>
         <div id="detailBadges" class="detail-badges"></div><div id="detailStars" class="stars"></div>
-        <p id="detailDesc" class="detail-desc"></p>
+        <div class="detail-desc"><strong style="display:block;color:#fff;margin-bottom:7px">Descrição</strong><p id="detailDesc" style="margin:0"></p></div>
         <div class="collection-info"><h3>🏪 Disponibilidade</h3><div class="collection-grid">
           <div class="collection-item">Status<b id="infoRentalStatus">Disponível</b></div>
           <div class="collection-item">Cópias<b id="infoCopies">1</b></div>
@@ -297,7 +299,7 @@ function fillCats(){
 }
 function renderNav(){
  const n=$("nav");n.innerHTML="";
- [["🏠","Início",""],["🎮","Minha Coleção",""],["♡","Favoritos","fav"],["✓","Jogados","played"],["◷","Não Jogados","not"],["📤","Emprestados","loaned"],["⚠️","Atrasados","overdue"],["☆","Avaliados","rated"]].forEach(x=>{
+ [["🏠","Início",""],["🎮","Minha Coleção",""],["♡","Favoritos","fav"],["✓","Jogados","played"],["◷","Não Jogados","not"],["☆","Avaliados","rated"]].forEach(x=>{
   const b=document.createElement("button");b.className=(!filter&&!special&&x[1]=="Início")||special===x[2]?"active":"";
   b.innerHTML=x[0]+" "+x[1];b.onclick=()=>{
   if(x[1]==="Minha Coleção" || x[1]==="Início"){
@@ -325,7 +327,7 @@ function renderCategoryFilters(){
 }
 function filteredGames(){
  const q=$("search").value.toLowerCase().trim();
- return games.filter(g=>(!q||(g.nome+" "+g.categoria).toLowerCase().includes(q))&&(!filter||getGameCategories(g).includes(filter))&&(!special||(special==="fav"?Number(g.favorito)===1:special==="played"?Number(g.jogado)===1:special==="not"?Number(g.jogado)===0:special==="loaned"?getMeta(g.id).borrowed:special==="overdue"?isOverdue(g):Number(g.nota)>0)));
+ return games.filter(g=>(!q||(g.nome+" "+g.categoria).toLowerCase().includes(q))&&(!filter||getGameCategories(g).includes(filter))&&(!special||(special==="fav"?Number(g.favorito)===1:special==="played"?Number(g.jogado)===1:special==="not"?Number(g.jogado)===0:Number(g.nota)>0)));
 }
 function render(){
  let list=filteredGames();const s=$("sort").value;
@@ -355,11 +357,11 @@ function logout(){adminToken="";sessionStorage.removeItem("ng_admin_token");clos
 function todayISO(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
 function isOverdue(g){const m=getMeta(g.id);return !!(m.borrowed&&m.returnDate&&m.returnDate<todayISO())}
 function overdueDays(date){const a=new Date(date+"T00:00:00"),b=new Date(todayISO()+"T00:00:00");return Math.max(1,Math.floor((b-a)/86400000))}
-function setAF(x){adminFilter=x;["afAll","afWith","afWithout"].forEach(i=>$(i).classList.remove("active"));const id=x==="all"?"afAll":x==="with"?"afWith":x==="without"?"afWithout":null;if(id)$(id).classList.add("active");renderAdmin()}
-function updateAdmin(){const w=games.filter(g=>String(g.capa_url||"").trim()).length;$("aTotal").textContent=games.length;$("aWith").textContent=w;$("aWithout").textContent=games.length-w;const overdue=games.filter(isOverdue),box=$("overdueAlert");if(overdue.length){box.classList.add("show");$("overdueTitle").textContent=overdue.length===1?"⚠️ Há 1 empréstimo atrasado":"⚠️ Há "+overdue.length+" empréstimos atrasados";$("overdueText").textContent="A data prevista de devolução já passou.";$("overdueList").innerHTML=overdue.slice(0,5).map(g=>{const m=getMeta(g.id);return`<div>• <b>${esc(g.nome)}</b> — ${esc(m.borrowedTo||"pessoa não informada")} — ${overdueDays(m.returnDate)} dia(s) de atraso</div>`}).join("")+(overdue.length>5?`<div>• +${overdue.length-5} outro(s)</div>`:"")}else{box.classList.remove("show");$("overdueText").textContent="";$("overdueList").innerHTML=""}}
+function setAF(x){adminFilter=x;["afAll","afWith","afWithout","afLoaned","afOverdue"].forEach(i=>$(i).classList.remove("active"));const id=x==="all"?"afAll":x==="with"?"afWith":x==="without"?"afWithout":x==="loaned"?"afLoaned":x==="overdue"?"afOverdue":null;if(id)$(id).classList.add("active");renderAdmin()}
+function updateAdmin(){const w=games.filter(g=>String(g.capa_url||"").trim()).length;$("aTotal").textContent=games.length;$("aWith").textContent=w;$("aWithout").textContent=games.length-w;$("aLoaned").textContent=games.filter(g=>getMeta(g.id).borrowed).length;$("aOverdue").textContent=games.filter(isOverdue).length;const overdue=games.filter(isOverdue),box=$("overdueAlert");if(overdue.length){box.classList.add("show");$("overdueTitle").textContent=overdue.length===1?"⚠️ Há 1 empréstimo atrasado":"⚠️ Há "+overdue.length+" empréstimos atrasados";$("overdueText").textContent="A data prevista de devolução já passou.";$("overdueList").innerHTML=overdue.slice(0,5).map(g=>{const m=getMeta(g.id);return`<div>• <b>${esc(g.nome)}</b> — ${esc(m.borrowedTo||"pessoa não informada")} — ${overdueDays(m.returnDate)} dia(s) de atraso</div>`}).join("")+(overdue.length>5?`<div>• +${overdue.length-5} outro(s)</div>`:"")}else{box.classList.remove("show");$("overdueText").textContent="";$("overdueList").innerHTML=""}}
 function renderAdmin(){
  const q=$("adminSearch").value.toLowerCase().trim(),c=$("adminCat").value;
- const list=games.filter(g=>{const has=!!String(g.capa_url||"").trim();return(!q||g.nome.toLowerCase().includes(q))&&(!c||getGameCategories(g).includes(c))&&(adminFilter==="all"||(adminFilter==="with"&&has)||(adminFilter==="without"&&!has)||(adminFilter==="overdue"&&isOverdue(g)))});
+ const list=games.filter(g=>{const has=!!String(g.capa_url||"").trim();return(!q||g.nome.toLowerCase().includes(q))&&(!c||getGameCategories(g).includes(c))&&(adminFilter==="all"||(adminFilter==="with"&&has)||(adminFilter==="without"&&!has)||(adminFilter==="loaned"&&getMeta(g.id).borrowed)||(adminFilter==="overdue"&&isOverdue(g)))});
  $("adminResult").textContent=list.length+" jogo(s)";
  $("adminBody").innerHTML=list.map(g=>{const has=!!String(g.capa_url||"").trim(),m=getMeta(g.id);return`<tr><td>${has?`<img class="thumb" src="${esc(g.capa_url)}">`:"🎮"}</td><td><b>${esc(g.nome)}</b><br><small class="muted">${esc(g.plataforma||"PS4")}</small></td><td><div class="category-list">${getGameCategories(g).map(c=>`<span class="category-chip">${ICONS[c]||"🎮"} ${esc(c)}</span>`).join("")}</div></td><td>${g.ano||"-"}</td><td class="stars">${"★★★★★".split("").map((x,i)=>`<span class="star ${i<Number(g.nota||0)?"on":""}">${x}</span>`).join("")}</td><td>${m.borrowed?(isOverdue(g)?'<span class="borrowed">⚠️ Em atraso</span>':'<span class="borrowed">📤 Emprestado</span>'):(Number(g.jogado)?"✓ Jogado":"◷ Não jogado")}</td><td><div class="actions"><button class="btn" onclick="event.stopPropagation();openDetail(${g.id})">Ver</button><button class="btn" onclick="event.stopPropagation();openCover(${g.id})">${has?"🔄 Capa":"🖼️ Capa"}</button><button class="btn" onclick="event.stopPropagation();gameModal(${g.id})">Editar</button><button class="btn danger" onclick="event.stopPropagation();delGame(${g.id})">Excluir</button></div></td></tr>`}).join("")||`<tr><td colspan="7" class="muted">Nenhum jogo encontrado.</td></tr>`
 }
