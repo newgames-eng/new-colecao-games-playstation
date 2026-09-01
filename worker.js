@@ -142,6 +142,7 @@ export default {
             j.ano,
             j.capa_url,
             j.descricao,
+            COALESCE(j.zerado, 0) AS zerado,
             COALESCE(a.nota, 0) AS nota,
             COALESCE(a.jogado, 0) AS jogado,
             COALESCE(a.favorito, 0) AS favorito
@@ -514,6 +515,7 @@ export default {
           String(body.capa_url || "").trim();
         const descricao =
           String(body.descricao || "").trim();
+        const zerado = body.zerado ? 1 : 0;
 
         if (!nome) {
           return json({
@@ -570,10 +572,11 @@ export default {
                 plataforma,
                 ano,
                 capa_url,
-                descricao
+                descricao,
+                zerado
               )
             VALUES
-              (?, ?, ?, ?, ?, ?)
+              (?, ?, ?, ?, ?, ?, ?)
           `)
           .bind(
             nome,
@@ -581,7 +584,8 @@ export default {
             plataforma,
             ano,
             capa_url,
-            descricao
+            descricao,
+            zerado
           )
           .run();
 
@@ -635,6 +639,7 @@ export default {
           String(body.capa_url || "").trim();
         const descricao =
           String(body.descricao || "").trim();
+        const zerado = body.zerado ? 1 : 0;
 
         if (!id) {
           return json({
@@ -673,7 +678,8 @@ export default {
               plataforma = ?,
               ano = ?,
               capa_url = ?,
-              descricao = ?
+              descricao = ?,
+              zerado = ?
             WHERE id = ?
           `)
           .bind(
@@ -683,6 +689,7 @@ export default {
             ano,
             capa_url,
             descricao,
+            zerado,
             id
           )
           .run();
