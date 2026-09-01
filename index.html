@@ -911,6 +911,7 @@ const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
 const metaKey=id=>"ng_game_meta_"+id;
 function getMeta(id){try{return JSON.parse(localStorage.getItem(metaKey(id))||"{}")}catch{return{}}}
+function isZerado(g){return Number(g?.zerado)===1 || !!getMeta(g?.id).zerado}
 function getGameCategories(g){
  return String(g?.categoria||"").split(/\\s*,\\s*|\\s*\\|\\s*/).map(x=>x.trim()).filter(Boolean);
 }
@@ -976,7 +977,7 @@ function render(){
  let list=filteredGames();const s=$("sort").value;
  if(s==="name")list.sort((a,b)=>a.nome.localeCompare(b.nome));if(s==="category")list.sort((a,b)=>(a.categoria||"").localeCompare(b.categoria||"")||a.nome.localeCompare(b.nome));if(s==="rating")list.sort((a,b)=>Number(b.nota)-Number(a.nota));if(s==="recent")list.sort((a,b)=>Number(b.id)-Number(a.id));
  $("result").textContent=list.length+" jogo(s)";
- $("grid").innerHTML=list.map(g=>`<div class="card" onclick="event.stopPropagation();openDetail(${g.id})"><div class="cover">${g.capa_url?`<img src="${esc(g.capa_url)}" alt="${esc(g.nome)}">`:`<div class="placeholder"><span class="big">${ICONS[g.categoria]||"🎮"}</span>CAPA DO JOGO</div>`}</div><div class="card-body"><div class="platform ${String(g.plataforma||"PS4").toUpperCase()==="PS5"?"ps5":String(g.plataforma||"PS4").toUpperCase()==="PS4"?"ps4":"other"}">🎮 ${esc(g.plataforma||"PS4")}</div><div class="category-list">${getGameCategories(g).map(c=>`<span class="category-chip">${ICONS[c]||"🎮"} ${esc(c)}</span>`).join("")}</div><h3>${esc(g.nome)}</h3><div class="meta">${g.ano||"Ano não informado"}</div><div class="stars">${"★★★★★".split("").map((x,i)=>`<span class="star ${i<Number(g.nota||0)?"on":""}">${x}</span>`).join("")}</div><div class="status ${getMeta(g.id).borrowed?"borrowed":(Number(g.jogado)?"played":"notplayed")}">${getMeta(g.id).borrowed?"📤 EMPRESTADO":(Number(g.jogado)?"✓ JOGADO":"◷ NÃO JOGADO")}<span class="fav ${Number(g.favorito)?"on":""}">${Number(g.favorito)?"♥":"♡"}</span></div>${getMeta(g.id).zerado?'<div class="completed-badge"><span class="trophy-icon">🏆</span><span class="trophy-text">JOGO ZERADO</span></div>':''}</div></div>`).join("")||`<div class="empty">Nenhum jogo encontrado.</div>`;
+ $("grid").innerHTML=list.map(g=>`<div class="card" onclick="event.stopPropagation();openDetail(${g.id})"><div class="cover">${g.capa_url?`<img src="${esc(g.capa_url)}" alt="${esc(g.nome)}">`:`<div class="placeholder"><span class="big">${ICONS[g.categoria]||"🎮"}</span>CAPA DO JOGO</div>`}</div><div class="card-body"><div class="platform ${String(g.plataforma||"PS4").toUpperCase()==="PS5"?"ps5":String(g.plataforma||"PS4").toUpperCase()==="PS4"?"ps4":"other"}">🎮 ${esc(g.plataforma||"PS4")}</div><div class="category-list">${getGameCategories(g).map(c=>`<span class="category-chip">${ICONS[c]||"🎮"} ${esc(c)}</span>`).join("")}</div><h3>${esc(g.nome)}</h3><div class="meta">${g.ano||"Ano não informado"}</div><div class="stars">${"★★★★★".split("").map((x,i)=>`<span class="star ${i<Number(g.nota||0)?"on":""}">${x}</span>`).join("")}</div><div class="status ${getMeta(g.id).borrowed?"borrowed":(Number(g.jogado)?"played":"notplayed")}">${getMeta(g.id).borrowed?"📤 EMPRESTADO":(Number(g.jogado)?"✓ JOGADO":"◷ NÃO JOGADO")}<span class="fav ${Number(g.favorito)?"on":""}">${Number(g.favorito)?"♥":"♡"}</span></div>${isZerado(g)?'<div class="completed-badge"><span class="trophy-icon">🏆</span><span class="trophy-text">JOGO ZERADO</span></div>':''}</div></div>`).join("")||`<div class="empty">Nenhum jogo encontrado.</div>`;
 }
 function setFilter(x){filter=x;special="";renderNav();renderCategoryFilters();render()}
 function setSpecial(x){special=x;filter="";renderNav();renderCategoryFilters();render()}
@@ -1099,7 +1100,7 @@ function openDetail(id){
  $("detailStars").innerHTML="★★★★★".split("").map((x,i)=>`<span class="star ${i<Number(g.nota||0)?"on":""}">${x}</span>`).join("");
  $("detailDesc").textContent=g.descricao||"Este jogo ainda não possui uma descrição cadastrada.";
  const m=getMeta(id);
- $("detailBadges").innerHTML=`<span class="detail-badge">${Number(g.jogado)?"✓ Jogado":"◷ Não jogado"}</span><span class="detail-badge"><span class="detail-favorite ${Number(g.favorito)?"on":""}">${Number(g.favorito)?"♥":"♡"}</span>${Number(g.favorito)?"Favorito":"Não favorito"}</span>${m.zerado?'<span class="detail-badge detail-completed">🏆 Jogo zerado</span>':""}${m.borrowed?'<span class="detail-badge borrowed-badge">📤 Emprestado</span>':""}`;
+ $("detailBadges").innerHTML=`<span class="detail-badge">${Number(g.jogado)?"✓ Jogado":"◷ Não jogado"}</span><span class="detail-badge"><span class="detail-favorite ${Number(g.favorito)?"on":""}">${Number(g.favorito)?"♥":"♡"}</span>${Number(g.favorito)?"Favorito":"Não favorito"}</span>${isZerado(g)?'<span class="detail-badge detail-completed">🏆 Jogo zerado</span>':""}${m.borrowed?'<span class="detail-badge borrowed-badge">📤 Emprestado</span>':""}`;
 const rentalLabels={available:"🟢 Disponível",loaned:"🔵 Emprestado",reserved:"🟠 Reservado",maintenance:"⚫ Manutenção"};
  const rentalStatus=m.rentalStatus||(m.borrowed?"loaned":"available");
  $("infoRentalStatus").textContent=isOverdue(g)?"⚠️ Em atraso":(rentalLabels[rentalStatus]||"🟢 Disponível");
@@ -1117,7 +1118,7 @@ function closeDetail(){$("detailModal").classList.remove("open");detailId=null}
 function drawRating(){$("grating").innerHTML=[1,2,3,4,5].map(n=>`<button type="button" class="${n<=rating?"on":""}" onclick="rating=${n};drawRating()">★</button>`).join("")}
 function gameModal(id=null){
  editingId=id;const g=id?games.find(x=>Number(x.id)===Number(id)):null;const m=id?getMeta(id):{};
- $("gmTitle").textContent=g?"Editar jogo":"Cadastrar jogo";$("gid").value=g?.id||"";$("gname").value=g?.nome||"";setGameCategoriesSelected(g?getGameCategories(g):[]);$("gplatform").value=g?.plataforma||"PS4";$("gyear").value=g?.ano||"";$("gcover").value=g?.capa_url||"";$("gdesc").value=g?.descricao||"";$("gplayed").checked=Number(g?.jogado)===1;$("gfav").checked=Number(g?.favorito)===1;$("gzerado").checked=!!m.zerado;
+ $("gmTitle").textContent=g?"Editar jogo":"Cadastrar jogo";$("gid").value=g?.id||"";$("gname").value=g?.nome||"";setGameCategoriesSelected(g?getGameCategories(g):[]);$("gplatform").value=g?.plataforma||"PS4";$("gyear").value=g?.ano||"";$("gcover").value=g?.capa_url||"";$("gdesc").value=g?.descricao||"";$("gplayed").checked=Number(g?.jogado)===1;$("gfav").checked=Number(g?.favorito)===1;$("gzerado").checked=Number(g?.zerado)===1 || !!m.zerado;
  $("gedition").value=m.edition||"";$("gdate").value=m.date||"";$("glocation").value=m.location||"";$("gnotes").value=m.notes||"";
  $("gborrowed").checked=!!m.borrowed;$("gborrowedTo").value=m.borrowedTo||"";$("gborrowedDate").value=m.borrowedDate||"";$("greturnDate").value=m.returnDate||"";
  $("grentalStatus").value=m.rentalStatus||(m.borrowed?"loaned":"available");$("gcopies").value=m.copies||1;
@@ -1129,7 +1130,7 @@ $("gameForm").addEventListener("submit",async e=>{
  try{
   const selectedCats=selectedGameCategories();if(!selectedCats.length)throw Error("Selecione pelo menos uma categoria.");
  if($("gborrowed").checked)$("grentalStatus").value="loaned";
- const d={nome:$("gname").value.trim(),categoria:selectedCats.join(", "),plataforma:$("gplatform").value,ano:$("gyear").value,capa_url:$("gcover").value.trim(),descricao:$("gdesc").value.trim()};
+ const d={nome:$("gname").value.trim(),categoria:selectedCats.join(", "),plataforma:$("gplatform").value,ano:$("gyear").value,capa_url:$("gcover").value.trim(),descricao:$("gdesc").value.trim(),zerado:$("gzerado").checked};
   let id=editingId;if(id)await write("/api/jogos/"+id,"PUT",d);else id=(await write("/api/jogos","POST",d)).id;
   await write("/api/jogos/"+id+"/avaliacao","PUT",{nota:rating,jogado:$("gplayed").checked,favorito:$("gfav").checked});
   saveMeta(id);closeGameModal();await load();openAdmin();toast("Jogo salvo com sucesso.")
