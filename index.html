@@ -665,7 +665,8 @@ body{
 .card .platform{letter-spacing:.1px}
 .card .cover{isolation:isolate}
 
-/* NEW GAMES V12.5 — favorito, zerado e plataformas */
+/* NEW GAMES V12.9.1 — Locadora: status clicável + exclusões
+/* V12.5 — favorito, zerado e plataformas */ */
 .fav{float:right;color:#8094b4;font-size:22px;line-height:1;margin-left:8px;text-shadow:0 0 7px rgba(255,255,255,.08)}
 .fav.on{color:#ff3158;font-size:25px;text-shadow:0 0 11px rgba(255,49,88,.45)}
 .platform.ps5{background:#fff!important;color:#111!important;border-color:#fff!important;box-shadow:0 0 8px rgba(255,255,255,.18)!important}
@@ -682,6 +683,19 @@ body{
 .detail-completed{border-color:#6d5720!important;background:rgba(55,42,7,.55)!important;color:#ffd54a!important;font-weight:800}
 
 .rental-pro-head{display:flex;justify-content:space-between;align-items:center;gap:18px;margin:0 0 14px;padding:18px 20px;border:1px solid #1a4775;border-radius:14px;background:linear-gradient(145deg,#071b33,#04101f);box-shadow:0 12px 30px rgba(0,0,0,.28)}.rental-pro-kicker{font-size:9px;letter-spacing:1.8px;color:#4ea1ff;font-weight:900}.rental-pro-head h2{margin:3px 0;font-size:22px;color:#fff}.rental-pro-head p{margin:5px 0 0;color:#8ea7c8;font-size:11px}.rental-pro-actions{display:flex;gap:8px;flex-wrap:wrap}.rental-alert-center{margin:14px 0;padding:15px;border:1px solid #183b61;border-radius:13px;background:#061629}.alert-center-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:11px}.alert-center-head strong{display:block;color:#fff;font-size:13px}.alert-center-head span{display:block;color:#7890b2;font-size:9px;margin-top:3px}.alert-center-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.alert-box{appearance:none;text-align:left;cursor:pointer;border-radius:11px;padding:13px;color:#fff;border:1px solid #21496f;background:#07192c;display:flex;flex-direction:column;gap:3px}.alert-box b{font-size:24px}.alert-box span{font-size:10px;font-weight:800}.alert-box small{font-size:8px;color:#89a6c9}.alert-danger{border-color:#743240;background:#281019}.alert-danger b{color:#ff697c}.alert-warning{border-color:#6d5624;background:#261e0b}.alert-warning b{color:#ffd05a}.alert-info{border-color:#24547d;background:#081d35}.alert-info b{color:#55a9ff}@media(max-width:700px){.rental-pro-head{flex-direction:column;align-items:flex-start}.alert-center-grid{grid-template-columns:1fr}}</style>
+
+<style id="v1291-rental-style">
+/* NEW GAMES V12.9.1 — Locadora: status clicável + exclusões */
+.rental-status-btn{appearance:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:5px;min-width:94px;padding:6px 9px;border-radius:7px;border:1px solid;font:inherit;font-size:9px;font-weight:900;letter-spacing:.15px;white-space:nowrap;transition:transform .15s ease,filter .15s ease,background .15s ease}
+.rental-status-btn:hover{transform:translateY(-1px);filter:brightness(1.12)}
+.rental-status-btn:active{transform:translateY(0)}
+.rental-status-btn.status-returned{color:#55ef9b;background:#06251a;border-color:#168c5b}
+.rental-status-btn.status-loaned{color:#ffd35a;background:#2a2108;border-color:#8b6a18}
+.rental-status-btn.status-loaned.late{background:#34200a;border-color:#b56b16}
+.rental-action-delete,.client-delete-btn{color:#ff8290!important;border-color:#6d2634!important;background:#2b0e15!important}
+.rental-action-delete:hover,.client-delete-btn:hover{background:#3a111b!important}
+@media(max-width:700px){.rental-status-btn{min-width:86px;padding:6px 7px}.rental-table{min-width:820px}}
+</style>
 </head>
 <body>
 <header class="site-header">
@@ -765,7 +779,7 @@ body{
     <div class="table-wrap">
       <div class="rental-pro-head"><div><div class="rental-pro-kicker">🎮 NEW GAMES • GESTÃO</div><h2>🏪 Locadora PRO</h2><p>Controle clientes, cópias, locações, devoluções e atrasos em um só lugar.</p></div><div class="rental-pro-actions"><button class="btn" onclick="clientModal()">➕ Novo cliente</button><button class="btn green" onclick="rentalModal()">📤 Nova locação</button></div></div><div class="rental-toolbar">
         <input id="rentalSearch" placeholder="🔎 Pesquisar cliente ou jogo...">
-        <select id="rentalFilter"><option value="">Todas as locações</option><option value="active">Ativas</option><option value="late">Atrasadas</option><option value="returned">Devolvidas</option></select>
+        <select id="rentalFilter"><option value="">Todas as locações</option><option value="active">Ativas</option><option value="late">Atrasadas</option><option value="today">Devoluções hoje</option><option value="returned">Devolvidas</option></select>
         <button class="btn" onclick="clientListModal()">👤 Clientes</button>
       </div>
       <div class="rental-alert-center" id="rentalAlertCenter"><div class="alert-center-head"><div><strong>🚨 Central de Alertas</strong><span>Acompanhamento administrativo das locações</span></div><button class="btn" onclick="$('"'"'rentalFilter'"'"').value='"'"''"'"';renderRentals()">Limpar filtro</button></div><div class="alert-center-grid"><button class="alert-box alert-danger" onclick="$('"'"'rentalFilter'"'"').value='"'"'late'"'"';renderRentals()"><b id="rcLate">0</b><span>Locações atrasadas</span><small>Ver atrasadas →</small></button><button class="alert-box alert-warning" onclick="$('"'"'rentalFilter'"'"').value='"'"'today'"'"';renderRentals()"><b id="rcToday">0</b><span>Devoluções hoje</span><small>Ver hoje →</small></button><button class="alert-box alert-info" onclick="$('"'"'rentalFilter'"'"').value='"'"'active'"'"';renderRentals()"><b id="rcActive">0</b><span>Locações ativas</span><small>Ver ativas →</small></button></div></div><div id="rentalTableWrap"></div>
@@ -1034,30 +1048,50 @@ function clientModal(id=null){
   $("clientModal").classList.add("open");
 }
 function clientListModal(){
-  const cs=clients();
-  $("clientListBody").innerHTML=cs.length?`<div class="table-wrap"><table class="rental-table"><thead><tr><th>Nome</th><th>Telefone</th><th>E-mail</th><th>Ações</th></tr></thead><tbody>${cs.map(c=>`<tr><td><b>${esc(c.name)}</b></td><td>${esc(c.phone||"—")}</td><td>${esc(c.email||"—")}</td><td><button class="btn" onclick="clientModal(${c.id});closeModal('clientListModal')">Editar</button></td></tr>`).join("")}</tbody></table></div>`:`<div class="rental-empty">Nenhum cliente cadastrado.</div>`;
+  const cs=clients(),rs=rentals();
+  $("clientListBody").innerHTML=cs.length?`<div class="table-wrap"><table class="rental-table"><thead><tr><th>Nome</th><th>Telefone</th><th>E-mail</th><th>Ações</th></tr></thead><tbody>${cs.map(c=>{const linked=rs.some(r=>String(r.clientId)===String(c.id));return`<tr><td><b>${esc(c.name)}</b></td><td>${esc(c.phone||"—")}</td><td>${esc(c.email||"—")}</td><td><div class="buttons"><button class="btn" onclick="clientModal(${c.id});closeModal('clientListModal')">Editar</button><button class="btn client-delete-btn" onclick="deleteClient(${c.id})" title="Excluir cliente">🗑️ Excluir</button></div>${linked?`<small class="muted">Possui locações registradas</small>`:""}</td></tr>`}).join("")}</tbody></table></div>`:`<div class="rental-empty">Nenhum cliente cadastrado.</div>`;
   $("clientListModal").classList.add("open");
 }
 function renderRentals(){
-  const rs=rentals(),cs=clients(),active=rs.filter(r=>!r.returnedAt),late=rs.filter(rentalLate);
+  const rs=rentals(),cs=clients(),active=rs.filter(r=>!r.returnedAt),late=rs.filter(rentalLate),today=rs.filter(r=>!r.returnedAt&&r.due===todayISO());
   $("rClients").textContent=cs.length;$("rActive").textContent=active.length;$("rLate").textContent=late.length;
+  if($("rcLate"))$("rcLate").textContent=late.length;if($("rcToday"))$("rcToday").textContent=today.length;if($("rcActive"))$("rcActive").textContent=active.length;
   const total=rs.reduce((s,r)=>s+Math.max(0,Number(r.price||0)-Number(r.discount||0)),0);
   $("rRevenue").textContent=total.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
   const q=($("rentalSearch").value||"").toLowerCase().trim(),f=$("rentalFilter").value;
   const list=rs.filter(r=>{
     const txt=(clientName(r.clientId)+" "+gameName(r.gameId)).toLowerCase();
-    return(!q||txt.includes(q))&&(!f||(f==="active"&&!r.returnedAt)||(f==="late"&&rentalLate(r))||(f==="returned"&&r.returnedAt));
+    return(!q||txt.includes(q))&&(!f||(f==="active"&&!r.returnedAt)||(f==="late"&&rentalLate(r))||(f==="returned"&&r.returnedAt)||(f==="today"&&!r.returnedAt&&r.due===todayISO()));
   }).sort((a,b)=>String(b.start).localeCompare(String(a.start)));
   $("rentalTableWrap").innerHTML=list.length?`<table class="rental-table"><thead><tr><th>Cliente</th><th>Jogo</th><th>Retirada</th><th>Devolução</th><th>Valor</th><th>Status</th><th>Ações</th></tr></thead><tbody>${list.map(r=>{
-    const late=rentalLate(r),status=r.returnedAt?`<span class="status-pill status-returned">✓ Devolvido</span>`:late?`<span class="status-pill status-late">⚠️ Atrasado</span>`:`<span class="status-pill status-active">📤 Ativo</span>`;
+    const late=rentalLate(r),status=r.returnedAt?`<button type="button" class="rental-status-btn status-returned" onclick="toggleRentalStatus(${r.id})" title="Clique para marcar como empréstimo">✓ Devolvido</button>`:`<button type="button" class="rental-status-btn status-loaned${late?" late":""}" onclick="toggleRentalStatus(${r.id})" title="Clique para marcar como devolvido">📤 Empréstimo</button>`;
     const val=Math.max(0,Number(r.price||0)-Number(r.discount||0)).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
-    return `<tr><td><b>${esc(clientName(r.clientId))}</b></td><td>${esc(gameName(r.gameId))}</td><td>${dateBR(r.start)}</td><td>${dateBR(r.due)}${late?`<br><small class="status-late">${overdueDays(r.due)} dia(s) de atraso</small>`:""}</td><td>${val}</td><td>${status}</td><td><div class="buttons"><button class="btn" onclick="rentalModal(${r.id})">Editar</button>${!r.returnedAt?`<button class="btn green" onclick="returnRental(${r.id})">Devolver</button>`:""}</div></td></tr>`;
+    return `<tr><td><b>${esc(clientName(r.clientId))}</b></td><td>${esc(gameName(r.gameId))}</td><td>${dateBR(r.start)}</td><td>${dateBR(r.due)}${late?`<br><small class="status-late">${overdueDays(r.due)} dia(s) de atraso</small>`:""}</td><td>${val}</td><td>${status}</td><td><div class="buttons"><button class="btn" onclick="rentalModal(${r.id})">Editar</button><button class="btn rental-action-delete" onclick="deleteRental(${r.id})" title="Excluir locação">🗑️ Excluir</button></div></td></tr>`;
   }).join("")}</tbody></table>`:`<div class="rental-empty">Nenhuma locação encontrada.</div>`;
 }
-function returnRental(id){
+function toggleRentalStatus(id){
   const rs=rentals(),r=rs.find(x=>String(x.id)===String(id));if(!r)return;
-  r.returnedAt=todayISO();saveRentals(rs);renderRentals();toast("Jogo devolvido.");
+  if(r.returnedAt){
+    r.returnedAt=null;
+    saveRentals(rs);renderRentals();toast("Status alterado para Empréstimo.");
+  }else{
+    r.returnedAt=todayISO();
+    saveRentals(rs);renderRentals();toast("Status alterado para Devolvido.");
+  }
 }
+function deleteRental(id){
+  const rs=rentals(),r=rs.find(x=>String(x.id)===String(id));if(!r)return;
+  if(!confirm(`Excluir a locação de "${clientName(r.clientId)}" — "${gameName(r.gameId)}"?\n\nEsta ação não poderá ser desfeita.`))return;
+  saveRentals(rs.filter(x=>String(x.id)!==String(id)));renderRentals();toast("Locação excluída.");
+}
+function deleteClient(id){
+  const rs=rentals(),c=clients().find(x=>String(x.id)===String(id));if(!c)return;
+  if(rs.some(r=>String(r.clientId)===String(id))){toast("Não é possível excluir: este cliente possui locações registradas. Exclua as locações primeiro.");return}
+  if(!confirm(`Excluir o cliente "${c.name}"?\n\nEsta ação não poderá ser desfeita.`))return;
+  saveClients(clients().filter(x=>String(x.id)!==String(id)));
+  closeModal("clientListModal");renderRentals();toast("Cliente excluído.");
+}
+
 $("clientForm").addEventListener("submit",e=>{
   e.preventDefault();const cs=clients(),id=$("clientId").value||Date.now();
   const item={id:Number(id),name:$("clientName").value.trim(),phone:$("clientPhone").value.trim(),email:$("clientEmail").value.trim(),notes:$("clientNotes").value.trim()};
