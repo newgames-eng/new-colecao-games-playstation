@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#2563eb">
 <title>NEW CORRETOR</title>
 
+<!-- Leitura de imagem no navegador -->
 <script async src="https://docs.opencv.org/4.x/opencv.js"></script>
 
 <style>
@@ -23,9 +24,13 @@
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
 button,input,select{font:inherit}
-
 .header{
   background:linear-gradient(135deg,#111827,#2563eb);
   color:#fff;
@@ -57,7 +62,6 @@ button,input,select{font:inherit}
   font-weight:800;
 }
 .nav button:hover{background:rgba(255,255,255,.22)}
-
 .container{max-width:1250px;margin:auto;padding:26px 18px 60px}
 .section{display:none}
 .section.active{display:block}
@@ -97,12 +101,10 @@ button,input,select{font:inherit}
 .btn-danger{background:var(--danger);color:#fff}
 .btn-secondary{background:#e2e8f0;color:#172033}
 .btn-large{padding:14px 22px;font-size:15px}
-
 .dashboard{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
 .stat{background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px}
 .stat small{color:var(--muted);font-weight:800}
 .stat strong{display:block;font-size:30px;margin-top:7px}
-
 .gabarito-grid,.answers-grid{
   display:grid;
   grid-template-columns:repeat(5,1fr);
@@ -116,7 +118,6 @@ button,input,select{font:inherit}
 }
 .question strong{display:block;margin-bottom:7px}
 .question select{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px}
-
 .camera{
   border:2px dashed #cbd5e1;
   background:#f8fafc;
@@ -133,7 +134,6 @@ button,input,select{font:inherit}
   border-radius:10px;
   border:1px solid #cbd5e1;
 }
-
 .scanner-panel{
   margin-top:20px;
   padding:20px;
@@ -165,7 +165,6 @@ button,input,select{font:inherit}
   transition:width .2s;
 }
 .scan-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
-
 .reading-table{width:100%;border-collapse:collapse;margin-top:15px}
 .reading-table th,.reading-table td{
   border:1px solid var(--border);
@@ -176,7 +175,6 @@ button,input,select{font:inherit}
 .ok{color:#15803d;font-weight:900}
 .bad{color:#dc2626;font-weight:900}
 .neutral{color:#64748b;font-weight:800}
-
 .result{
   display:none;
   margin-top:20px;
@@ -189,7 +187,6 @@ button,input,select{font:inherit}
 .result-item{background:#fff;padding:15px;border-radius:9px;text-align:center}
 .result-item small{color:var(--muted)}
 .result-item strong{display:block;font-size:27px;margin-top:5px}
-
 .table-wrapper{overflow-x:auto}
 table{width:100%;border-collapse:collapse}
 th,td{padding:12px;border-bottom:1px solid var(--border);text-align:left}
@@ -211,8 +208,6 @@ th{background:#f8fafc}
   border-radius:9px;
   line-height:1.5;
 }
-
-.footer{text-align:center;color:var(--muted);font-size:12px;padding:30px}
 
 /* CARTÃO A4 */
 .omr-page{
@@ -269,7 +264,7 @@ th{background:#f8fafc}
 .omr-instruction{text-align:center;margin-top:18px;font-size:11px}
 .omr-warning{text-align:center;font-size:9px;margin-top:7px}
 
-/* RESPONSIVO */
+/* Mobile */
 @media(max-width:900px){
   .header-inner{flex-direction:column;align-items:flex-start}
   .form-grid{grid-template-columns:1fr 1fr}
@@ -326,19 +321,36 @@ th{background:#f8fafc}
 <main class="container">
 
 <section id="inicio" class="section active">
+
   <div class="card">
     <h1>NEW CORRETOR</h1>
     <p>Crie avaliações, gere cartões-resposta e faça a leitura experimental por imagem.</p>
+
     <button class="btn btn-primary btn-large" onclick="showSection('avaliacao')">
       + NOVA AVALIAÇÃO
     </button>
   </div>
 
   <div class="dashboard">
-    <div class="stat"><small>Avaliação cadastrada</small><strong id="statAvaliacao">0</strong></div>
-    <div class="stat"><small>Questões</small><strong id="statQuestoes">0</strong></div>
-    <div class="stat"><small>Provas corrigidas</small><strong id="statProvas">0</strong></div>
-    <div class="stat"><small>Média</small><strong id="statMedia">0,0</strong></div>
+    <div class="stat">
+      <small>Avaliação cadastrada</small>
+      <strong id="statAvaliacao">0</strong>
+    </div>
+
+    <div class="stat">
+      <small>Questões</small>
+      <strong id="statQuestoes">0</strong>
+    </div>
+
+    <div class="stat">
+      <small>Provas corrigidas</small>
+      <strong id="statProvas">0</strong>
+    </div>
+
+    <div class="stat">
+      <small>Média</small>
+      <strong id="statMedia">0,0</strong>
+    </div>
   </div>
 
   <div class="card" style="margin-top:20px">
@@ -348,16 +360,20 @@ th{background:#f8fafc}
       2. Gere o cartão OMR e imprima em A4.<br>
       3. O aluno marca as alternativas.<br>
       4. Fotografe o cartão inteiro, incluindo os quatro marcadores.<br>
-      5. O sistema tenta alinhar a imagem e identificar as marcações.
+      5. O sistema localiza os quadros, analisa o interior das bolhas e mostra a leitura para conferência.
     </div>
   </div>
+
 </section>
 
 <section id="avaliacao" class="section">
+
   <div class="card">
+
     <div class="card-title">📝 Nova avaliação</div>
 
     <div class="form-grid">
+
       <div class="field">
         <label>Nome da avaliação</label>
         <input id="nome" placeholder="Ex.: Avaliação de Matemática">
@@ -382,18 +398,31 @@ th{background:#f8fafc}
         <label>Valor da avaliação</label>
         <input id="valor" type="number" min="0.1" step="0.1" value="10">
       </div>
+
     </div>
 
     <br>
-    <button class="btn btn-primary" onclick="gerarGabarito()">GERAR GABARITO</button>
+
+    <button class="btn btn-primary" onclick="gerarGabarito()">
+      GERAR GABARITO
+    </button>
+
   </div>
 
   <div id="gabaritoCard" class="card" style="display:none">
+
     <div class="card-title">🎯 Gabarito</div>
+
     <div id="gabarito" class="gabarito-grid"></div>
+
     <br>
-    <button class="btn btn-success" onclick="salvarAvaliacao()">✓ SALVAR AVALIAÇÃO</button>
+
+    <button class="btn btn-success" onclick="salvarAvaliacao()">
+      ✓ SALVAR AVALIAÇÃO
+    </button>
+
   </div>
+
 </section>
 
 <section id="correcao" class="section">
@@ -413,21 +442,40 @@ th{background:#f8fafc}
     <br>
 
     <div class="camera">
-      <div style="font-size:52px">📷</div>
-      <h2>Fotografar cartão-resposta</h2>
-      <p>Fotografe o cartão inteiro, sem cortar nenhum dos quatro quadrados pretos.</p>
 
-      <label for="camera" class="btn btn-primary btn-large">📷 ABRIR CÂMERA</label>
-      <input id="camera" type="file" accept="image/*" capture="environment">
+      <div style="font-size:52px">📷</div>
+
+      <h2>Fotografar cartão-resposta</h2>
+
+      <p>
+        Fotografe o cartão inteiro, mantendo os quatro quadrados pretos visíveis.
+      </p>
+
+      <label for="camera" class="btn btn-primary btn-large">
+        📷 ABRIR CÂMERA
+      </label>
+
+      <input
+        id="camera"
+        type="file"
+        accept="image/*"
+        capture="environment">
 
       <img id="preview" class="preview" alt="Prévia da fotografia">
+
     </div>
 
-    <div id="scannerPanel" class="scanner-panel" style="display:none">
+
+    <div
+      id="scannerPanel"
+      class="scanner-panel"
+      style="display:none">
 
       <h2>🔍 Leitura do cartão</h2>
 
-      <div id="scanStatus" class="scan-status">
+      <div
+        id="scanStatus"
+        class="scan-status">
         Aguardando análise...
       </div>
 
@@ -435,54 +483,98 @@ th{background:#f8fafc}
         <div id="progressBar"></div>
       </div>
 
-      <img id="processedImage" class="processed-image" alt="Cartão alinhado">
+      <img
+        id="processedImage"
+        class="processed-image"
+        alt="Cartão alinhado e analisado">
 
       <div id="readingResult"></div>
 
       <div class="scan-actions">
+
         <button
           id="useScanButton"
           class="btn btn-success"
           style="display:none"
           onclick="usarLeituraNaCorrecao()">
+
           ✓ USAR LEITURA
+
         </button>
 
-        <button class="btn btn-secondary" onclick="limparLeitura()">
+        <button
+          class="btn btn-secondary"
+          onclick="limparLeitura()">
+
           LIMPAR
+
         </button>
+
       </div>
 
     </div>
 
   </div>
 
+
   <div class="card">
 
-    <div class="card-title">✏️ Conferência</div>
+    <div class="card-title">
+      ✏️ Conferência das respostas
+    </div>
 
     <p style="color:#64748b">
-      A leitura da imagem é experimental. Confira as respostas antes de registrar a nota.
+      Confira a leitura da imagem antes de registrar a nota.
     </p>
 
-    <div id="respostas" class="answers-grid"></div>
+    <div
+      id="respostas"
+      class="answers-grid">
+    </div>
 
     <br>
 
-    <button class="btn btn-primary btn-large" onclick="corrigirManual()">
+    <button
+      class="btn btn-primary btn-large"
+      onclick="corrigirManual()">
+
       ✓ CORRIGIR PROVA
+
     </button>
 
-    <div id="resultado" class="result">
+
+    <div
+      id="resultado"
+      class="result">
+
       <h2>Resultado</h2>
+
       <div id="nomeResultado"></div>
 
       <div class="result-grid">
-        <div class="result-item"><small>Acertos</small><strong id="acertos">0</strong></div>
-        <div class="result-item"><small>Erros</small><strong id="erros">0</strong></div>
-        <div class="result-item"><small>Em branco</small><strong id="brancos">0</strong></div>
-        <div class="result-item"><small>Nota</small><strong id="nota">0,0</strong></div>
+
+        <div class="result-item">
+          <small>Acertos</small>
+          <strong id="acertos">0</strong>
+        </div>
+
+        <div class="result-item">
+          <small>Erros</small>
+          <strong id="erros">0</strong>
+        </div>
+
+        <div class="result-item">
+          <small>Em branco</small>
+          <strong id="brancos">0</strong>
+        </div>
+
+        <div class="result-item">
+          <small>Nota</small>
+          <strong id="nota">0,0</strong>
+        </div>
+
       </div>
+
     </div>
 
   </div>
@@ -492,15 +584,33 @@ th{background:#f8fafc}
 <section id="cartao" class="section">
 
   <div class="card">
-    <div class="card-title">📄 Cartão-resposta OMR</div>
+
+    <div class="card-title">
+      📄 Cartão-resposta OMR
+    </div>
 
     <p>
-      Cartão A4 com marcadores de referência para alinhamento da fotografia.
+      Cartão A4 com quatro marcadores de referência para o alinhamento da fotografia.
     </p>
 
-    <button class="btn btn-primary" onclick="gerarCartao()">GERAR CARTÃO</button>
-    <button class="btn btn-secondary" onclick="window.print()">🖨️ IMPRIMIR A4</button>
+    <button
+      class="btn btn-primary"
+      onclick="gerarCartao()">
+
+      GERAR CARTÃO
+
+    </button>
+
+    <button
+      class="btn btn-secondary"
+      onclick="window.print()">
+
+      🖨️ IMPRIMIR A4
+
+    </button>
+
   </div>
+
 
   <div class="omr-page">
 
@@ -510,11 +620,18 @@ th{background:#f8fafc}
     <div class="omr-marker marker-br"></div>
 
     <div class="omr-header">
+
       <h1>NEW CORRETOR</h1>
-      <h2 id="tituloCartao">CARTÃO-RESPOSTA</h2>
+
+      <h2 id="tituloCartao">
+        CARTÃO-RESPOSTA
+      </h2>
+
     </div>
 
+
     <div class="omr-info">
+
       <div>
         <strong>Aluno:</strong>
         <div class="omr-line"></div>
@@ -524,20 +641,43 @@ th{background:#f8fafc}
         <strong>Turma:</strong>
         <div class="omr-line"></div>
       </div>
+
     </div>
 
-    <div id="codigoAvaliacao" class="omr-id">NEW-CORRETOR</div>
 
-    <div id="omrGrid" class="omr-grid"></div>
+    <div
+      id="codigoAvaliacao"
+      class="omr-id">
+
+      NEW-CORRETOR
+
+    </div>
+
+
+    <div
+      id="omrGrid"
+      class="omr-grid">
+    </div>
+
 
     <div class="omr-instruction">
-      <strong>MARQUE APENAS UMA ALTERNATIVA POR QUESTÃO.</strong><br>
+
+      <strong>
+        MARQUE APENAS UMA ALTERNATIVA POR QUESTÃO.
+      </strong>
+
+      <br>
+
       Preencha completamente o círculo escolhido.
+
     </div>
 
+
     <div class="omr-warning">
+
       Não faça marcas nos quatro quadrados pretos dos cantos.
       Eles são usados para localizar o cartão.
+
     </div>
 
   </div>
@@ -548,13 +688,16 @@ th{background:#f8fafc}
 
   <div class="card">
 
-    <div class="card-title">📊 Resultados</div>
+    <div class="card-title">
+      📊 Resultados
+    </div>
 
     <div class="table-wrapper">
 
       <table>
 
         <thead>
+
           <tr>
             <th>Aluno</th>
             <th>Turma</th>
@@ -563,6 +706,7 @@ th{background:#f8fafc}
             <th>Brancos</th>
             <th>Nota</th>
           </tr>
+
         </thead>
 
         <tbody id="tabela"></tbody>
@@ -577,33 +721,53 @@ th{background:#f8fafc}
 
 </main>
 
+
 <footer class="footer">
   NEW CORRETOR • Sistema de correção de avaliações
 </footer>
 
+
 <script>
+
 /* =========================================================
-   NEW CORRETOR V2.2
-   Leitura OMR calibrada para o cartão gerado por esta página.
+   NEW CORRETOR V2.3
+   Leitor OMR por imagem.
+
+   Diferença principal desta versão:
+   - primeiro encontra os 4 marcadores;
+   - corrige a perspectiva;
+   - depois encontra os próprios quadros das questões;
+   - dentro de cada quadro, mede a área escura do INTERIOR
+     de cada bolha, sem depender de coordenadas fixas da página.
 ========================================================= */
 
 let avaliacao =
-  JSON.parse(localStorage.getItem("newCorretorAvaliacao") || "null");
+  JSON.parse(
+    localStorage.getItem("newCorretorAvaliacao") || "null"
+  );
 
 let resultados =
-  JSON.parse(localStorage.getItem("newCorretorResultados") || "[]");
+  JSON.parse(
+    localStorage.getItem("newCorretorResultados") || "[]"
+  );
 
 let ultimaLeitura = null;
+
 
 /* =========================================================
    NAVEGAÇÃO
 ========================================================= */
 
 function showSection(id){
-  document.querySelectorAll(".section")
-    .forEach(s => s.classList.remove("active"));
 
-  const section = document.getElementById(id);
+  document
+    .querySelectorAll(".section")
+    .forEach(s =>
+      s.classList.remove("active")
+    );
+
+  const section =
+    document.getElementById(id);
 
   if(section){
     section.classList.add("active");
@@ -628,6 +792,7 @@ function showSection(id){
   });
 }
 
+
 /* =========================================================
    GABARITO
 ========================================================= */
@@ -635,14 +800,20 @@ function showSection(id){
 function gerarGabarito(){
 
   const quantidade =
-    Number(document.getElementById("quantidade").value);
+    Number(
+      document.getElementById("quantidade").value
+    );
 
   if(
     !Number.isInteger(quantidade) ||
     quantidade < 1 ||
     quantidade > 40
   ){
-    alert("Use entre 1 e 40 questões para o cartão A4.");
+
+    alert(
+      "Use entre 1 e 40 questões."
+    );
+
     return;
   }
 
@@ -651,7 +822,11 @@ function gerarGabarito(){
 
   area.innerHTML = "";
 
-  for(let i=1;i<=quantidade;i++){
+  for(
+    let i=1;
+    i<=quantidade;
+    i++
+  ){
 
     const div =
       document.createElement("div");
@@ -659,28 +834,35 @@ function gerarGabarito(){
     div.className = "question";
 
     div.innerHTML = `
+
       <strong>Questão ${i}</strong>
+
       <select id="g${i}">
-        <option value="">Selecione</option>
+
+        <option value="">
+          Selecione
+        </option>
+
         <option value="A">A</option>
         <option value="B">B</option>
         <option value="C">C</option>
         <option value="D">D</option>
         <option value="E">E</option>
+
       </select>
+
     `;
 
     area.appendChild(div);
   }
 
-  document.getElementById("gabaritoCard").style.display = "block";
+  document
+    .getElementById("gabaritoCard")
+    .style.display =
+    "block";
 
-  document.getElementById("gabaritoCard")
-    .scrollIntoView({
-      behavior:"smooth",
-      block:"start"
-    });
 }
+
 
 /* =========================================================
    SALVAR AVALIAÇÃO
@@ -689,19 +871,30 @@ function gerarGabarito(){
 function salvarAvaliacao(){
 
   const nome =
-    document.getElementById("nome").value.trim();
+    document.getElementById("nome")
+      .value
+      .trim();
 
   const turma =
-    document.getElementById("turma").value.trim();
+    document.getElementById("turma")
+      .value
+      .trim();
 
   const disciplina =
-    document.getElementById("disciplina").value.trim();
+    document.getElementById("disciplina")
+      .value
+      .trim();
 
   const quantidade =
-    Number(document.getElementById("quantidade").value);
+    Number(
+      document.getElementById("quantidade").value
+    );
 
   const valor =
-    Number(document.getElementById("valor").value);
+    Number(
+      document.getElementById("valor").value
+    );
+
 
   if(
     !nome ||
@@ -710,49 +903,87 @@ function salvarAvaliacao(){
     !quantidade ||
     !valor
   ){
-    alert("Preencha todos os dados da avaliação.");
+
+    alert(
+      "Preencha todos os dados."
+    );
+
     return;
   }
 
+
   const gabarito = [];
 
-  for(let i=1;i<=quantidade;i++){
 
-    const resposta =
-      document.getElementById("g"+i).value;
+  for(
+    let i=1;
+    i<=quantidade;
+    i++
+  ){
 
-    if(!resposta){
-      alert("Informe o gabarito da questão "+i+".");
+    const r =
+      document.getElementById(
+        "g"+i
+      ).value;
+
+
+    if(!r){
+
+      alert(
+        "Informe o gabarito da questão "
+        + i
+        + "."
+      );
+
       return;
     }
 
-    gabarito.push(resposta);
+
+    gabarito.push(r);
   }
 
+
   avaliacao = {
-    id:"NC-" + Date.now().toString(36).toUpperCase(),
+
+    id:
+      "NC-" +
+      Date.now()
+        .toString(36)
+        .toUpperCase(),
+
     nome,
     turma,
     disciplina,
     quantidade,
     valor,
     gabarito,
-    criadaEm:new Date().toISOString()
+
+    criadaEm:
+      new Date().toISOString()
   };
+
 
   localStorage.setItem(
     "newCorretorAvaliacao",
     JSON.stringify(avaliacao)
   );
 
+
   atualizarDashboard();
+
   atualizarInfo();
+
   gerarCartao();
 
-  alert("Avaliação salva com sucesso.");
+
+  alert(
+    "Avaliação salva com sucesso."
+  );
+
 
   showSection("cartao");
 }
+
 
 /* =========================================================
    INFO
@@ -761,21 +992,35 @@ function salvarAvaliacao(){
 function atualizarInfo(){
 
   const el =
-    document.getElementById("infoAvaliacao");
+    document.getElementById(
+      "infoAvaliacao"
+    );
+
 
   if(!avaliacao){
+
     el.innerText =
       "Nenhuma avaliação cadastrada.";
+
     return;
   }
 
+
   el.innerHTML = `
-    <strong>${escapeHTML(avaliacao.nome)}</strong>
+
+    <strong>
+      ${escapeHTML(avaliacao.nome)}
+    </strong>
+
     • ${escapeHTML(avaliacao.turma)}
+
     • ${escapeHTML(avaliacao.disciplina)}
+
     • ${avaliacao.quantidade} questões
+
   `;
 }
+
 
 /* =========================================================
    RESPOSTAS MANUAIS
@@ -784,9 +1029,13 @@ function atualizarInfo(){
 function gerarRespostas(){
 
   const area =
-    document.getElementById("respostas");
+    document.getElementById(
+      "respostas"
+    );
+
 
   area.innerHTML = "";
+
 
   if(!avaliacao){
 
@@ -796,49 +1045,78 @@ function gerarRespostas(){
     return;
   }
 
-  for(let i=1;i<=avaliacao.quantidade;i++){
+
+  for(
+    let i=1;
+    i<=avaliacao.quantidade;
+    i++
+  ){
 
     const div =
       document.createElement("div");
 
-    div.className = "question";
+    div.className =
+      "question";
+
 
     div.innerHTML = `
+
       <strong>Questão ${i}</strong>
 
       <select id="r${i}">
-        <option value="">Em branco</option>
+
+        <option value="">
+          Em branco
+        </option>
+
         <option value="A">A</option>
         <option value="B">B</option>
         <option value="C">C</option>
         <option value="D">D</option>
         <option value="E">E</option>
+
       </select>
+
     `;
+
 
     area.appendChild(div);
   }
+
 }
 
+
 /* =========================================================
-   CORREÇÃO
+   CORREÇÃO MANUAL
 ========================================================= */
 
 function corrigirManual(){
 
   if(!avaliacao){
-    alert("Cadastre uma avaliação primeiro.");
+
+    alert(
+      "Cadastre uma avaliação primeiro."
+    );
+
     return;
   }
+
 
   const aluno =
-    document.getElementById("aluno")
-      .value.trim();
+    document.getElementById(
+      "aluno"
+    ).value.trim();
+
 
   if(!aluno){
-    alert("Informe o nome do aluno.");
+
+    alert(
+      "Informe o nome do aluno."
+    );
+
     return;
   }
+
 
   const respostas = [];
 
@@ -846,23 +1124,37 @@ function corrigirManual(){
   let erros = 0;
   let brancos = 0;
 
-  for(let i=1;i<=avaliacao.quantidade;i++){
 
-    const resposta =
-      document.getElementById("r"+i).value;
+  for(
+    let i=1;
+    i<=avaliacao.quantidade;
+    i++
+  ){
 
-    respostas.push(resposta);
+    const r =
+      document.getElementById(
+        "r"+i
+      ).value;
 
-    if(!resposta){
+
+    respostas.push(r);
+
+
+    if(!r){
       brancos++;
-    }else if(
-      resposta === avaliacao.gabarito[i-1]
+    }
+    else if(
+      r ===
+      avaliacao.gabarito[i-1]
     ){
       acertos++;
-    }else{
+    }
+    else{
       erros++;
     }
+
   }
+
 
   registrarResultado(
     aluno,
@@ -871,7 +1163,9 @@ function corrigirManual(){
     erros,
     brancos
   );
+
 }
+
 
 /* =========================================================
    REGISTRAR RESULTADO
@@ -886,34 +1180,67 @@ function registrarResultado(
 ){
 
   const nota =
-    (acertos / avaliacao.quantidade)
-    * avaliacao.valor;
+    (
+      acertos /
+      avaliacao.quantidade
+    ) *
+    avaliacao.valor;
+
 
   const resultado = {
+
     id:Date.now(),
+
     aluno,
-    turma:avaliacao.turma,
-    avaliacao:avaliacao.nome,
+
+    turma:
+      avaliacao.turma,
+
+    avaliacao:
+      avaliacao.nome,
+
     acertos,
+
     erros,
+
     brancos,
-    total:avaliacao.quantidade,
-    nota:Number(nota.toFixed(2)),
+
+    total:
+      avaliacao.quantidade,
+
+    nota:
+      Number(
+        nota.toFixed(2)
+      ),
+
     respostas,
-    data:new Date().toISOString()
+
+    data:
+      new Date().toISOString()
   };
 
-  resultados.push(resultado);
+
+  resultados.push(
+    resultado
+  );
+
 
   localStorage.setItem(
     "newCorretorResultados",
     JSON.stringify(resultados)
   );
 
-  mostrarResultado(resultado);
+
+  mostrarResultado(
+    resultado
+  );
+
+
   atualizarDashboard();
+
   atualizarTabela();
 }
+
 
 /* =========================================================
    RESULTADO
@@ -921,60 +1248,114 @@ function registrarResultado(
 
 function mostrarResultado(r){
 
-  document.getElementById("resultado").style.display =
+  document
+    .getElementById(
+      "resultado"
+    )
+    .style.display =
     "block";
 
-  document.getElementById("nomeResultado")
-    .innerHTML =
-      "<strong>Aluno:</strong> "
-      + escapeHTML(r.aluno);
 
-  document.getElementById("acertos").innerText =
+  document
+    .getElementById(
+      "nomeResultado"
+    )
+    .innerHTML =
+
+      "<strong>Aluno:</strong> "
+      +
+      escapeHTML(r.aluno);
+
+
+  document
+    .getElementById(
+      "acertos"
+    )
+    .innerText =
     r.acertos;
 
-  document.getElementById("erros").innerText =
+
+  document
+    .getElementById(
+      "erros"
+    )
+    .innerText =
     r.erros;
 
-  document.getElementById("brancos").innerText =
+
+  document
+    .getElementById(
+      "brancos"
+    )
+    .innerText =
     r.brancos;
 
-  document.getElementById("nota").innerText =
-    r.nota.toFixed(1).replace(".",",");
+
+  document
+    .getElementById(
+      "nota"
+    )
+    .innerText =
+    r.nota
+      .toFixed(1)
+      .replace(".",",");
 }
 
+
 /* =========================================================
-   CARTÃO OMR
+   CARTÃO
 ========================================================= */
 
 function gerarCartao(){
 
   const grid =
-    document.getElementById("omrGrid");
+    document.getElementById(
+      "omrGrid"
+    );
+
 
   if(!avaliacao){
 
     grid.innerHTML = "";
 
-    document.getElementById("tituloCartao")
+    document
+      .getElementById(
+        "tituloCartao"
+      )
       .innerText =
       "CARTÃO-RESPOSTA";
 
-    document.getElementById("codigoAvaliacao")
+
+    document
+      .getElementById(
+        "codigoAvaliacao"
+      )
       .innerText =
       "NEW-CORRETOR";
+
 
     return;
   }
 
-  document.getElementById("tituloCartao")
+
+  document
+    .getElementById(
+      "tituloCartao"
+    )
     .innerText =
     avaliacao.nome.toUpperCase();
 
-  document.getElementById("codigoAvaliacao")
+
+  document
+    .getElementById(
+      "codigoAvaliacao"
+    )
     .innerText =
     avaliacao.id;
 
+
   grid.innerHTML = "";
+
 
   for(
     let i=1;
@@ -985,34 +1366,59 @@ function gerarCartao(){
     const div =
       document.createElement("div");
 
+
     div.className =
       "omr-question";
 
+
     div.innerHTML = `
+
       <div class="omr-number">
-        QUESTÃO ${String(i).padStart(2,"0")}
+
+        QUESTÃO
+        ${String(i).padStart(2,"0")}
+
       </div>
+
 
       <div class="omr-options">
 
-        <div class="omr-bubble">A</div>
-        <div class="omr-bubble">B</div>
-        <div class="omr-bubble">C</div>
-        <div class="omr-bubble">D</div>
-        <div class="omr-bubble">E</div>
+        <div class="omr-bubble">
+          A
+        </div>
+
+        <div class="omr-bubble">
+          B
+        </div>
+
+        <div class="omr-bubble">
+          C
+        </div>
+
+        <div class="omr-bubble">
+          D
+        </div>
+
+        <div class="omr-bubble">
+          E
+        </div>
 
       </div>
+
     `;
+
 
     grid.appendChild(div);
   }
 }
 
+
 /* =========================================================
    CÂMERA
 ========================================================= */
 
-document.getElementById("camera")
+document
+  .getElementById("camera")
   .addEventListener(
     "change",
     async function(e){
@@ -1021,109 +1427,165 @@ document.getElementById("camera")
         e.target.files &&
         e.target.files[0];
 
+
       if(!file){
         return;
       }
 
+
       const preview =
-        document.getElementById("preview");
+        document.getElementById(
+          "preview"
+        );
+
 
       preview.src =
-        URL.createObjectURL(file);
+        URL.createObjectURL(
+          file
+        );
+
 
       preview.style.display =
         "block";
 
-      await analisarCartao(file);
+
+      await analisarCartao(
+        file
+      );
+
     }
   );
 
+
 /* =========================================================
-   ANÁLISE DO CARTÃO
+   ANÁLISE PRINCIPAL
 ========================================================= */
 
 async function analisarCartao(file){
 
   const panel =
-    document.getElementById("scannerPanel");
+    document.getElementById(
+      "scannerPanel"
+    );
 
   const status =
-    document.getElementById("scanStatus");
+    document.getElementById(
+      "scanStatus"
+    );
 
   const result =
-    document.getElementById("readingResult");
+    document.getElementById(
+      "readingResult"
+    );
 
   const processed =
-    document.getElementById("processedImage");
+    document.getElementById(
+      "processedImage"
+    );
 
   const progress =
-    document.getElementById("progressBar");
+    document.getElementById(
+      "progressBar"
+    );
 
   const useButton =
-    document.getElementById("useScanButton");
+    document.getElementById(
+      "useScanButton"
+    );
+
 
   panel.style.display =
     "block";
 
-  result.innerHTML = "";
+
+  result.innerHTML =
+    "";
+
 
   processed.style.display =
     "none";
 
+
   useButton.style.display =
     "none";
+
 
   progress.style.width =
     "5%";
 
+
   status.className =
     "scan-status processing";
 
+
   status.innerText =
     "🔍 Preparando imagem...";
+
 
   try{
 
     await esperarOpenCV();
 
+
     progress.style.width =
       "15%";
 
+
     status.innerText =
-      "🔍 Procurando os quatro marcadores...";
+      "🔍 Localizando os quatro marcadores...";
+
 
     const img =
-      await carregarImagem(file);
+      await carregarImagem(
+        file
+      );
+
 
     const src =
-      cv.imread(img);
+      cv.imread(
+        img
+      );
+
 
     progress.style.width =
       "30%";
 
-    const pontos =
-      detectarMarcadores(src);
 
-    if(pontos.length !== 4){
+    const pontos =
+      detectarMarcadores(
+        src
+      );
+
+
+    if(
+      pontos.length !== 4
+    ){
 
       src.delete();
 
       throw new Error(
-        "Não encontrei os quatro marcadores. Fotografe o cartão inteiro, sem cortar os cantos."
+        "Não encontrei os quatro marcadores. Fotografe o cartão inteiro e sem cortar os cantos."
       );
     }
 
+
     progress.style.width =
-      "45%";
+      "42%";
+
 
     status.innerText =
       "📐 Corrigindo perspectiva...";
 
+
     const ordenados =
-      ordenarPontos(pontos);
+      ordenarPontos(
+        pontos
+      );
+
 
     const W = 1000;
     const H = 1414;
+
 
     const srcTri =
       cv.matFromArray(
@@ -1131,6 +1593,7 @@ async function analisarCartao(file){
         1,
         cv.CV_32FC2,
         [
+
           ordenados[0].x,
           ordenados[0].y,
 
@@ -1142,8 +1605,10 @@ async function analisarCartao(file){
 
           ordenados[3].x,
           ordenados[3].y
+
         ]
       );
+
 
     const dstTri =
       cv.matFromArray(
@@ -1151,12 +1616,22 @@ async function analisarCartao(file){
         1,
         cv.CV_32FC2,
         [
-          0,0,
-          W,0,
-          W,H,
-          0,H
+
+          0,
+          0,
+
+          W,
+          0,
+
+          W,
+          H,
+
+          0,
+          H
+
         ]
       );
+
 
     const M =
       cv.getPerspectiveTransform(
@@ -1164,104 +1639,171 @@ async function analisarCartao(file){
         dstTri
       );
 
+
     const warped =
       new cv.Mat();
+
 
     cv.warpPerspective(
       src,
       warped,
       M,
-      new cv.Size(W,H),
+      new cv.Size(
+        W,
+        H
+      ),
       cv.INTER_LINEAR,
       cv.BORDER_CONSTANT,
-      new cv.Scalar(255,255,255,255)
+      new cv.Scalar(
+        255,
+        255,
+        255,
+        255
+      )
     );
 
+
     progress.style.width =
-      "65%";
+      "62%";
+
 
     status.innerText =
-      "🎯 Cartão alinhado. Analisando o centro das bolhas...";
+      "🎯 Procurando os quadros das questões...";
 
-    /*
-      Cria imagem de visualização.
-    */
 
     const visual =
       warped.clone();
 
+
+    const boxes =
+      detectarQuadrosQuestoes(
+        warped,
+        avaliacao
+          ? avaliacao.quantidade
+          : 0
+      );
+
+
+    if(
+      avaliacao &&
+      boxes.length <
+      avaliacao.quantidade
+    ){
+
+      /*
+        Ainda mostramos a imagem para diagnóstico.
+      */
+
+      mostrarImagem(
+        visual,
+        processed
+      );
+
+
+      limparMat(
+        src,
+        srcTri,
+        dstTri,
+        M,
+        warped,
+        visual
+      );
+
+
+      throw new Error(
+        "Encontrei apenas " +
+        boxes.length +
+        " quadros de questões de " +
+        avaliacao.quantidade +
+        ". Melhore a iluminação ou fotografe o cartão mais de frente."
+      );
+    }
+
+
+    progress.style.width =
+      "78%";
+
+
+    status.innerText =
+      "⭕ Analisando o interior das bolhas...";
+
+
     const leitura =
-      analisarBolhasPrecisao(
+      analisarBolhasPorQuadro(
         warped,
         visual,
-        avaliacao ? avaliacao.quantidade : 0
+        boxes,
+        avaliacao
+          ? avaliacao.quantidade
+          : 0
       );
 
-    const canvas =
-      document.createElement("canvas");
-
-    canvas.width = W;
-    canvas.height = H;
-
-    cv.imshow(
-      canvas,
-      visual
-    );
-
-    processed.src =
-      canvas.toDataURL(
-        "image/jpeg",
-        0.9
-      );
-
-    processed.style.display =
-      "block";
 
     ultimaLeitura =
       leitura;
+
+
+    mostrarImagem(
+      visual,
+      processed
+    );
+
 
     mostrarLeitura(
       leitura
     );
 
+
     progress.style.width =
       "100%";
+
 
     status.className =
       "scan-status success";
 
+
     status.innerText =
       "✓ Leitura concluída. Confira as respostas antes de usar.";
 
-    if(leitura.length){
-      useButton.style.display =
-        "inline-block";
-    }
 
-    src.delete();
-    srcTri.delete();
-    dstTri.delete();
-    M.delete();
-    warped.delete();
-    visual.delete();
+    useButton.style.display =
+      leitura.length
+      ? "inline-block"
+      : "none";
+
+
+    limparMat(
+      src,
+      srcTri,
+      dstTri,
+      M,
+      warped,
+      visual
+    );
+
 
   }catch(err){
 
     console.error(err);
 
+
     status.className =
       "scan-status error";
 
+
     status.innerText =
-      "⚠️ " + err.message;
+      "⚠️ " +
+      err.message;
+
 
     progress.style.width =
       "0%";
   }
 }
 
+
 /* =========================================================
-   DETECÇÃO DOS MARCADORES
+   DETECTAR MARCADORES
 ========================================================= */
 
 function detectarMarcadores(src){
@@ -1272,11 +1814,13 @@ function detectarMarcadores(src){
   const binary =
     new cv.Mat();
 
+
   cv.cvtColor(
     src,
     gray,
     cv.COLOR_RGBA2GRAY
   );
+
 
   cv.threshold(
     gray,
@@ -1286,11 +1830,13 @@ function detectarMarcadores(src){
     cv.THRESH_BINARY_INV
   );
 
+
   const contours =
     new cv.MatVector();
 
   const hierarchy =
     new cv.Mat();
+
 
   cv.findContours(
     binary,
@@ -1300,10 +1846,13 @@ function detectarMarcadores(src){
     cv.CHAIN_APPROX_SIMPLE
   );
 
+
   const candidatos = [];
 
   const imageArea =
-    src.cols * src.rows;
+    src.cols *
+    src.rows;
+
 
   for(
     let i=0;
@@ -1314,24 +1863,42 @@ function detectarMarcadores(src){
     const contour =
       contours.get(i);
 
-    const area =
-      cv.contourArea(contour);
 
-    if(area < imageArea * 0.00025){
+    const area =
+      cv.contourArea(
+        contour
+      );
+
+
+    if(
+      area <
+      imageArea * 0.00025
+    ){
+
       contour.delete();
+
       continue;
     }
 
+
     const rect =
-      cv.boundingRect(contour);
+      cv.boundingRect(
+        contour
+      );
+
 
     const ratio =
       rect.width /
       rect.height;
 
+
     const fill =
       area /
-      (rect.width * rect.height);
+      (
+        rect.width *
+        rect.height
+      );
+
 
     if(
       ratio > 0.70 &&
@@ -1342,27 +1909,31 @@ function detectarMarcadores(src){
     ){
 
       candidatos.push({
-        x:rect.x + rect.width/2,
-        y:rect.y + rect.height/2,
-        area:area,
-        width:rect.width,
-        height:rect.height
+
+        x:
+          rect.x +
+          rect.width/2,
+
+        y:
+          rect.y +
+          rect.height/2,
+
+        area:
+          area
       });
+
     }
+
 
     contour.delete();
   }
+
 
   gray.delete();
   binary.delete();
   contours.delete();
   hierarchy.delete();
 
-  /*
-    Divide a imagem em quatro quadrantes.
-    Como os marcadores são grandes e isolados,
-    isso evita confundir uma questão com um marcador.
-  */
 
   const cx =
     src.cols / 2;
@@ -1370,59 +1941,82 @@ function detectarMarcadores(src){
   const cy =
     src.rows / 2;
 
-  const selecionados = [];
 
   const quadrantes = [
-    {name:"tl",x:0,y:0,w:cx,h:cy},
-    {name:"tr",x:cx,y:0,w:cx,h:cy},
-    {name:"bl",x:0,y:cy,w:cx,h:cy},
-    {name:"br",x:cx,y:cy,w:cx,h:cy}
+
+    {
+      x:0,
+      y:0,
+      w:cx,
+      h:cy
+    },
+
+    {
+      x:cx,
+      y:0,
+      w:cx,
+      h:cy
+    },
+
+    {
+      x:0,
+      y:cy,
+      w:cx,
+      h:cy
+    },
+
+    {
+      x:cx,
+      y:cy,
+      w:cx,
+      h:cy
+    }
+
   ];
 
-  for(const q of quadrantes){
+
+  const escolhidos = [];
+
+
+  for(
+    const q of quadrantes
+  ){
 
     const dentro =
-      candidatos.filter(c=>
-        c.x >= q.x &&
-        c.x < q.x+q.w &&
-        c.y >= q.y &&
-        c.y < q.y+q.h
+      candidatos.filter(
+        c =>
+          c.x >= q.x &&
+          c.x < q.x+q.w &&
+          c.y >= q.y &&
+          c.y < q.y+q.h
       );
 
-    if(!dentro.length) continue;
+
+    if(!dentro.length){
+      continue;
+    }
+
 
     dentro.sort(
-      (a,b)=>b.area-a.area
+      (a,b)=>
+        b.area-a.area
     );
 
-    selecionados.push(
+
+    escolhidos.push(
       dentro[0]
     );
   }
 
-  if(selecionados.length === 4){
-    return selecionados.map(p=>({
+
+  return escolhidos.map(
+    p => ({
       x:p.x,
       y:p.y
-    }));
-  }
-
-  /*
-    Fallback.
-  */
-
-  candidatos.sort(
-    (a,b)=>b.area-a.area
+    })
   );
-
-  const fallback =
-    candidatos.slice(0,4);
-
-  return fallback.map(p=>({
-    x:p.x,
-    y:p.y
-  }));
 }
+
 
 /* =========================================================
    ORDENAR CANTOS
@@ -1430,80 +2024,59 @@ function detectarMarcadores(src){
 
 function ordenarPontos(points){
 
-  const tl =
+  const sum =
     [...points].sort(
       (a,b)=>
-        (a.x+a.y)-
-        (b.x+b.y)
-    )[0];
-
-  const br =
-    [...points].sort(
-      (a,b)=>
-        (b.x+b.y)-
-        (a.x+a.y)
-    )[0];
-
-  const tr =
-    [...points].sort(
-      (a,b)=>
-        (b.x-a.y)-
-        (a.x-b.y)
-    )[0];
-
-  const bl =
-    [...points].sort(
-      (a,b)=>
-        (a.x-b.y)-
-        (b.x-a.y)
-    )[0];
-
-  /*
-    O cálculo acima pode ter ambiguidades em
-    imagens muito inclinadas. Reordenamos usando
-    soma/diferença tradicionais.
-  */
-
-  const sumSorted =
-    [...points].sort(
-      (a,b)=>
-        (a.x+a.y)-
+        (a.x+a.y) -
         (b.x+b.y)
     );
 
-  const diffSorted =
+
+  const diff =
     [...points].sort(
       (a,b)=>
-        (a.x-a.y)-
+        (a.x-a.y) -
         (b.x-b.y)
     );
 
+
   return [
-    sumSorted[0], /* TL */
-    diffSorted[3], /* TR */
-    sumSorted[3], /* BR */
-    diffSorted[0]  /* BL */
+
+    sum[0],  /* TL */
+
+    diff[3], /* TR */
+
+    sum[3],  /* BR */
+
+    diff[0]  /* BL */
+
   ];
 }
 
+
 /* =========================================================
-   LEITURA PRECISA DO CENTRO DAS BOLHAS
+   DETECTAR QUADROS DAS QUESTÕES
 ========================================================= */
 
-function analisarBolhasPrecisao(
+function detectarQuadrosQuestoes(
   mat,
-  visual,
   total
 ){
 
-  const respostas = [];
-
   if(!total){
-    return respostas;
+    return [];
   }
+
 
   const gray =
     new cv.Mat();
+
+  const blur =
+    new cv.Mat();
+
+  const edges =
+    new cv.Mat();
+
 
   cv.cvtColor(
     mat,
@@ -1511,52 +2084,450 @@ function analisarBolhasPrecisao(
     cv.COLOR_RGBA2GRAY
   );
 
+
+  cv.GaussianBlur(
+    gray,
+    blur,
+    new cv.Size(3,3),
+    0
+  );
+
+
+  cv.Canny(
+    blur,
+    edges,
+    60,
+    160
+  );
+
+
+  const contours =
+    new cv.MatVector();
+
+  const hierarchy =
+    new cv.Mat();
+
+
+  cv.findContours(
+    edges,
+    contours,
+    hierarchy,
+    cv.RETR_LIST,
+    cv.CHAIN_APPROX_SIMPLE
+  );
+
+
+  const candidatos = [];
+
+
+  for(
+    let i=0;
+    i<contours.size();
+    i++
+  ){
+
+    const contour =
+      contours.get(i);
+
+
+    const rect =
+      cv.boundingRect(
+        contour
+      );
+
+
+    const area =
+      rect.width *
+      rect.height;
+
+
+    /*
+      A área principal das questões
+      fica na região superior do cartão.
+    */
+
+    if(
+      rect.y < 150 ||
+      rect.y > 650
+    ){
+
+      contour.delete();
+
+      continue;
+    }
+
+
+    /*
+      Proporção típica de um quadro:
+      bastante mais largo que alto.
+    */
+
+    const ratio =
+      rect.width /
+      rect.height;
+
+
+    if(
+      rect.width < 130 ||
+      rect.width > 310 ||
+      rect.height < 35 ||
+      rect.height > 110 ||
+      ratio < 2.4 ||
+      ratio > 6.5
+    ){
+
+      contour.delete();
+
+      continue;
+    }
+
+
+    const peri =
+      cv.arcLength(
+        contour,
+        true
+      );
+
+
+    const approx =
+      new cv.Mat();
+
+
+    cv.approxPolyDP(
+      contour,
+      approx,
+      0.035 * peri,
+      true
+    );
+
+
+    if(
+      approx.rows === 4
+    ){
+
+      candidatos.push({
+
+        x:rect.x,
+        y:rect.y,
+
+        width:
+          rect.width,
+
+        height:
+          rect.height,
+
+        area
+      });
+
+    }
+
+
+    approx.delete();
+    contour.delete();
+  }
+
+
+  gray.delete();
+  blur.delete();
+  edges.delete();
+  contours.delete();
+  hierarchy.delete();
+
+
   /*
-    A geometria abaixo corresponde ao cartão
-    A4 gerado por este sistema.
-
-    Após o warp, o centro do marcador superior
-    esquerdo é (0,0).
-
-    Posições calibradas a partir do layout:
-      primeira bolha: X ≈ 20
-      passo entre alternativas: ≈ 46
-      passo entre colunas: ≈ 258
-      primeira linha: Y ≈ 293
-      passo entre linhas: ≈ 107
+    Remover caixas duplicadas usando proximidade.
   */
 
-  const START_X = 20;
-  const START_Y = 293;
-  const COL_STEP = 258;
-  const ROW_STEP = 107;
-  const BUBBLE_STEP = 46;
+  candidatos.sort(
+    (a,b)=>
+      b.area-a.area
+  );
+
+
+  const unicos = [];
+
+
+  for(
+    const r of candidatos
+  ){
+
+    const duplicado =
+      unicos.some(
+        u =>
+          sobreposicao(u,r) > 0.55
+      );
+
+
+    if(!duplicado){
+      unicos.push(r);
+    }
+
+  }
+
+
+  /*
+    Ordenar por linha e coluna.
+  */
+
+  unicos.sort(
+    (a,b)=>{
+
+      const dy =
+        a.y-b.y;
+
+
+      if(
+        Math.abs(dy) > 25
+      ){
+
+        return dy;
+      }
+
+
+      return a.x-b.x;
+    }
+  );
+
+
+  /*
+    Se encontramos mais caixas do que
+    precisamos, ficamos com as maiores.
+  */
+
+  if(
+    unicos.length > total
+  ){
+
+    unicos
+      .sort(
+        (a,b)=>
+          b.area-a.area
+      );
+
+    const selecionados =
+      unicos.slice(
+        0,
+        total
+      );
+
+
+    selecionados.sort(
+      (a,b)=>{
+
+        const dy =
+          a.y-b.y;
+
+        if(
+          Math.abs(dy) > 25
+        ){
+          return dy;
+        }
+
+        return a.x-b.x;
+      }
+    );
+
+
+    return selecionados;
+  }
+
+
+  return unicos;
+}
+
+
+/* =========================================================
+   SOBREPOSIÇÃO
+========================================================= */
+
+function sobreposicao(a,b){
+
+  const x1 =
+    Math.max(
+      a.x,
+      b.x
+    );
+
+  const y1 =
+    Math.max(
+      a.y,
+      b.y
+    );
+
+  const x2 =
+    Math.min(
+      a.x+a.width,
+      b.x+b.width
+    );
+
+  const y2 =
+    Math.min(
+      a.y+a.height,
+      b.y+b.height
+    );
+
+
+  if(
+    x2 <= x1 ||
+    y2 <= y1
+  ){
+    return 0;
+  }
+
+
+  const inter =
+    (
+      x2-x1
+    ) *
+    (
+      y2-y1
+    );
+
+
+  const menor =
+    Math.min(
+      a.width*a.height,
+      b.width*b.height
+    );
+
+
+  return inter /
+    Math.max(
+      1,
+      menor
+    );
+}
+
+
+/* =========================================================
+   ANALISAR BOLHAS DENTRO DE CADA QUADRO
+========================================================= */
+
+function analisarBolhasPorQuadro(
+  mat,
+  visual,
+  boxes,
+  total
+){
+
+  const respostas = [];
+
+
+  if(
+    !total ||
+    !boxes.length
+  ){
+    return respostas;
+  }
+
+
+  const gray =
+    new cv.Mat();
+
+
+  cv.cvtColor(
+    mat,
+    gray,
+    cv.COLOR_RGBA2GRAY
+  );
+
+
+  /*
+    Threshold adaptativo melhora a leitura
+    em iluminação desigual.
+  */
+
+  const bin =
+    new cv.Mat();
+
+
+  cv.adaptiveThreshold(
+    gray,
+    bin,
+    255,
+    cv.ADAPTIVE_THRESH_GAUSSIAN_C,
+    cv.THRESH_BINARY_INV,
+    31,
+    10
+  );
+
 
   const letras =
-    ["A","B","C","D","E"];
+    [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E"
+    ];
+
+
+  boxes =
+    boxes
+      .slice()
+      .sort(
+        (a,b)=>{
+
+          const dy =
+            a.y-b.y;
+
+          if(
+            Math.abs(dy) > 25
+          ){
+            return dy;
+          }
+
+          return a.x-b.x;
+        }
+      );
+
 
   for(
     let q=0;
-    q<total;
+    q<Math.min(
+      total,
+      boxes.length
+    );
     q++
   ){
 
-    const coluna =
-      q % 4;
+    const box =
+      boxes[q];
 
-    const linha =
-      Math.floor(q / 4);
 
-    const baseX =
-      START_X +
-      coluna * COL_STEP;
+    /*
+      As bolhas ocupam praticamente toda
+      a largura do quadro.
 
-    const baseY =
-      START_Y +
-      linha * ROW_STEP;
+      Os centros são calculados
+      proporcionalmente ao próprio quadro.
+    */
 
-    const valores = [];
-    const pontos = [];
+    const y =
+      Math.round(
+        box.y +
+        box.height * 0.68
+      );
+
+
+    const xInicio =
+      box.x +
+      box.width * 0.12;
+
+
+    const xFim =
+      box.x +
+      box.width * 0.88;
+
+
+    const passo =
+      (
+        xFim-xInicio
+      ) / 4;
+
+
+    const candidatos = [];
+
 
     for(
       let a=0;
@@ -1566,445 +2537,528 @@ function analisarBolhasPrecisao(
 
       const cx =
         Math.round(
-          baseX +
-          a * BUBBLE_STEP
+          xInicio +
+          a*passo
         );
 
+
       const cy =
-        Math.round(baseY);
+        y;
 
-      const raioCentro = 6;
-      const raioAnelInterno = 8;
-      const raioAnelExterno = 11;
-
-      const centerVals = [];
-      const ringVals = [];
 
       /*
-        Analisa o centro da bolinha.
-        A borda da circunferência fica fora.
+        Raio proporcional ao quadro.
+        A área analisada fica dentro da
+        circunferência, longe da borda.
       */
 
+      const raio =
+        Math.max(
+          6,
+          Math.min(
+            10,
+            box.height*0.14
+          )
+        );
+
+
+      let totalPixels = 0;
+      let pixelsEscuros = 0;
+      let soma = 0;
+
+
       for(
-        let dy=-raioCentro;
-        dy<=raioCentro;
+        let dy=-raio;
+        dy<=raio;
         dy++
       ){
 
         for(
-          let dx=-raioCentro;
-          dx<=raioCentro;
+          let dx=-raio;
+          dx<=raio;
           dx++
         ){
 
           if(
-            dx*dx +
-            dy*dy <=
-            raioCentro*raioCentro
+            dx*dx+
+            dy*dy >
+            raio*raio
           ){
-
-            const x =
-              Math.max(
-                0,
-                Math.min(
-                  gray.cols-1,
-                  cx+dx
-                )
-              );
-
-            const y =
-              Math.max(
-                0,
-                Math.min(
-                  gray.rows-1,
-                  cy+dy
-                )
-              );
-
-            centerVals.push(
-              gray.ucharAt(y,x)
-            );
+            continue;
           }
-        }
-      }
 
-      /*
-        O anel ajuda a ignorar o efeito da borda.
-      */
 
-      for(
-        let dy=-raioAnelExterno;
-        dy<=raioAnelExterno;
-        dy++
-      ){
+          const xx =
+            Math.max(
+              0,
+              Math.min(
+                bin.cols-1,
+                cx+dx
+              )
+            );
 
-        for(
-          let dx=-raioAnelExterno;
-          dx<=raioAnelExterno;
-          dx++
-        ){
 
-          const d2 =
-            dx*dx +
-            dy*dy;
+          const yy =
+            Math.max(
+              0,
+              Math.min(
+                bin.rows-1,
+                cy+dy
+              )
+            );
+
+
+          const v =
+            bin.ucharAt(
+              yy,
+              xx
+            );
+
+
+          totalPixels++;
+
+          soma +=
+            gray.ucharAt(
+              yy,
+              xx
+            );
+
 
           if(
-            d2 <=
-            raioAnelExterno*raioAnelExterno &&
-            d2 >=
-            raioAnelInterno*raioAnelInterno
+            v > 0
           ){
 
-            const x =
-              Math.max(
-                0,
-                Math.min(
-                  gray.cols-1,
-                  cx+dx
-                )
-              );
-
-            const y =
-              Math.max(
-                0,
-                Math.min(
-                  gray.rows-1,
-                  cy+dy
-                )
-              );
-
-            ringVals.push(
-              gray.ucharAt(y,x)
-            );
+            pixelsEscuros++;
           }
+
         }
       }
 
-      const centerMean =
-        media(centerVals);
 
-      const ringMean =
-        media(ringVals);
+      const fracao =
+        pixelsEscuros /
+        Math.max(
+          1,
+          totalPixels
+        );
 
-      /*
-        Diferença positiva grande:
-        centro mais escuro que o anel.
-      */
 
-      const contraste =
-        ringMean -
-        centerMean;
+      const mediaCinza =
+        soma /
+        Math.max(
+          1,
+          totalPixels
+        );
 
-      const darkness =
-        255 -
-        centerMean;
 
-      /*
-        Critério conservador.
-        Ele é focado no centro para não confundir
-        a borda de uma bolinha vazia com marcação.
-      */
+      candidatos.push({
 
-      const marcado =
-        contraste >= 22 &&
-        darkness >= 35;
+        indice:a,
 
-      valores.push(
-        marcado
-        ? contraste
-        : 0
-      );
-
-      pontos.push({
         x:cx,
         y:cy,
-        marcado,
-        contraste
+
+        fracao,
+
+        mediaCinza
       });
+
+
+      /*
+        Diagnóstico:
+        desenhar um círculo no centro
+        de cada alternativa.
+      */
+
+      cv.circle(
+        visual,
+        new cv.Point(
+          cx,
+          cy
+        ),
+        Math.round(raio+2),
+        new cv.Scalar(
+          100,
+          116,
+          139,
+          255
+        ),
+        2
+      );
+
     }
 
-    const candidatos =
-      pontos.filter(
-        p=>p.marcado
-      );
+
+    /*
+      Ordenar pelo percentual escuro.
+    */
+
+    candidatos.sort(
+      (a,b)=>
+        b.fracao-a.fracao
+    );
+
+
+    const melhor =
+      candidatos[0];
+
+
+    const segundo =
+      candidatos[1];
+
+
+    /*
+      Critério principal:
+
+      O interior preenchido possui uma fração
+      preta muito maior que o interior vazio,
+      mesmo que o círculo tenha uma letra
+      impressa no centro.
+    */
+
+    const LIMIAR_PREENCHIMENTO =
+      0.34;
+
 
     let resposta =
       "—";
 
-    let confianca = 0;
 
-    if(candidatos.length === 0){
+    let confianca =
+      0;
+
+
+    if(
+      melhor.fracao <
+      LIMIAR_PREENCHIMENTO
+    ){
 
       resposta =
         "—";
 
-    }else if(candidatos.length > 1){
-
-      /*
-        Se houver várias marcações,
-        escolhemos uma apenas quando existe
-        uma diferença muito clara entre elas.
-      */
-
-      candidatos.sort(
-        (a,b)=>
-          b.contraste-
-          a.contraste
-      );
-
-      const melhor =
-        candidatos[0];
-
-      const segundo =
-        candidatos[1];
+    }
+    else{
 
       const diferenca =
-        melhor.contraste-
-        segundo.contraste;
+        melhor.fracao -
+        segundo.fracao;
 
-      if(diferenca >= 22){
 
-        const indice =
-          pontos.indexOf(melhor);
+      /*
+        Se duas bolhas estão muito escuras
+        e próximas, sinalizamos revisão.
+      */
 
-        resposta =
-          letras[indice];
-
-        confianca =
-          Math.min(
-            99,
-            Math.round(
-              (diferenca /
-              Math.max(
-                1,
-                melhor.contraste
-              )) * 100
-            )
-          );
-
-      }else{
+      if(
+        segundo.fracao >=
+          LIMIAR_PREENCHIMENTO &&
+        diferenca < 0.10
+      ){
 
         resposta =
           "⚠️";
+
       }
+      else{
 
-    }else{
+        resposta =
+          letras[
+            melhor.indice
+          ];
 
-      const melhor =
-        candidatos[0];
 
-      const indice =
-        pontos.indexOf(melhor);
-
-      resposta =
-        letras[indice];
-
-      confianca =
-        Math.min(
-          99,
+        confianca =
           Math.round(
             Math.min(
-              1,
-              melhor.contraste/100
-            )*100
-          )
-        );
+              99,
+              (
+                diferenca /
+                Math.max(
+                  0.05,
+                  melhor.fracao
+                )
+              ) * 100
+            )
+          );
+
+      }
     }
 
+
     /*
-      Desenha uma marcação de diagnóstico
-      na imagem alinhada.
+      Destacar o melhor candidato.
     */
 
-    const corCorreta =
+    const cor =
+      resposta === "⚠️"
+      ? new cv.Scalar(
+          220,
+          38,
+          38,
+          255
+        )
+      : resposta === "—"
+      ? new cv.Scalar(
+          100,
+          116,
+          139,
+          255
+        )
+      : new cv.Scalar(
+          22,
+          163,
+          74,
+          255
+        );
+
+
+    cv.circle(
+      visual,
+      new cv.Point(
+        melhor.x,
+        melhor.y
+      ),
+      12,
+      cor,
+      3
+    );
+
+
+    /*
+      Número da questão no canto
+      para diagnóstico visual.
+    */
+
+    cv.putText(
+      visual,
+      String(q+1),
+      new cv.Point(
+        box.x+6,
+        box.y+16
+      ),
+      cv.FONT_HERSHEY_SIMPLEX,
+      0.55,
       new cv.Scalar(
-        22,
-        163,
-        74,
+        37,
+        99,
+        235,
         255
-      );
+      ),
+      2
+    );
 
-    const corRevisao =
-      new cv.Scalar(
-        220,
-        38,
-        38,
-        255
-      );
-
-    const corCinza =
-      new cv.Scalar(
-        100,
-        116,
-        139,
-        255
-      );
-
-    pontos.forEach(p=>{
-
-      const cor =
-        p.marcado
-        ? (resposta === "⚠️"
-            ? corRevisao
-            : corCorreta)
-        : corCinza;
-
-      cv.circle(
-        visual,
-        new cv.Point(p.x,p.y),
-        9,
-        cor,
-        2
-      );
-    });
 
     respostas.push({
+
       questao:q+1,
+
       resposta,
-      valores,
-      confianca
+
+      confianca,
+
+      fracao:
+        melhor.fracao
+
     });
+
   }
 
+
   gray.delete();
+  bin.delete();
+
 
   return respostas;
 }
 
+
 /* =========================================================
-   MÉDIA
+   MOSTRAR IMAGEM
 ========================================================= */
 
-function media(arr){
+function mostrarImagem(
+  mat,
+  imgElement
+){
 
-  if(!arr.length){
-    return 255;
-  }
+  const canvas =
+    document.createElement(
+      "canvas"
+    );
 
-  let soma = 0;
 
-  for(const v of arr){
-    soma += v;
-  }
+  canvas.width =
+    mat.cols;
 
-  return soma / arr.length;
+  canvas.height =
+    mat.rows;
+
+
+  cv.imshow(
+    canvas,
+    mat
+  );
+
+
+  imgElement.src =
+    canvas.toDataURL(
+      "image/jpeg",
+      0.9
+    );
+
+
+  imgElement.style.display =
+    "block";
 }
+
 
 /* =========================================================
    MOSTRAR LEITURA
 ========================================================= */
 
-function mostrarLeitura(respostas){
+function mostrarLeitura(
+  respostas
+){
 
   const area =
     document.getElementById(
       "readingResult"
     );
 
-  if(!respostas.length){
+
+  if(
+    !respostas.length
+  ){
 
     area.innerHTML =
-      '<div class="empty">Não foi possível analisar as questões.</div>';
+      '<div class="empty">Nenhuma questão foi lida.</div>';
 
     return;
   }
 
-  let html = `
-    <h3>Respostas identificadas</h3>
 
-    <table class="reading-table">
+  let html = `
+
+    <h3>
+      Respostas identificadas
+    </h3>
+
+    <table
+      class="reading-table">
 
       <thead>
 
         <tr>
+
           <th>Questão</th>
           <th>Leitura</th>
           <th>Gabarito</th>
           <th>Situação</th>
           <th>Confiança</th>
+
         </tr>
 
       </thead>
 
       <tbody>
+
   `;
 
-  respostas.forEach(item=>{
 
-    const gab =
-      avaliacao
-      ? avaliacao.gabarito[item.questao-1]
-      : "-";
+  respostas.forEach(
+    item => {
 
-    let classe =
-      "neutral";
+      const gab =
+        avaliacao
+        ? avaliacao.gabarito[
+            item.questao-1
+          ]
+        : "-";
 
-    let situacao =
-      "Em branco";
 
-    if(item.resposta === "⚠️"){
+      let classe =
+        "neutral";
 
-      classe =
-        "bad";
 
-      situacao =
-        "⚠️ Revisar dupla marcação";
+      let situacao =
+        "Em branco";
 
-    }else if(item.resposta !== "—"){
 
       if(
-        avaliacao &&
-        item.resposta === gab
+        item.resposta ===
+        "⚠️"
       ){
-
-        classe =
-          "ok";
-
-        situacao =
-          "✓ Correta";
-
-      }else{
 
         classe =
           "bad";
 
         situacao =
-          "✗ Incorreta";
+          "⚠️ Revisar dupla marcação";
+
       }
+      else if(
+        item.resposta !== "—"
+      ){
+
+        if(
+          avaliacao &&
+          item.resposta === gab
+        ){
+
+          classe =
+            "ok";
+
+          situacao =
+            "✓ Correta";
+
+        }
+        else{
+
+          classe =
+            "bad";
+
+          situacao =
+            "✗ Incorreta";
+        }
+      }
+
+
+      html += `
+
+        <tr>
+
+          <td>
+            ${String(item.questao)
+              .padStart(2,"0")}
+          </td>
+
+          <td class="${classe}">
+            ${item.resposta}
+          </td>
+
+          <td>
+            ${gab}
+          </td>
+
+          <td class="${classe}">
+            ${situacao}
+          </td>
+
+          <td>
+            ${
+              item.resposta === "—" ||
+              item.resposta === "⚠️"
+              ? "-"
+              : item.confianca + "%"
+            }
+          </td>
+
+        </tr>
+      `;
+
     }
+  );
 
-    html += `
-
-      <tr>
-
-        <td>
-          ${String(item.questao).padStart(2,"0")}
-        </td>
-
-        <td class="${classe}">
-          ${item.resposta}
-        </td>
-
-        <td>
-          ${gab}
-        </td>
-
-        <td class="${classe}">
-          ${situacao}
-        </td>
-
-        <td>
-          ${
-            item.resposta === "—" ||
-            item.resposta === "⚠️"
-            ? "-"
-            : item.confianca + "%"
-          }
-        </td>
-
-      </tr>
-    `;
-  });
 
   html += `
 
@@ -2012,21 +3066,29 @@ function mostrarLeitura(respostas){
 
     </table>
 
-    <div class="warning" style="margin-top:15px">
+    <div
+      class="warning"
+      style="margin-top:15px">
 
-      <strong>Conferência obrigatória:</strong>
-      a leitura automática está em fase de calibração.
-      Confira as respostas antes de registrar a nota.
+      <strong>
+        Conferência:
+      </strong>
+
+      O leitor está em fase de calibração.
+      Confira a imagem e as respostas antes de registrar a nota.
 
     </div>
+
   `;
+
 
   area.innerHTML =
     html;
 }
 
+
 /* =========================================================
-   USAR LEITURA
+   TRANSFERIR LEITURA
 ========================================================= */
 
 function usarLeituraNaCorrecao(){
@@ -2043,6 +3105,7 @@ function usarLeituraNaCorrecao(){
     return;
   }
 
+
   for(
     let i=1;
     i<=avaliacao.quantidade;
@@ -2054,38 +3117,57 @@ function usarLeituraNaCorrecao(){
         "r"+i
       );
 
+
     const leitura =
       ultimaLeitura[i-1];
 
-    if(!select || !leitura){
+
+    if(
+      !select ||
+      !leitura
+    ){
       continue;
     }
 
+
     if(
-      ["A","B","C","D","E"]
-      .includes(leitura.resposta)
+      [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E"
+      ].includes(
+        leitura.resposta
+      )
     ){
 
       select.value =
         leitura.resposta;
 
-    }else{
+    }
+    else{
 
       select.value =
         "";
     }
   }
 
+
   alert(
-    "A leitura foi transferida para a conferência. Confira as respostas e clique em CORRIGIR PROVA."
+    "A leitura foi transferida para a conferência."
   );
 
+
   document
-    .getElementById("respostas")
+    .getElementById(
+      "respostas"
+    )
     .scrollIntoView({
       behavior:"smooth"
     });
 }
+
 
 /* =========================================================
    LIMPAR
@@ -2096,29 +3178,47 @@ function limparLeitura(){
   ultimaLeitura =
     null;
 
+
   document
-    .getElementById("scannerPanel")
+    .getElementById(
+      "scannerPanel"
+    )
     .style.display =
     "none";
 
+
   document
-    .getElementById("preview")
+    .getElementById(
+      "preview"
+    )
     .style.display =
     "none";
 
+
   document
-    .getElementById("processedImage")
+    .getElementById(
+      "processedImage"
+    )
     .style.display =
     "none";
 
-  document
-    .getElementById("camera")
-    .value = "";
 
   document
-    .getElementById("readingResult")
-    .innerHTML = "";
+    .getElementById(
+      "camera"
+    )
+    .value =
+    "";
+
+
+  document
+    .getElementById(
+      "readingResult"
+    )
+    .innerHTML =
+    "";
 }
+
 
 /* =========================================================
    OPENCV
@@ -2135,49 +3235,63 @@ function esperarOpenCV(){
       ){
 
         resolve();
+
         return;
       }
 
-      let tentativas = 0;
+
+      let tentativas =
+        0;
+
 
       const timer =
-        setInterval(()=>{
+        setInterval(
+          ()=>{
 
-          tentativas++;
+            tentativas++;
 
-          if(
-            typeof cv !== "undefined" &&
-            cv.Mat
-          ){
 
-            clearInterval(timer);
+            if(
+              typeof cv !== "undefined" &&
+              cv.Mat
+            ){
 
-            resolve();
+              clearInterval(timer);
 
-            return;
-          }
+              resolve();
 
-          if(tentativas > 180){
+              return;
+            }
 
-            clearInterval(timer);
 
-            reject(
-              new Error(
-                "O leitor de imagem não carregou. Verifique a internet e tente novamente."
-              )
-            );
-          }
+            if(
+              tentativas > 180
+            ){
 
-        },100);
+              clearInterval(timer);
+
+              reject(
+                new Error(
+                  "O leitor de imagem não carregou. Verifique sua conexão e tente novamente."
+                )
+              );
+            }
+
+          },
+          100
+        );
     }
   );
 }
+
 
 /* =========================================================
    IMAGEM
 ========================================================= */
 
-function carregarImagem(file){
+function carregarImagem(
+  file
+){
 
   return new Promise(
     (resolve,reject)=>{
@@ -2185,8 +3299,10 @@ function carregarImagem(file){
       const img =
         new Image();
 
+
       img.onload =
         ()=>resolve(img);
+
 
       img.onerror =
         ()=>reject(
@@ -2195,11 +3311,34 @@ function carregarImagem(file){
           )
         );
 
+
       img.src =
-        URL.createObjectURL(file);
+        URL.createObjectURL(
+          file
+        );
+
     }
   );
 }
+
+
+/* =========================================================
+   LIMPAR MATRIZES
+========================================================= */
+
+function limparMat(...mats){
+
+  mats.forEach(
+    m=>{
+      try{
+        if(m && !m.isDeleted()){
+          m.delete();
+        }
+      }catch(e){}
+    }
+  );
+}
+
 
 /* =========================================================
    DASHBOARD
@@ -2207,48 +3346,72 @@ function carregarImagem(file){
 
 function atualizarDashboard(){
 
-  document.getElementById(
-    "statAvaliacao"
-  ).innerText =
-    avaliacao ? "1" : "0";
+  document
+    .getElementById(
+      "statAvaliacao"
+    )
+    .innerText =
+    avaliacao
+    ? "1"
+    : "0";
 
-  document.getElementById(
-    "statQuestoes"
-  ).innerText =
+
+  document
+    .getElementById(
+      "statQuestoes"
+    )
+    .innerText =
     avaliacao
     ? avaliacao.quantidade
     : "0";
 
-  document.getElementById(
-    "statProvas"
-  ).innerText =
+
+  document
+    .getElementById(
+      "statProvas"
+    )
+    .innerText =
     resultados.length;
 
-  if(!resultados.length){
 
-    document.getElementById(
-      "statMedia"
-    ).innerText =
+  if(
+    !resultados.length
+  ){
+
+    document
+      .getElementById(
+        "statMedia"
+      )
+      .innerText =
       "0,0";
 
     return;
   }
 
-  const mediaTurma =
+
+  const media =
     resultados.reduce(
-      (sum,r)=>
-        sum + Number(r.nota),
+      (
+        total,
+        r
+      ) =>
+        total +
+        Number(r.nota),
       0
     ) /
     resultados.length;
 
-  document.getElementById(
-    "statMedia"
-  ).innerText =
-    mediaTurma
+
+  document
+    .getElementById(
+      "statMedia"
+    )
+    .innerText =
+    media
       .toFixed(1)
       .replace(".",",");
 }
+
 
 /* =========================================================
    TABELA
@@ -2257,75 +3420,120 @@ function atualizarDashboard(){
 function atualizarTabela(){
 
   const tabela =
-    document.getElementById("tabela");
+    document.getElementById(
+      "tabela"
+    );
 
-  if(!resultados.length){
+
+  if(
+    !resultados.length
+  ){
 
     tabela.innerHTML = `
+
       <tr>
-        <td colspan="6" class="empty">
+
+        <td
+          colspan="6"
+          class="empty">
+
           Nenhuma prova corrigida.
+
         </td>
+
       </tr>
+
     `;
 
     return;
   }
 
+
   tabela.innerHTML =
     resultados
       .slice()
       .reverse()
-      .map(r=>`
+      .map(
+        r=>`
 
-        <tr>
+          <tr>
 
-          <td>
-            ${escapeHTML(r.aluno)}
-          </td>
+            <td>
+              ${escapeHTML(r.aluno)}
+            </td>
 
-          <td>
-            ${escapeHTML(r.turma)}
-          </td>
+            <td>
+              ${escapeHTML(r.turma)}
+            </td>
 
-          <td>
-            ${r.acertos}/${r.total}
-          </td>
+            <td>
+              ${r.acertos}/${r.total}
+            </td>
 
-          <td>
-            ${r.erros}
-          </td>
+            <td>
+              ${r.erros}
+            </td>
 
-          <td>
-            ${r.brancos}
-          </td>
+            <td>
+              ${r.brancos}
+            </td>
 
-          <td>
-            <strong>
-              ${Number(r.nota)
-                .toFixed(1)
-                .replace(".",",")}
-            </strong>
-          </td>
+            <td>
 
-        </tr>
-      `)
+              <strong>
+
+                ${Number(r.nota)
+                  .toFixed(1)
+                  .replace(".",",")}
+
+              </strong>
+
+            </td>
+
+          </tr>
+
+        `
+      )
       .join("");
 }
+
 
 /* =========================================================
    SEGURANÇA
 ========================================================= */
 
-function escapeHTML(text){
+function escapeHTML(
+  text
+){
 
   return String(text)
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
+
+    .replaceAll(
+      "&",
+      "&amp;"
+    )
+
+    .replaceAll(
+      "<",
+      "&lt;"
+    )
+
+    .replaceAll(
+      ">",
+      "&gt;"
+    )
+
+    .replaceAll(
+      '"',
+      "&quot;"
+    )
+
+    .replaceAll(
+      "'",
+      "&#039;"
+    );
 }
+
 
 /* =========================================================
    INICIALIZAÇÃO
