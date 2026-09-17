@@ -1,1 +1,1815 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#2563eb">
 
+<title>NEW CORRETOR</title>
+
+<style>
+:root{
+    --primary:#2563eb;
+    --primary-dark:#1d4ed8;
+    --bg:#f3f6fb;
+    --card:#ffffff;
+    --text:#172033;
+    --muted:#64748b;
+    --border:#e2e8f0;
+    --success:#16a34a;
+    --danger:#dc2626;
+    --warning:#d97706;
+    --shadow:0 8px 30px rgba(15,23,42,.08);
+}
+
+*{
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+}
+
+/* HEADER */
+
+.header{
+    background:linear-gradient(135deg,#111827,#2563eb);
+    color:white;
+    padding:18px 25px;
+    position:sticky;
+    top:0;
+    z-index:100;
+    box-shadow:0 3px 15px rgba(0,0,0,.15);
+}
+
+.header-inner{
+    max-width:1250px;
+    margin:auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+}
+
+.logo{
+    font-size:26px;
+    font-weight:900;
+    letter-spacing:-1px;
+}
+
+.logo span{
+    color:#93c5fd;
+}
+
+.subtitle{
+    font-size:12px;
+    opacity:.85;
+    margin-top:3px;
+}
+
+/* NAV */
+
+.nav{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+.nav button{
+    background:rgba(255,255,255,.12);
+    color:white;
+    border:1px solid rgba(255,255,255,.15);
+    padding:10px 13px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.nav button:hover{
+    background:rgba(255,255,255,.22);
+}
+
+/* CONTAINER */
+
+.container{
+    max-width:1250px;
+    margin:auto;
+    padding:28px 20px 60px;
+}
+
+/* SECTIONS */
+
+.section{
+    display:none;
+}
+
+.section.active{
+    display:block;
+}
+
+/* DASHBOARD */
+
+.welcome{
+    margin-bottom:25px;
+}
+
+.welcome h1{
+    margin:0 0 7px;
+    font-size:30px;
+}
+
+.welcome p{
+    color:var(--muted);
+}
+
+.dashboard-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+    margin-bottom:25px;
+}
+
+.stat{
+    background:white;
+    border-radius:15px;
+    padding:22px;
+    box-shadow:var(--shadow);
+    border:1px solid var(--border);
+}
+
+.stat-icon{
+    font-size:25px;
+    margin-bottom:12px;
+}
+
+.stat-label{
+    color:var(--muted);
+    font-size:13px;
+    font-weight:bold;
+}
+
+.stat-value{
+    font-size:30px;
+    font-weight:900;
+    margin-top:6px;
+}
+
+/* CARDS */
+
+.card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:15px;
+    box-shadow:var(--shadow);
+    padding:25px;
+    margin-bottom:22px;
+}
+
+.card-title{
+    font-size:20px;
+    font-weight:800;
+    margin-bottom:20px;
+}
+
+/* BUTTONS */
+
+button{
+    font-family:inherit;
+}
+
+.btn{
+    border:0;
+    border-radius:9px;
+    padding:12px 18px;
+    cursor:pointer;
+    font-weight:800;
+    transition:.15s;
+}
+
+.btn:hover{
+    transform:translateY(-1px);
+}
+
+.btn-primary{
+    background:var(--primary);
+    color:white;
+}
+
+.btn-primary:hover{
+    background:var(--primary-dark);
+}
+
+.btn-success{
+    background:var(--success);
+    color:white;
+}
+
+.btn-danger{
+    background:var(--danger);
+    color:white;
+}
+
+.btn-secondary{
+    background:#e2e8f0;
+    color:#1e293b;
+}
+
+.btn-large{
+    padding:15px 24px;
+    font-size:16px;
+}
+
+/* FORM */
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:17px;
+}
+
+.field label{
+    display:block;
+    font-size:13px;
+    font-weight:800;
+    margin-bottom:6px;
+}
+
+.field input,
+.field select{
+    width:100%;
+    border:1px solid var(--border);
+    border-radius:9px;
+    padding:12px;
+    font-size:15px;
+    outline:none;
+    background:white;
+}
+
+.field input:focus,
+.field select:focus{
+    border-color:var(--primary);
+    box-shadow:0 0 0 3px rgba(37,99,235,.12);
+}
+
+/* GABARITO */
+
+.gabarito-grid{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:12px;
+}
+
+.question-card{
+    background:#f8fafc;
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:12px;
+}
+
+.question-number{
+    font-weight:900;
+    margin-bottom:8px;
+}
+
+.question-card select{
+    width:100%;
+    padding:9px;
+    border:1px solid var(--border);
+    border-radius:7px;
+    background:white;
+}
+
+/* AVALIAÇÃO */
+
+.assessment-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    flex-wrap:wrap;
+}
+
+/* CAMERA */
+
+.camera-area{
+    text-align:center;
+    border:2px dashed #cbd5e1;
+    border-radius:15px;
+    padding:35px 20px;
+    background:#f8fafc;
+}
+
+.camera-icon{
+    font-size:55px;
+    margin-bottom:10px;
+}
+
+.camera-area p{
+    color:var(--muted);
+}
+
+.camera-input{
+    display:none;
+}
+
+.preview{
+    max-width:100%;
+    max-height:450px;
+    margin:20px auto 0;
+    border-radius:12px;
+    display:none;
+    box-shadow:var(--shadow);
+}
+
+/* ANSWERS */
+
+.answers-grid{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:12px;
+}
+
+.answer-card{
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:12px;
+    background:#f8fafc;
+}
+
+.answer-card strong{
+    display:block;
+    margin-bottom:8px;
+}
+
+.answer-card select{
+    width:100%;
+    padding:9px;
+    border-radius:7px;
+    border:1px solid var(--border);
+}
+
+/* RESULT */
+
+.result-box{
+    display:none;
+    margin-top:20px;
+    background:#eff6ff;
+    border:1px solid #bfdbfe;
+    border-radius:14px;
+    padding:25px;
+}
+
+.result-main{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    margin-top:18px;
+}
+
+.result-item{
+    background:white;
+    border-radius:10px;
+    padding:15px;
+    text-align:center;
+}
+
+.result-item small{
+    color:var(--muted);
+    display:block;
+    margin-bottom:5px;
+}
+
+.result-item strong{
+    font-size:25px;
+}
+
+.big-grade{
+    color:var(--primary);
+    font-size:42px!important;
+}
+
+/* TABLE */
+
+.table-wrapper{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th,td{
+    padding:13px;
+    text-align:left;
+    border-bottom:1px solid var(--border);
+}
+
+th{
+    background:#f8fafc;
+    font-size:13px;
+}
+
+.grade{
+    font-weight:900;
+    color:var(--primary);
+}
+
+/* CARTÃO */
+
+.print-card{
+    max-width:850px;
+    margin:20px auto;
+    background:white;
+    padding:30px;
+    border:1px solid #ddd;
+}
+
+.answer-sheet{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+    margin-top:25px;
+}
+
+.sheet-question{
+    border:1px solid #111;
+    padding:10px;
+    text-align:center;
+}
+
+.bubbles{
+    display:flex;
+    justify-content:center;
+    gap:7px;
+    margin-top:8px;
+}
+
+.bubble{
+    width:28px;
+    height:28px;
+    border:2px solid #111;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:12px;
+    font-weight:bold;
+}
+
+/* ALERT */
+
+.alert{
+    padding:14px 16px;
+    border-radius:9px;
+    margin-bottom:15px;
+    display:none;
+}
+
+.alert.success{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.alert.error{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+/* FOOTER */
+
+.footer{
+    text-align:center;
+    color:var(--muted);
+    font-size:12px;
+    padding:30px;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:900px){
+
+    .dashboard-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .form-grid{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .gabarito-grid,
+    .answers-grid{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .result-main{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:600px){
+
+    .header{
+        padding:15px;
+    }
+
+    .header-inner{
+        align-items:flex-start;
+        flex-direction:column;
+    }
+
+    .nav{
+        width:100%;
+    }
+
+    .nav button{
+        flex:1;
+    }
+
+    .container{
+        padding:20px 12px 40px;
+    }
+
+    .dashboard-grid{
+        grid-template-columns:1fr 1fr;
+        gap:10px;
+    }
+
+    .stat{
+        padding:16px;
+    }
+
+    .stat-value{
+        font-size:25px;
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .gabarito-grid,
+    .answers-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .answer-sheet{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .result-main{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .card{
+        padding:18px;
+    }
+}
+
+/* IMPRESSÃO */
+
+@media print{
+
+    body{
+        background:white;
+    }
+
+    .header,
+    .nav,
+    .container > *:not(#printSection),
+    .footer{
+        display:none!important;
+    }
+
+    #printSection{
+        display:block!important;
+    }
+
+    .print-card{
+        border:0;
+        box-shadow:none;
+        margin:0;
+        max-width:none;
+    }
+
+    @page{
+        size:A4;
+        margin:12mm;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+<div class="header-inner">
+
+<div>
+<div class="logo">NEW <span>CORRETOR</span></div>
+<div class="subtitle">Correção inteligente de avaliações</div>
+</div>
+
+<nav class="nav">
+<button onclick="showSection('inicio')">🏠 Início</button>
+<button onclick="showSection('avaliacao')">📝 Avaliação</button>
+<button onclick="showSection('correcao')">📷 Corrigir</button>
+<button onclick="showSection('resultados')">📊 Resultados</button>
+<button onclick="showSection('cartao')">📄 Cartão</button>
+</nav>
+
+</div>
+
+</header>
+
+
+<main class="container">
+
+<!-- INÍCIO -->
+
+<section id="inicio" class="section active">
+
+<div class="welcome">
+
+<h1>Olá! 👋</h1>
+
+<p>
+Bem-vindo ao <strong>NEW CORRETOR</strong>.
+Crie avaliações, gere cartões-resposta e organize as correções.
+</p>
+
+</div>
+
+
+<div class="dashboard-grid">
+
+<div class="stat">
+<div class="stat-icon">📝</div>
+<div class="stat-label">Avaliações</div>
+<div class="stat-value" id="statAvaliacoes">0</div>
+</div>
+
+<div class="stat">
+<div class="stat-icon">📄</div>
+<div class="stat-label">Questões</div>
+<div class="stat-value" id="statQuestoes">0</div>
+</div>
+
+<div class="stat">
+<div class="stat-icon">👨‍🎓</div>
+<div class="stat-label">Provas corrigidas</div>
+<div class="stat-value" id="statProvas">0</div>
+</div>
+
+<div class="stat">
+<div class="stat-icon">⭐</div>
+<div class="stat-label">Média</div>
+<div class="stat-value" id="statMedia">0,0</div>
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="card-title">
+Começar uma nova avaliação
+</div>
+
+<p style="color:#64748b">
+Cadastre a avaliação e informe o gabarito.
+</p>
+
+<button
+class="btn btn-primary btn-large"
+onclick="showSection('avaliacao')">
+
++ NOVA AVALIAÇÃO
+
+</button>
+
+</div>
+
+</section>
+
+
+<!-- AVALIAÇÃO -->
+
+<section id="avaliacao" class="section">
+
+<div class="card">
+
+<div class="card-title">
+📝 Nova avaliação
+</div>
+
+<div class="form-grid">
+
+<div class="field">
+<label>Nome da avaliação</label>
+<input id="nomeAvaliacao"
+placeholder="Ex.: Avaliação de Matemática">
+</div>
+
+<div class="field">
+<label>Turma</label>
+<input id="turma"
+placeholder="Ex.: 4º Ano B">
+</div>
+
+<div class="field">
+<label>Disciplina</label>
+<input id="disciplina"
+placeholder="Ex.: Matemática">
+</div>
+
+<div class="field">
+<label>Quantidade de questões</label>
+<input id="quantidade"
+type="number"
+min="1"
+max="100"
+value="20">
+</div>
+
+<div class="field">
+<label>Valor da avaliação</label>
+<input id="valor"
+type="number"
+min="0.1"
+step="0.1"
+value="10">
+</div>
+
+</div>
+
+<br>
+
+<button
+class="btn btn-primary"
+onclick="gerarGabarito()">
+
+Gerar gabarito
+
+</button>
+
+</div>
+
+
+<div
+id="gabaritoCard"
+class="card"
+style="display:none">
+
+<div class="card-title">
+🎯 Defina o gabarito
+</div>
+
+<div
+id="gabaritoGrid"
+class="gabarito-grid">
+</div>
+
+<br>
+
+<button
+class="btn btn-success btn-large"
+onclick="salvarAvaliacao()">
+
+✓ SALVAR AVALIAÇÃO
+
+</button>
+
+</div>
+
+</section>
+
+
+<!-- CORREÇÃO -->
+
+<section id="correcao" class="section">
+
+<div class="card">
+
+<div class="assessment-header">
+
+<div>
+
+<div class="card-title" style="margin-bottom:5px">
+📷 Corrigir prova
+</div>
+
+<div id="infoAvaliacao"
+style="color:#64748b">
+Nenhuma avaliação cadastrada.
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="field">
+
+<label>Nome do aluno</label>
+
+<input
+id="nomeAluno"
+placeholder="Digite o nome do aluno">
+
+</div>
+
+<br>
+
+
+<div class="camera-area">
+
+<div class="camera-icon">📷</div>
+
+<h2>Fotografar cartão-resposta</h2>
+
+<p>
+No celular, toque abaixo para abrir a câmera.
+</p>
+
+<label
+for="cameraInput"
+class="btn btn-primary btn-large">
+
+📷 ABRIR CÂMERA
+
+</label>
+
+<input
+id="cameraInput"
+class="camera-input"
+type="file"
+accept="image/*"
+capture="environment">
+
+<img
+id="preview"
+class="preview">
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="card-title">
+✏️ Respostas do aluno
+</div>
+
+<p style="color:#64748b">
+Nesta V2.1 você pode conferir ou lançar manualmente as respostas.
+Na próxima etapa, o sistema fará a leitura automática da imagem.
+</p>
+
+<div
+id="answersGrid"
+class="answers-grid">
+</div>
+
+<br>
+
+<button
+class="btn btn-primary btn-large"
+onclick="corrigirProva()">
+
+✓ CORRIGIR PROVA
+
+</button>
+
+
+<div
+id="resultBox"
+class="result-box">
+
+<h2>Resultado da correção</h2>
+
+<div id="resultStudent"></div>
+
+<div class="result-main">
+
+<div class="result-item">
+
+<small>Acertos</small>
+
+<strong id="resultAcertos">0</strong>
+
+</div>
+
+<div class="result-item">
+
+<small>Erros</small>
+
+<strong id="resultErros">0</strong>
+
+</div>
+
+<div class="result-item">
+
+<small>Questões</small>
+
+<strong id="resultQuestoes">0</strong>
+
+</div>
+
+<div class="result-item">
+
+<small>Nota</small>
+
+<strong
+id="resultNota"
+class="big-grade">
+
+0,0
+
+</strong>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- RESULTADOS -->
+
+<section id="resultados" class="section">
+
+<div class="card">
+
+<div class="card-title">
+📊 Resultados
+</div>
+
+<div class="table-wrapper">
+
+<table>
+
+<thead>
+
+<tr>
+<th>Aluno</th>
+<th>Turma</th>
+<th>Acertos</th>
+<th>Erros</th>
+<th>Nota</th>
+</tr>
+
+</thead>
+
+<tbody id="resultTable">
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- CARTÃO -->
+
+<section id="cartao" class="section">
+
+<div class="card">
+
+<div class="card-title">
+📄 Cartão-resposta
+</div>
+
+<p style="color:#64748b">
+Gere uma folha padronizada para imprimir e entregar aos alunos.
+</p>
+
+<button
+class="btn btn-primary"
+onclick="gerarCartao()">
+
+GERAR CARTÃO-RESPOSTA
+
+</button>
+
+<button
+class="btn btn-secondary"
+onclick="window.print()">
+
+🖨️ IMPRIMIR
+
+</button>
+
+</div>
+
+<div id="printSection">
+
+<div class="print-card">
+
+<div style="text-align:center">
+
+<h1 style="margin-bottom:5px">
+NEW CORRETOR
+</h1>
+
+<h2 id="sheetTitle">
+CARTÃO-RESPOSTA
+</h2>
+
+</div>
+
+<div style="
+display:grid;
+grid-template-columns:2fr 1fr;
+gap:15px;
+margin-top:25px;
+">
+
+<div>
+
+<strong>Aluno:</strong>
+
+<div style="
+border-bottom:1px solid #111;
+height:25px;
+">
+</div>
+
+</div>
+
+<div>
+
+<strong>Turma:</strong>
+
+<div style="
+border-bottom:1px solid #111;
+height:25px;
+">
+</div>
+
+</div>
+
+</div>
+
+
+<div
+id="answerSheet"
+class="answer-sheet">
+</div>
+
+
+<div style="
+margin-top:25px;
+font-size:12px;
+text-align:center;
+">
+
+Marque apenas uma alternativa por questão.
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+
+<footer class="footer">
+
+NEW CORRETOR • Sistema de correção de avaliações
+
+</footer>
+
+
+<script>
+
+/* =========================
+   DADOS
+========================= */
+
+let avaliacao = JSON.parse(
+    localStorage.getItem("newCorretorAvaliacao")
+) || null;
+
+let resultados = JSON.parse(
+    localStorage.getItem("newCorretorResultados")
+) || [];
+
+
+/* =========================
+   NAVEGAÇÃO
+========================= */
+
+function showSection(id){
+
+    document
+        .querySelectorAll(".section")
+        .forEach(section => {
+
+            section.classList.remove("active");
+
+        });
+
+    document
+        .getElementById(id)
+        .classList.add("active");
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+    if(id === "correcao"){
+        atualizarInfoAvaliacao();
+        gerarRespostasAluno();
+    }
+
+    if(id === "resultados"){
+        atualizarTabela();
+    }
+
+    if(id === "cartao"){
+        gerarCartao();
+    }
+}
+
+
+/* =========================
+   GERAR GABARITO
+========================= */
+
+function gerarGabarito(){
+
+    const quantidade =
+        Number(document.getElementById("quantidade").value);
+
+    if(!quantidade || quantidade < 1){
+
+        alert("Informe uma quantidade válida de questões.");
+
+        return;
+    }
+
+    const grid =
+        document.getElementById("gabaritoGrid");
+
+    grid.innerHTML = "";
+
+    for(let i=1;i<=quantidade;i++){
+
+        const div =
+            document.createElement("div");
+
+        div.className = "question-card";
+
+        div.innerHTML = `
+
+            <div class="question-number">
+                Questão ${i}
+            </div>
+
+            <select id="gabarito-${i}">
+
+                <option value="">Selecione</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+
+            </select>
+
+        `;
+
+        grid.appendChild(div);
+    }
+
+    document
+        .getElementById("gabaritoCard")
+        .style.display = "block";
+
+    document
+        .getElementById("gabaritoCard")
+        .scrollIntoView({
+            behavior:"smooth"
+        });
+}
+
+
+/* =========================
+   SALVAR AVALIAÇÃO
+========================= */
+
+function salvarAvaliacao(){
+
+    const nome =
+        document.getElementById("nomeAvaliacao").value.trim();
+
+    const turma =
+        document.getElementById("turma").value.trim();
+
+    const disciplina =
+        document.getElementById("disciplina").value.trim();
+
+    const quantidade =
+        Number(document.getElementById("quantidade").value);
+
+    const valor =
+        Number(document.getElementById("valor").value);
+
+
+    if(!nome){
+
+        alert("Informe o nome da avaliação.");
+
+        return;
+    }
+
+    if(!turma){
+
+        alert("Informe a turma.");
+
+        return;
+    }
+
+    if(!quantidade){
+
+        alert("Informe a quantidade de questões.");
+
+        return;
+    }
+
+
+    const gabarito = [];
+
+    for(let i=1;i<=quantidade;i++){
+
+        const resposta =
+            document.getElementById(`gabarito-${i}`).value;
+
+        if(!resposta){
+
+            alert(
+                `Informe o gabarito da questão ${i}.`
+            );
+
+            return;
+        }
+
+        gabarito.push(resposta);
+    }
+
+
+    avaliacao = {
+
+        id:Date.now(),
+
+        nome,
+
+        turma,
+
+        disciplina,
+
+        quantidade,
+
+        valor,
+
+        gabarito,
+
+        criadaEm:new Date().toISOString()
+
+    };
+
+
+    localStorage.setItem(
+        "newCorretorAvaliacao",
+        JSON.stringify(avaliacao)
+    );
+
+
+    atualizarDashboard();
+
+    atualizarInfoAvaliacao();
+
+    alert("Avaliação salva com sucesso!");
+
+
+    showSection("correcao");
+}
+
+
+/* =========================
+   INFORMAÇÃO DA AVALIAÇÃO
+========================= */
+
+function atualizarInfoAvaliacao(){
+
+    const elemento =
+        document.getElementById("infoAvaliacao");
+
+    if(!avaliacao){
+
+        elemento.innerHTML =
+            "Nenhuma avaliação cadastrada.";
+
+        return;
+    }
+
+    elemento.innerHTML = `
+
+        <strong>${escapeHTML(avaliacao.nome)}</strong>
+        • ${escapeHTML(avaliacao.turma)}
+        • ${escapeHTML(avaliacao.disciplina)}
+        • ${avaliacao.quantidade} questões
+
+    `;
+}
+
+
+/* =========================
+   RESPOSTAS DO ALUNO
+========================= */
+
+function gerarRespostasAluno(){
+
+    const grid =
+        document.getElementById("answersGrid");
+
+    grid.innerHTML = "";
+
+    if(!avaliacao){
+
+        grid.innerHTML =
+            "<p>Cadastre uma avaliação primeiro.</p>";
+
+        return;
+    }
+
+
+    for(let i=1;i<=avaliacao.quantidade;i++){
+
+        const div =
+            document.createElement("div");
+
+        div.className = "answer-card";
+
+        div.innerHTML = `
+
+            <strong>Questão ${i}</strong>
+
+            <select id="aluno-${i}">
+
+                <option value="">Em branco</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+
+            </select>
+
+        `;
+
+        grid.appendChild(div);
+    }
+}
+
+
+/* =========================
+   CORRIGIR PROVA
+========================= */
+
+function corrigirProva(){
+
+    if(!avaliacao){
+
+        alert("Cadastre uma avaliação primeiro.");
+
+        return;
+    }
+
+
+    const aluno =
+        document.getElementById("nomeAluno")
+        .value.trim();
+
+
+    if(!aluno){
+
+        alert("Informe o nome do aluno.");
+
+        return;
+    }
+
+
+    let acertos = 0;
+
+    let erros = 0;
+
+    let brancos = 0;
+
+
+    const respostas = [];
+
+
+    for(let i=1;i<=avaliacao.quantidade;i++){
+
+        const resposta =
+            document.getElementById(`aluno-${i}`).value;
+
+        respostas.push(resposta);
+
+
+        if(!resposta){
+
+            brancos++;
+
+        }else if(
+            resposta === avaliacao.gabarito[i-1]
+        ){
+
+            acertos++;
+
+        }else{
+
+            erros++;
+
+        }
+    }
+
+
+    const nota =
+        (acertos / avaliacao.quantidade)
+        * avaliacao.valor;
+
+
+    const notaFormatada =
+        nota.toFixed(1);
+
+
+    const resultado = {
+
+        id:Date.now(),
+
+        aluno,
+
+        turma:avaliacao.turma,
+
+        avaliacao:avaliacao.nome,
+
+        acertos,
+
+        erros,
+
+        brancos,
+
+        total:avaliacao.quantidade,
+
+        nota:Number(notaFormatada),
+
+        respostas,
+
+        data:new Date().toISOString()
+
+    };
+
+
+    resultados.push(resultado);
+
+
+    localStorage.setItem(
+        "newCorretorResultados",
+        JSON.stringify(resultados)
+    );
+
+
+    document
+        .getElementById("resultBox")
+        .style.display = "block";
+
+
+    document
+        .getElementById("resultStudent")
+        .innerHTML = `
+
+        <strong>Aluno:</strong>
+        ${escapeHTML(aluno)}
+
+        `;
+
+
+    document
+        .getElementById("resultAcertos")
+        .innerText = acertos;
+
+
+    document
+        .getElementById("resultErros")
+        .innerText = erros;
+
+
+    document
+        .getElementById("resultQuestoes")
+        .innerText =
+        avaliacao.quantidade;
+
+
+    document
+        .getElementById("resultNota")
+        .innerText =
+        notaFormatada.replace(".",",");
+
+
+    atualizarDashboard();
+
+    atualizarTabela();
+
+
+    window.scrollTo({
+        top:document.body.scrollHeight,
+        behavior:"smooth"
+    });
+}
+
+
+/* =========================
+   TABELA
+========================= */
+
+function atualizarTabela(){
+
+    const tbody =
+        document.getElementById("resultTable");
+
+    tbody.innerHTML = "";
+
+
+    if(!resultados.length){
+
+        tbody.innerHTML = `
+
+            <tr>
+
+                <td colspan="5"
+                    style="text-align:center;color:#64748b">
+
+                    Nenhuma prova corrigida ainda.
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+    }
+
+
+    resultados
+        .slice()
+        .reverse()
+        .forEach(resultado => {
+
+            const tr =
+                document.createElement("tr");
+
+
+            tr.innerHTML = `
+
+                <td>
+                    ${escapeHTML(resultado.aluno)}
+                </td>
+
+                <td>
+                    ${escapeHTML(resultado.turma)}
+                </td>
+
+                <td>
+                    ${resultado.acertos}/${resultado.total}
+                </td>
+
+                <td>
+                    ${resultado.erros}
+                </td>
+
+                <td class="grade">
+                    ${resultado.nota
+                        .toFixed(1)
+                        .replace(".",",")}
+                </td>
+
+            `;
+
+            tbody.appendChild(tr);
+
+        });
+}
+
+
+/* =========================
+   DASHBOARD
+========================= */
+
+function atualizarDashboard(){
+
+    const totalAvaliacoes =
+        avaliacao ? 1 : 0;
+
+
+    document
+        .getElementById("statAvaliacoes")
+        .innerText =
+        totalAvaliacoes;
+
+
+    document
+        .getElementById("statQuestoes")
+        .innerText =
+        avaliacao
+            ? avaliacao.quantidade
+            : 0;
+
+
+    document
+        .getElementById("statProvas")
+        .innerText =
+        resultados.length;
+
+
+    if(resultados.length){
+
+        const soma =
+            resultados.reduce(
+                (total,item) =>
+                    total + Number(item.nota),
+                0
+            );
+
+
+        const media =
+            soma / resultados.length;
+
+
+        document
+            .getElementById("statMedia")
+            .innerText =
+            media
+                .toFixed(1)
+                .replace(".",",");
+
+    }else{
+
+        document
+            .getElementById("statMedia")
+            .innerText =
+            "0,0";
+    }
+}
+
+
+/* =========================
+   CARTÃO-RESPOSTA
+========================= */
+
+function gerarCartao(){
+
+    const sheet =
+        document.getElementById("answerSheet");
+
+    sheet.innerHTML = "";
+
+
+    if(!avaliacao){
+
+        document
+            .getElementById("sheetTitle")
+            .innerText =
+            "CARTÃO-RESPOSTA";
+
+        return;
+    }
+
+
+    document
+        .getElementById("sheetTitle")
+        .innerText =
+        avaliacao.nome.toUpperCase();
+
+
+    for(let i=1;i<=avaliacao.quantidade;i++){
+
+        const div =
+            document.createElement("div");
+
+        div.className =
+            "sheet-question";
+
+
+        div.innerHTML = `
+
+            <strong>${i}</strong>
+
+            <div class="bubbles">
+
+                <div class="bubble">A</div>
+                <div class="bubble">B</div>
+                <div class="bubble">C</div>
+                <div class="bubble">D</div>
+                <div class="bubble">E</div>
+
+            </div>
+
+        `;
+
+
+        sheet.appendChild(div);
+    }
+}
+
+
+/* =========================
+   CÂMERA
+========================= */
+
+document
+    .getElementById("cameraInput")
+    .addEventListener(
+        "change",
+        function(event){
+
+            const arquivo =
+                event.target.files[0];
+
+            if(!arquivo){
+
+                return;
+            }
+
+
+            const preview =
+                document.getElementById("preview");
+
+
+            preview.src =
+                URL.createObjectURL(arquivo);
+
+
+            preview.style.display =
+                "block";
+
+        }
+    );
+
+
+/* =========================
+   SEGURANÇA
+========================= */
+
+function escapeHTML(text){
+
+    return String(text)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+}
+
+
+/* =========================
+   INICIALIZAÇÃO
+========================= */
+
+atualizarDashboard();
+
+atualizarTabela();
+
+atualizarInfoAvaliacao();
+
+</script>
+
+</body>
+</html>
