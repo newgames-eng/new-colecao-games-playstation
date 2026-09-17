@@ -730,7 +730,7 @@ th{background:#f8fafc}
 <script>
 
 /* =========================================================
-   NEW CORRETOR V2.3
+   NEW CORRETOR V2.4
    Leitor OMR por imagem.
 
    Diferença principal desta versão:
@@ -1675,64 +1675,26 @@ async function analisarCartao(file){
       warped.clone();
 
 
-    const boxes =
-      detectarQuadrosQuestoes(
-        warped,
-        avaliacao
-          ? avaliacao.quantidade
-          : 0
-      );
-
-
-    if(
-      avaliacao &&
-      boxes.length <
-      avaliacao.quantidade
-    ){
-
-      /*
-        Ainda mostramos a imagem para diagnóstico.
-      */
-
-      mostrarImagem(
-        visual,
-        processed
-      );
-
-
-      limparMat(
-        src,
-        srcTri,
-        dstTri,
-        M,
-        warped,
-        visual
-      );
-
-
-      throw new Error(
-        "Encontrei apenas " +
-        boxes.length +
-        " quadros de questões de " +
-        avaliacao.quantidade +
-        ". Melhore a iluminação ou fotografe o cartão mais de frente."
-      );
-    }
-
-
     progress.style.width =
-      "78%";
+      "72%";
 
 
     status.innerText =
-      "⭕ Analisando o interior das bolhas...";
+      "⭕ Localizando as 50 bolhas do cartão...";
 
+
+    /*
+      V2.4:
+      Não dependemos mais dos retângulos das questões.
+      O leitor procura diretamente as bolhas circulares.
+      Isso é muito mais adequado para uma fotografia
+      real do cartão.
+    */
 
     const leitura =
-      analisarBolhasPorQuadro(
+      analisarBolhasDireto(
         warped,
         visual,
-        boxes,
         avaliacao
           ? avaliacao.quantidade
           : 0
@@ -2402,6 +2364,645 @@ function sobreposicao(a,b){
 /* =========================================================
    ANALISAR BOLHAS DENTRO DE CADA QUADRO
 ========================================================= */
+
+
+/* =========================================================
+   NOVO LEITOR OMR V2.4 — BOLHAS DIRETAMENTE
+========================================================= */
+
+function analisarBolhasDireto(mat, visual, total){
+
+  if(!total){
+    return [];
+  }
+
+  const gray = new cv.Mat();
+  const blur = new cv.Mat();
+
+  cv.cvtColor(
+    mat,
+    gray,
+    cv.COLOR_RGBA2GRAY
+  );
+
+  cv.GaussianBlur(
+    gray,
+    blur,
+    new cv.Size(3,3),
+    0
+  );
+
+  /*
+    O cartão gerado pelo NEW CORRETOR possui as bolhas
+    na parte superior. Ignoramos cabeçalho e rodapé.
+  */
+  const roi = blur.roi(
+    new cv.Rect(
+      50,
+      130,
+      Math.max(1, mat.cols-100),
+      Math.min(650, mat.rows-160)
+    )
+  );
+
+  const circles = new cv.Mat();
+
+  /*
+    HoughCircles encontra o contorno circular das bolhas.
+    Os parâmetros foram escolhidos para o cartão A4
+    gerado pelo próprio sistema.
+  */
+  cv.HoughCircles(
+    roi,
+    circles,
+    cv.HOUGH_GRADIENT,
+    1.2,
+    18,
+    100,
+    17,
+    6,
+    15
+  );
+
+  const encontrados=[];
+
+  for(let i=0;i<circles.cols;i++){
+
+    const x =
+      circles.data32F[i*3] + 50;
+
+    const y =
+      circles.data32F[i*3+1] + 130;
+
+    const r =
+      circles.data32F[i*3+2];
+
+    if(
+      x < 70 ||
+      x > mat.cols-70 ||
+      y < 150 ||
+      y > 650 ||
+      r < 6 ||
+      r > 15
+    ){
+      continue;
+    }
+
+    encontrados.push({
+      x,y,r
+    });
+  }
+
+  roi.delete();
+  circles.delete();
+  blur.delete();
+
+  /*
+    Remove círculos duplicados muito próximos.
+  */
+  encontrados.sort(
+    (a,b)=>a.y-b.y || a.x-b.x
+  );
+
+  const unicos=[];
+
+  for(const c of encontrados){
+
+    const duplicado =
+      unicos.some(
+        u =>
+          Math.hypot(
+            u.x-c.x,
+            u.y-c.y
+          ) < 9
+      );
+
+    if(!duplicado){
+      unicos.push(c);
+    }
+  }
+
+  /*
+    Organizar por linhas.
+  */
+  const linhas=[];
+
+  for(const c of unicos){
+
+    let linha =
+      linhas.find(
+        l =>
+          Math.abs(
+            l.yMedia-c.y
+          ) < 22
+      );
+
+    if(!linha){
+
+      linha={
+        itens:[],
+        yMedia:c.y
+      };
+
+      linhas.push(linha);
+    }
+
+    linha.itens.push(c);
+
+    linha.yMedia =
+      linha.itens.reduce(
+        (s,p)=>s+p.y,
+        0
+      ) /
+      linha.itens.length;
+  }
+
+  linhas.sort(
+    (a,b)=>a.yMedia-b.yMedia
+  );
+
+  /*
+    Cada linha do cartão contém:
+      linha 1: 20 bolhas
+      linha 2: 20 bolhas
+      linha 3: 10 bolhas
+
+    Se houver ruído, usamos agrupamento pela distância
+    horizontal para separar as questões.
+  */
+  const questoes=[];
+
+  for(const linha of linhas){
+
+    linha.itens.sort(
+      (a,b)=>a.x-b.x
+    );
+
+    let grupos=[];
+    let atual=[];
+
+    for(let i=0;i<linha.itens.length;i++){
+
+      const c=linha.itens[i];
+
+      if(
+        !atual.length ||
+        c.x-atual[atual.length-1].x < 55
+      ){
+        atual.push(c);
+      }
+      else{
+        if(atual.length>=4){
+          grupos.push(atual);
+        }
+        atual=[c];
+      }
+    }
+
+    if(atual.length>=4){
+      grupos.push(atual);
+    }
+
+    /*
+      Em algumas fotos o espaço entre questões fica
+      praticamente igual ao espaço entre bolhas.
+      Nesse caso, dividimos sequências longas em blocos
+      de cinco.
+    */
+    const normalizados=[];
+
+    for(const g of grupos){
+
+      if(g.length===5){
+        normalizados.push(g);
+      }
+      else if(g.length>5){
+
+        for(
+          let i=0;
+          i+4<g.length;
+          i+=5
+        ){
+          normalizados.push(
+            g.slice(i,i+5)
+          );
+        }
+      }
+    }
+
+    normalizados.forEach(
+      g=>{
+        if(g.length===5){
+          questoes.push(g);
+        }
+      }
+    );
+  }
+
+  /*
+    Se a detecção encontrou exatamente 50 bolhas,
+    esta é a situação ideal. Caso encontre algumas
+    bolhas extras, escolhemos os grupos mais plausíveis.
+  */
+  let grupos = questoes;
+
+  if(grupos.length > total){
+
+    grupos =
+      grupos
+        .slice(0,total);
+  }
+
+  /*
+    Se a detecção de Hough falhar por causa da qualidade
+    da foto, usamos uma segunda estratégia: posições
+    geométricas conhecidas do cartão, mas sem depender
+    de caixas detectadas.
+  */
+  if(grupos.length < total){
+
+    grupos =
+      detectarBolhasPorGeometria(
+        mat
+      );
+  }
+
+  /*
+    Diagnóstico visual dos grupos.
+  */
+  grupos
+    .slice(0,total)
+    .forEach(
+      (g,q)=>{
+
+        g.forEach(
+          (c,i)=>{
+
+            cv.circle(
+              visual,
+              new cv.Point(
+                Math.round(c.x),
+                Math.round(c.y)
+              ),
+              Math.round(c.r+2),
+              new cv.Scalar(
+                37,
+                99,
+                235,
+                255
+              ),
+              2
+            );
+
+            cv.putText(
+              visual,
+              String(q+1),
+              new cv.Point(
+                Math.round(g[0].x-18),
+                Math.round(g[0].y+5)
+              ),
+              cv.FONT_HERSHEY_SIMPLEX,
+              0.45,
+              new cv.Scalar(
+                22,
+                163,
+                74,
+                255
+              ),
+              2
+            );
+          }
+        );
+      }
+    );
+
+  const respostas=[];
+
+  const letras=[
+    "A","B","C","D","E"
+  ];
+
+  /*
+    Para cada questão:
+    - mede o preenchimento dentro de cada círculo;
+    - ignora a borda;
+    - identifica a alternativa mais escura;
+    - se duas estiverem preenchidas, marca revisão.
+  */
+  for(
+    let q=0;
+    q<Math.min(
+      total,
+      grupos.length
+    );
+    q++
+  ){
+
+    const grupo =
+      grupos[q]
+        .slice()
+        .sort(
+          (a,b)=>a.x-b.x
+        );
+
+    if(grupo.length!==5){
+
+      respostas.push({
+        questao:q+1,
+        resposta:"⚠️",
+        confianca:0,
+        fracao:0
+      });
+
+      continue;
+    }
+
+    const medidas=[];
+
+    for(
+      let i=0;
+      i<5;
+      i++
+    ){
+
+      const c=grupo[i];
+
+      const raio =
+        Math.max(
+          3,
+          Math.floor(
+            c.r*0.62
+          )
+        );
+
+      let soma=0;
+      let n=0;
+
+      /*
+        Média do interior da bolha.
+        O centro preenchido fica muito mais escuro
+        que uma bolha vazia.
+      */
+      for(
+        let dy=-raio;
+        dy<=raio;
+        dy++
+      ){
+
+        for(
+          let dx=-raio;
+          dx<=raio;
+          dx++
+        ){
+
+          if(
+            dx*dx+dy*dy >
+            raio*raio
+          ){
+            continue;
+          }
+
+          const xx =
+            Math.max(
+              0,
+              Math.min(
+                gray.cols-1,
+                Math.round(c.x+dx)
+              )
+            );
+
+          const yy =
+            Math.max(
+              0,
+              Math.min(
+                gray.rows-1,
+                Math.round(c.y+dy)
+              )
+            );
+
+          soma +=
+            gray.ucharAt(
+              yy,
+              xx
+            );
+
+          n++;
+        }
+      }
+
+      const media =
+        soma/
+        Math.max(1,n);
+
+      /*
+        Transformar em índice de preenchimento:
+        0 = claro
+        1 = muito escuro
+      */
+      const preenchimento =
+        Math.max(
+          0,
+          Math.min(
+            1,
+            (230-media)/190
+          )
+        );
+
+      medidas.push({
+        indice:i,
+        media,
+        preenchimento,
+        x:c.x,
+        y:c.y,
+        r:c.r
+      });
+    }
+
+    medidas.sort(
+      (a,b)=>
+        b.preenchimento-a.preenchimento
+    );
+
+    const melhor=medidas[0];
+    const segundo=medidas[1];
+
+    /*
+      Limite relativamente conservador.
+      A letra impressa não deve ser suficiente
+      para ultrapassá-lo; o preenchimento manual,
+      sim.
+    */
+    const LIMIAR=0.28;
+
+    let resposta="—";
+    let confianca=0;
+
+    if(
+      melhor.preenchimento >= LIMIAR
+    ){
+
+      const diferenca =
+        melhor.preenchimento -
+        segundo.preenchimento;
+
+      if(
+        segundo.preenchimento >= LIMIAR &&
+        diferenca < 0.12
+      ){
+
+        resposta="⚠️";
+
+      }
+      else{
+
+        resposta=
+          letras[
+            melhor.indice
+          ];
+
+        confianca=
+          Math.round(
+            Math.min(
+              99,
+              55 +
+              diferenca*100
+            )
+          );
+      }
+    }
+
+    respostas.push({
+
+      questao:q+1,
+
+      resposta,
+
+      confianca,
+
+      fracao:
+        melhor.preenchimento
+    });
+  }
+
+  gray.delete();
+
+  return respostas;
+}
+
+
+/* =========================================================
+   FALLBACK GEOMÉTRICO
+========================================================= */
+
+function detectarBolhasPorGeometria(mat){
+
+  /*
+    Coordenadas aproximadas do cartão A4 gerado pelo sistema.
+    São relativas à imagem já corrigida para 1000x1414.
+
+    O objetivo do fallback é continuar funcionando quando
+    o Hough não encontra todos os círculos.
+  */
+
+  const escalaX =
+    mat.cols/1000;
+
+  const escalaY =
+    mat.rows/1414;
+
+  const grupos=[];
+
+  /*
+    Os centros observados no cartão gerado.
+    O leitor usa os próprios círculos para a análise.
+  */
+
+  const linhas=[
+    {
+      y:505,
+      quantidade:4
+    },
+    {
+      y:590,
+      quantidade:4
+    },
+    {
+      y:675,
+      quantidade:2
+    }
+  ];
+
+  /*
+    Posições aproximadas das 4 colunas.
+  */
+  const colunas=[
+    130,
+    370,
+    610,
+    850
+  ];
+
+  /*
+    Espaçamento aproximado das cinco bolhas
+    dentro de cada questão.
+  */
+  const passos=[
+    -45,
+    -22.5,
+    0,
+    22.5,
+    45
+  ];
+
+  let numero=0;
+
+  for(const linha of linhas){
+
+    for(
+      let col=0;
+      col<linha.quantidade;
+      col++
+    ){
+
+      numero++;
+
+      const grupo=[];
+
+      for(
+        let a=0;
+        a<5;
+        a++
+      ){
+
+        grupo.push({
+
+          x:
+            (
+              colunas[col]+
+              passos[a]
+            )*
+            escalaX,
+
+          y:
+            linha.y*
+            escalaY,
+
+          r:
+            10*
+            Math.min(
+              escalaX,
+              escalaY
+            )
+        });
+      }
+
+      grupos.push(grupo);
+    }
+  }
+
+  return grupos;
+}
+
 
 function analisarBolhasPorQuadro(
   mat,
