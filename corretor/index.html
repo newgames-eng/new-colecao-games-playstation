@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NEW CORRETOR V3.7</title>
+<title>NEW CORRETOR V3.8</title>
 <script async src="https://docs.opencv.org/4.x/opencv.js"></script>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f2f5fa;color:#17243a}
@@ -23,7 +23,7 @@ table{width:100%;border-collapse:collapse;margin-top:13px;font-size:14px}th,td{b
 .raw{font:12px/1.5 monospace;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px;overflow:auto;white-space:pre}
 @media(max-width:600px){.brand{font-size:28px}.qgrid{grid-template-columns:repeat(2,1fr)}nav button{font-size:15px}}
 
-/* ===== CARTÃO-RESPOSTA A4 V3.7 ===== */
+/* ===== CARTÃO-RESPOSTA A4 V3.8 ===== */
 .card-config{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}
 .card-config label{font-weight:800;font-size:13px}
 .card-config label:first-child{grid-column:span 2}
@@ -39,11 +39,11 @@ table{width:100%;border-collapse:collapse;margin-top:13px;font-size:14px}th,td{b
 .card-subtitle{text-align:center;font-size:10pt;font-weight:800;letter-spacing:1.5px;margin:-1mm 0 5mm;color:#26364d}
 .ident-box{border:1.5px solid #111;margin:0 2mm 4mm}
 .ident-title{background:#173f8f;color:#fff;font-size:10pt;font-weight:900;padding:2.5mm 3mm;letter-spacing:.5px}
-.ident-grid{display:grid;grid-template-columns:1.8fr 1fr 1.2fr;gap:0}
-.ident-cell{padding:2mm 2.5mm;border-right:1px solid #aaa;border-top:1px solid #aaa;min-height:15mm}
+.ident-grid{display:grid;grid-template-columns:1.8fr .8fr 1.05fr;gap:0;min-width:0}
+.ident-cell{padding:2mm 2.5mm;border-right:1px solid #aaa;border-top:1px solid #aaa;min-height:14mm;min-width:0;overflow:hidden}
 .ident-cell:nth-child(3n){border-right:0}
 .ident-label{font-size:7.5pt;font-weight:800;text-transform:uppercase;color:#4b5563;margin-bottom:2mm}
-.ident-value{font-size:10.5pt;font-weight:700;min-height:5mm;white-space:nowrap;overflow:hidden}
+.ident-value{font-size:10.5pt;font-weight:700;min-height:5mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .reg-code{font-family:"Courier New",monospace;letter-spacing:1.3px;font-size:10pt}
 .instructions{font-size:7pt;margin:0 2mm 3mm;border:1px solid #bbb;padding:2.5mm 3mm;line-height:1.35}
 .instructions b{color:#173f8f}
@@ -51,15 +51,18 @@ table{width:100%;border-collapse:collapse;margin-top:13px;font-size:14px}th,td{b
 .answer-help{text-align:center;font-size:6.5pt;margin:0 2mm 3mm;color:#444}
 .omr-grid{
 display:grid;
-grid-template-columns:repeat(var(--cols,5),minmax(0,1fr));
-gap:2.8mm;
+grid-auto-flow:column;
+grid-template-rows:repeat(var(--rows,10),minmax(0,1fr));
+grid-template-columns:repeat(var(--cols,1),minmax(0,1fr));
+gap:3mm;
 margin:0 2mm;
 align-content:start;
-justify-content:center;
+justify-content:stretch;
+height:var(--grid-h,190mm);
 }
 .omr-q{
 border:1px solid #111;
-min-height:17mm;
+min-height:0;
 height:auto;
 padding:2mm 1.5mm;
 text-align:center;
@@ -67,6 +70,7 @@ break-inside:avoid;
 display:flex;
 flex-direction:column;
 justify-content:center;
+box-sizing:border-box;
 }
 .omr-qnum{font-size:7pt;font-weight:900;margin-bottom:1.7mm}
 .omr-options{
@@ -96,12 +100,12 @@ flex-wrap:nowrap;
 </style>
 </head>
 <body>
-<header><div class="brand">NEW <span>CORRETOR</span></div><div class="sub">Correção inteligente de avaliações — leitor OMR V3.7</div>
+<header><div class="brand">NEW <span>CORRETOR</span></div><div class="sub">Correção inteligente de avaliações — leitor OMR V3.8</div>
 <nav><button onclick="show('inicio')">🏠 Início</button><button onclick="show('avaliacao')">📝 Avaliação</button><button onclick="show('corrigir')">📷 Corrigir</button><button onclick="show('cartao')">📄 Cartão</button><button onclick="show('resultados')">📊 Resultados</button></nav></header>
 <main>
-<section id="inicio" class="page"><div class="card"><h1>NEW CORRETOR</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V3.7:</b> o leitor calcula as posições das bolhas a partir dos próprios quadros das questões. A mesma leitura alimenta diagnóstico, sequência e tabela.</div><div class="actions"><button class="primary" onclick="show('avaliacao')">Configurar avaliação</button><button class="secondary" onclick="show('corrigir')">Corrigir cartão</button></div></div></section>
+<section id="inicio" class="page"><div class="card"><h1>NEW CORRETOR</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V3.8:</b> o leitor calcula as posições das bolhas a partir dos próprios quadros das questões. A mesma leitura alimenta diagnóstico, sequência e tabela.</div><div class="actions"><button class="primary" onclick="show('avaliacao')">Configurar avaliação</button><button class="secondary" onclick="show('corrigir')">Corrigir cartão</button></div></div></section>
 
-<section id="avaliacao" class="page hidden"><div class="card"><h2>📝 Avaliação</h2><div class="grid"><label>Título<input id="titulo" value="AVALIAÇÃO DE MATEMÁTICA"></label><label>Questões<input id="nq" type="number" min="1" max="50" value="10" onchange="buildKey()"></label><label>Alternativas<select id="na" onchange="buildKey()"><option value="5">A até E</option><option value="4">A até D</option></select></label><label>Valor por questão<input id="valor" type="number" step=".01" value="1"></label></div><h3 style="margin-top:18px">Gabarito</h3><div id="key" class="qgrid"></div><div class="actions"><button class="primary" onclick="saveKey()">Salvar gabarito</button></div><div id="keymsg" class="status info">Configure o gabarito.</div></div></section>
+<section id="avaliacao" class="page hidden"><div class="card"><h2>📝 Avaliação</h2><div class="grid"><label>Título<input id="titulo" value="AVALIAÇÃO DE MATEMÁTICA"></label><label>Questões<input id="nq" type="number" min="1" max="50" value="10" onchange="buildKey()"></label><label>Alternativas<select id="na" onchange="buildKey()"><option value="3">A até C</option><option value="4">A até D</option><option value="5" selected>A até E</option></select></label><label>Valor por questão<input id="valor" type="number" step=".01" value="1"></label></div><h3 style="margin-top:18px">Gabarito</h3><div id="key" class="qgrid"></div><div class="actions"><button class="primary" onclick="saveKey()">Salvar gabarito</button></div><div id="keymsg" class="status info">Configure o gabarito.</div></div></section>
 
 <section id="cartao" class="page hidden">
 <div class="card no-print">
@@ -119,6 +123,16 @@ flex-wrap:nowrap;
     </label>
     <label>Turma
       <input id="cardTurma" placeholder="Ex.: 5º A" oninput="renderCard()">
+    </label>
+    <label>Questões
+      <input id="cardQuestoes" type="number" min="1" max="50" value="10" oninput="syncCardConfig()">
+    </label>
+    <label>Alternativas
+      <select id="cardAlternativas" onchange="syncCardConfig()">
+        <option value="3">A até C</option>
+        <option value="4">A até D</option>
+        <option value="5" selected>A até E</option>
+      </select>
     </label>
     <label>Código de registro da prova
       <input id="cardCodigo" class="reg-code" readonly>
@@ -146,7 +160,7 @@ let gabarito=[],ultimaLeitura=null,busy=false;
 const L='ABCDE';
 
 function show(id){document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');if(id==='avaliacao')buildKey();if(id==='cartao')renderCard()}
-function buildKey(){const n=Math.max(1,Math.min(50,+nq.value||10)),ls=L.slice(0,+na.value||5),old=[...gabarito];gabarito=Array.from({length:n},(_,i)=>old[i]||'A');key.innerHTML='';gabarito.forEach((v,i)=>{let d=document.createElement('div');d.className='qbox';d.innerHTML='<b style="font-size:12px">QUESTÃO '+String(i+1).padStart(2,'0')+'</b><div class="qopts">'+[...ls].map(x=>`<button class="${v===x?'sel':''}" onclick="setKey(${i},'${x}')">${x}</button>`).join('')+'</div>';key.appendChild(d)});renderCard()}
+function buildKey(){const n=Math.max(1,Math.min(50,+nq.value||10)),ls=L.slice(0,+na.value||5),old=[...gabarito];gabarito=Array.from({length:n},(_,i)=>ls.includes(old[i])?old[i]:'A');key.innerHTML='';gabarito.forEach((v,i)=>{let d=document.createElement('div');d.className='qbox';d.innerHTML='<b style="font-size:12px">QUESTÃO '+String(i+1).padStart(2,'0')+'</b><div class="qopts">'+[...ls].map(x=>`<button class="${v===x?'sel':''}" onclick="setKey(${i},'${x}')">${x}</button>`).join('')+'</div>';key.appendChild(d)});if(document.getElementById('cardQuestoes'))document.getElementById('cardQuestoes').value=n;if(document.getElementById('cardAlternativas'))document.getElementById('cardAlternativas').value=String(ls.length);renderCard()}
 function setKey(i,x){gabarito[i]=x;buildKey()}
 function saveKey(){localStorage.setItem('newCorretorGabarito',JSON.stringify(gabarito));keymsg.textContent='✓ Gabarito salvo neste aparelho.';keymsg.className='status ok';renderCard()}
 function loadKey(){try{let x=JSON.parse(localStorage.getItem('newCorretorGabarito'));if(Array.isArray(x)&&x.length){gabarito=x;nq.value=x.length}}catch(e){}}
@@ -165,6 +179,14 @@ function fmtDate(v){
  if(!v)return '____/____/________';
  const p=v.split('-'); return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:v;
 }
+function syncCardConfig(){
+ const q=document.getElementById('cardQuestoes');
+ const a=document.getElementById('cardAlternativas');
+ if(q) nq.value=Math.max(1,Math.min(50,+q.value||10));
+ if(a) na.value=a.value;
+ buildKey();
+ renderCard();
+}
 function renderCard(){
  const printCardEl=document.getElementById('printCard');
  if(!printCardEl)return;
@@ -175,7 +197,15 @@ function renderCard(){
  const alunoCard=document.getElementById('cardAluno')?.value||'';
  const turmaCard=document.getElementById('cardTurma')?.value||'';
  const codigo=getCardCode();
+
  if(document.getElementById('cardCodigo'))document.getElementById('cardCodigo').value=codigo;
+ if(document.getElementById('cardQuestoes'))document.getElementById('cardQuestoes').value=n;
+ if(document.getElementById('cardAlternativas'))document.getElementById('cardAlternativas').value=String(ls.length);
+
+ // Até 10 questões por coluna. Ex.: 15 = 10 na 1ª coluna + 5 na 2ª.
+ const rows=Math.min(10,n);
+ const cols=Math.ceil(n/10);
+ const gridH = n<=10 ? '190mm' : (n<=20 ? '190mm' : '188mm');
 
  let qs='';
  for(let i=0;i<n;i++){
@@ -197,15 +227,16 @@ function renderCard(){
        <div class="ident-cell"><div class="ident-label">Código de registro da prova</div><div class="ident-value reg-code">${esc(codigo)}</div></div>
        <div class="ident-cell"><div class="ident-label">Nome do estudante</div><div class="ident-value">${esc(alunoCard)||'________________________________________________________________'}</div></div>
        <div class="ident-cell"><div class="ident-label">Turma</div><div class="ident-value">${esc(turmaCard)||'________________'}</div></div>
-       <div class="ident-cell"><div class="ident-label">Questões</div><div class="ident-value">${n} questões · ${ls.length} alternativas</div></div>
+       <div class="ident-cell"><div class="ident-label">Questões / alternativas</div><div class="ident-value">${n} questões · A até ${ls[ls.length-1]}</div></div>
      </div>
    </div>
    <div class="instructions"><b>ORIENTAÇÕES:</b> Preencha completamente apenas uma alternativa por questão. Use lápis ou caneta preta/azul. Não faça marcas fora dos círculos. Não dobre nem corte o cartão.</div>
    <div class="answer-title">MARQUE A ALTERNATIVA CORRESPONDENTE À SUA RESPOSTA</div>
    <div class="answer-help">Preencha o círculo escolhido de forma completa. Os marcadores pretos dos quatro cantos são utilizados pelo sistema para localizar e corrigir o cartão.</div>
-   <div class="omr-grid">${qs}</div>
+   <div class="omr-grid" style="--rows:${rows};--cols:${cols};--grid-h:${gridH}">${qs}</div>
    <div class="card-footer"><strong>NEW CORRETOR</strong> · Cartão-resposta para correção automática por imagem · Código ${esc(codigo)}</div>`;
 }
+
 function setStatus(t,c){readStatus.textContent=t;readStatus.className='status '+c}
 function resetRead(){photo.value='';results.innerHTML='';diag.getContext('2d').clearRect(0,0,diag.width,diag.height);ultimaLeitura=null;summary.className='status info';summary.textContent='Nenhuma correção realizada nesta sessão.';setStatus('Aguardando fotografia.','info')}
 
@@ -318,8 +349,8 @@ function detectAnswers(warp){
  const fallback=[{x:50,y:275,w:210,h:80},{x:320,y:275,w:210,h:80},{x:590,y:275,w:210,h:80},{x:860,y:275,w:210,h:80},
  {x:50,y:410,w:210,h:80},{x:320,y:410,w:210,h:80},{x:590,y:410,w:210,h:80},{x:860,y:410,w:210,h:80},
  {x:50,y:545,w:210,h:80},{x:320,y:545,w:210,h:80}];
- for(let i=0;i<Math.min(gabarito.length,10);i++){
-   let b=boxes[i]||fallback[i], vals=[],pts=[];
+ for(let i=0;i<gabarito.length;i++){
+   let b=boxes[i]||fallback[i]; if(!b) break; let vals=[],pts=[];
    // Bubble centers follow the actual question frame: margins 20/18 and answer row near 68% height.
    let y=b.y+b.h*.69, start=b.x+20, span=b.w-40;
    for(let j=0;j<ls.length;j++){let p=localInk(gray,start+(span*j/(ls.length-1)),y,18);vals.push(p.score);pts.push({x:p.x,y:p.y})}
@@ -336,13 +367,13 @@ function detectAnswers(warp){
  gray.delete();return {answers:out,raw:raw.join('\\n')};
 }
 function drawDiagnostic(warp,a){
- let out=new cv.Mat();warp.copyTo(out);a.forEach(z=>z.pts.forEach((p,j)=>{let chosen=z.ans===L[j];cv.circle(out,new cv.Point(p.x,p.y),12,chosen?new cv.Scalar(60,190,90,255):new cv.Scalar(60,100,235,255),2)}));cv.imshow(diag,out);out.delete();
+ let out=new cv.Mat();warp.copyTo(out);a.forEach(z=>z.pts.forEach((p,j)=>{let chosen=z.ans===L.slice(0,+na.value||5)[j];cv.circle(out,new cv.Point(p.x,p.y),12,chosen?new cv.Scalar(60,190,90,255):new cv.Scalar(60,100,235,255),2)}));cv.imshow(diag,out);out.delete();
 }
 function renderResults(a,raw){
  let ac=0,wr=0,bl=0,du=0,v=Math.max(.01,+valor.value||1);
  let rows=a.map(x=>{let cls='',sit=x.status;if(x.status.startsWith('Dupla')){du++;cls='double'}else if(x.status==='Em branco'){bl++;cls='blank'}else if(x.ans===gabarito[x.q-1]){ac++;cls='correct';sit='✓ Correta'}else{wr++;cls='wrong';sit='✗ Incorreta'}return `<tr><td>${String(x.q).padStart(2,'0')}</td><td class="${cls}">${x.ans}</td><td>${gabarito[x.q-1]||'—'}</td><td class="${cls}">${sit}</td><td>${x.vals.map(z=>Math.round(z*100)+'%').join(' / ')}</td></tr>`}).join('');
  let nota=ac*v;
- results.innerHTML=`<h2>Respostas identificadas</h2><div class="status info"><b>Estudante:</b> ${esc(aluno.value)||'Não informado'} &nbsp; <b>Turma:</b> ${esc(turma.value)||'—'}</div><div class="keyline">${a.map(x=>x.ans).join(' | ')}</div><div class="grid"><div class="status ok">Acertos<br><b>${ac}</b></div><div class="status bad">Erros<br><b>${wr}</b></div><div class="status warn">Brancas<br><b>${bl}</b></div><div class="status warn">Revisar<br><b>${du}</b></div></div><div class="card"><div class="score">${nota.toFixed(1)}</div>Nota — ${ac} acertos × ${v.toFixed(2)}</div><details><summary><b>🔎 Leitura bruta para conferência</b></summary><pre class="raw">${esc(raw)}</pre></details><div style="overflow:auto"><table><thead><tr><th>Questão</th><th>Leitura</th><th>Gabarito</th><th>Situação</th><th>Índice A/B/C/D/E</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+ results.innerHTML=`<h2>Respostas identificadas</h2><div class="status info"><b>Estudante:</b> ${esc(aluno.value)||'Não informado'} &nbsp; <b>Turma:</b> ${esc(turma.value)||'—'}</div><div class="keyline">${a.map(x=>x.ans).join(' | ')}</div><div class="grid"><div class="status ok">Acertos<br><b>${ac}</b></div><div class="status bad">Erros<br><b>${wr}</b></div><div class="status warn">Brancas<br><b>${bl}</b></div><div class="status warn">Revisar<br><b>${du}</b></div></div><div class="card"><div class="score">${nota.toFixed(1)}</div>Nota — ${ac} acertos × ${v.toFixed(2)}</div><details><summary><b>🔎 Leitura bruta para conferência</b></summary><pre class="raw">${esc(raw)}</pre></details><div style="overflow:auto"><table><thead><tr><th>Questão</th><th>Leitura</th><th>Gabarito</th><th>Situação</th><th>Índice das alternativas</th></tr></thead><tbody>${rows}</tbody></table></div>`;
  summary.className='status ok';summary.innerHTML=`<b>${esc(aluno.value)||'Estudante'}</b> — ${esc(turma.value)||'Turma não informada'} — ${ac} acertos, ${wr} erros, ${bl} brancas, ${du} para revisar — Nota <b>${nota.toFixed(1)}</b>.`;
 }
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
@@ -360,50 +391,13 @@ async function readPhoto(){
  }catch(e){console.error(e);setStatus('Erro na leitura: '+e.message,'bad')}finally{finish()}
 }
 function finish(){busy=false;btnRead.disabled=false}
-loadKey();if(document.getElementById('cardData')&&!document.getElementById('cardData').value)document.getElementById('cardData').value=new Date().toISOString().slice(0,10);renderCard();buildKey();show('inicio');
+loadKey();
+if(document.getElementById('cardData')&&!document.getElementById('cardData').value)document.getElementById('cardData').value=new Date().toISOString().slice(0,10);
+if(document.getElementById('cardQuestoes'))document.getElementById('cardQuestoes').value=Math.max(1,Math.min(50,+nq.value||10));
+if(document.getElementById('cardAlternativas'))document.getElementById('cardAlternativas').value=String(na.value||5);
+buildKey();
+show('inicio');
 </script>
 
-<script>
-(function(){
-  function ajustarGradeCartao(){
-    const grid = document.querySelector('.omr-grid');
-    if(!grid) return;
-
-    const qs = grid.querySelectorAll('.omr-q').length;
-    if(!qs) return;
-
-    // Distribuição automática: usa a largura da A4 e evita linhas muito longas.
-    let cols;
-    if(qs <= 10) cols = 5;
-    else if(qs <= 12) cols = 4;
-    else if(qs <= 20) cols = 5;
-    else if(qs <= 25) cols = 5;
-    else if(qs <= 30) cols = 6;
-    else if(qs <= 40) cols = 5;
-    else cols = 6;
-
-    grid.style.setProperty('--cols', cols);
-
-    // Quanto mais questões, menor o espaço vertical de cada cartão.
-    const q = grid.querySelectorAll('.omr-q');
-    let minH = qs <= 10 ? '17mm' :
-               qs <= 20 ? '14.5mm' :
-               qs <= 30 ? '12.5mm' :
-               qs <= 40 ? '11mm' : '9.8mm';
-
-    q.forEach(el => {
-      el.style.minHeight = minH;
-      el.style.padding = qs <= 20 ? '2mm 1.5mm' : '1.4mm 1mm';
-    });
-  }
-
-  // Executa após o cartão ser gerado e sempre que houver mudança.
-  window.ajustarGradeCartao = ajustarGradeCartao;
-  document.addEventListener('DOMContentLoaded', ajustarGradeCartao);
-
-  const observer = new MutationObserver(ajustarGradeCartao);
-  observer.observe(document.body, {childList:true, subtree:true});
-})();
-</script>
 
 </body></html>
