@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NEW CORRETOR V2.6</title>
+<title>NEW CORRETOR V2.8</title>
 <script async src="https://docs.opencv.org/4.x/opencv.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f2f5fa;color:#13233b}
@@ -41,7 +42,7 @@ th,td{border:1px solid #dbe2ea;padding:10px;text-align:center}th{background:#eef
 <body>
 <header>
   <div class="brand">NEW <span>CORRETOR</span></div>
-  <div class="sub">Correção inteligente de avaliações — leitor OMR V2.6</div>
+  <div class="sub">Correção inteligente de avaliações — leitor OMR V2.8</div>
   <nav>
     <button onclick="show('inicio')">🏠 Início</button>
     <button onclick="show('avaliacao')">📝 Avaliação</button>
@@ -99,6 +100,11 @@ th,td{border:1px solid #dbe2ea;padding:10px;text-align:center}th{background:#eef
  <div class="card">
   <h2>📷 Corrigir cartão</h2>
   <p>Fotografe o cartão inteiro, de frente, com boa iluminação.</p>
+  <div class="grid" style="margin-bottom:12px">
+   <label>Nome do estudante<input id="studentName" placeholder="Digite o nome ou deixe em branco para tentar OCR"></label>
+   <label>Turma<input id="studentClass" placeholder="Ex.: 5º A"></label>
+  </div>
+  <div class="small">O OCR tenta ler o nome escrito no campo do cartão. Como o nome pode estar manuscrito, confirme antes de salvar.</div>
   <input id="photo" type="file" accept="image/*" capture="environment">
   <div class="actions"><button class="primary" onclick="readPhoto()">🔎 Ler cartão</button><button class="secondary" onclick="document.getElementById('photo').value=''">Limpar</button></div>
   <div id="readStatus" class="status info">Aguardando fotografia.</div>
@@ -296,12 +302,13 @@ function drawDiagnostic(warp,answers){
   });
   cv.imshow('diag',out);out.delete();
 }
-function renderResults(a){
+function renderResults(a,studentName="",studentClass=""){
  const el=document.getElementById('results');let ac=0,wr=0,bl=0,du=0;
  let rows=a.map(x=>{let cls='',sit=x.status;if(x.status.startsWith('Dupla')){du++;cls='double'}else if(x.status==='Em branco'){bl++;cls='blank'}else if(x.ans===gabarito[x.q-1]){ac++;cls='correct';sit='✓ Correta'}else{wr++;cls='wrong';sit='✗ Incorreta'}return `<tr><td>${String(x.q).padStart(2,'0')}</td><td class="${cls}">${x.ans}</td><td>${gabarito[x.q-1]||'—'}</td><td class="${cls}">${sit}</td><td>${x.vals.map(v=>(v*100).toFixed(0)+'%').join(' / ')}</td></tr>`}).join('');
  const total=a.length, valor=+document.getElementById('valor').value||1,nota=ac*valor;
- el.innerHTML=`<h2>Respostas identificadas</h2><div class="grid"><div class="status ok">Acertos<br><b>${ac}</b></div><div class="status bad">Erros<br><b>${wr}</b></div><div class="status warn">Brancas<br><b>${bl}</b></div><div class="status warn">Revisar<br><b>${du}</b></div></div><div class="card" style="padding:14px"><div class="score">${nota.toFixed(1)}</div><div>Nota considerando ${total} questões e valor ${valor} por questão.</div></div><div style="overflow:auto"><table><thead><tr><th>Questão</th><th>Leitura</th><th>Gabarito</th><th>Situação</th><th>Índice das alternativas</th></tr></thead><tbody>${rows}</tbody></table></div>`;
- document.getElementById('summary').className='status ok';document.getElementById('summary').innerHTML=`<b>Última correção:</b> ${ac} acertos, ${wr} erros, ${bl} em branco e ${du} para revisão. Nota: <b>${nota.toFixed(1)}</b>.`;
+ el.innerHTML=`<h2>Respostas identificadas</h2><div class="status info"><b>Estudante:</b> ${studentName||"Nome não identificado"} &nbsp; <b>Turma:</b> ${studentClass||"—"}</div><div class="grid"><div class="status ok">Acertos<br><b>${ac}</b></div><div class="status bad">Erros<br><b>${wr}</b></div><div class="status warn">Brancas<br><b>${bl}</b></div><div class="status warn">Revisar<br><b>${du}</b></div></div><div class="card" style="padding:14px"><div class="score">${nota.toFixed(1)}</div><div>Nota considerando ${total} questões e valor ${valor} por questão.</div></div><div style="overflow:auto"><table><thead><tr><th>Questão</th><th>Leitura</th><th>Gabarito</th><th>Situação</th><th>Índice das alternativas</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+ document.getElementById('summary').className='status ok';localStorage.setItem('newCorretorAluno',studentName||''); localStorage.setItem('newCorretorTurma',studentClass||'');
+ document.getElementById('summary').innerHTML=`<b>Estudante:</b> ${studentName||'Nome não identificado'} &nbsp; <b>Turma:</b> ${studentClass||'—'}<br><b>Última correção:</b> ${ac} acertos, ${wr} erros, ${bl} em branco e ${du} para revisão. Nota: <b>${nota.toFixed(1)}</b>.`;
 }
 function setStatus(t,c){const e=document.getElementById('readStatus');e.textContent=t;e.className='status '+c}
 loadKey();buildKey();show('inicio');
