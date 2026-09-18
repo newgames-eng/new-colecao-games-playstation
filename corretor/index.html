@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NEW CORRETOR V5 — OMR Próprio</title>
+<title>NEW CORRETOR V5.2 — Base Estável</title>
 <script async src="https://docs.opencv.org/4.x/opencv.js"></script>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f2f5fa;color:#17243a}
@@ -23,7 +23,7 @@ table{width:100%;border-collapse:collapse;margin-top:13px;font-size:14px}th,td{b
 .raw{font:12px/1.5 monospace;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px;overflow:auto;white-space:pre}
 @media(max-width:600px){.brand{font-size:28px}.qgrid{grid-template-columns:repeat(2,1fr)}nav button{font-size:15px}}
 
-/* ===== CARTÃO-RESPOSTA A4 V5 ===== */
+/* ===== CARTÃO-RESPOSTA A4 V5.2 ===== */
 .card-config{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}
 .card-config label{font-weight:800;font-size:13px}
 .card-config label:first-child{grid-column:span 2}
@@ -100,12 +100,12 @@ flex-wrap:nowrap;
 </style>
 </head>
 <body>
-<header><div class="brand">NEW <span>CORRETOR</span></div><div class="sub">Correção inteligente de avaliações — leitor OMR V5</div>
-<nav><button type="button" onclick="show('inicio')">🏠 Início</button><button type="button" onclick="show('avaliacao')">📝 Avaliação</button><button type="button" onclick="show('corrigir')">📷 Corrigir</button><button type="button" onclick="show('cartao')">📄 Cartão</button><button type="button" onclick="show('resultados')">📊 Resultados</button></nav></header>
+<header><div class="brand">NEW <span>CORRETOR</span></div><div class="sub">Correção inteligente de avaliações — NEW CORRETOR V5.2</div>
+<nav><button onclick="show('inicio')">🏠 Início</button><button onclick="show('avaliacao')">📝 Avaliação</button><button onclick="show('corrigir')">📷 Corrigir</button><button onclick="show('cartao')">📄 Cartão</button><button onclick="show('resultados')">📊 Resultados</button></nav></header>
 <main>
-<section id="inicio" class="page"><div class="card"><h1>NEW CORRETOR</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V5:</b> leitor OMR próprio do NEW CORRETOR. A foto é alinhada pelos 4 marcadores e as bolhas são lidas pela geometria conhecida do cartão.</div><div class="actions"><button type="button" class="primary" onclick="show('avaliacao')">Configurar avaliação</button><button type="button" class="secondary" onclick="show('corrigir')">Corrigir cartão</button></div></div></section>
+<section id="inicio" class="page"><div class="card"><h1>NEW CORRETOR</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V5.2:</b> base estável preservada. Primeiro validamos toda a interface; depois substituímos somente o módulo de leitura OMR.</div><div class="actions"><button class="primary" onclick="show('avaliacao')">Configurar avaliação</button><button class="secondary" onclick="show('corrigir')">Corrigir cartão</button></div></div></section>
 
-<section id="avaliacao" class="page hidden"><div class="card"><h2>📝 Avaliação</h2><div class="grid"><label>Título<input id="titulo" value="AVALIAÇÃO DE MATEMÁTICA"></label><label>Questões<input id="nq" type="number" min="1" max="50" value="10" onchange="buildKey()"></label><label>Alternativas<select id="na" onchange="buildKey()"><option value="3">A até C</option><option value="4">A até D</option><option value="5" selected>A até E</option></select></label><label>Valor por questão<input id="valor" type="number" step=".01" value="1"></label></div><h3 style="margin-top:18px">Gabarito</h3><div id="key" class="qgrid"></div><div class="actions"><button type="button" class="primary" onclick="saveKey()">Salvar gabarito</button></div><div id="keymsg" class="status info">Configure o gabarito.</div></div></section>
+<section id="avaliacao" class="page hidden"><div class="card"><h2>📝 Avaliação</h2><div class="grid"><label>Título<input id="titulo" value="AVALIAÇÃO DE MATEMÁTICA"></label><label>Questões<input id="nq" type="number" min="1" max="50" value="10" onchange="buildKey()"></label><label>Alternativas<select id="na" onchange="buildKey()"><option value="3">A até C</option><option value="4">A até D</option><option value="5" selected>A até E</option></select></label><label>Valor por questão<input id="valor" type="number" step=".01" value="1"></label></div><h3 style="margin-top:18px">Gabarito</h3><div id="key" class="qgrid"></div><div class="actions"><button class="primary" onclick="saveKey()">Salvar gabarito</button></div><div id="keymsg" class="status info">Configure o gabarito.</div></div></section>
 
 <section id="cartao" class="page hidden">
 <div class="card no-print">
@@ -139,9 +139,9 @@ flex-wrap:nowrap;
     </label>
   </div>
   <div class="actions">
-    <button type="button" class="primary" onclick="renderCard()">🔄 Atualizar cartão</button>
-    <button type="button" class="secondary" onclick="newCardCode()">🔐 Novo código</button>
-    <button type="button" class="primary" onclick="window.print()">🖨️ Imprimir A4</button>
+    <button class="primary" onclick="renderCard()">🔄 Atualizar cartão</button>
+    <button class="secondary" onclick="newCardCode()">🔐 Novo código</button>
+    <button class="primary" onclick="window.print()">🖨️ Imprimir A4</button>
   </div>
   <div class="status warn">⚠️ Imprima em <b>100%</b>. Não recorte, dobre ou cubra os quatro marcadores pretos dos cantos.</div>
 </div>
@@ -150,30 +150,17 @@ flex-wrap:nowrap;
 </div>
 </section>
 
-<section id="corrigir" class="page hidden"><div class="card"><h2>📷 Corrigir cartão</h2><p>Preencha os dados do estudante e fotografe o cartão inteiro.</p><div class="grid"><label>Nome do estudante<input id="aluno" placeholder="Nome completo"></label><label>Turma<input id="turma" placeholder="Ex.: 5º A"></label></div><div class="small">O nome escrito no cartão não é usado como OCR nesta versão; informe o nome aqui para garantir a identificação.</div><input id="photo" type="file" accept="image/*" capture="environment" style="margin-top:12px"><div class="actions"><button type="button" id="btnRead" class="primary" onclick="readPhoto()">🔎 Ler cartão</button><button type="button" class="secondary" onclick="resetRead()">Limpar</button></div><div id="readStatus" class="status info">Aguardando fotografia.</div><canvas id="diag" class="preview"></canvas><div id="results"></div></div></section>
+<section id="corrigir" class="page hidden"><div class="card"><h2>📷 Corrigir cartão</h2><p>Preencha os dados do estudante e fotografe o cartão inteiro.</p><div class="grid"><label>Nome do estudante<input id="aluno" placeholder="Nome completo"></label><label>Turma<input id="turma" placeholder="Ex.: 5º A"></label></div><div class="small">O nome escrito no cartão não é usado como OCR nesta versão; informe o nome aqui para garantir a identificação.</div><input id="photo" type="file" accept="image/*" capture="environment" style="margin-top:12px"><div class="actions"><button id="btnRead" class="primary" onclick="readPhoto()">🔎 Ler cartão</button><button class="secondary" onclick="resetRead()">Limpar</button></div><div id="readStatus" class="status info">Aguardando fotografia.</div><canvas id="diag" class="preview"></canvas><div id="results"></div></div></section>
 
 <section id="resultados" class="page hidden"><div class="card"><h2>📊 Resultado</h2><div id="summary" class="status info">Nenhuma correção realizada nesta sessão.</div></div></section>
 </main>
 
 <script>
-/* V5.1 — referências DOM explícitas para evitar congelamento/erros por IDs globais */
-const $id = id => document.getElementById(id);
-const nq=$id('nq'), na=$id('na'), valor=$id('valor'), key=$id('key'), keymsg=$id('keymsg');
-const titulo=$id('titulo'), cardTitulo=$id('cardTitulo'), cardData=$id('cardData'), cardAluno=$id('cardAluno');
-const cardTurma=$id('cardTurma'), cardCodigo=$id('cardCodigo'), cardQuestoes=$id('cardQuestoes'), cardAlternativas=$id('cardAlternativas');
-const printCard=$id('printCard'), photo=$id('photo'), btnRead=$id('btnRead'), results=$id('results'), diag=$id('diag');
-const summary=$id('summary'), aluno=$id('aluno'), turma=$id('turma'), readStatus=$id('readStatus');
 let gabarito=[],ultimaLeitura=null,busy=false;
 const L='ABCDE';
 
-function show(id){
-  document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));
-  const page=$id(id);
-  if(page) page.classList.remove('hidden');
-  if(id==='avaliacao') buildKey();
-  if(id==='cartao') renderCard();
-}
-function buildKey(){const n=Math.max(1,Math.min(50,+nq.value||10)),ls=L.slice(0,+na.value||5),old=[...gabarito];gabarito=Array.from({length:n},(_,i)=>ls.includes(old[i])?old[i]:'A');key.innerHTML='';gabarito.forEach((v,i)=>{let d=document.createElement('div');d.className='qbox';d.innerHTML='<b style="font-size:12px">QUESTÃO '+String(i+1).padStart(2,'0')+'</b><div class="qopts">'+[...ls].map(x=>`<button type="button" class="${v===x?'sel':''}" onclick="setKey(${i},'${x}')">${x}</button>`).join('')+'</div>';key.appendChild(d)});if(document.getElementById('cardQuestoes'))document.getElementById('cardQuestoes').value=n;if(document.getElementById('cardAlternativas'))document.getElementById('cardAlternativas').value=String(ls.length);renderCard()}
+function show(id){document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');if(id==='avaliacao')buildKey();if(id==='cartao')renderCard()}
+function buildKey(){const n=Math.max(1,Math.min(50,+nq.value||10)),ls=L.slice(0,+na.value||5),old=[...gabarito];gabarito=Array.from({length:n},(_,i)=>ls.includes(old[i])?old[i]:'A');key.innerHTML='';gabarito.forEach((v,i)=>{let d=document.createElement('div');d.className='qbox';d.innerHTML='<b style="font-size:12px">QUESTÃO '+String(i+1).padStart(2,'0')+'</b><div class="qopts">'+[...ls].map(x=>`<button class="${v===x?'sel':''}" onclick="setKey(${i},'${x}')">${x}</button>`).join('')+'</div>';key.appendChild(d)});if(document.getElementById('cardQuestoes'))document.getElementById('cardQuestoes').value=n;if(document.getElementById('cardAlternativas'))document.getElementById('cardAlternativas').value=String(ls.length);renderCard()}
 function setKey(i,x){gabarito[i]=x;buildKey()}
 function saveKey(){localStorage.setItem('newCorretorGabarito',JSON.stringify(gabarito));keymsg.textContent='✓ Gabarito salvo neste aparelho.';keymsg.className='status ok';renderCard()}
 function loadKey(){try{let x=JSON.parse(localStorage.getItem('newCorretorGabarito'));if(Array.isArray(x)&&x.length){gabarito=x;nq.value=x.length}}catch(e){}}
@@ -253,14 +240,7 @@ function renderCard(){
 function setStatus(t,c){readStatus.textContent=t;readStatus.className='status '+c}
 function resetRead(){photo.value='';results.innerHTML='';diag.getContext('2d').clearRect(0,0,diag.width,diag.height);ultimaLeitura=null;summary.className='status info';summary.textContent='Nenhuma correção realizada nesta sessão.';setStatus('Aguardando fotografia.','info')}
 
-function loadImage(f){
-  return new Promise((ok,no)=>{
-    const im=new Image(), u=URL.createObjectURL(f);
-    im.onload=()=>{URL.revokeObjectURL(u);ok(im)};
-    im.onerror=(e)=>{URL.revokeObjectURL(u);no(e)};
-    im.src=u;
-  })
-}
+function loadImage(f){return new Promise((ok,no)=>{let im=new Image();im.onload=()=>ok(im);im.onerror=no;im.src=URL.createObjectURL(f)})}
 function orderPts(p){let s=p.map(a=>a.x+a.y),d=p.map(a=>a.x-a.y);return[p[s.indexOf(Math.min(...s))],p[d.indexOf(Math.max(...d))],p[s.indexOf(Math.max(...s))],p[d.indexOf(Math.min(...d))]]}
 function findMarkers(src){
   // V3.4: detecção dos quatro marcadores mais tolerante a fotos pequenas,
@@ -408,153 +388,76 @@ function localInk(gray,x,y,r){
  return {score:Math.max(0,best),x:bx,y:by}
 }
 
-function sampleBubble(gray,x,y,r){
-  // Leitura centrada na área interna da bolha.
-  // Evita a borda do círculo e reduz a influência da letra A-E impressa.
-  const R=Math.max(8,Math.min(16,Math.round(r)));
-  const innerR=Math.max(4,Math.round(R*0.42));
-  let sum=0,n=0,dark=0;
-  for(let yy=-innerR;yy<=innerR;yy++){
-    for(let xx=-innerR;xx<=innerR;xx++){
-      if(xx*xx+yy*yy>innerR*innerR)continue;
-      const px=Math.round(x+xx),py=Math.round(y+yy);
-      if(px<0||py<0||px>=gray.cols||py>=gray.rows)continue;
-      const g=gray.ucharPtr(py,px)[0];
-      sum+=g;n++;
-      if(g<120)dark++;
-    }
-  }
-  const mean=n?sum/n:255;
-  const darkRatio=n?dark/n:0;
-  return {mean,darkRatio};
-}
-
-function getOMRGeometry(count, altCount){
-  // Geometria do cartão A4 gerado pelo próprio NEW CORRETOR.
-  // Após a correção de perspectiva, o cartão é sempre 1200 x 1697 px.
-  const cols=Math.ceil(count/10);
-  const rows=Math.min(10,count);
-
-  // Coordenadas calibradas a partir do cartão V5:
-  // primeira linha ≈ y 645 e última ≈ y 1306 para 10 questões.
-  const yFirst=645, yLast=1306;
-  const yStep=rows===1?0:(yLast-yFirst)/(rows-1);
-
-  // Grade física: margem de 14 mm, largura útil de 182 mm.
-  const PXMM=1200/210;
-  const gridLeft=14*PXMM;
-  const gridWidth=182*PXMM;
-  const colGap=1.8*PXMM;
-  const colWidth=(gridWidth-(cols-1)*colGap)/cols;
-
-  // Cada bolha tem aproximadamente 4,7 mm e gap de 1,7 mm.
-  const bubble=4.7*PXMM;
-  const optionGap=1.7*PXMM;
-  const optionTotal=altCount*bubble+(altCount-1)*optionGap;
-
-  const rowsOut=[];
-  for(let c=0;c<cols;c++){
-    const colX=gridLeft+c*(colWidth+colGap);
-    const firstX=colX+(colWidth-optionTotal)/2+bubble/2;
-    const inCol=Math.min(10,Math.max(0,count-c*10));
-
-    for(let r=0;r<inCol;r++){
-      const q=c*10+r;
-      rowsOut.push({
-        q:q+1,
-        y:yFirst+r*yStep,
-        xs:Array.from({length:altCount},(_,j)=>firstX+j*(bubble+optionGap))
-      });
-    }
-  }
-  return rowsOut;
-}
-
 function detectAnswers(warp){
-  const gray=new cv.Mat();
-  cv.cvtColor(warp,gray,cv.COLOR_RGBA2GRAY);
+ let gray=new cv.Mat();cv.cvtColor(warp,gray,cv.COLOR_RGBA2GRAY);
+ const count=gabarito.length, ls=L.slice(0,+na.value||5);
+ let boxes=findQuestionBoxes(warp);
 
-  const count=gabarito.length;
-  const ls=L.slice(0,+na.value||5);
-  const geom=getOMRGeometry(count,ls.length);
+ // O cartão atual tem uma geometria conhecida após a perspectiva.
+ // Se a foto não produzir contornos confiáveis, usamos a geometria do próprio cartão.
+ if(boxes.length<count) boxes=fallbackQuestionBoxes(count);
 
-  let out=[],raw=[];
+ // Quando houver exatamente a quantidade esperada, preserva a ordem por coluna.
+ boxes=boxes.slice(0,count);
 
-  for(let i=0;i<count;i++){
-    const row=geom[i];
-    const samples=row.xs.map(x=>sampleBubble(gray,x,row.y,13));
+ let out=[],raw=[];
+ for(let i=0;i<count;i++){
+   const b=boxes[i];
+   const vals=[],pts=[];
 
-    const means=samples.map(s=>s.mean);
-    const median=[...means].sort((a,b)=>a-b)[Math.floor(means.length/2)]||180;
+   // As bolhas ficam centralizadas horizontalmente dentro da moldura.
+   // Tamanho real do círculo: 4,7 mm; espaçamento: 1,7 mm.
+   const mm=1200/210;
+   const bubbleW=4.7*mm, gap=1.7*mm;
+   const total=ls.length*bubbleW+(ls.length-1)*gap;
+   const start=b.x+(b.w-total)/2+bubbleW/2;
 
-    // Quanto mais abaixo da mediana, mais provavelmente a bolha foi preenchida.
-    const scores=means.map(m=>Math.max(0,Math.min(1,(median-m)/Math.max(1,median))));
+   // A caixa usa flex-column + justify-content:center.
+   // O centro da fileira de bolhas fica aproximadamente em 60% da altura.
+   const y=b.y+b.h*0.60;
 
-    const ranked=scores.map((s,j)=>({s,j})).sort((a,b)=>b.s-a.s);
-    const best=ranked[0]||{s:0,j:0};
-    const second=ranked[1]||{s:0,j:0};
+   for(let j=0;j<ls.length;j++){
+     const x=start+j*(bubbleW+gap);
+     const p=localInk(gray,x,y,bubbleW*.42);
+     vals.push(p.score);pts.push({x:p.x,y:p.y});
+   }
 
-    let ans='—',status='Em branco';
+   const sorted=[...vals].sort((a,b)=>b-a);
+   const max=sorted[0]||0, second=sorted[1]||0;
+   let ans='—',status='Em branco';
 
-    // Preenchimento real produz contraste muito maior que a letra impressa.
-    // Valores baixos são tratados como branco; dois valores altos e próximos
-    // indicam possível dupla marcação.
-    if(best.s>=0.38){
-      if(second.s>=0.50 && second.s>=best.s*0.68){
-        status='Dupla marcação / revisar';
-      }else{
-        ans=ls[best.j];
-        status='Marcada';
-      }
-    }
+   // Centro de bolha vazia contém apenas a letra impressa.
+   // Uma bolha preenchida tem área escura muito maior.
+   if(max>=0.34){
+     const idx=vals.indexOf(max);
+     // Só considera dupla marcação quando duas bolhas têm níveis altos
+     // e próximos; isso reduz falsos positivos causados pelas letras A-E.
+     if(second>=0.86*max && second>=0.34){
+       status='Dupla marcação / revisar';
+     }else{
+       ans=ls[idx];
+       status='Marcada';
+     }
+   }
 
-    const vals=scores.map((s,j)=>({
-      score:s,
-      mean:means[j],
-      darkRatio:samples[j].darkRatio
-    }));
-
-    out.push({
-      q:i+1,
-      ans,
-      status,
-      vals:va[...ls].map(v=>v.score),
-      pts:row.xs.map((x,j)=>({x,y:row.y,score:vals[j].score,mean:vals[j].mean}))
-    });
-
-    raw.push(
-      `Q${String(i+1).padStart(2,'0')}  `+
-      [...ls].map((x,j)=>`${x}:${Math.round(scores[j]*100)}%`).join('  ')+
-      `  → ${ans}`
-    );
-  }
-
-  gray.delete();
-  return {answers:out,raw:raw.join('\n')};
+   out.push({q:i+1,ans,status,vals,pts});
+   raw.push(`Q${String(i+1).padStart(2,'0')}  ${[...ls].map((x,j)=>x+':'+Math.round(vals[j]*100)+'%').join('  ')}  → ${ans}`);
+ }
+ gray.delete();
+ return {answers:out,raw:raw.join('\n')};
 }
 function drawDiagnostic(warp,a){
-  let out=new cv.Mat();warp.copyTo(out);
-  const ls=L.slice(0,+na.value||5);
-
-  a.forEach(z=>{
-    z.pts.forEach((p,j)=>{
-      const isChosen=(z.ans===ls[j]);
-      const isReview=z.status.startsWith('Dupla');
-      let color;
-      if(isReview) color=new cv.Scalar(60,150,235,255);
-      else if(isChosen) color=new cv.Scalar(40,190,70,255);
-      else color=new cv.Scalar(80,90,220,255);
-
-      cv.circle(out,new cv.Point(Math.round(p.x),Math.round(p.y)),14,color,2);
-    });
-  });
-
-  cv.imshow(diag,out);
-  out.delete();
+ let out=new cv.Mat();warp.copyTo(out);
+ a.forEach(z=>z.pts.forEach((p,j)=>{
+   const chosen=z.ans===L.slice(0,+na.value||5)[j];
+   cv.circle(out,new cv.Point(Math.round(p.x),Math.round(p.y)),12,
+     chosen?new cv.Scalar(60,190,90,255):new cv.Scalar(60,100,235,255),2)
+ }));
+ cv.imshow(diag,out);out.delete();
 }
 function renderResults(a,raw){
  let ac=0,wr=0,bl=0,du=0,v=Math.max(.01,+valor.value||1);
- let rows=a.map(x=>{let cls='',sit=x.status;if(x.status.startsWith('Dupla')){du++;cls='double'}else if(x.status==='Em branco'){bl++;cls='blank'}else if(x.ans===gabarito[x.q-1]){ac++;cls='correct';sit='✓ Correta'}else{wr++;cls='wrong';sit='✗ Incorreta'}return `<tr><td>${String(x.q).padStart(2,'0')}</td><td class="${cls}">${x.ans}</td><td>${gabarito[x.q-1]||'—'}</td><td class="${cls}">${sit}</td><td>${x.va[...ls].map(z=>Math.round(z*100)+'%').join(' / ')}</td></tr>`}).join('');
+ let rows=a.map(x=>{let cls='',sit=x.status;if(x.status.startsWith('Dupla')){du++;cls='double'}else if(x.status==='Em branco'){bl++;cls='blank'}else if(x.ans===gabarito[x.q-1]){ac++;cls='correct';sit='✓ Correta'}else{wr++;cls='wrong';sit='✗ Incorreta'}return `<tr><td>${String(x.q).padStart(2,'0')}</td><td class="${cls}">${x.ans}</td><td>${gabarito[x.q-1]||'—'}</td><td class="${cls}">${sit}</td><td>${x.vals.map(z=>Math.round(z*100)+'%').join(' / ')}</td></tr>`}).join('');
  let nota=ac*v;
  results.innerHTML=`<h2>Respostas identificadas</h2><div class="status info"><b>Estudante:</b> ${esc(aluno.value)||'Não informado'} &nbsp; <b>Turma:</b> ${esc(turma.value)||'—'}</div><div class="keyline">${a.map(x=>x.ans).join(' | ')}</div><div class="grid"><div class="status ok">Acertos<br><b>${ac}</b></div><div class="status bad">Erros<br><b>${wr}</b></div><div class="status warn">Brancas<br><b>${bl}</b></div><div class="status warn">Revisar<br><b>${du}</b></div></div><div class="card"><div class="score">${nota.toFixed(1)}</div>Nota — ${ac} acertos × ${v.toFixed(2)}</div><details><summary><b>🔎 Leitura bruta para conferência</b></summary><pre class="raw">${esc(raw)}</pre></details><div style="overflow:auto"><table><thead><tr><th>Questão</th><th>Leitura</th><th>Gabarito</th><th>Situação</th><th>Índice das alternativas</th></tr></thead><tbody>${rows}</tbody></table></div>`;
  summary.className='status ok';summary.innerHTML=`<b>${esc(aluno.value)||'Estudante'}</b> — ${esc(turma.value)||'Turma não informada'} — ${ac} acertos, ${wr} erros, ${bl} brancas, ${du} para revisar — Nota <b>${nota.toFixed(1)}</b>.`;
