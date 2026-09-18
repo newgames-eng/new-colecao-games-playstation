@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NEW CORRETOR V2.8</title>
+<title>NEW CORRETOR V2.9</title>
 <script async src="https://docs.opencv.org/4.x/opencv.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
@@ -42,7 +42,7 @@ th,td{border:1px solid #dbe2ea;padding:10px;text-align:center}th{background:#eef
 <body>
 <header>
   <div class="brand">NEW <span>CORRETOR</span></div>
-  <div class="sub">Correção inteligente de avaliações — leitor OMR V2.8</div>
+  <div class="sub">Correção inteligente de avaliações — leitor OMR V2.9</div>
   <nav>
     <button onclick="show('inicio')">🏠 Início</button>
     <button onclick="show('avaliacao')">📝 Avaliação</button>
@@ -310,6 +310,53 @@ function renderResults(a,studentName="",studentClass=""){
  document.getElementById('summary').className='status ok';localStorage.setItem('newCorretorAluno',studentName||''); localStorage.setItem('newCorretorTurma',studentClass||'');
  document.getElementById('summary').innerHTML=`<b>Estudante:</b> ${studentName||'Nome não identificado'} &nbsp; <b>Turma:</b> ${studentClass||'—'}<br><b>Última correção:</b> ${ac} acertos, ${wr} erros, ${bl} em branco e ${du} para revisão. Nota: <b>${nota.toFixed(1)}</b>.`;
 }
+
+async function waitOpenCV(timeout=12000){
+  const start=Date.now();
+  while(Date.now()-start<timeout){
+    if(window.cv && cv.Mat && cv.imread && cv.findContours) return true;
+    await new Promise(r=>setTimeout(r,150));
+  }
+  return false;
+}
+async function readPhoto(){
+  const file=document.getElementById('photo').files[0];
+  if(!file){setStatus('Selecione ou fotografe o cartão primeiro.','warn');return;}
+  const ready=await waitOpenCV();
+  if(!ready){setStatus('O leitor de imagem não carregou. Verifique a internet e toque em Ler cartão novamente.','bad');return;}
+  setStatus('Processando foto... localizando os 4 marcadores.','info');
+  try{
+    const im=await loadImage(file);
+    const maxSide=1800;
+    const scale=Math.min(1,maxSide/Math.max(im.naturalWidth,im.naturalHeight));
+    const c=document.createElement('canvas');
+    c.width=Math.max(1,Math.round(im.naturalWidth*scale));
+    c.height=Math.max(1,Math.round(im.naturalHeight*scale));
+    c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+    const src=cv.imread(c);
+    const markers=findMarkers(src);
+    if(!markers){
+      src.delete();
+      setStatus('Não consegui localizar os 4 marcadores pretos. Fotografe o cartão inteiro, sem cortar os cantos.','bad');
+      return;
+    }
+    setStatus('✓ 4 marcadores encontrados. Corrigindo perspectiva e lendo as bolhas...','info');
+    const warp=warpToCard(src,markers);
+    const answers=detectAnswers(warp);
+    ultimaLeitura=answers;
+    drawDiagnostic(warp,answers);
+    const studentName=(document.getElementById('studentName')?.value||'').trim();
+    const studentClass=(document.getElementById('studentClass')?.value||'').trim();
+    renderResults(answers,studentName,studentClass);
+    setStatus('✓ Leitura concluída. Confira as respostas antes de usar.','ok');
+    src.delete();
+    warp.delete();
+  }catch(e){
+    console.error(e);
+    setStatus('Erro durante a leitura: '+(e?.message||e),'bad');
+  }
+}
+
 function setStatus(t,c){const e=document.getElementById('readStatus');e.textContent=t;e.className='status '+c}
 loadKey();buildKey();show('inicio');
 </script>
