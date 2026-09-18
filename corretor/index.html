@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NEW CORRETOR V4.2</title>
+<title>New Prof. Corretor Inteligente de Avaliações</title>
 <script async src="https://docs.opencv.org/4.x/opencv.js"></script>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f2f5fa;color:#17243a}
@@ -100,10 +100,10 @@ flex-wrap:nowrap;
 </style>
 </head>
 <body>
-<header><div class="brand">NEW <span>CORRETOR</span></div><div class="sub">Correção inteligente de avaliações — leitor OMR V4.2</div>
-<nav><button onclick="show('inicio')">🏠 Início</button><button onclick="show('avaliacao')">📝 Avaliação</button><button onclick="show('corrigir')">📷 Corrigir</button><button onclick="show('cartao')">📄 Cartão</button><button onclick="show('resultados')">📊 Resultados</button></nav></header>
+<header><div class="brand">NEW <span>PROF. CORRETOR</span></div><div class="sub">Corretor Inteligente de Avaliações — OMR</div>
+<nav><button onclick="show('inicio')">🏠 Início</button><button onclick="show('avaliacao')">📝 Avaliação</button><button onclick="show('corrigir')">📷 Corrigir</button><button onclick="show('cartao')">📄 Cartão</button><button onclick="show('resultados')">📊 Resultados</button><button onclick="show('historico')">📚 Histórico</button></nav></header>
 <main>
-<section id="inicio" class="page"><div class="card"><h1>NEW CORRETOR</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V4.1:</b> o leitor calcula as posições das bolhas a partir dos próprios quadros das questões. A mesma leitura alimenta diagnóstico, sequência e tabela.</div><div class="actions"><button class="primary" onclick="show('avaliacao')">Configurar avaliação</button><button class="secondary" onclick="show('corrigir')">Corrigir cartão</button></div></div></section>
+<section id="inicio" class="page"><div class="card"><h1>NEW PROF. CORRETOR INTELIGENTE</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V4.2:</b> Leitor OMR testado com fotografias reais. Histórico local e câmera integrados.<br><br><b>Base preservada:</b> o leitor calcula as posições das bolhas a partir dos próprios quadros das questões. A mesma leitura alimenta diagnóstico, sequência e tabela.</div><div class="actions"><button class="primary" onclick="show('avaliacao')">Configurar avaliação</button><button class="secondary" onclick="show('corrigir')">Corrigir cartão</button></div></div></section>
 
 <section id="avaliacao" class="page hidden"><div class="card"><h2>📝 Avaliação</h2><div class="grid"><label>Título<input id="titulo" value="AVALIAÇÃO DE MATEMÁTICA"></label><label>Questões<input id="nq" type="number" min="1" max="50" value="10" onchange="buildKey()"></label><label>Alternativas<select id="na" onchange="buildKey()"><option value="3">A até C</option><option value="4">A até D</option><option value="5" selected>A até E</option></select></label><label>Valor por questão<input id="valor" type="number" step=".01" value="1"></label></div><h3 style="margin-top:18px">Gabarito</h3><div id="key" class="qgrid"></div><div class="actions"><button class="primary" onclick="saveKey()">Salvar gabarito</button></div><div id="keymsg" class="status info">Configure o gabarito.</div></div></section>
 
@@ -150,16 +150,49 @@ flex-wrap:nowrap;
 </div>
 </section>
 
-<section id="corrigir" class="page hidden"><div class="card"><h2>📷 Corrigir cartão</h2><p>Preencha os dados do estudante e fotografe o cartão inteiro.</p><div class="grid"><label>Nome do estudante<input id="aluno" placeholder="Nome completo"></label><label>Turma<input id="turma" placeholder="Ex.: 5º A"></label></div><div class="small">O nome escrito no cartão não é usado como OCR nesta versão; informe o nome aqui para garantir a identificação.</div><input id="photo" type="file" accept="image/*" capture="environment" style="margin-top:12px"><div class="actions"><button id="btnRead" class="primary" onclick="readPhoto()">🔎 Ler cartão</button><button class="secondary" onclick="resetRead()">Limpar</button></div><div id="readStatus" class="status info">Aguardando fotografia.</div><canvas id="diag" class="preview"></canvas><div id="results"></div></div></section>
+<section id="corrigir" class="page hidden"><div class="card">
+<h2>📷 Corrigir cartão</h2>
+<p>Informe o estudante e use a câmera do celular ou selecione uma foto do cartão inteiro.</p>
+<div class="grid"><label>Nome do estudante<input id="aluno" placeholder="Nome completo"></label><label>Turma<input id="turma" placeholder="Ex.: 5º A"></label></div>
+<div class="actions">
+  <button type="button" class="primary" onclick="startCamera()">📷 Abrir câmera</button>
+  <button type="button" class="secondary" onclick="stopCamera()">⏹️ Fechar câmera</button>
+</div>
+<div id="cameraBox" class="hidden" style="margin-top:14px">
+  <video id="cameraVideo" autoplay playsinline style="width:100%;max-height:520px;border-radius:12px;background:#111"></video>
+  <div class="actions"><button type="button" class="primary" onclick="captureCamera()">📸 Fotografar cartão</button></div>
+  <canvas id="cameraCanvas" class="hidden"></canvas>
+</div>
+<div class="small">Dica: enquadre o cartão inteiro e mantenha os quatro marcadores pretos visíveis.</div>
+<input id="photo" type="file" accept="image/*" capture="environment" style="margin-top:12px">
+<div class="actions"><button id="btnRead" type="button" class="primary" onclick="readPhoto()">🔎 Ler cartão</button><button type="button" class="secondary" onclick="resetRead()">Limpar</button></div>
+<div id="readStatus" class="status info">Aguardando fotografia.</div><canvas id="diag" class="preview"></canvas><div id="results"></div>
+</div></section>
 
 <section id="resultados" class="page hidden"><div class="card"><h2>📊 Resultado</h2><div id="summary" class="status info">Nenhuma correção realizada nesta sessão.</div></div></section>
+
+<section id="historico" class="page hidden">
+  <div class="card">
+    <h2>📚 Histórico de correções</h2>
+    <p>Correções ficam salvas <b>neste aparelho</b> para consulta rápida.</p>
+    <div class="grid">
+      <label>Pesquisar estudante ou turma<input id="histBusca" oninput="renderHistory()" placeholder="Digite para filtrar"></label>
+      <label>Avaliação<input id="histAvaliacao" oninput="renderHistory()" placeholder="Título da avaliação"></label>
+    </div>
+    <div class="actions">
+      <button class="primary" onclick="exportHistoryCSV()">⬇️ Exportar CSV</button>
+      <button class="secondary" onclick="clearHistory()">🗑️ Limpar histórico</button>
+    </div>
+    <div id="historyList"></div>
+  </div>
+</section>
 </main>
 
 <script>
-let gabarito=[],ultimaLeitura=null,busy=false;
+let gabarito=[],ultimaLeitura=null,busy=false,cameraStream=null;
 const L='ABCDE';
 
-function show(id){document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');if(id==='avaliacao')buildKey();if(id==='cartao')renderCard()}
+function show(id){document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');if(id==='avaliacao')buildKey();if(id==='cartao')renderCard();if(id==='historico')renderHistory()}
 function buildKey(){const n=Math.max(1,Math.min(50,+nq.value||10)),ls=L.slice(0,+na.value||5),old=[...gabarito];gabarito=Array.from({length:n},(_,i)=>ls.includes(old[i])?old[i]:'A');key.innerHTML='';gabarito.forEach((v,i)=>{let d=document.createElement('div');d.className='qbox';d.innerHTML='<b style="font-size:12px">QUESTÃO '+String(i+1).padStart(2,'0')+'</b><div class="qopts">'+[...ls].map(x=>`<button class="${v===x?'sel':''}" onclick="setKey(${i},'${x}')">${x}</button>`).join('')+'</div>';key.appendChild(d)});if(document.getElementById('cardQuestoes'))document.getElementById('cardQuestoes').value=n;if(document.getElementById('cardAlternativas'))document.getElementById('cardAlternativas').value=String(ls.length);renderCard()}
 function setKey(i,x){gabarito[i]=x;buildKey()}
 function saveKey(){localStorage.setItem('newCorretorGabarito',JSON.stringify(gabarito));keymsg.textContent='✓ Gabarito salvo neste aparelho.';keymsg.className='status ok';renderCard()}
@@ -216,7 +249,7 @@ function renderCard(){
    <i class="omr-marker omr-bl"></i><i class="omr-marker omr-br"></i>
    <div class="card-head">
      <div class="main-title">CARTÃO-RESPOSTA</div>
-     <div class="brand"><strong>NEW CORRETOR</strong>LEITOR OMR</div>
+     <div class="brand"><strong>NEW PROF. CORRETOR</strong>LEITOR OMR</div>
    </div>
    <div class="card-subtitle">${esc(tituloCard)}</div>
    <div class="ident-box">
@@ -234,11 +267,79 @@ function renderCard(){
    <div class="answer-title">MARQUE A ALTERNATIVA CORRESPONDENTE À SUA RESPOSTA</div>
    <div class="answer-help">Preencha o círculo escolhido de forma completa. Os marcadores pretos dos quatro cantos são utilizados pelo sistema para localizar e corrigir o cartão.</div>
    <div class="omr-grid" style="--rows:${rows};--cols:${cols};--grid-h:${gridH}">${qs}</div>
-   <div class="card-footer"><strong>NEW CORRETOR</strong> · Cartão-resposta para correção automática por imagem · Código ${esc(codigo)}</div>`;
+   <div class="card-footer"><strong>NEW PROF. CORRETOR</strong> · Cartão-resposta para correção automática por imagem · Código ${esc(codigo)}</div>`;
+}
+
+
+async function startCamera(){
+  try{
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+      setStatus('A câmera não está disponível neste navegador. Use Selecionar foto.','warn'); return;
+    }
+    stopCamera();
+    cameraStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}},audio:false});
+    cameraVideo.srcObject=cameraStream;
+    cameraBox.classList.remove('hidden');
+    setStatus('✓ Câmera aberta. Enquadre o cartão inteiro com os quatro marcadores visíveis.','info');
+  }catch(e){
+    setStatus('Não foi possível abrir a câmera. Verifique a permissão do navegador.','warn');
+  }
+}
+function stopCamera(){
+  if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null}
+  if(cameraVideo)cameraVideo.srcObject=null;
+  if(cameraBox)cameraBox.classList.add('hidden');
+}
+function captureCamera(){
+  if(!cameraStream || !cameraVideo.videoWidth){setStatus('A câmera ainda não está pronta.','warn');return}
+  const c=cameraCanvas;c.width=cameraVideo.videoWidth;c.height=cameraVideo.videoHeight;
+  c.getContext('2d').drawImage(cameraVideo,0,0,c.width,c.height);
+  c.toBlob(blob=>{
+    if(!blob)return;
+    const file=new File([blob],'cartao-camera.jpg',{type:'image/jpeg'});
+    const dt=new DataTransfer();dt.items.add(file);photo.files=dt.files;
+    stopCamera();
+    setStatus('✓ Foto capturada. Clique em "Ler cartão".','ok');
+  },'image/jpeg',.94);
+}
+function getHistory(){
+  try{const x=JSON.parse(localStorage.getItem('newCorretorHistorico')||'[]');return Array.isArray(x)?x:[]}
+  catch(e){return []}
+}
+function saveHistory(item){
+  const h=getHistory();
+  h.unshift(item);
+  localStorage.setItem('newCorretorHistorico',JSON.stringify(h.slice(0,500)));
+  renderHistory();
+}
+function renderHistory(){
+  const box=document.getElementById('historyList'); if(!box)return;
+  const busca=(document.getElementById('histBusca')?.value||'').toLowerCase().trim();
+  const av=(document.getElementById('histAvaliacao')?.value||'').toLowerCase().trim();
+  const h=getHistory().filter(x=>(!busca||`${x.aluno} ${x.turma}`.toLowerCase().includes(busca))&&(!av||(x.avaliacao||'').toLowerCase().includes(av)));
+  if(!h.length){box.innerHTML='<div class="status info">Nenhuma correção encontrada.</div>';return}
+  box.innerHTML='<div style="overflow:auto"><table><thead><tr><th>Data</th><th>Estudante</th><th>Turma</th><th>Avaliação</th><th>Acertos</th><th>Nota</th></tr></thead><tbody>'+
+    h.map(x=>`<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos}/${x.total}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td></tr>`).join('')+
+    '</tbody></table></div>';
+}
+function clearHistory(){
+  if(confirm('Apagar todo o histórico salvo neste aparelho?')){
+    localStorage.removeItem('newCorretorHistorico');renderHistory();
+  }
+}
+function exportHistoryCSV(){
+  const h=getHistory();
+  if(!h.length){alert('Não há correções no histórico.');return}
+  const head=['Data','Estudante','Turma','Avaliação','Acertos','Erros','Brancas','Revisar','Nota','Respostas'];
+  const rows=h.map(x=>[x.data,x.aluno,x.turma,x.avaliacao,x.acertos,x.erros,x.brancas,x.revisar,x.nota,(x.respostas||[]).join(' | ')]);
+  const csv=[head,...rows].map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(';')).join('\n');
+  const blob=new Blob(['\\ufeff'+csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='new-prof-corretor-historico.csv';a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
 }
 
 function setStatus(t,c){readStatus.textContent=t;readStatus.className='status '+c}
-function resetRead(){photo.value='';results.innerHTML='';diag.getContext('2d').clearRect(0,0,diag.width,diag.height);ultimaLeitura=null;summary.className='status info';summary.textContent='Nenhuma correção realizada nesta sessão.';setStatus('Aguardando fotografia.','info')}
+function resetRead(){stopCamera();photo.value='';results.innerHTML='';diag.getContext('2d').clearRect(0,0,diag.width,diag.height);ultimaLeitura=null;summary.className='status info';summary.textContent='Nenhuma correção realizada nesta sessão.';setStatus('Aguardando fotografia.','info')}
 
 function loadImage(f){return new Promise((ok,no)=>{let im=new Image();im.onload=()=>ok(im);im.onerror=no;im.src=URL.createObjectURL(f)})}
 function orderPts(p){let s=p.map(a=>a.x+a.y),d=p.map(a=>a.x-a.y);return[p[s.indexOf(Math.min(...s))],p[d.indexOf(Math.max(...d))],p[s.indexOf(Math.max(...s))],p[d.indexOf(Math.min(...d))]]}
@@ -517,6 +618,7 @@ function renderResults(a,raw){
  let rows=a.map(x=>{let cls='',sit=x.status;if(x.status.startsWith('Dupla')){du++;cls='double'}else if(x.status==='Em branco'){bl++;cls='blank'}else if(x.ans===gabarito[x.q-1]){ac++;cls='correct';sit='✓ Correta'}else{wr++;cls='wrong';sit='✗ Incorreta'}return `<tr><td>${String(x.q).padStart(2,'0')}</td><td class="${cls}">${x.ans}</td><td>${gabarito[x.q-1]||'—'}</td><td class="${cls}">${sit}</td><td>${x.vals.map(z=>Math.round(z*100)+'%').join(' / ')}</td></tr>`}).join('');
  let nota=ac*v;
  results.innerHTML=`<h2>Respostas identificadas</h2><div class="status info"><b>Estudante:</b> ${esc(aluno.value)||'Não informado'} &nbsp; <b>Turma:</b> ${esc(turma.value)||'—'}</div><div class="keyline">${a.map(x=>x.ans).join(' | ')}</div><div class="grid"><div class="status ok">Acertos<br><b>${ac}</b></div><div class="status bad">Erros<br><b>${wr}</b></div><div class="status warn">Brancas<br><b>${bl}</b></div><div class="status warn">Revisar<br><b>${du}</b></div></div><div class="card"><div class="score">${nota.toFixed(1)}</div>Nota — ${ac} acertos × ${v.toFixed(2)}</div><details><summary><b>🔎 Leitura bruta para conferência</b></summary><pre class="raw">${esc(raw)}</pre></details><div style="overflow:auto"><table><thead><tr><th>Questão</th><th>Leitura</th><th>Gabarito</th><th>Situação</th><th>Índice das alternativas</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+ saveHistory({data:new Date().toLocaleString('pt-BR'),aluno:aluno.value||'Não informado',turma:turma.value||'—',avaliacao:titulo.value||'Avaliação',acertos:ac,erros:wr,brancas:bl,revisar:du,total:a.length,nota:Number(nota.toFixed(2)),respostas:a.map(x=>x.ans)});
  summary.className='status ok';summary.innerHTML=`<b>${esc(aluno.value)||'Estudante'}</b> — ${esc(turma.value)||'Turma não informada'} — ${ac} acertos, ${wr} erros, ${bl} brancas, ${du} para revisar — Nota <b>${nota.toFixed(1)}</b>.`;
 }
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
