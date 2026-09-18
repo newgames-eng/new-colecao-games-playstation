@@ -101,11 +101,11 @@ flex-wrap:nowrap;
 </head>
 <body>
 <header><div class="brand">NEW <span>CORRETOR</span></div><div class="sub">Correção inteligente de avaliações — leitor OMR V5</div>
-<nav><button onclick="show('inicio')">🏠 Início</button><button onclick="show('avaliacao')">📝 Avaliação</button><button onclick="show('corrigir')">📷 Corrigir</button><button onclick="show('cartao')">📄 Cartão</button><button onclick="show('resultados')">📊 Resultados</button></nav></header>
+<nav><button type="button" onclick="show('inicio')">🏠 Início</button><button type="button" onclick="show('avaliacao')">📝 Avaliação</button><button type="button" onclick="show('corrigir')">📷 Corrigir</button><button type="button" onclick="show('cartao')">📄 Cartão</button><button type="button" onclick="show('resultados')">📊 Resultados</button></nav></header>
 <main>
-<section id="inicio" class="page"><div class="card"><h1>NEW CORRETOR</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V5:</b> leitor OMR próprio do NEW CORRETOR. A foto é alinhada pelos 4 marcadores e as bolhas são lidas pela geometria conhecida do cartão.</div><div class="actions"><button class="primary" onclick="show('avaliacao')">Configurar avaliação</button><button class="secondary" onclick="show('corrigir')">Corrigir cartão</button></div></div></section>
+<section id="inicio" class="page"><div class="card"><h1>NEW CORRETOR</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V5:</b> leitor OMR próprio do NEW CORRETOR. A foto é alinhada pelos 4 marcadores e as bolhas são lidas pela geometria conhecida do cartão.</div><div class="actions"><button type="button" class="primary" onclick="show('avaliacao')">Configurar avaliação</button><button type="button" class="secondary" onclick="show('corrigir')">Corrigir cartão</button></div></div></section>
 
-<section id="avaliacao" class="page hidden"><div class="card"><h2>📝 Avaliação</h2><div class="grid"><label>Título<input id="titulo" value="AVALIAÇÃO DE MATEMÁTICA"></label><label>Questões<input id="nq" type="number" min="1" max="50" value="10" onchange="buildKey()"></label><label>Alternativas<select id="na" onchange="buildKey()"><option value="3">A até C</option><option value="4">A até D</option><option value="5" selected>A até E</option></select></label><label>Valor por questão<input id="valor" type="number" step=".01" value="1"></label></div><h3 style="margin-top:18px">Gabarito</h3><div id="key" class="qgrid"></div><div class="actions"><button class="primary" onclick="saveKey()">Salvar gabarito</button></div><div id="keymsg" class="status info">Configure o gabarito.</div></div></section>
+<section id="avaliacao" class="page hidden"><div class="card"><h2>📝 Avaliação</h2><div class="grid"><label>Título<input id="titulo" value="AVALIAÇÃO DE MATEMÁTICA"></label><label>Questões<input id="nq" type="number" min="1" max="50" value="10" onchange="buildKey()"></label><label>Alternativas<select id="na" onchange="buildKey()"><option value="3">A até C</option><option value="4">A até D</option><option value="5" selected>A até E</option></select></label><label>Valor por questão<input id="valor" type="number" step=".01" value="1"></label></div><h3 style="margin-top:18px">Gabarito</h3><div id="key" class="qgrid"></div><div class="actions"><button type="button" class="primary" onclick="saveKey()">Salvar gabarito</button></div><div id="keymsg" class="status info">Configure o gabarito.</div></div></section>
 
 <section id="cartao" class="page hidden">
 <div class="card no-print">
@@ -139,9 +139,9 @@ flex-wrap:nowrap;
     </label>
   </div>
   <div class="actions">
-    <button class="primary" onclick="renderCard()">🔄 Atualizar cartão</button>
-    <button class="secondary" onclick="newCardCode()">🔐 Novo código</button>
-    <button class="primary" onclick="window.print()">🖨️ Imprimir A4</button>
+    <button type="button" class="primary" onclick="renderCard()">🔄 Atualizar cartão</button>
+    <button type="button" class="secondary" onclick="newCardCode()">🔐 Novo código</button>
+    <button type="button" class="primary" onclick="window.print()">🖨️ Imprimir A4</button>
   </div>
   <div class="status warn">⚠️ Imprima em <b>100%</b>. Não recorte, dobre ou cubra os quatro marcadores pretos dos cantos.</div>
 </div>
@@ -150,17 +150,30 @@ flex-wrap:nowrap;
 </div>
 </section>
 
-<section id="corrigir" class="page hidden"><div class="card"><h2>📷 Corrigir cartão</h2><p>Preencha os dados do estudante e fotografe o cartão inteiro.</p><div class="grid"><label>Nome do estudante<input id="aluno" placeholder="Nome completo"></label><label>Turma<input id="turma" placeholder="Ex.: 5º A"></label></div><div class="small">O nome escrito no cartão não é usado como OCR nesta versão; informe o nome aqui para garantir a identificação.</div><input id="photo" type="file" accept="image/*" capture="environment" style="margin-top:12px"><div class="actions"><button id="btnRead" class="primary" onclick="readPhoto()">🔎 Ler cartão</button><button class="secondary" onclick="resetRead()">Limpar</button></div><div id="readStatus" class="status info">Aguardando fotografia.</div><canvas id="diag" class="preview"></canvas><div id="results"></div></div></section>
+<section id="corrigir" class="page hidden"><div class="card"><h2>📷 Corrigir cartão</h2><p>Preencha os dados do estudante e fotografe o cartão inteiro.</p><div class="grid"><label>Nome do estudante<input id="aluno" placeholder="Nome completo"></label><label>Turma<input id="turma" placeholder="Ex.: 5º A"></label></div><div class="small">O nome escrito no cartão não é usado como OCR nesta versão; informe o nome aqui para garantir a identificação.</div><input id="photo" type="file" accept="image/*" capture="environment" style="margin-top:12px"><div class="actions"><button type="button" id="btnRead" class="primary" onclick="readPhoto()">🔎 Ler cartão</button><button type="button" class="secondary" onclick="resetRead()">Limpar</button></div><div id="readStatus" class="status info">Aguardando fotografia.</div><canvas id="diag" class="preview"></canvas><div id="results"></div></div></section>
 
 <section id="resultados" class="page hidden"><div class="card"><h2>📊 Resultado</h2><div id="summary" class="status info">Nenhuma correção realizada nesta sessão.</div></div></section>
 </main>
 
 <script>
+/* V5.1 — referências DOM explícitas para evitar congelamento/erros por IDs globais */
+const $id = id => document.getElementById(id);
+const nq=$id('nq'), na=$id('na'), valor=$id('valor'), key=$id('key'), keymsg=$id('keymsg');
+const titulo=$id('titulo'), cardTitulo=$id('cardTitulo'), cardData=$id('cardData'), cardAluno=$id('cardAluno');
+const cardTurma=$id('cardTurma'), cardCodigo=$id('cardCodigo'), cardQuestoes=$id('cardQuestoes'), cardAlternativas=$id('cardAlternativas');
+const printCard=$id('printCard'), photo=$id('photo'), btnRead=$id('btnRead'), results=$id('results'), diag=$id('diag');
+const summary=$id('summary'), aluno=$id('aluno'), turma=$id('turma'), readStatus=$id('readStatus');
 let gabarito=[],ultimaLeitura=null,busy=false;
 const L='ABCDE';
 
-function show(id){document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');if(id==='avaliacao')buildKey();if(id==='cartao')renderCard()}
-function buildKey(){const n=Math.max(1,Math.min(50,+nq.value||10)),ls=L.slice(0,+na.value||5),old=[...gabarito];gabarito=Array.from({length:n},(_,i)=>ls.includes(old[i])?old[i]:'A');key.innerHTML='';gabarito.forEach((v,i)=>{let d=document.createElement('div');d.className='qbox';d.innerHTML='<b style="font-size:12px">QUESTÃO '+String(i+1).padStart(2,'0')+'</b><div class="qopts">'+[...ls].map(x=>`<button class="${v===x?'sel':''}" onclick="setKey(${i},'${x}')">${x}</button>`).join('')+'</div>';key.appendChild(d)});if(document.getElementById('cardQuestoes'))document.getElementById('cardQuestoes').value=n;if(document.getElementById('cardAlternativas'))document.getElementById('cardAlternativas').value=String(ls.length);renderCard()}
+function show(id){
+  document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));
+  const page=$id(id);
+  if(page) page.classList.remove('hidden');
+  if(id==='avaliacao') buildKey();
+  if(id==='cartao') renderCard();
+}
+function buildKey(){const n=Math.max(1,Math.min(50,+nq.value||10)),ls=L.slice(0,+na.value||5),old=[...gabarito];gabarito=Array.from({length:n},(_,i)=>ls.includes(old[i])?old[i]:'A');key.innerHTML='';gabarito.forEach((v,i)=>{let d=document.createElement('div');d.className='qbox';d.innerHTML='<b style="font-size:12px">QUESTÃO '+String(i+1).padStart(2,'0')+'</b><div class="qopts">'+[...ls].map(x=>`<button type="button" class="${v===x?'sel':''}" onclick="setKey(${i},'${x}')">${x}</button>`).join('')+'</div>';key.appendChild(d)});if(document.getElementById('cardQuestoes'))document.getElementById('cardQuestoes').value=n;if(document.getElementById('cardAlternativas'))document.getElementById('cardAlternativas').value=String(ls.length);renderCard()}
 function setKey(i,x){gabarito[i]=x;buildKey()}
 function saveKey(){localStorage.setItem('newCorretorGabarito',JSON.stringify(gabarito));keymsg.textContent='✓ Gabarito salvo neste aparelho.';keymsg.className='status ok';renderCard()}
 function loadKey(){try{let x=JSON.parse(localStorage.getItem('newCorretorGabarito'));if(Array.isArray(x)&&x.length){gabarito=x;nq.value=x.length}}catch(e){}}
@@ -240,7 +253,14 @@ function renderCard(){
 function setStatus(t,c){readStatus.textContent=t;readStatus.className='status '+c}
 function resetRead(){photo.value='';results.innerHTML='';diag.getContext('2d').clearRect(0,0,diag.width,diag.height);ultimaLeitura=null;summary.className='status info';summary.textContent='Nenhuma correção realizada nesta sessão.';setStatus('Aguardando fotografia.','info')}
 
-function loadImage(f){return new Promise((ok,no)=>{let im=new Image();im.onload=()=>ok(im);im.onerror=no;im.src=URL.createObjectURL(f)})}
+function loadImage(f){
+  return new Promise((ok,no)=>{
+    const im=new Image(), u=URL.createObjectURL(f);
+    im.onload=()=>{URL.revokeObjectURL(u);ok(im)};
+    im.onerror=(e)=>{URL.revokeObjectURL(u);no(e)};
+    im.src=u;
+  })
+}
 function orderPts(p){let s=p.map(a=>a.x+a.y),d=p.map(a=>a.x-a.y);return[p[s.indexOf(Math.min(...s))],p[d.indexOf(Math.max(...d))],p[s.indexOf(Math.max(...s))],p[d.indexOf(Math.min(...d))]]}
 function findMarkers(src){
   // V3.4: detecção dos quatro marcadores mais tolerante a fotos pequenas,
