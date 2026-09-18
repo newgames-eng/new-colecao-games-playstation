@@ -364,61 +364,65 @@ function fallbackQuestionBoxes(count){
   return out;
 }
 
-function localInk(gray,x,y,r){
- // V3.4: lê o centro da bolha, evitando bordas, linhas e textos próximos.
- // A busca de deslocamento é pequena para não "pular" para a bolha vizinha.
- let best=-1,bx=Math.round(x),by=Math.round(y);
- const rr=Math.max(5,Math.min(8,Math.round(r*.38)));
- for(let dy=-3;dy<=3;dy++)for(let dx=-3;dx<=3;dx++){
-  const cx=Math.round(x+dx),cy=Math.round(y+dy);
-  let dark=0,ink=0,n=0;
-  for(let yy=cy-rr;yy<=cy+rr;yy++)for(let xx=cx-rr;xx<=cx+rr;xx++){
-   if(xx<0||yy<0||xx>=gray.cols||yy>=gray.rows)continue;
-   const dd=(xx-cx)**2+(yy-cy)**2;
-   if(dd<=rr*rr){
-     const g=gray.ucharPtr(yy,xx)[0]; n++;
-     if(g<90) ink++;
-     dark += (255-g)/255;
-   }
+function bubbleContrast(gray,x,y,r){
+  // Leitura resistente a fotos de celular: compara o anel interno da bolha
+  // com um anel externo próximo. Isso reduz o efeito de sombra/iluminação
+  // e ignora a letra A-E que fica no centro do círculo.
+  const R=Math.max(7,Math.min(15,r));
+  const r1=R*0.34, r2=R*0.72;
+  const o1=R*1.02, o2=R*1.48;
+  let inner=0,outer=0,ni=0,no=0;
+  const x0=Math.round(x),y0=Math.round(y);
+  const maxR=Math.ceil(o2);
+  for(let yy=-maxR;yy<=maxR;yy++){
+    for(let xx=-maxR;xx<=maxR;xx++){
+      const d=Math.hypot(xx,yy);
+      if(d<r1||d>o2)continue;
+      const px=x0+xx,py=y0+yy;
+      if(px<0||py<0||px>=gray.cols||py>=gray.rows)continue;
+      const g=gray.ucharPtr(py,px)[0];
+      if(d>=r1&&d<=r2){ inner+=(255-g); ni++; }
+      else if(d>=o1&&d<=o2){ outer+=(255-g); no++; }
+    }
   }
-  // Combina tinta realmente escura com escuridão média do centro.
-  const score=(ink/Math.max(1,n))*0.75+(dark/Math.max(1,n))*0.25;
-  if(score>best){best=score;bx=cx;by=cy}
- }
- return {score:Math.max(0,best),x:bx,y:by}
+  const id=ni?inner/ni:0, od=no?outer/no:0;
+  // 0 = igual ao fundo; 1 = interior muito mais escuro que o fundo.
+  return Math.max(-1,Math.min(1,(id-od)/255));
+}
+
+function readBubble(gray,x,y,r){
+  let best={score:-999,x:Math.round(x),y:Math.round(y)};
+  // Corrige pequenos deslocamentos provocados por foto, perspectiva residual
+  // e arredondamento das coordenadas do cartão.
+  for(let dy=-8;dy<=8;dy+=2){
+    for(let dx=-8;dx<=8;dx+=2){
+      const p=bubbleContrast(gray,x+dx,y+dy,r);
+      if(p>best.score)best={score:p,x:Math.round(x+dx),y:Math.round(y+dy)};
+    }
+  }
+  return best;
 }
 
 function detectAnswers(warp){
  let gray=new cv.Mat();cv.cvtColor(warp,gray,cv.COLOR_RGBA2GRAY);
  const count=gabarito.length, ls=L.slice(0,+na.value||5);
  let boxes=findQuestionBoxes(warp);
-
- // O cartão atual tem uma geometria conhecida após a perspectiva.
- // Se a foto não produzir contornos confiáveis, usamos a geometria do próprio cartão.
  if(boxes.length<count) boxes=fallbackQuestionBoxes(count);
-
- // Quando houver exatamente a quantidade esperada, preserva a ordem por coluna.
  boxes=boxes.slice(0,count);
-
  let out=[],raw=[];
+
  for(let i=0;i<count;i++){
    const b=boxes[i];
    const vals=[],pts=[];
-
-   // As bolhas ficam centralizadas horizontalmente dentro da moldura.
-   // Tamanho real do círculo: 4,7 mm; espaçamento: 1,7 mm.
    const mm=1200/210;
    const bubbleW=4.7*mm, gap=1.7*mm;
    const total=ls.length*bubbleW+(ls.length-1)*gap;
    const start=b.x+(b.w-total)/2+bubbleW/2;
-
-   // A caixa usa flex-column + justify-content:center.
-   // O centro da fileira de bolhas fica aproximadamente em 60% da altura.
    const y=b.y+b.h*0.60;
 
    for(let j=0;j<ls.length;j++){
      const x=start+j*(bubbleW+gap);
-     const p=localInk(gray,x,y,bubbleW*.42);
+     const p=readBubble(gray,x,y,bubbleW*.42);
      vals.push(p.score);pts.push({x:p.x,y:p.y});
    }
 
@@ -426,13 +430,11 @@ function detectAnswers(warp){
    const max=sorted[0]||0, second=sorted[1]||0;
    let ans='—',status='Em branco';
 
-   // Centro de bolha vazia contém apenas a letra impressa.
-   // Uma bolha preenchida tem área escura muito maior.
-   if(max>=0.34){
+   // Uma bolha preenchida produz forte contraste no anel interno.
+   // O segundo maior valor precisa estar realmente próximo para ser dupla.
+   if(max>=0.16){
      const idx=vals.indexOf(max);
-     // Só considera dupla marcação quando duas bolhas têm níveis altos
-     // e próximos; isso reduz falsos positivos causados pelas letras A-E.
-     if(second>=0.86*max && second>=0.34){
+     if(second>=0.82*max && second>=0.16){
        status='Dupla marcação / revisar';
      }else{
        ans=ls[idx];
@@ -441,7 +443,7 @@ function detectAnswers(warp){
    }
 
    out.push({q:i+1,ans,status,vals,pts});
-   raw.push(`Q${String(i+1).padStart(2,'0')}  ${[...ls].map((x,j)=>x+':'+Math.round(vals[j]*100)+'%').join('  ')}  → ${ans}`);
+   raw.push(`Q${String(i+1).padStart(2,'0')}  ${[...ls].map((x,j)=>x+':'+Math.round(Math.max(0,vals[j])*100)+'%').join('  ')}  → ${ans}`);
  }
  gray.delete();
  return {answers:out,raw:raw.join('\n')};
