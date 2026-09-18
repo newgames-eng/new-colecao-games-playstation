@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NEW CORRETOR V5.2 — Base Estável</title>
+<title>NEW CORRETOR V4.2</title>
 <script async src="https://docs.opencv.org/4.x/opencv.js"></script>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f2f5fa;color:#17243a}
@@ -23,7 +23,7 @@ table{width:100%;border-collapse:collapse;margin-top:13px;font-size:14px}th,td{b
 .raw{font:12px/1.5 monospace;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px;overflow:auto;white-space:pre}
 @media(max-width:600px){.brand{font-size:28px}.qgrid{grid-template-columns:repeat(2,1fr)}nav button{font-size:15px}}
 
-/* ===== CARTÃO-RESPOSTA A4 V5.2 ===== */
+/* ===== CARTÃO-RESPOSTA A4 V4.1 ===== */
 .card-config{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}
 .card-config label{font-weight:800;font-size:13px}
 .card-config label:first-child{grid-column:span 2}
@@ -100,10 +100,10 @@ flex-wrap:nowrap;
 </style>
 </head>
 <body>
-<header><div class="brand">NEW <span>CORRETOR</span></div><div class="sub">Correção inteligente de avaliações — NEW CORRETOR V5.3</div>
+<header><div class="brand">NEW <span>CORRETOR</span></div><div class="sub">Correção inteligente de avaliações — leitor OMR V4.2</div>
 <nav><button onclick="show('inicio')">🏠 Início</button><button onclick="show('avaliacao')">📝 Avaliação</button><button onclick="show('corrigir')">📷 Corrigir</button><button onclick="show('cartao')">📄 Cartão</button><button onclick="show('resultados')">📊 Resultados</button></nav></header>
 <main>
-<section id="inicio" class="page"><div class="card"><h1>NEW CORRETOR</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V5.2:</b> base estável preservada. Primeiro validamos toda a interface; depois substituímos somente o módulo de leitura OMR.</div><div class="actions"><button class="primary" onclick="show('avaliacao')">Configurar avaliação</button><button class="secondary" onclick="show('corrigir')">Corrigir cartão</button></div></div></section>
+<section id="inicio" class="page"><div class="card"><h1>NEW CORRETOR</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V4.1:</b> o leitor calcula as posições das bolhas a partir dos próprios quadros das questões. A mesma leitura alimenta diagnóstico, sequência e tabela.</div><div class="actions"><button class="primary" onclick="show('avaliacao')">Configurar avaliação</button><button class="secondary" onclick="show('corrigir')">Corrigir cartão</button></div></div></section>
 
 <section id="avaliacao" class="page hidden"><div class="card"><h2>📝 Avaliação</h2><div class="grid"><label>Título<input id="titulo" value="AVALIAÇÃO DE MATEMÁTICA"></label><label>Questões<input id="nq" type="number" min="1" max="50" value="10" onchange="buildKey()"></label><label>Alternativas<select id="na" onchange="buildKey()"><option value="3">A até C</option><option value="4">A até D</option><option value="5" selected>A até E</option></select></label><label>Valor por questão<input id="valor" type="number" step=".01" value="1"></label></div><h3 style="margin-top:18px">Gabarito</h3><div id="key" class="qgrid"></div><div class="actions"><button class="primary" onclick="saveKey()">Salvar gabarito</button></div><div id="keymsg" class="status info">Configure o gabarito.</div></div></section>
 
@@ -364,65 +364,118 @@ function fallbackQuestionBoxes(count){
   return out;
 }
 
-function bubbleContrast(gray,x,y,r){
-  // Leitura resistente a fotos de celular: compara o anel interno da bolha
-  // com um anel externo próximo. Isso reduz o efeito de sombra/iluminação
-  // e ignora a letra A-E que fica no centro do círculo.
-  const R=Math.max(7,Math.min(15,r));
-  const r1=R*0.34, r2=R*0.72;
-  const o1=R*1.02, o2=R*1.48;
-  let inner=0,outer=0,ni=0,no=0;
-  const x0=Math.round(x),y0=Math.round(y);
-  const maxR=Math.ceil(o2);
-  for(let yy=-maxR;yy<=maxR;yy++){
-    for(let xx=-maxR;xx<=maxR;xx++){
-      const d=Math.hypot(xx,yy);
-      if(d<r1||d>o2)continue;
-      const px=x0+xx,py=y0+yy;
-      if(px<0||py<0||px>=gray.cols||py>=gray.rows)continue;
-      const g=gray.ucharPtr(py,px)[0];
-      if(d>=r1&&d<=r2){ inner+=(255-g); ni++; }
-      else if(d>=o1&&d<=o2){ outer+=(255-g); no++; }
-    }
+function localInk(gray,x,y,r){
+ // V3.4: lê o centro da bolha, evitando bordas, linhas e textos próximos.
+ // A busca de deslocamento é pequena para não "pular" para a bolha vizinha.
+ let best=-1,bx=Math.round(x),by=Math.round(y);
+ const rr=Math.max(5,Math.min(8,Math.round(r*.38)));
+ for(let dy=-3;dy<=3;dy++)for(let dx=-3;dx<=3;dx++){
+  const cx=Math.round(x+dx),cy=Math.round(y+dy);
+  let dark=0,ink=0,n=0;
+  for(let yy=cy-rr;yy<=cy+rr;yy++)for(let xx=cx-rr;xx<=cx+rr;xx++){
+   if(xx<0||yy<0||xx>=gray.cols||yy>=gray.rows)continue;
+   const dd=(xx-cx)**2+(yy-cy)**2;
+   if(dd<=rr*rr){
+     const g=gray.ucharPtr(yy,xx)[0]; n++;
+     if(g<90) ink++;
+     dark += (255-g)/255;
+   }
   }
-  const id=ni?inner/ni:0, od=no?outer/no:0;
-  // 0 = igual ao fundo; 1 = interior muito mais escuro que o fundo.
-  return Math.max(-1,Math.min(1,(id-od)/255));
+  // Combina tinta realmente escura com escuridão média do centro.
+  const score=(ink/Math.max(1,n))*0.75+(dark/Math.max(1,n))*0.25;
+  if(score>best){best=score;bx=cx;by=cy}
+ }
+ return {score:Math.max(0,best),x:bx,y:by}
 }
 
-function readBubble(gray,x,y,r){
-  let best={score:-999,x:Math.round(x),y:Math.round(y)};
-  // Corrige pequenos deslocamentos provocados por foto, perspectiva residual
-  // e arredondamento das coordenadas do cartão.
-  for(let dy=-8;dy<=8;dy+=2){
-    for(let dx=-8;dx<=8;dx+=2){
-      const p=bubbleContrast(gray,x+dx,y+dy,r);
-      if(p>best.score)best={score:p,x:Math.round(x+dx),y:Math.round(y+dy)};
+
+// ===== OMR V4.2 — leitor calibrado para o cartão NEW CORRETOR de 10 questões =====
+// Esta geometria é a mesma do protótipo sem Python que passou nos testes com fotos reais.
+const OMR10_LETTERS=['A','B','C','D','E'];
+const OMR10_X=[547,584,621,658,694];
+const OMR10_Y=[677,750,822,894,964,1035,1107,1179,1253,1325];
+const OMR10_DEST=[{x:80,y:67},{x:1165,y:67},{x:1165,y:1698},{x:80,y:1698}];
+
+function warpCardOMR10(src,m){
+  const a=cv.matFromArray(4,1,cv.CV_32FC2,m.flatMap(p=>[p.x,p.y]));
+  const b=cv.matFromArray(4,1,cv.CV_32FC2,OMR10_DEST.flatMap(p=>[p.x,p.y]));
+  const M=cv.getPerspectiveTransform(a,b),d=new cv.Mat();
+  cv.warpPerspective(src,d,M,new cv.Size(1245,1754),cv.INTER_LINEAR,cv.BORDER_CONSTANT,new cv.Scalar(255,255,255,255));
+  a.delete();b.delete();M.delete();
+  return d;
+}
+
+function omr10Sample(gray,x,y){
+  const r=9; let n=0,dark=0,sum=0;
+  for(let yy=y-r;yy<=y+r;yy++) for(let xx=x-r;xx<=x+r;xx++){
+    if(xx<0||yy<0||xx>=gray.cols||yy>=gray.rows) continue;
+    if((xx-x)*(xx-x)+(yy-y)*(yy-y)<=r*r){
+      const v=gray.ucharPtr(yy,xx)[0]; n++; sum+=(255-v)/255; if(v<100) dark++;
     }
   }
-  return best;
+  return .70*(dark/Math.max(1,n))+.30*(sum/Math.max(1,n));
+}
+
+function detectAnswersOMR10(warp){
+  const gray=new cv.Mat(); cv.cvtColor(warp,gray,cv.COLOR_RGBA2GRAY);
+  const ls=L.slice(0,+na.value||5).slice(0,5);
+  const count=Math.min(10,gabarito.length);
+  const out=[],raw=[];
+  for(let q=0;q<count;q++){
+    const vals=OMR10_X.slice(0,ls.length).map(x=>omr10Sample(gray,x,OMR10_Y[q]));
+    const sorted=[...vals].sort((a,b)=>b-a), max=sorted[0]||0, second=sorted[1]||0;
+    const idx=vals.indexOf(max); let ans='—', status='Em branco';
+    const margin=max-second;
+    // Regra aprovada no protótipo V3: aceita marca mais fraca quando há predominância clara.
+    if(max>=0.32 && margin>=0.10){
+      if(second/max>0.78) status='Dupla marcação / revisar';
+      else {ans=ls[idx]||'—'; status='Marcada';}
+    }
+    const pts=OMR10_X.slice(0,ls.length).map((x,j)=>({x,y:OMR10_Y[q]}));
+    out.push({q:q+1,ans,status,vals,pts});
+    raw.push(`Q${String(q+1).padStart(2,'0')}  ${[...ls].map((x,j)=>x+':'+Math.round((vals[j]||0)*100)+'%').join('  ')}  → ${ans}`);
+  }
+  // Se houver menos de 10 questões, o restante não participa da leitura.
+  gray.delete();
+  return {answers:out,raw:raw.join('\n')};
 }
 
 function detectAnswers(warp){
+  if(gabarito.length===10) return detectAnswersOMR10(warp);
+  return detectAnswersLegacy(warp);
+}
+
+function detectAnswersLegacy(warp){
  let gray=new cv.Mat();cv.cvtColor(warp,gray,cv.COLOR_RGBA2GRAY);
  const count=gabarito.length, ls=L.slice(0,+na.value||5);
  let boxes=findQuestionBoxes(warp);
- if(boxes.length<count) boxes=fallbackQuestionBoxes(count);
- boxes=boxes.slice(0,count);
- let out=[],raw=[];
 
+ // O cartão atual tem uma geometria conhecida após a perspectiva.
+ // Se a foto não produzir contornos confiáveis, usamos a geometria do próprio cartão.
+ if(boxes.length<count) boxes=fallbackQuestionBoxes(count);
+
+ // Quando houver exatamente a quantidade esperada, preserva a ordem por coluna.
+ boxes=boxes.slice(0,count);
+
+ let out=[],raw=[];
  for(let i=0;i<count;i++){
    const b=boxes[i];
    const vals=[],pts=[];
+
+   // As bolhas ficam centralizadas horizontalmente dentro da moldura.
+   // Tamanho real do círculo: 4,7 mm; espaçamento: 1,7 mm.
    const mm=1200/210;
    const bubbleW=4.7*mm, gap=1.7*mm;
    const total=ls.length*bubbleW+(ls.length-1)*gap;
    const start=b.x+(b.w-total)/2+bubbleW/2;
+
+   // A caixa usa flex-column + justify-content:center.
+   // O centro da fileira de bolhas fica aproximadamente em 60% da altura.
    const y=b.y+b.h*0.60;
 
    for(let j=0;j<ls.length;j++){
      const x=start+j*(bubbleW+gap);
-     const p=readBubble(gray,x,y,bubbleW*.42);
+     const p=localInk(gray,x,y,bubbleW*.42);
      vals.push(p.score);pts.push({x:p.x,y:p.y});
    }
 
@@ -430,11 +483,13 @@ function detectAnswers(warp){
    const max=sorted[0]||0, second=sorted[1]||0;
    let ans='—',status='Em branco';
 
-   // Uma bolha preenchida produz forte contraste no anel interno.
-   // O segundo maior valor precisa estar realmente próximo para ser dupla.
-   if(max>=0.16){
+   // Centro de bolha vazia contém apenas a letra impressa.
+   // Uma bolha preenchida tem área escura muito maior.
+   if(max>=0.34){
      const idx=vals.indexOf(max);
-     if(second>=0.82*max && second>=0.16){
+     // Só considera dupla marcação quando duas bolhas têm níveis altos
+     // e próximos; isso reduz falsos positivos causados pelas letras A-E.
+     if(second>=0.86*max && second>=0.34){
        status='Dupla marcação / revisar';
      }else{
        ans=ls[idx];
@@ -443,7 +498,7 @@ function detectAnswers(warp){
    }
 
    out.push({q:i+1,ans,status,vals,pts});
-   raw.push(`Q${String(i+1).padStart(2,'0')}  ${[...ls].map((x,j)=>x+':'+Math.round(Math.max(0,vals[j])*100)+'%').join('  ')}  → ${ans}`);
+   raw.push(`Q${String(i+1).padStart(2,'0')}  ${[...ls].map((x,j)=>x+':'+Math.round(vals[j]*100)+'%').join('  ')}  → ${ans}`);
  }
  gray.delete();
  return {answers:out,raw:raw.join('\n')};
@@ -475,7 +530,7 @@ async function readPhoto(){
   c.width=Math.round(im.naturalWidth*scale);c.height=Math.round(im.naturalHeight*scale);c.getContext('2d').drawImage(im,0,0,c.width,c.height);
   let src=cv.imread(c),m=findMarkers(src);if(!m){src.delete();setStatus('Não encontrei os 4 marcadores. Fotografe o cartão inteiro, sem cortar os cantos.','bad');finish();return}
   setStatus('✓ 4 marcadores encontrados. Corrigindo perspectiva e localizando cada quadro...','info');
-  let warp=warpCard(src,m),r=detectAnswers(warp);ultimaLeitura=r.answers;drawDiagnostic(warp,r.answers);renderResults(r.answers,r.raw);setStatus('✓ Leitura concluída. Confira a sequência e a leitura bruta antes de usar.','ok');src.delete();warp.delete();
+  let warp=(gabarito.length===10?warpCardOMR10(src,m):warpCard(src,m)),r=detectAnswers(warp);ultimaLeitura=r.answers;drawDiagnostic(warp,r.answers);renderResults(r.answers,r.raw);setStatus('✓ Leitura concluída. Confira a sequência e a leitura bruta antes de usar.','ok');src.delete();warp.delete();
  }catch(e){console.error(e);setStatus('Erro na leitura: '+e.message,'bad')}finally{finish()}
 }
 function finish(){busy=false;btnRead.disabled=false}
