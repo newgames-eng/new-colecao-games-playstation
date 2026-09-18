@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NEW CORRETOR V3.1</title>
+<title>NEW CORRETOR V3.5</title>
 <script async src="https://docs.opencv.org/4.x/opencv.js"></script>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f2f5fa;color:#17243a}
@@ -22,17 +22,96 @@ table{width:100%;border-collapse:collapse;margin-top:13px;font-size:14px}th,td{b
 .qgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.qbox{border:1px solid #cbd5e1;border-radius:8px;padding:8px}.qopts{display:flex;gap:4px;margin-top:6px}.qopts button{width:27px;height:27px;border-radius:50%;border:1px solid #64748b;background:#fff}.qopts button.sel{background:#1764e8;color:#fff}
 .raw{font:12px/1.5 monospace;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px;overflow:auto;white-space:pre}
 @media(max-width:600px){.brand{font-size:28px}.qgrid{grid-template-columns:repeat(2,1fr)}nav button{font-size:15px}}
+
+/* ===== CARTÃO-RESPOSTA A4 V3.5 ===== */
+.card-config{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}
+.card-config label{font-weight:800;font-size:13px}
+.card-config label:first-child{grid-column:span 2}
+.card-config input,.card-config select{width:100%;margin-top:5px;padding:10px;border:1px solid #cbd5e1;border-radius:8px}
+.a4-wrap{width:210mm;margin:18px auto;overflow:auto}
+.a4-sheet{width:210mm;height:297mm;min-width:210mm;min-height:297mm;background:#fff;color:#111;position:relative;padding:13mm 12mm 12mm;border:1px solid #bbb;box-shadow:0 3px 18px #0002;font-family:Arial,Helvetica,sans-serif}
+.omr-marker{position:absolute;width:8mm;height:8mm;background:#000}
+.omr-tl{left:7mm;top:7mm}.omr-tr{right:7mm;top:7mm}.omr-bl{left:7mm;bottom:7mm}.omr-br{right:7mm;bottom:7mm}
+.card-head{border-bottom:2px solid #173f8f;padding:0 2mm 4mm;margin:0 2mm 5mm;display:flex;align-items:end;justify-content:space-between;gap:8mm}
+.card-head .main-title{font-size:24pt;font-weight:900;letter-spacing:.5px;color:#102a56}
+.card-head .brand{font-size:10pt;font-weight:800;color:#173f8f;text-align:right}
+.card-head .brand strong{display:block;font-size:13pt}
+.card-subtitle{text-align:center;font-size:11pt;font-weight:800;letter-spacing:1.5px;margin:-1mm 0 5mm;color:#26364d}
+.ident-box{border:1.5px solid #111;margin:0 2mm 4mm}
+.ident-title{background:#173f8f;color:#fff;font-size:10pt;font-weight:900;padding:2.5mm 3mm;letter-spacing:.5px}
+.ident-grid{display:grid;grid-template-columns:1.8fr 1fr 1.2fr;gap:0}
+.ident-cell{padding:2.7mm 3mm;border-right:1px solid #aaa;border-top:1px solid #aaa;min-height:15mm}
+.ident-cell:nth-child(3n){border-right:0}
+.ident-label{font-size:7.5pt;font-weight:800;text-transform:uppercase;color:#4b5563;margin-bottom:2mm}
+.ident-value{font-size:10.5pt;font-weight:700;min-height:5mm;white-space:nowrap;overflow:hidden}
+.reg-code{font-family:"Courier New",monospace;letter-spacing:1.3px;font-size:10pt}
+.instructions{font-size:7.5pt;margin:0 2mm 4mm;border:1px solid #bbb;padding:2.5mm 3mm;line-height:1.35}
+.instructions b{color:#173f8f}
+.answer-title{text-align:center;font-size:10pt;font-weight:900;margin:4mm 2mm 2mm;letter-spacing:.5px}
+.answer-help{text-align:center;font-size:7pt;margin:0 2mm 4mm;color:#444}
+.omr-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:3mm 3mm;margin:0 2mm}
+.omr-q{border:1px solid #111;height:20mm;padding:2.5mm 2mm 2mm;text-align:center}
+.omr-qnum{font-size:7.5pt;font-weight:900;margin-bottom:2.2mm}
+.omr-options{display:flex;justify-content:center;gap:3.2mm}
+.omr-opt{width:6.3mm;height:6.3mm;border:1.1px solid #111;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:7.5pt;font-weight:700}
+.card-footer{position:absolute;left:12mm;right:12mm;bottom:17mm;text-align:center;border-top:1px solid #aaa;padding-top:3mm;font-size:7pt;color:#555}
+.card-footer strong{font-size:8pt;color:#173f8f}
+@media print{
+  body{background:#fff!important}
+  header,main>.card:not(#cartao .card),#cartao>.card>h2,#cartao>.card>p,#cartao>.card>.status,#cartao>.card>.actions,.no-print{display:none!important}
+  #cartao{display:block!important}
+  #cartao>.card{border:0!important;box-shadow:none!important;padding:0!important;margin:0!important;background:#fff!important}
+  .a4-wrap{margin:0!important;width:210mm!important;overflow:visible!important}
+  .a4-sheet{box-shadow:none!important;border:0!important;margin:0!important}
+  @page{size:A4 portrait;margin:0}
+}
+@media(max-width:700px){
+ .card-config{grid-template-columns:1fr 1fr}
+ .card-config label:first-child{grid-column:span 2}
+ .a4-wrap{margin-left:-12px;margin-right:-12px}
+}
 </style>
 </head>
 <body>
-<header><div class="brand">NEW <span>CORRETOR</span></div><div class="sub">Correção inteligente de avaliações — leitor OMR V3.1</div>
+<header><div class="brand">NEW <span>CORRETOR</span></div><div class="sub">Correção inteligente de avaliações — leitor OMR V3.5</div>
 <nav><button onclick="show('inicio')">🏠 Início</button><button onclick="show('avaliacao')">📝 Avaliação</button><button onclick="show('corrigir')">📷 Corrigir</button><button onclick="show('cartao')">📄 Cartão</button><button onclick="show('resultados')">📊 Resultados</button></nav></header>
 <main>
-<section id="inicio" class="page"><div class="card"><h1>NEW CORRETOR</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V3.4:</b> o leitor calcula as posições das bolhas a partir dos próprios quadros das questões. A mesma leitura alimenta diagnóstico, sequência e tabela.</div><div class="actions"><button class="primary" onclick="show('avaliacao')">Configurar avaliação</button><button class="secondary" onclick="show('corrigir')">Corrigir cartão</button></div></div></section>
+<section id="inicio" class="page"><div class="card"><h1>NEW CORRETOR</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V3.5:</b> o leitor calcula as posições das bolhas a partir dos próprios quadros das questões. A mesma leitura alimenta diagnóstico, sequência e tabela.</div><div class="actions"><button class="primary" onclick="show('avaliacao')">Configurar avaliação</button><button class="secondary" onclick="show('corrigir')">Corrigir cartão</button></div></div></section>
 
 <section id="avaliacao" class="page hidden"><div class="card"><h2>📝 Avaliação</h2><div class="grid"><label>Título<input id="titulo" value="AVALIAÇÃO DE MATEMÁTICA"></label><label>Questões<input id="nq" type="number" min="1" max="50" value="10" onchange="buildKey()"></label><label>Alternativas<select id="na" onchange="buildKey()"><option value="5">A até E</option><option value="4">A até D</option></select></label><label>Valor por questão<input id="valor" type="number" step=".01" value="1"></label></div><h3 style="margin-top:18px">Gabarito</h3><div id="key" class="qgrid"></div><div class="actions"><button class="primary" onclick="saveKey()">Salvar gabarito</button></div><div id="keymsg" class="status info">Configure o gabarito.</div></div></section>
 
-<section id="cartao" class="page hidden"><div class="card"><h2>📄 Cartão-resposta</h2><p>Modelo calibrado para o leitor OMR: quatro marcadores e até 10 questões.</p><div class="status warn">Imprima em escala 100% e não corte os quatro quadrados pretos.</div><div class="actions"><button class="primary" onclick="window.print()">🖨️ Imprimir</button></div><div id="printCard" style="max-width:800px;margin:18px auto;border:1px solid #111;padding:20px"><div style="display:flex;justify-content:space-between"><i style="background:#000;width:35px;height:35px;display:block"></i><i style="background:#000;width:35px;height:35px;display:block"></i></div><h2 style="text-align:center;margin:9px 0 0">NEW CORRETOR</h2><h3 style="text-align:center">AVALIAÇÃO DE MATEMÁTICA</h3><div style="display:flex;gap:20px;margin:18px 0"><div style="flex:2"><b>Aluno:</b><div style="height:24px;border-bottom:1px solid"></div></div><div style="flex:1"><b>Turma:</b><div style="height:24px;border-bottom:1px solid"></div></div></div><div id="cardQs"></div><p style="text-align:center;font-size:11px;font-weight:bold">MARQUE APENAS UMA ALTERNATIVA POR QUESTÃO.</p><div style="display:flex;justify-content:space-between;margin-top:75px"><i style="background:#000;width:35px;height:35px;display:block"></i><i style="background:#000;width:35px;height:35px;display:block"></i></div></div></div></section>
+<section id="cartao" class="page hidden">
+<div class="card no-print">
+  <h2>📄 Cartão-resposta</h2>
+  <p>Configure a identificação e gere um cartão profissional em <b>A4, escala 100%</b>, preparado para leitura OMR.</p>
+  <div class="card-config">
+    <label>Identificação da Avaliação
+      <input id="cardTitulo" value="AVALIAÇÃO DE MATEMÁTICA" oninput="renderCard()">
+    </label>
+    <label>Data
+      <input id="cardData" type="date" oninput="renderCard()">
+    </label>
+    <label>Nome do estudante
+      <input id="cardAluno" placeholder="Nome completo" oninput="renderCard()">
+    </label>
+    <label>Turma
+      <input id="cardTurma" placeholder="Ex.: 5º A" oninput="renderCard()">
+    </label>
+    <label>Código de registro da prova
+      <input id="cardCodigo" class="reg-code" readonly>
+    </label>
+  </div>
+  <div class="actions">
+    <button class="primary" onclick="renderCard()">🔄 Atualizar cartão</button>
+    <button class="secondary" onclick="newCardCode()">🔐 Novo código</button>
+    <button class="primary" onclick="window.print()">🖨️ Imprimir A4</button>
+  </div>
+  <div class="status warn">⚠️ Imprima em <b>100%</b>. Não recorte, dobre ou cubra os quatro marcadores pretos dos cantos.</div>
+</div>
+<div class="a4-wrap">
+  <div id="printCard" class="a4-sheet"></div>
+</div>
+</section>
 
 <section id="corrigir" class="page hidden"><div class="card"><h2>📷 Corrigir cartão</h2><p>Preencha os dados do estudante e fotografe o cartão inteiro.</p><div class="grid"><label>Nome do estudante<input id="aluno" placeholder="Nome completo"></label><label>Turma<input id="turma" placeholder="Ex.: 5º A"></label></div><div class="small">O nome escrito no cartão não é usado como OCR nesta versão; informe o nome aqui para garantir a identificação.</div><input id="photo" type="file" accept="image/*" capture="environment" style="margin-top:12px"><div class="actions"><button id="btnRead" class="primary" onclick="readPhoto()">🔎 Ler cartão</button><button class="secondary" onclick="resetRead()">Limpar</button></div><div id="readStatus" class="status info">Aguardando fotografia.</div><canvas id="diag" class="preview"></canvas><div id="results"></div></div></section>
 
@@ -48,7 +127,61 @@ function buildKey(){const n=Math.max(1,Math.min(50,+nq.value||10)),ls=L.slice(0,
 function setKey(i,x){gabarito[i]=x;buildKey()}
 function saveKey(){localStorage.setItem('newCorretorGabarito',JSON.stringify(gabarito));keymsg.textContent='✓ Gabarito salvo neste aparelho.';keymsg.className='status ok';renderCard()}
 function loadKey(){try{let x=JSON.parse(localStorage.getItem('newCorretorGabarito'));if(Array.isArray(x)&&x.length){gabarito=x;nq.value=x.length}}catch(e){}}
-function renderCard(){if(!cardQs)return;let n=Math.min(10,gabarito.length||10),ls=L.slice(0,+na.value||5),s='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">';for(let i=0;i<n;i++)s+=`<div style="border:1px solid;padding:7px;text-align:center;font-size:11px"><b>QUESTÃO ${String(i+1).padStart(2,'0')}</b><div style="display:flex;justify-content:center;gap:5px;margin-top:6px">${[...ls].map(x=>`<span style="width:23px;height:23px;border:1px solid;border-radius:50%;display:inline-flex;align-items:center;justify-content:center">${x}</span>`).join('')}</div></div>`;cardQs.innerHTML=s+'</div>'}
+function getCardCode(){
+ let c=localStorage.getItem('newCorretorCardCode');
+ if(!c){c='NC-'+Math.random().toString(36).slice(2,8).toUpperCase()+'-'+Math.random().toString(36).slice(2,6).toUpperCase();localStorage.setItem('newCorretorCardCode',c)}
+ return c;
+}
+function newCardCode(){
+ const c='NC-'+Math.random().toString(36).slice(2,8).toUpperCase()+'-'+Math.random().toString(36).slice(2,6).toUpperCase();
+ localStorage.setItem('newCorretorCardCode',c);
+ if(cardCodigo)cardCodigo.value=c;
+ renderCard();
+}
+function fmtDate(v){
+ if(!v)return '____/____/________';
+ const p=v.split('-'); return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:v;
+}
+function renderCard(){
+ if(!cardQs && !document.getElementById('printCard'))return;
+ const n=Math.min(50,Math.max(1,+nq.value||10));
+ const ls=L.slice(0,+na.value||5);
+ const tituloCard=(document.getElementById('cardTitulo')?.value||titulo?.value||'AVALIAÇÃO').toUpperCase();
+ const dataCard=document.getElementById('cardData')?.value||'';
+ const alunoCard=document.getElementById('cardAluno')?.value||'';
+ const turmaCard=document.getElementById('cardTurma')?.value||'';
+ const codigo=getCardCode();
+ if(document.getElementById('cardCodigo'))document.getElementById('cardCodigo').value=codigo;
+
+ let qs='';
+ for(let i=0;i<n;i++){
+   qs+=`<div class="omr-q"><div class="omr-qnum">QUESTÃO ${String(i+1).padStart(2,'0')}</div><div class="omr-options">${[...ls].map(x=>`<span class="omr-opt">${x}</span>`).join('')}</div></div>`;
+ }
+ document.getElementById('printCard').innerHTML=`
+   <i class="omr-marker omr-tl"></i><i class="omr-marker omr-tr"></i>
+   <i class="omr-marker omr-bl"></i><i class="omr-marker omr-br"></i>
+   <div class="card-head">
+     <div class="main-title">CARTÃO-RESPOSTA</div>
+     <div class="brand"><strong>NEW CORRETOR</strong>LEITOR OMR</div>
+   </div>
+   <div class="card-subtitle">${esc(tituloCard)}</div>
+   <div class="ident-box">
+     <div class="ident-title">IDENTIFICAÇÃO DA AVALIAÇÃO</div>
+     <div class="ident-grid">
+       <div class="ident-cell"><div class="ident-label">Avaliação</div><div class="ident-value">${esc(tituloCard)}</div></div>
+       <div class="ident-cell"><div class="ident-label">Data</div><div class="ident-value">${fmtDate(dataCard)}</div></div>
+       <div class="ident-cell"><div class="ident-label">Código de registro da prova</div><div class="ident-value reg-code">${esc(codigo)}</div></div>
+       <div class="ident-cell"><div class="ident-label">Nome do estudante</div><div class="ident-value">${esc(alunoCard)||'________________________________________________________________'}</div></div>
+       <div class="ident-cell"><div class="ident-label">Turma</div><div class="ident-value">${esc(turmaCard)||'________________'}</div></div>
+       <div class="ident-cell"><div class="ident-label">Questões</div><div class="ident-value">${n} questões · ${ls.length} alternativas</div></div>
+     </div>
+   </div>
+   <div class="instructions"><b>ORIENTAÇÕES:</b> Preencha completamente apenas uma alternativa por questão. Use lápis ou caneta preta/azul. Não faça marcas fora dos círculos. Não dobre nem corte o cartão.</div>
+   <div class="answer-title">MARQUE A ALTERNATIVA CORRESPONDENTE À SUA RESPOSTA</div>
+   <div class="answer-help">Preencha o círculo escolhido de forma completa. Os marcadores pretos dos quatro cantos são utilizados pelo sistema para localizar e corrigir o cartão.</div>
+   <div class="omr-grid">${qs}</div>
+   <div class="card-footer"><strong>NEW CORRETOR</strong> · Cartão-resposta para correção automática por imagem · Código ${esc(codigo)}</div>`;
+}
 function setStatus(t,c){readStatus.textContent=t;readStatus.className='status '+c}
 function resetRead(){photo.value='';results.innerHTML='';diag.getContext('2d').clearRect(0,0,diag.width,diag.height);ultimaLeitura=null;summary.className='status info';summary.textContent='Nenhuma correção realizada nesta sessão.';setStatus('Aguardando fotografia.','info')}
 
@@ -203,6 +336,6 @@ async function readPhoto(){
  }catch(e){console.error(e);setStatus('Erro na leitura: '+e.message,'bad')}finally{finish()}
 }
 function finish(){busy=false;btnRead.disabled=false}
-loadKey();buildKey();show('inicio');
+loadKey();if(document.getElementById('cardData')&&!document.getElementById('cardData').value)document.getElementById('cardData').value=new Date().toISOString().slice(0,10);renderCard();buildKey();show('inicio');
 </script>
 </body></html>
