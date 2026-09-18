@@ -3,362 +3,160 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NEW CORRETOR V2.9</title>
+<title>NEW CORRETOR V3.0</title>
 <script async src="https://docs.opencv.org/4.x/opencv.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f2f5fa;color:#13233b}
-header{background:linear-gradient(135deg,#123b91,#1764e8);color:#fff;padding:22px 18px 18px;position:sticky;top:0;z-index:20;box-shadow:0 3px 12px #0003}
-.brand{font-size:30px;font-weight:900;letter-spacing:.5px}.brand span{color:#8ec5ff}
-.sub{margin-top:4px;color:#dbeaff}
-nav{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
-nav button{border:1px solid #ffffff44;background:#ffffff18;color:white;border-radius:12px;padding:12px 18px;font-size:16px;font-weight:800;cursor:pointer}
-nav button:hover{background:#ffffff30}
-main{max-width:1050px;margin:auto;padding:24px 16px 60px}
-.card{background:white;border-radius:18px;padding:20px;margin-bottom:18px;box-shadow:0 2px 12px #153b7112;border:1px solid #e2e8f0}
-h1,h2{margin-top:0}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
-label{font-weight:700;font-size:14px;display:block}
-input,select{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:9px;margin-top:6px;font-size:16px}
-.primary{background:#1764e8;color:white;border:0;border-radius:10px;padding:13px 18px;font-weight:800;cursor:pointer}
-.secondary{background:#e9eef7;color:#17345d;border:0;border-radius:10px;padding:13px 18px;font-weight:800;cursor:pointer}
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
-.status{padding:14px;border-radius:12px;margin-top:15px;font-weight:700}
-.info{background:#e8f1ff;color:#164a98}.ok{background:#dcfce7;color:#166534}.warn{background:#fff4d6;color:#8a5a00}.bad{background:#fee2e2;color:#991b1b}
-.preview{width:100%;max-height:650px;object-fit:contain;border:1px solid #d8dee8;border-radius:12px;background:#f8fafc;margin-top:15px}
-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:15px}
-th,td{border:1px solid #dbe2ea;padding:10px;text-align:center}th{background:#eef3f9}
-.correct{color:#137333;font-weight:800}.wrong{color:#c62828;font-weight:800}.blank{color:#64748b;font-weight:700}.double{color:#a15c00;font-weight:800}
-.score{font-size:32px;font-weight:900;color:#1764e8}
-.hidden{display:none}
-.small{font-size:12px;color:#64748b}
-.qgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:15px}
-.qbox{border:1px solid #cbd5e1;border-radius:9px;padding:8px}.qbox strong{font-size:12px}
-.qopts{display:flex;gap:4px;margin-top:7px}.qopts button{width:28px;height:28px;border-radius:50%;border:1px solid #64748b;background:#fff;cursor:pointer;font-weight:700}.qopts button.sel{background:#1764e8;color:#fff}
-@media(max-width:600px){.brand{font-size:27px}nav button{font-size:15px;padding:11px 13px}main{padding:14px 10px}.qgrid{grid-template-columns:repeat(2,1fr)}}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f2f5fa;color:#17243a}
+header{background:linear-gradient(135deg,#123b91,#1764e8);color:#fff;padding:22px 18px;position:sticky;top:0;z-index:20;box-shadow:0 3px 12px #0003}
+.brand{font-size:31px;font-weight:900}.brand span{color:#9dccff}.sub{margin-top:5px;color:#e4efff}
+nav{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}nav button{border:1px solid #fff5;background:#fff2;color:#fff;border-radius:12px;padding:12px 17px;font-size:16px;font-weight:800}
+main{max-width:1050px;margin:auto;padding:22px 15px 60px}.card{background:#fff;border:1px solid #e1e7ef;border-radius:17px;padding:19px;margin-bottom:18px;box-shadow:0 2px 12px #173b7112}
+h1,h2,h3{margin-top:0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+label{font-weight:700;font-size:14px}input,select{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;margin-top:5px;font-size:16px}
+button{cursor:pointer}.primary{background:#1764e8;color:#fff;border:0;border-radius:9px;padding:12px 17px;font-weight:800}.secondary{background:#e8eef7;color:#17345d;border:0;border-radius:9px;padding:12px 17px;font-weight:800}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.status{padding:13px;border-radius:11px;margin-top:12px;font-weight:700}.info{background:#e8f1ff;color:#174a96}.ok{background:#dcfce7;color:#166534}.warn{background:#fff4d6;color:#8a5a00}.bad{background:#fee2e2;color:#991b1b}
+.hidden{display:none}.preview{width:100%;max-height:650px;object-fit:contain;border:1px solid #d5dde8;border-radius:11px;margin-top:13px;background:#fafcff}
+table{width:100%;border-collapse:collapse;margin-top:13px;font-size:14px}th,td{border:1px solid #d9e1ea;padding:9px;text-align:center}th{background:#edf3fa}.correct{color:#16803d;font-weight:800}.wrong{color:#c62828;font-weight:800}.blank{color:#64748b;font-weight:800}.double{color:#a15c00;font-weight:800}
+.score{font-size:34px;color:#1764e8;font-weight:900}.keyline{font-family:monospace;background:#f1f5f9;padding:12px;border-radius:9px;font-size:18px;letter-spacing:3px;word-break:break-all}
+.qgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.qbox{border:1px solid #cbd5e1;border-radius:8px;padding:8px}.qopts{display:flex;gap:4px;margin-top:6px}.qopts button{width:27px;height:27px;border-radius:50%;border:1px solid #64748b;background:#fff}.qopts button.sel{background:#1764e8;color:#fff}
+@media(max-width:600px){.brand{font-size:28px}.qgrid{grid-template-columns:repeat(2,1fr)}nav button{font-size:15px}}
 </style>
 </head>
 <body>
 <header>
-  <div class="brand">NEW <span>CORRETOR</span></div>
-  <div class="sub">Correção inteligente de avaliações — leitor OMR V2.9</div>
-  <nav>
-    <button onclick="show('inicio')">🏠 Início</button>
-    <button onclick="show('avaliacao')">📝 Avaliação</button>
-    <button onclick="show('corrigir')">📷 Corrigir</button>
-    <button onclick="show('cartao')">📄 Cartão</button>
-    <button onclick="show('resultados')">📊 Resultados</button>
-  </nav>
-</header>
-
+<div class="brand">NEW <span>CORRETOR</span></div>
+<div class="sub">Correção inteligente de avaliações — leitor OMR V3.0</div>
+<nav>
+<button onclick="show('inicio')">🏠 Início</button><button onclick="show('avaliacao')">📝 Avaliação</button>
+<button onclick="show('corrigir')">📷 Corrigir</button><button onclick="show('cartao')">📄 Cartão</button><button onclick="show('resultados')">📊 Resultados</button>
+</nav></header>
 <main>
 <section id="inicio" class="page">
- <div class="card">
-  <h1>NEW CORRETOR</h1>
-  <p>Correção de cartões-resposta por fotografia.</p>
-  <div class="status info"><b>V2.6:</b> a leitura usa os quatro marcadores pretos do cartão para corrigir a perspectiva e depois calcula as posições das 50 bolhas. Não procura círculos aleatoriamente.</div>
-  <div class="actions"><button class="primary" onclick="show('avaliacao')">Começar avaliação</button><button class="secondary" onclick="show('corrigir')">Corrigir cartão</button></div>
- </div>
+<div class="card"><h1>NEW CORRETOR</h1><p>Correção de cartões-resposta por fotografia.</p>
+<div class="status info"><b>V3.0:</b> diagnóstico e tabela agora usam exatamente a mesma leitura. O resultado anterior é apagado antes de cada nova correção.</div>
+<div class="actions"><button class="primary" onclick="show('avaliacao')">Configurar avaliação</button><button class="secondary" onclick="show('corrigir')">Corrigir cartão</button></div></div>
 </section>
 
-<section id="avaliacao" class="page hidden">
- <div class="card">
-  <h2>📝 Configuração da avaliação</h2>
-  <div class="grid">
-   <label>Título<input id="titulo" value="AVALIAÇÃO DE MATEMÁTICA"></label>
-   <label>Quantidade de questões<input id="nq" type="number" min="1" max="50" value="10" onchange="buildKey()"></label>
-   <label>Alternativas
-    <select id="na" onchange="buildKey()"><option value="5" selected>A até E</option><option value="4">A até D</option></select>
-   </label>
-   <label>Valor por questão<input id="valor" type="number" min="0.01" step="0.01" value="1"></label>
-  </div>
-  <h3>Gabarito</h3><div id="key" class="qgrid"></div>
-  <div class="actions"><button class="primary" onclick="saveKey()">Salvar gabarito</button></div>
-  <div id="keymsg" class="status info">Defina o gabarito e salve.</div>
- </div>
-</section>
+<section id="avaliacao" class="page hidden"><div class="card">
+<h2>📝 Avaliação</h2><div class="grid">
+<label>Título<input id="titulo" value="AVALIAÇÃO DE MATEMÁTICA"></label>
+<label>Questões<input id="nq" type="number" min="1" max="50" value="10" onchange="buildKey()"></label>
+<label>Alternativas<select id="na" onchange="buildKey()"><option value="5">A até E</option><option value="4">A até D</option></select></label>
+<label>Valor por questão<input id="valor" type="number" step=".01" value="1"></label></div>
+<h3 style="margin-top:18px">Gabarito</h3><div id="key" class="qgrid"></div>
+<div class="actions"><button class="primary" onclick="saveKey()">Salvar gabarito</button></div><div id="keymsg" class="status info">Configure o gabarito.</div>
+</div></section>
 
-<section id="cartao" class="page hidden">
- <div class="card">
-  <h2>📄 Cartão-resposta</h2>
-  <p>O leitor V2.6 foi calibrado para este modelo: 4 marcadores pretos, 10 questões e 5 alternativas.</p>
-  <div class="status info">Importante: imprima o cartão em escala 100%. Não corte os quatro quadrados pretos.</div>
-  <div class="actions"><button class="primary" onclick="window.print()">🖨️ Imprimir página</button></div>
-  <div id="printCard" style="margin-top:18px;border:1px solid #111;padding:22px;max-width:800px;margin-left:auto;margin-right:auto">
-   <div style="display:flex;justify-content:space-between"><span style="background:#000;width:35px;height:35px"></span><span style="background:#000;width:35px;height:35px"></span></div>
-   <h2 style="text-align:center;margin:10px 0 0">NEW CORRETOR</h2><h3 style="text-align:center;margin:3px">AVALIAÇÃO DE MATEMÁTICA</h3>
-   <div style="display:flex;gap:20px;margin:20px 0"><div style="flex:2"><b>Aluno:</b><div style="border-bottom:1px solid #111;height:25px"></div></div><div style="flex:1"><b>Turma:</b><div style="border-bottom:1px solid #111;height:25px"></div></div></div>
-   <div id="cardQs"></div>
-   <p style="text-align:center;font-size:12px;font-weight:bold">MARQUE APENAS UMA ALTERNATIVA POR QUESTÃO.</p>
-   <div style="display:flex;justify-content:space-between;margin-top:80px"><span style="background:#000;width:35px;height:35px"></span><span style="background:#000;width:35px;height:35px"></span></div>
-  </div>
- </div>
-</section>
+<section id="cartao" class="page hidden"><div class="card"><h2>📄 Cartão-resposta</h2>
+<p>Modelo calibrado para o leitor OMR: quatro marcadores e até 10 questões no cartão.</p>
+<div class="status warn">Imprima em escala 100% e não corte os quatro quadrados pretos.</div>
+<div class="actions"><button class="primary" onclick="window.print()">🖨️ Imprimir</button></div>
+<div id="printCard" style="max-width:800px;margin:18px auto;border:1px solid #111;padding:20px">
+<div style="display:flex;justify-content:space-between"><i style="background:#000;width:35px;height:35px;display:block"></i><i style="background:#000;width:35px;height:35px;display:block"></i></div>
+<h2 style="text-align:center;margin:9px 0 0">NEW CORRETOR</h2><h3 style="text-align:center">AVALIAÇÃO DE MATEMÁTICA</h3>
+<div style="display:flex;gap:20px;margin:18px 0"><div style="flex:2"><b>Aluno:</b><div style="height:24px;border-bottom:1px solid"></div></div><div style="flex:1"><b>Turma:</b><div style="height:24px;border-bottom:1px solid"></div></div></div>
+<div id="cardQs"></div><p style="text-align:center;font-size:11px;font-weight:bold">MARQUE APENAS UMA ALTERNATIVA POR QUESTÃO.</p>
+<div style="display:flex;justify-content:space-between;margin-top:75px"><i style="background:#000;width:35px;height:35px;display:block"></i><i style="background:#000;width:35px;height:35px;display:block"></i></div>
+</div></div></section>
 
-<section id="corrigir" class="page hidden">
- <div class="card">
-  <h2>📷 Corrigir cartão</h2>
-  <p>Fotografe o cartão inteiro, de frente, com boa iluminação.</p>
-  <div class="grid" style="margin-bottom:12px">
-   <label>Nome do estudante<input id="studentName" placeholder="Digite o nome ou deixe em branco para tentar OCR"></label>
-   <label>Turma<input id="studentClass" placeholder="Ex.: 5º A"></label>
-  </div>
-  <div class="small">O OCR tenta ler o nome escrito no campo do cartão. Como o nome pode estar manuscrito, confirme antes de salvar.</div>
-  <input id="photo" type="file" accept="image/*" capture="environment">
-  <div class="actions"><button class="primary" onclick="readPhoto()">🔎 Ler cartão</button><button class="secondary" onclick="document.getElementById('photo').value=''">Limpar</button></div>
-  <div id="readStatus" class="status info">Aguardando fotografia.</div>
-  <canvas id="diag" class="preview"></canvas>
-  <div id="results"></div>
- </div>
-</section>
+<section id="corrigir" class="page hidden"><div class="card">
+<h2>📷 Corrigir cartão</h2><p>Preencha os dados do estudante e fotografe o cartão inteiro.</p>
+<div class="grid"><label>Nome do estudante<input id="aluno" placeholder="Nome completo"></label><label>Turma<input id="turma" placeholder="Ex.: 5º A"></label></div>
+<div class="small" style="margin-top:7px">O nome escrito no cartão não é usado como OCR nesta versão. Informe o nome aqui para garantir a identificação correta.</div>
+<input id="photo" type="file" accept="image/*" capture="environment" style="margin-top:12px">
+<div class="actions"><button id="btnRead" class="primary" onclick="readPhoto()">🔎 Ler cartão</button><button class="secondary" onclick="resetRead()">Limpar</button></div>
+<div id="readStatus" class="status info">Aguardando fotografia.</div>
+<canvas id="diag" class="preview"></canvas>
+<div id="results"></div>
+</div></section>
 
-<section id="resultados" class="page hidden">
- <div class="card"><h2>📊 Resultados</h2><div id="summary" class="status info">Faça uma correção para ver o resultado.</div></div>
-</section>
+<section id="resultados" class="page hidden"><div class="card"><h2>📊 Resultado</h2><div id="summary" class="status info">Nenhuma correção realizada nesta sessão.</div></div></section>
 </main>
 
 <script>
-let gabarito=[];
-let ultimaLeitura=[];
-let opencvReady=false;
+let gabarito=[],ultimaLeitura=null,busy=false;
+const lettersAll='ABCDE';
 
 function show(id){document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');if(id==='avaliacao')buildKey();if(id==='cartao')renderCard();}
 function buildKey(){
- const n=Math.max(1,Math.min(50,+document.getElementById('nq').value||10));
- const a=+document.getElementById('na').value||5;
- const letters='ABCDE'.slice(0,a);
- const old=gabarito.slice();
- gabarito=Array.from({length:n},(_,i)=>old[i]||'A');
- const el=document.getElementById('key');el.innerHTML='';
- gabarito.forEach((v,i)=>{
-   const d=document.createElement('div');d.className='qbox';
-   d.innerHTML='<strong>QUESTÃO '+String(i+1).padStart(2,'0')+'</strong><div class="qopts">'+[...letters].map(l=>`<button class="${v===l?'sel':''}" onclick="setKey(${i},'${l}')">${l}</button>`).join('')+'</div>';
-   el.appendChild(d);
- });
+ const n=Math.max(1,Math.min(50,+nq.value||10)),a=+na.value||5,ls=lettersAll.slice(0,a),old=[...gabarito];
+ gabarito=Array.from({length:n},(_,i)=>old[i]||'A');key.innerHTML='';
+ gabarito.forEach((v,i)=>{let d=document.createElement('div');d.className='qbox';d.innerHTML='<b style="font-size:12px">QUESTÃO '+String(i+1).padStart(2,'0')+'</b><div class="qopts">'+[...ls].map(l=>`<button class="${v===l?'sel':''}" onclick="setKey(${i},'${l}')">${l}</button>`).join('')+'</div>';key.appendChild(d)});
  renderCard();
 }
-function setKey(i,l){gabarito[i]=l;buildKey();}
-function saveKey(){localStorage.setItem('newCorretorGabarito',JSON.stringify(gabarito));document.getElementById('keymsg').textContent='✓ Gabarito salvo neste aparelho.';document.getElementById('keymsg').className='status ok';renderCard();}
-function loadKey(){try{const x=JSON.parse(localStorage.getItem('newCorretorGabarito'));if(Array.isArray(x)&&x.length){gabarito=x;document.getElementById('nq').value=x.length}}catch(e){}}
-function renderCard(){
- const n=Math.min(10,gabarito.length||10), letters='ABCDE'.slice(0,+document.getElementById('na').value||5), el=document.getElementById('cardQs'); if(!el)return;
- let s='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">';
- for(let i=0;i<n;i++){s+=`<div style="border:1px solid #111;padding:8px;text-align:center;font-size:12px"><b>QUESTÃO ${String(i+1).padStart(2,'0')}</b><div style="display:flex;justify-content:center;gap:5px;margin-top:7px">${[...letters].map(l=>`<span style="width:23px;height:23px;border:1px solid #111;border-radius:50%;display:inline-flex;align-items:center;justify-content:center">${l}</span>`).join('')}</div></div>`}
- s+='</div>';el.innerHTML=s;
-}
-function loadImage(file){return new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src=URL.createObjectURL(file)})}
-function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
-function orderPts(p){
- const s=p.map(x=>x.x+x.y), d=p.map(x=>x.x-x.y);
- return [p[s.indexOf(Math.min(...s))],p[d.indexOf(Math.max(...d))],p[s.indexOf(Math.max(...s))],p[d.indexOf(Math.min(...d))]];
-}
+function setKey(i,l){gabarito[i]=l;buildKey()}
+function saveKey(){localStorage.setItem('newCorretorGabarito',JSON.stringify(gabarito));keymsg.textContent='✓ Gabarito salvo neste aparelho.';keymsg.className='status ok';renderCard()}
+function loadKey(){try{let x=JSON.parse(localStorage.getItem('newCorretorGabarito'));if(Array.isArray(x)&&x.length){gabarito=x;nq.value=x.length}}catch(e){}}
+function renderCard(){if(!cardQs)return;let n=Math.min(10,gabarito.length||10),ls=lettersAll.slice(0,+na.value||5),s='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">';
+for(let i=0;i<n;i++){s+=`<div style="border:1px solid;padding:7px;text-align:center;font-size:11px"><b>QUESTÃO ${String(i+1).padStart(2,'0')}</b><div style="display:flex;justify-content:center;gap:5px;margin-top:6px">${[...ls].map(l=>`<span style="width:23px;height:23px;border:1px solid;border-radius:50%;display:inline-flex;align-items:center;justify-content:center">${l}</span>`).join('')}</div></div>`}cardQs.innerHTML=s+'</div>'}
+function setStatus(t,c){readStatus.textContent=t;readStatus.className='status '+c}
+function resetRead(){photo.value='';results.innerHTML='';diag.getContext('2d').clearRect(0,0,diag.width,diag.height);ultimaLeitura=null;summary.className='status info';summary.textContent='Nenhuma correção realizada nesta sessão.';setStatus('Aguardando fotografia.','info')}
+
+function loadImage(file){return new Promise((ok,no)=>{let im=new Image();im.onload=()=>ok(im);im.onerror=no;im.src=URL.createObjectURL(file)})}
+function distance(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
+function orderPts(p){let sum=p.map(a=>a.x+a.y),dif=p.map(a=>a.x-a.y);return[p[sum.indexOf(Math.min(...sum))],p[dif.indexOf(Math.max(...dif))],p[sum.indexOf(Math.max(...sum))],p[dif.indexOf(Math.min(...dif))]]}
 function findMarkers(src){
- // Threshold dark pixels, connected components. The card markers are the four largest near-square dark regions.
- let gray=new cv.Mat(), bw=new cv.Mat();
- cv.cvtColor(src,gray,cv.COLOR_RGBA2GRAY);
- cv.threshold(gray,bw,80,255,cv.THRESH_BINARY_INV);
- let contours=new cv.MatVector(), hier=new cv.Mat();
- cv.findContours(bw,contours,hier,cv.RETR_EXTERNAL,cv.CHAIN_APPROX_SIMPLE);
- let arr=[];
- for(let i=0;i<contours.size();i++){
-   const c=contours.get(i), r=cv.boundingRect(c), area=r.width*r.height;
-   if(area>200 && area<src.cols*src.rows*.08 && r.width/r.height>.65 && r.width/r.height<1.35){
-     const peri=cv.arcLength(c,true), approx=new cv.Mat();
-     cv.approxPolyDP(c,approx,.04*peri,true);
-     arr.push({x:r.x+r.width/2,y:r.y+r.height/2,w:r.width,h:r.height,area});
-     approx.delete();c.delete();
-   }
- }
- contours.delete();hier.delete();gray.delete();bw.delete();
- arr.sort((a,b)=>b.area-a.area);
- // remove near duplicates and retain candidates spread around the image
- const out=[];
- for(const x of arr){if(out.every(y=>dist(x,y)>Math.min(src.cols,src.rows)*.08))out.push(x)}
- if(out.length<4)return null;
- const corners=[
-   out.slice().sort((a,b)=>(a.x+a.y)-(b.x+b.y))[0],
-   out.slice().sort((a,b)=>(b.x-a.x+a.y)-(b.x-a.x+b.y))[0],
-   out.slice().sort((a,b)=>(b.x+b.y)-(a.x+a.y))[0],
-   out.slice().sort((a,b)=>(a.x-b.x+a.y-b.y))[0]
- ];
- // safer: choose four candidates maximizing spread by quadrant
- const q=[null,null,null,null];
- for(const c of out){
-   const k=(c.y<src.rows/2?0:2)+(c.x<src.cols/2?0:1);
-   if(!q[k]||c.area>q[k].area)q[k]=c;
- }
- if(q.every(Boolean))return orderPts(q);
- return orderPts(out.slice(0,4));
+ let gray=new cv.Mat(),bw=new cv.Mat();cv.cvtColor(src,gray,cv.COLOR_RGBA2GRAY);cv.threshold(gray,bw,80,255,cv.THRESH_BINARY_INV);
+ let cs=new cv.MatVector(),hi=new cv.Mat();cv.findContours(bw,cs,hi,cv.RETR_EXTERNAL,cv.CHAIN_APPROX_SIMPLE);let a=[];
+ for(let i=0;i<cs.size();i++){let c=cs.get(i),r=cv.boundingRect(c),ar=r.width*r.height,ratio=r.width/r.height;if(ar>200&&ar<src.cols*src.rows*.08&&ratio>.65&&ratio<1.35)a.push({x:r.x+r.width/2,y:r.y+r.height/2,area:ar});c.delete()}
+ cs.delete();hi.delete();gray.delete();bw.delete();a.sort((x,y)=>y.area-x.area);let q=[null,null,null,null];
+ for(let x of a){let k=(x.y<src.rows/2?0:2)+(x.x<src.cols/2?0:1);if(!q[k]||x.area>q[k].area)q[k]=x}
+ return q.every(Boolean)?orderPts(q):null;
 }
-function matFromPoints(pts){const m=cv.matFromArray(4,1,cv.CV_32FC2,pts.flatMap(p=>[p.x,p.y]));return m}
-function warpToCard(src, markers){
- // Output geometry deliberately matches the printed card coordinate system.
- const W=1200,H=1697;
- const dstPts=[{x:45,y:35},{x:1155,y:35},{x:1155,y:1662},{x:45,y:1662}];
- const M=cv.getPerspectiveTransform(matFromPoints(markers),matFromPoints(dstPts));
- const dst=new cv.Mat();
- cv.warpPerspective(src,dst,M,new cv.Size(W,H),cv.INTER_LINEAR,cv.BORDER_CONSTANT,new cv.Scalar(255,255,255,255));
- M.delete();
- return dst;
+function matPts(p){return cv.matFromArray(4,1,cv.CV_32FC2,p.flatMap(a=>[a.x,a.y]))}
+function warpCard(src,m){
+ let M=cv.getPerspectiveTransform(matPts(m),matPts([{x:45,y:35},{x:1155,y:35},{x:1155,y:1662},{x:45,y:1662}])),d=new cv.Mat();
+ cv.warpPerspective(src,d,M,new cv.Size(1200,1697),cv.INTER_LINEAR,cv.BORDER_CONSTANT,new cv.Scalar(255,255,255,255));M.delete();return d;
 }
-function sampleBubble(warp,x,y,r){
- const gray=new cv.Mat();cv.cvtColor(warp,gray,cv.COLOR_RGBA2GRAY);
- const rr=Math.max(4,Math.round(r*.48));
- let dark=0,total=0;
- for(let yy=Math.round(y-rr);yy<=Math.round(y+rr);yy++){
-  for(let xx=Math.round(x-rr);xx<=Math.round(x+rr);xx++){
-   if((xx-x)*(xx-x)+(yy-y)*(yy-y)<=rr*rr){total++;if(gray.ucharPtr(yy,xx)[0]<125)dark++}
-  }
- }
- gray.delete();
- return dark/Math.max(1,total);
+function readBubble(gray,x,y,r){
+ let rr=Math.max(5,Math.round(r*.43)),sum=0,n=0;
+ for(let yy=Math.max(0,Math.round(y-rr));yy<=Math.min(gray.rows-1,Math.round(y+rr));yy++)
+  for(let xx=Math.max(0,Math.round(x-rr));xx<=Math.min(gray.cols-1,Math.round(x+rr));xx++)
+   if((xx-x)**2+(yy-y)**2<=rr*rr){n++;if(gray.ucharPtr(yy,xx)[0]<125)sum++}
+ return sum/Math.max(1,n);
 }
-function findQuestionBoxes(warp){
-  const gray=new cv.Mat(), bw=new cv.Mat();
-  cv.cvtColor(warp,gray,cv.COLOR_RGBA2GRAY);
-  cv.threshold(gray,bw,180,255,cv.THRESH_BINARY_INV);
-  const contours=new cv.MatVector(), hier=new cv.Mat();
-  cv.findContours(bw,contours,hier,cv.RETR_LIST,cv.CHAIN_APPROX_SIMPLE);
-  const boxes=[];
-  for(let i=0;i<contours.size();i++){
-    const c=contours.get(i), r=cv.boundingRect(c);
-    const ar=r.width/r.height, area=r.width*r.height;
-    if(r.width>150 && r.width<340 && r.height>45 && r.height<125 &&
-       ar>2.0 && ar<5.5 && area>9000){
-      boxes.push({x:r.x,y:r.y,w:r.width,h:r.height,area});
-    }
-    c.delete();
-  }
-  contours.delete();hier.delete();gray.delete();bw.delete();
-  // Remove nested/duplicate rectangles, keeping the largest useful box at each location.
-  boxes.sort((a,b)=>b.area-a.area);
-  const out=[];
-  for(const b of boxes){
-    if(out.every(o=>Math.abs((o.x+o.w/2)-(b.x+b.w/2))>35 || Math.abs((o.y+o.h/2)-(b.y+b.h/2))>25))
-      out.push(b);
-  }
-  // Keep the 10 boxes nearest the expected answer-grid region.
-  const expected=[];
-  for(let row=0;row<3;row++) for(let col=0;col<4;col++)
-    expected.push({x:95+270*col,y:275+135*row,w:235,h:90});
-  out.sort((a,b)=>{
-    const da=Math.min(...expected.map(e=>Math.hypot((a.x+a.w/2)-(e.x+e.w/2),(a.y+a.h/2)-(e.y+e.h/2))));
-    const db=Math.min(...expected.map(e=>Math.hypot((b.x+b.w/2)-(e.x+e.w/2),(b.y+b.h/2)-(e.y+e.h/2))));
-    return da-db;
-  });
-  return out.slice(0,10).sort((a,b)=>a.y-b.y || a.x-b.x);
-}
-
 function detectAnswers(warp){
-  const n=Math.min(10,gabarito.length||10);
-  const letters='ABCDE'.slice(0,+document.getElementById('na').value||5);
-  const boxes=findQuestionBoxes(warp);
-  const answers=[];
-  for(let i=0;i<n;i++){
-    const b=boxes[i];
-    let vals=[];
-    if(b){
-      // The answer row is near the lower part of the question box. Derive all
-      // five centers from the detected box itself, so small perspective errors
-      // and camera angle no longer shift one question into another.
-      const y=b.y+b.h*0.70;
-      const left=b.x+b.w*0.13;
-      const right=b.x+b.w*0.87;
-      for(let j=0;j<letters.length;j++){
-        const x=left+(right-left)*(letters.length===1?0:j/(letters.length-1));
-        vals.push(sampleBubble(warp,x,y,15));
-      }
-    }else{
-      // Fallback to the calibrated template coordinates.
-      const row=Math.floor(i/4),col=i%4;
-      const x0=[90,365,640,915][col], y0=[330,465,600][row], step=48;
-      for(let j=0;j<letters.length;j++) vals.push(sampleBubble(warp,x0+j*step,y0,15));
-    }
-    const sorted=[...vals].sort((a,b)=>b-a), max=sorted[0]||0, second=sorted[1]||0;
-    let status='Em branco',ans='—';
-    if(max>.30){
-      const idx=vals.indexOf(max);
-      if(second>.72*max && second>.28) status='Dupla marcação / revisar';
-      else {ans=letters[idx];status='Marcada';}
-    }
-    answers.push({q:i+1,ans,status,vals,box:b});
-  }
-  return answers;
+ let gray=new cv.Mat();cv.cvtColor(warp,gray,cv.COLOR_RGBA2GRAY);
+ const ls=lettersAll.slice(0,+na.value||5),rowY=[330,465,600],colX=[115,385,655,925],step=48,out=[];
+ for(let i=0;i<Math.min(gabarito.length,10);i++){let row=Math.floor(i/4),col=i%4,vals=[];
+  for(let j=0;j<ls.length;j++)vals.push(readBubble(gray,colX[col]+j*step,rowY[row],17));
+  let sorted=[...vals].sort((a,b)=>b-a),max=sorted[0],second=sorted[1]||0,ans='—',status='Em branco';
+  if(max>.28){let idx=vals.indexOf(max);if(second>.72*max&&second>.28)status='Dupla marcação / revisar';else{ans=ls[idx];status='Marcada'}}
+  out.push({q:i+1,ans,status,vals});
+ }
+ gray.delete();return out;
 }
-function drawDiagnostic(warp,answers){
-  const out=new cv.Mat();warp.copyTo(out);
-  const letters='ABCDE'.slice(0,+document.getElementById('na').value||5);
-  answers.forEach(a=>{
-    const b=a.box;
-    if(!b)return;
-    const y=b.y+b.h*0.70, left=b.x+b.w*0.13, right=b.x+b.w*0.87;
-    for(let j=0;j<letters.length;j++){
-      const x=left+(right-left)*(letters.length===1?0:j/(letters.length-1));
-      const chosen=(a.ans===letters[j]);
-      const color=chosen?new cv.Scalar(30,180,70,255):new cv.Scalar(40,100,230,255);
-      cv.circle(out,new cv.Point(Math.round(x),Math.round(y)),15,color,2);
-    }
-  });
-  cv.imshow('diag',out);out.delete();
+function drawDiagnostic(warp,a){
+ let out=new cv.Mat();warp.copyTo(out);const ls=lettersAll.slice(0,+na.value||5),rowY=[330,465,600],colX=[115,385,655,925],step=48;
+ a.forEach((z,i)=>{let row=Math.floor(i/4),col=i%4;for(let j=0;j<ls.length;j++){let x=colX[col]+j*step,y=rowY[row];cv.circle(out,new cv.Point(x,y),17,new cv.Scalar(j===ls.indexOf(z.ans)?60:255,j===ls.indexOf(z.ans)?190:80,j===ls.indexOf(z.ans)?90:40,255),2)}});cv.imshow(diag,out);out.delete();
 }
-function renderResults(a,studentName="",studentClass=""){
- const el=document.getElementById('results');let ac=0,wr=0,bl=0,du=0;
- let rows=a.map(x=>{let cls='',sit=x.status;if(x.status.startsWith('Dupla')){du++;cls='double'}else if(x.status==='Em branco'){bl++;cls='blank'}else if(x.ans===gabarito[x.q-1]){ac++;cls='correct';sit='✓ Correta'}else{wr++;cls='wrong';sit='✗ Incorreta'}return `<tr><td>${String(x.q).padStart(2,'0')}</td><td class="${cls}">${x.ans}</td><td>${gabarito[x.q-1]||'—'}</td><td class="${cls}">${sit}</td><td>${x.vals.map(v=>(v*100).toFixed(0)+'%').join(' / ')}</td></tr>`}).join('');
- const total=a.length, valor=+document.getElementById('valor').value||1,nota=ac*valor;
- el.innerHTML=`<h2>Respostas identificadas</h2><div class="status info"><b>Estudante:</b> ${studentName||"Nome não identificado"} &nbsp; <b>Turma:</b> ${studentClass||"—"}</div><div class="grid"><div class="status ok">Acertos<br><b>${ac}</b></div><div class="status bad">Erros<br><b>${wr}</b></div><div class="status warn">Brancas<br><b>${bl}</b></div><div class="status warn">Revisar<br><b>${du}</b></div></div><div class="card" style="padding:14px"><div class="score">${nota.toFixed(1)}</div><div>Nota considerando ${total} questões e valor ${valor} por questão.</div></div><div style="overflow:auto"><table><thead><tr><th>Questão</th><th>Leitura</th><th>Gabarito</th><th>Situação</th><th>Índice das alternativas</th></tr></thead><tbody>${rows}</tbody></table></div>`;
- document.getElementById('summary').className='status ok';localStorage.setItem('newCorretorAluno',studentName||''); localStorage.setItem('newCorretorTurma',studentClass||'');
- document.getElementById('summary').innerHTML=`<b>Estudante:</b> ${studentName||'Nome não identificado'} &nbsp; <b>Turma:</b> ${studentClass||'—'}<br><b>Última correção:</b> ${ac} acertos, ${wr} erros, ${bl} em branco e ${du} para revisão. Nota: <b>${nota.toFixed(1)}</b>.`;
+function renderResults(a){
+ let ac=0,wr=0,bl=0,du=0,valor=+valorInput();
+ let rows=a.map(x=>{let cls='',sit=x.status;if(x.status.startsWith('Dupla')){du++;cls='double'}else if(x.status==='Em branco'){bl++;cls='blank'}else if(x.ans===gabarito[x.q-1]){ac++;cls='correct';sit='✓ Correta'}else{wr++;cls='wrong';sit='✗ Incorreta'}
+ return `<tr><td>${String(x.q).padStart(2,'0')}</td><td class="${cls}">${x.ans}</td><td>${gabarito[x.q-1]||'—'}</td><td class="${cls}">${sit}</td><td>${x.vals.map(v=>Math.round(v*100)+'%').join(' / ')}</td></tr>`}).join('');
+ let nota=ac*valor;
+ results.innerHTML=`<h2>Respostas identificadas</h2><div class="status info"><b>Estudante:</b> ${esc(aluno.value)||'Não informado'} &nbsp; <b>Turma:</b> ${esc(turma.value)||'—'}</div><div class="keyline">${a.map(x=>x.ans).join(' | ')}</div><div class="grid"><div class="status ok">Acertos<br><b>${ac}</b></div><div class="status bad">Erros<br><b>${wr}</b></div><div class="status warn">Brancas<br><b>${bl}</b></div><div class="status warn">Revisar<br><b>${du}</b></div></div><div class="card"><div class="score">${nota.toFixed(1)}</div>Nota — ${ac} acertos × ${valor.toFixed(2)}</div><div style="overflow:auto"><table><thead><tr><th>Questão</th><th>Leitura</th><th>Gabarito</th><th>Situação</th><th>Índice A/B/C/D/E</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+ summary.className='status ok';summary.innerHTML=`<b>${esc(aluno.value)||'Estudante'}</b> — ${esc(turma.value)||'Turma não informada'} — ${ac} acertos, ${wr} erros, ${bl} brancas, ${du} para revisar — Nota <b>${nota.toFixed(1)}</b>.`;
 }
+function valorInput(){return Math.max(.01,+valor.value||1)}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 
-async function waitOpenCV(timeout=12000){
-  const start=Date.now();
-  while(Date.now()-start<timeout){
-    if(window.cv && cv.Mat && cv.imread && cv.findContours) return true;
-    await new Promise(r=>setTimeout(r,150));
-  }
-  return false;
-}
 async function readPhoto(){
-  const file=document.getElementById('photo').files[0];
-  if(!file){setStatus('Selecione ou fotografe o cartão primeiro.','warn');return;}
-  const ready=await waitOpenCV();
-  if(!ready){setStatus('O leitor de imagem não carregou. Verifique a internet e toque em Ler cartão novamente.','bad');return;}
-  setStatus('Processando foto... localizando os 4 marcadores.','info');
-  try{
-    const im=await loadImage(file);
-    const maxSide=1800;
-    const scale=Math.min(1,maxSide/Math.max(im.naturalWidth,im.naturalHeight));
-    const c=document.createElement('canvas');
-    c.width=Math.max(1,Math.round(im.naturalWidth*scale));
-    c.height=Math.max(1,Math.round(im.naturalHeight*scale));
-    c.getContext('2d').drawImage(im,0,0,c.width,c.height);
-    const src=cv.imread(c);
-    const markers=findMarkers(src);
-    if(!markers){
-      src.delete();
-      setStatus('Não consegui localizar os 4 marcadores pretos. Fotografe o cartão inteiro, sem cortar os cantos.','bad');
-      return;
-    }
-    setStatus('✓ 4 marcadores encontrados. Corrigindo perspectiva e lendo as bolhas...','info');
-    const warp=warpToCard(src,markers);
-    const answers=detectAnswers(warp);
-    ultimaLeitura=answers;
-    drawDiagnostic(warp,answers);
-    const studentName=(document.getElementById('studentName')?.value||'').trim();
-    const studentClass=(document.getElementById('studentClass')?.value||'').trim();
-    renderResults(answers,studentName,studentClass);
-    setStatus('✓ Leitura concluída. Confira as respostas antes de usar.','ok');
-    src.delete();
-    warp.delete();
-  }catch(e){
-    console.error(e);
-    setStatus('Erro durante a leitura: '+(e?.message||e),'bad');
-  }
+ if(busy)return;busy=true;document.getElementById('btnRead').disabled=true;results.innerHTML='';ultimaLeitura=null;
+ if(!photo.files[0]){setStatus('Selecione ou fotografe o cartão primeiro.','warn');finish();return}
+ if(typeof cv==='undefined'||!cv.Mat){setStatus('O leitor de imagem ainda está carregando. Aguarde alguns segundos e tente novamente.','warn');finish();return}
+ setStatus('Lendo cartão... resultado anterior apagado.','info');
+ try{
+  let im=await loadImage(photo.files[0]),scale=Math.min(1,1800/Math.max(im.naturalWidth,im.naturalHeight)),c=document.createElement('canvas');
+  c.width=Math.round(im.naturalWidth*scale);c.height=Math.round(im.naturalHeight*scale);c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+  let src=cv.imread(c),m=findMarkers(src);
+  if(!m){src.delete();setStatus('Não encontrei os 4 marcadores. Fotografe o cartão inteiro, sem cortar os cantos.','bad');finish();return}
+  setStatus('✓ 4 marcadores encontrados. Corrigindo perspectiva...','info');
+  let warp=warpCard(src,m),a=detectAnswers(warp);ultimaLeitura=a;drawDiagnostic(warp,a);renderResults(a);
+  setStatus('✓ Leitura concluída. Confira a sequência antes de usar.','ok');src.delete();warp.delete();
+ }catch(e){console.error(e);setStatus('Erro na leitura: '+e.message,'bad')}finally{finish()}
 }
-
-function setStatus(t,c){const e=document.getElementById('readStatus');e.textContent=t;e.className='status '+c}
+function finish(){busy=false;document.getElementById('btnRead').disabled=false}
 loadKey();buildKey();show('inicio');
 </script>
-</body>
-</html>
+</body></html>
