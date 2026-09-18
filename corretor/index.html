@@ -97,13 +97,23 @@ flex-wrap:nowrap;
  .card-config label:first-child{grid-column:span 2}
  .a4-wrap{width:100%;overflow-x:auto;margin-left:0;margin-right:0}
 }
+
+.photo-picker{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}
+.picker-button{display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:12px 16px;border-radius:10px}
+.file-hidden{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.file-name{font-size:.95rem;color:#334155;overflow-wrap:anywhere}
+@media(max-width:600px){
+  .photo-picker{display:block}
+  .picker-button{width:100%;box-sizing:border-box}
+  .file-name{padding:8px 2px}
+}
 </style>
 </head>
 <body>
 <header><div class="brand">NEW <span>PROF. CORRETOR</span></div><div class="sub">Corretor Inteligente de Avaliações — OMR</div>
 <nav><button onclick="show('inicio')">🏠 Início</button><button onclick="show('avaliacao')">📝 Avaliação</button><button onclick="show('corrigir')">📷 Corrigir</button><button onclick="show('cartao')">📄 Cartão</button><button onclick="show('resultados')">📊 Resultados</button><button onclick="show('historico')">📚 Histórico</button></nav></header>
 <main>
-<section id="inicio" class="page"><div class="card"><h1>NEW PROF. CORRETOR INTELIGENTE</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V4.2:</b> Leitor OMR testado com fotografias reais. Histórico local e câmera integrados.<br><br><b>Base preservada:</b> o leitor calcula as posições das bolhas a partir dos próprios quadros das questões. A mesma leitura alimenta diagnóstico, sequência e tabela.</div><div class="actions"><button class="primary" onclick="show('avaliacao')">Configurar avaliação</button><button class="secondary" onclick="show('corrigir')">Corrigir cartão</button></div></div></section>
+<section id="inicio" class="page"><div class="card"><h1>NEW PROF. CORRETOR INTELIGENTE</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V4.4:</b> Leitor OMR testado com fotografias reais. Histórico local e câmera integrados.<br><br><b>Base preservada:</b> o leitor calcula as posições das bolhas a partir dos próprios quadros das questões. A mesma leitura alimenta diagnóstico, sequência e tabela.</div><div class="actions"><button class="primary" onclick="show('avaliacao')">Configurar avaliação</button><button class="secondary" onclick="show('corrigir')">Corrigir cartão</button></div></div></section>
 
 <section id="avaliacao" class="page hidden"><div class="card"><h2>📝 Avaliação</h2><div class="grid"><label>Título<input id="titulo" value="AVALIAÇÃO DE MATEMÁTICA"></label><label>Questões<input id="nq" type="number" min="1" max="50" value="10" onchange="buildKey()"></label><label>Alternativas<select id="na" onchange="buildKey()"><option value="3">A até C</option><option value="4">A até D</option><option value="5" selected>A até E</option></select></label><label>Valor por questão<input id="valor" type="number" step=".01" value="1"></label></div><h3 style="margin-top:18px">Gabarito</h3><div id="key" class="qgrid"></div><div class="actions"><button class="primary" onclick="saveKey()">Salvar gabarito</button></div><div id="keymsg" class="status info">Configure o gabarito.</div></div></section>
 
@@ -152,19 +162,17 @@ flex-wrap:nowrap;
 
 <section id="corrigir" class="page hidden"><div class="card">
 <h2>📷 Corrigir cartão</h2>
-<p>Informe o estudante e use a câmera do celular ou selecione uma foto do cartão inteiro.</p>
+<p>Informe o estudante e abra a <b>galeria, câmera ou arquivos</b> do aparelho para escolher a foto do cartão inteiro.</p>
 <div class="grid"><label>Nome do estudante<input id="aluno" placeholder="Nome completo"></label><label>Turma<input id="turma" placeholder="Ex.: 5º A"></label></div>
-<div class="actions">
-  <button type="button" class="primary" onclick="startCamera()">📷 Abrir câmera</button>
-  <button type="button" class="secondary" onclick="stopCamera()">⏹️ Fechar câmera</button>
+
+<div class="photo-picker">
+  <label for="photo" class="primary picker-button">📷 Abrir galeria / câmera / arquivos</label>
+  <input id="photo" type="file" accept="image/*" class="file-hidden">
+  <div id="photoName" class="file-name">Nenhuma foto selecionada</div>
 </div>
-<div id="cameraBox" class="hidden" style="margin-top:14px">
-  <video id="cameraVideo" autoplay playsinline style="width:100%;max-height:520px;border-radius:12px;background:#111"></video>
-  <div class="actions"><button type="button" class="primary" onclick="captureCamera()">📸 Fotografar cartão</button></div>
-  <canvas id="cameraCanvas" class="hidden"></canvas>
-</div>
-<div class="small">Dica: enquadre o cartão inteiro e mantenha os quatro marcadores pretos visíveis.</div>
-<input id="photo" type="file" accept="image/*" capture="environment" style="margin-top:12px">
+
+<div class="small">No celular, o seletor do próprio aparelho poderá oferecer <b>Câmera</b>, <b>Fotos/Galeria</b> e <b>Arquivos</b>, inclusive serviços de nuvem disponíveis no aparelho. No computador, será aberto o seletor de arquivos.</div>
+
 <div class="actions"><button id="btnRead" type="button" class="primary" onclick="readPhoto()">🔎 Ler cartão</button><button type="button" class="secondary" onclick="resetRead()">Limpar</button></div>
 <div id="readStatus" class="status info">Aguardando fotografia.</div><canvas id="diag" class="preview"></canvas><div id="results"></div>
 </div></section>
@@ -189,7 +197,13 @@ flex-wrap:nowrap;
 </main>
 
 <script>
-let gabarito=[],ultimaLeitura=null,busy=false,cameraStream=null;
+let gabarito=[],ultimaLeitura=null,busy=false;
+photo.addEventListener('change',()=>{
+  const f=photo.files?.[0];
+  photoName.textContent=f?`✓ ${f.name}`:'Nenhuma foto selecionada';
+  if(f) setStatus('Foto selecionada. Clique em “Ler cartão”.','info');
+});
+
 const L='ABCDE';
 
 function show(id){document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');if(id==='avaliacao')buildKey();if(id==='cartao')renderCard();if(id==='historico')renderHistory()}
@@ -271,37 +285,6 @@ function renderCard(){
 }
 
 
-async function startCamera(){
-  try{
-    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-      setStatus('A câmera não está disponível neste navegador. Use Selecionar foto.','warn'); return;
-    }
-    stopCamera();
-    cameraStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}},audio:false});
-    cameraVideo.srcObject=cameraStream;
-    cameraBox.classList.remove('hidden');
-    setStatus('✓ Câmera aberta. Enquadre o cartão inteiro com os quatro marcadores visíveis.','info');
-  }catch(e){
-    setStatus('Não foi possível abrir a câmera. Verifique a permissão do navegador.','warn');
-  }
-}
-function stopCamera(){
-  if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null}
-  if(cameraVideo)cameraVideo.srcObject=null;
-  if(cameraBox)cameraBox.classList.add('hidden');
-}
-function captureCamera(){
-  if(!cameraStream || !cameraVideo.videoWidth){setStatus('A câmera ainda não está pronta.','warn');return}
-  const c=cameraCanvas;c.width=cameraVideo.videoWidth;c.height=cameraVideo.videoHeight;
-  c.getContext('2d').drawImage(cameraVideo,0,0,c.width,c.height);
-  c.toBlob(blob=>{
-    if(!blob)return;
-    const file=new File([blob],'cartao-camera.jpg',{type:'image/jpeg'});
-    const dt=new DataTransfer();dt.items.add(file);photo.files=dt.files;
-    stopCamera();
-    setStatus('✓ Foto capturada. Clique em "Ler cartão".','ok');
-  },'image/jpeg',.94);
-}
 function getHistory(){
   try{const x=JSON.parse(localStorage.getItem('newCorretorHistorico')||'[]');return Array.isArray(x)?x:[]}
   catch(e){return []}
@@ -339,7 +322,7 @@ function exportHistoryCSV(){
 }
 
 function setStatus(t,c){readStatus.textContent=t;readStatus.className='status '+c}
-function resetRead(){stopCamera();photo.value='';results.innerHTML='';diag.getContext('2d').clearRect(0,0,diag.width,diag.height);ultimaLeitura=null;summary.className='status info';summary.textContent='Nenhuma correção realizada nesta sessão.';setStatus('Aguardando fotografia.','info')}
+function resetRead(){photo.value='';photoName.textContent='Nenhuma foto selecionada';results.innerHTML='';diag.getContext('2d').clearRect(0,0,diag.width,diag.height);ultimaLeitura=null;summary.className='status info';summary.textContent='Nenhuma correção realizada nesta sessão.';setStatus('Aguardando fotografia.','info')}
 
 function loadImage(f){return new Promise((ok,no)=>{let im=new Image();im.onload=()=>ok(im);im.onerror=no;im.src=URL.createObjectURL(f)})}
 function orderPts(p){let s=p.map(a=>a.x+a.y),d=p.map(a=>a.x-a.y);return[p[s.indexOf(Math.min(...s))],p[d.indexOf(Math.max(...d))],p[s.indexOf(Math.max(...s))],p[d.indexOf(Math.min(...d))]]}
@@ -490,7 +473,7 @@ function localInk(gray,x,y,r){
 }
 
 
-// ===== OMR V4.2 — leitor calibrado para o cartão NEW CORRETOR de 10 questões =====
+// ===== OMR V4.4 — leitor calibrado para o cartão NEW CORRETOR de 10 questões =====
 // Esta geometria é a mesma do protótipo sem Python que passou nos testes com fotos reais.
 const OMR10_LETTERS=['A','B','C','D','E'];
 const OMR10_X=[547,584,621,658,694];
