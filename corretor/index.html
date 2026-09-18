@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NEW CORRETOR V5.0 OMR</title>
+<title>NEW CORRETOR V5.1 OMR</title>
 <script async src="https://docs.opencv.org/4.x/opencv.js"></script>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f2f5fa;color:#17243a}
@@ -100,10 +100,10 @@ flex-wrap:nowrap;
 </style>
 </head>
 <body>
-<header><div class="brand">NEW <span>CORRETOR</span></div><div class="sub">Correção inteligente de avaliações — leitor OMR V5.0 · OpenCV</div>
+<header><div class="brand">NEW <span>CORRETOR</span></div><div class="sub">Correção inteligente de avaliações — leitor OMR V5.1 · OpenCV</div>
 <nav><button onclick="show('inicio')">🏠 Início</button><button onclick="show('avaliacao')">📝 Avaliação</button><button onclick="show('corrigir')">📷 Corrigir</button><button onclick="show('cartao')">📄 Cartão</button><button onclick="show('resultados')">📊 Resultados</button></nav></header>
 <main>
-<section id="inicio" class="page"><div class="card"><h1>NEW CORRETOR</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V5.0:</b> novo núcleo OMR com OpenCV, normalização da fotografia, correção de perspectiva e leitura por geometria do cartão.</div><div class="actions"><button class="primary" onclick="show('avaliacao')">Configurar avaliação</button><button class="secondary" onclick="show('corrigir')">Corrigir cartão</button></div></div></section>
+<section id="inicio" class="page"><div class="card"><h1>NEW CORRETOR</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V5.1:</b> novo núcleo OMR com OpenCV, leitura de fotos da Galeria ou da câmera, normalização da fotografia e correção de perspectiva.</div><div class="actions"><button class="primary" onclick="show('avaliacao')">Configurar avaliação</button><button class="secondary" onclick="show('corrigir')">Corrigir cartão</button></div></div></section>
 
 <section id="avaliacao" class="page hidden"><div class="card"><h2>📝 Avaliação</h2><div class="grid"><label>Título<input id="titulo" value="AVALIAÇÃO DE MATEMÁTICA"></label><label>Questões<input id="nq" type="number" min="1" max="50" value="10" onchange="buildKey()"></label><label>Alternativas<select id="na" onchange="buildKey()"><option value="3">A até C</option><option value="4">A até D</option><option value="5" selected>A até E</option></select></label><label>Valor por questão<input id="valor" type="number" step=".01" value="1"></label></div><h3 style="margin-top:18px">Gabarito</h3><div id="key" class="qgrid"></div><div class="actions"><button class="primary" onclick="saveKey()">Salvar gabarito</button></div><div id="keymsg" class="status info">Configure o gabarito.</div></div></section>
 
@@ -150,7 +150,13 @@ flex-wrap:nowrap;
 </div>
 </section>
 
-<section id="corrigir" class="page hidden"><div class="card"><h2>📷 Corrigir cartão</h2><p>Preencha os dados do estudante e fotografe o cartão inteiro.</p><div class="grid"><label>Nome do estudante<input id="aluno" placeholder="Nome completo"></label><label>Turma<input id="turma" placeholder="Ex.: 5º A"></label></div><div class="small">O nome escrito no cartão não é usado como OCR nesta versão; informe o nome aqui para garantir a identificação.</div><input id="photo" type="file" accept="image/*" capture="environment" style="margin-top:12px"><div class="actions"><button id="btnRead" class="primary" onclick="readPhoto()">🔎 Ler cartão</button><button class="secondary" onclick="resetRead()">Limpar</button></div><div id="readStatus" class="status info">Aguardando fotografia.</div><canvas id="diag" class="preview"></canvas><div id="results"></div></div></section>
+<section id="corrigir" class="page hidden"><div class="card"><h2>📷 Corrigir cartão</h2><p>Preencha os dados do estudante e fotografe o cartão inteiro.</p><div class="grid"><label>Nome do estudante<input id="aluno" placeholder="Nome completo"></label><label>Turma<input id="turma" placeholder="Ex.: 5º A"></label></div><div class="small">O nome escrito no cartão não é usado como OCR nesta versão; informe o nome aqui para garantir a identificação.</div><div class="photo-options" style="margin-top:12px">
+  <label style="display:block">
+    <b>📷 Foto do cartão</b>
+    <input id="photo" type="file" accept="image/*" style="margin-top:8px">
+  </label>
+  <div class="small" style="margin-top:7px">No celular, ao tocar no campo, você poderá escolher uma foto da <b>Galeria</b> ou tirar uma nova foto pela câmera.</div>
+</div><div class="actions"><button id="btnRead" class="primary" onclick="readPhoto()">🔎 Ler cartão</button><button class="secondary" onclick="resetRead()">Limpar</button></div><div id="readStatus" class="status info">Aguardando fotografia.</div><canvas id="diag" class="preview"></canvas><div id="results"></div></div></section>
 
 <section id="resultados" class="page hidden"><div class="card"><h2>📊 Resultado</h2><div id="summary" class="status info">Nenhuma correção realizada nesta sessão.</div></div></section>
 </main>
