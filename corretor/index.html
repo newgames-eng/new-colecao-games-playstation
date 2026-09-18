@@ -103,7 +103,7 @@ function detectAnswers(warp){
      else{ans=ls[idx];status='Marcada'}
    }
    out.push({q:i+1,ans,status,vals,pts});
-   raw.push(`Q${String(i+1).padStart(2,'0')}  ${ls.map((x,j)=>x+':'+Math.round(vals[j]*100)+'%').join('  ')}  → ${ans}`);
+   raw.push(`Q${String(i+1).padStart(2,'0')}  ${[...ls].map((x,j)=>x+':'+Math.round(vals[j]*100)+'%').join('  ')}  → ${ans}`);
  }
  gray.delete();return {answers:out,raw:raw.join('\\n')};
 }
