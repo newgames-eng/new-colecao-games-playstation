@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NEW CORRETOR V3.5</title>
+<title>NEW CORRETOR V3.6</title>
 <script async src="https://docs.opencv.org/4.x/opencv.js"></script>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f2f5fa;color:#17243a}
@@ -23,37 +23,37 @@ table{width:100%;border-collapse:collapse;margin-top:13px;font-size:14px}th,td{b
 .raw{font:12px/1.5 monospace;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px;overflow:auto;white-space:pre}
 @media(max-width:600px){.brand{font-size:28px}.qgrid{grid-template-columns:repeat(2,1fr)}nav button{font-size:15px}}
 
-/* ===== CARTÃO-RESPOSTA A4 V3.5 ===== */
+/* ===== CARTÃO-RESPOSTA A4 V3.6 ===== */
 .card-config{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}
 .card-config label{font-weight:800;font-size:13px}
 .card-config label:first-child{grid-column:span 2}
 .card-config input,.card-config select{width:100%;margin-top:5px;padding:10px;border:1px solid #cbd5e1;border-radius:8px}
-.a4-wrap{width:210mm;margin:18px auto;overflow:auto}
-.a4-sheet{width:210mm;height:297mm;min-width:210mm;min-height:297mm;background:#fff;color:#111;position:relative;padding:13mm 12mm 12mm;border:1px solid #bbb;box-shadow:0 3px 18px #0002;font-family:Arial,Helvetica,sans-serif}
+.a4-wrap{width:210mm;margin:18px auto;overflow:visible}
+.a4-sheet{width:210mm;height:297mm;min-width:210mm;min-height:297mm;max-height:297mm;background:#fff;color:#111;position:relative;padding:13mm 12mm 12mm;border:1px solid #bbb;box-shadow:0 3px 18px #0002;font-family:Arial,Helvetica,sans-serif}
 .omr-marker{position:absolute;width:8mm;height:8mm;background:#000}
 .omr-tl{left:7mm;top:7mm}.omr-tr{right:7mm;top:7mm}.omr-bl{left:7mm;bottom:7mm}.omr-br{right:7mm;bottom:7mm}
-.card-head{border-bottom:2px solid #173f8f;padding:0 2mm 4mm;margin:0 2mm 5mm;display:flex;align-items:end;justify-content:space-between;gap:8mm}
-.card-head .main-title{font-size:24pt;font-weight:900;letter-spacing:.5px;color:#102a56}
+.card-head{border-bottom:2px solid #173f8f;padding:0 2mm 3mm;margin:0 2mm 3.5mm;display:flex;align-items:end;justify-content:space-between;gap:8mm}
+.card-head .main-title{font-size:21pt;font-weight:900;letter-spacing:.5px;color:#102a56}
 .card-head .brand{font-size:10pt;font-weight:800;color:#173f8f;text-align:right}
 .card-head .brand strong{display:block;font-size:13pt}
-.card-subtitle{text-align:center;font-size:11pt;font-weight:800;letter-spacing:1.5px;margin:-1mm 0 5mm;color:#26364d}
+.card-subtitle{text-align:center;font-size:10pt;font-weight:800;letter-spacing:1.5px;margin:-1mm 0 5mm;color:#26364d}
 .ident-box{border:1.5px solid #111;margin:0 2mm 4mm}
 .ident-title{background:#173f8f;color:#fff;font-size:10pt;font-weight:900;padding:2.5mm 3mm;letter-spacing:.5px}
 .ident-grid{display:grid;grid-template-columns:1.8fr 1fr 1.2fr;gap:0}
-.ident-cell{padding:2.7mm 3mm;border-right:1px solid #aaa;border-top:1px solid #aaa;min-height:15mm}
+.ident-cell{padding:2mm 2.5mm;border-right:1px solid #aaa;border-top:1px solid #aaa;min-height:15mm}
 .ident-cell:nth-child(3n){border-right:0}
 .ident-label{font-size:7.5pt;font-weight:800;text-transform:uppercase;color:#4b5563;margin-bottom:2mm}
 .ident-value{font-size:10.5pt;font-weight:700;min-height:5mm;white-space:nowrap;overflow:hidden}
 .reg-code{font-family:"Courier New",monospace;letter-spacing:1.3px;font-size:10pt}
-.instructions{font-size:7.5pt;margin:0 2mm 4mm;border:1px solid #bbb;padding:2.5mm 3mm;line-height:1.35}
+.instructions{font-size:7pt;margin:0 2mm 3mm;border:1px solid #bbb;padding:2.5mm 3mm;line-height:1.35}
 .instructions b{color:#173f8f}
-.answer-title{text-align:center;font-size:10pt;font-weight:900;margin:4mm 2mm 2mm;letter-spacing:.5px}
-.answer-help{text-align:center;font-size:7pt;margin:0 2mm 4mm;color:#444}
-.omr-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:3mm 3mm;margin:0 2mm}
-.omr-q{border:1px solid #111;height:20mm;padding:2.5mm 2mm 2mm;text-align:center}
-.omr-qnum{font-size:7.5pt;font-weight:900;margin-bottom:2.2mm}
-.omr-options{display:flex;justify-content:center;gap:3.2mm}
-.omr-opt{width:6.3mm;height:6.3mm;border:1.1px solid #111;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:7.5pt;font-weight:700}
+.answer-title{text-align:center;font-size:9pt;font-weight:900;margin:4mm 2mm 2mm;letter-spacing:.5px}
+.answer-help{text-align:center;font-size:6.5pt;margin:0 2mm 3mm;color:#444}
+.omr-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:2.5mm 2.5mm;margin:0 2mm;align-content:start}
+.omr-q{border:1px solid #111;height:18mm;padding:2mm 1.5mm;text-align:center;break-inside:avoid}
+.omr-qnum{font-size:7pt;font-weight:900;margin-bottom:1.7mm}
+.omr-options{display:flex;justify-content:center;gap:2.5mm}
+.omr-opt{width:5.8mm;height:5.8mm;border:1.1px solid #111;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:7.5pt;font-weight:700}
 .card-footer{position:absolute;left:12mm;right:12mm;bottom:17mm;text-align:center;border-top:1px solid #aaa;padding-top:3mm;font-size:7pt;color:#555}
 .card-footer strong{font-size:8pt;color:#173f8f}
 @media print{
@@ -68,15 +68,15 @@ table{width:100%;border-collapse:collapse;margin-top:13px;font-size:14px}th,td{b
 @media(max-width:700px){
  .card-config{grid-template-columns:1fr 1fr}
  .card-config label:first-child{grid-column:span 2}
- .a4-wrap{margin-left:-12px;margin-right:-12px}
+ .a4-wrap{width:100%;overflow-x:auto;margin-left:0;margin-right:0}
 }
 </style>
 </head>
 <body>
-<header><div class="brand">NEW <span>CORRETOR</span></div><div class="sub">Correção inteligente de avaliações — leitor OMR V3.5</div>
+<header><div class="brand">NEW <span>CORRETOR</span></div><div class="sub">Correção inteligente de avaliações — leitor OMR V3.6</div>
 <nav><button onclick="show('inicio')">🏠 Início</button><button onclick="show('avaliacao')">📝 Avaliação</button><button onclick="show('corrigir')">📷 Corrigir</button><button onclick="show('cartao')">📄 Cartão</button><button onclick="show('resultados')">📊 Resultados</button></nav></header>
 <main>
-<section id="inicio" class="page"><div class="card"><h1>NEW CORRETOR</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V3.5:</b> o leitor calcula as posições das bolhas a partir dos próprios quadros das questões. A mesma leitura alimenta diagnóstico, sequência e tabela.</div><div class="actions"><button class="primary" onclick="show('avaliacao')">Configurar avaliação</button><button class="secondary" onclick="show('corrigir')">Corrigir cartão</button></div></div></section>
+<section id="inicio" class="page"><div class="card"><h1>NEW CORRETOR</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V3.6:</b> o leitor calcula as posições das bolhas a partir dos próprios quadros das questões. A mesma leitura alimenta diagnóstico, sequência e tabela.</div><div class="actions"><button class="primary" onclick="show('avaliacao')">Configurar avaliação</button><button class="secondary" onclick="show('corrigir')">Corrigir cartão</button></div></div></section>
 
 <section id="avaliacao" class="page hidden"><div class="card"><h2>📝 Avaliação</h2><div class="grid"><label>Título<input id="titulo" value="AVALIAÇÃO DE MATEMÁTICA"></label><label>Questões<input id="nq" type="number" min="1" max="50" value="10" onchange="buildKey()"></label><label>Alternativas<select id="na" onchange="buildKey()"><option value="5">A até E</option><option value="4">A até D</option></select></label><label>Valor por questão<input id="valor" type="number" step=".01" value="1"></label></div><h3 style="margin-top:18px">Gabarito</h3><div id="key" class="qgrid"></div><div class="actions"><button class="primary" onclick="saveKey()">Salvar gabarito</button></div><div id="keymsg" class="status info">Configure o gabarito.</div></div></section>
 
@@ -143,7 +143,8 @@ function fmtDate(v){
  const p=v.split('-'); return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:v;
 }
 function renderCard(){
- if(!cardQs && !document.getElementById('printCard'))return;
+ const printCardEl=document.getElementById('printCard');
+ if(!printCardEl)return;
  const n=Math.min(50,Math.max(1,+nq.value||10));
  const ls=L.slice(0,+na.value||5);
  const tituloCard=(document.getElementById('cardTitulo')?.value||titulo?.value||'AVALIAÇÃO').toUpperCase();
