@@ -28,7 +28,7 @@ table{width:100%;border-collapse:collapse;margin-top:13px;font-size:14px}th,td{b
 <header><div class="brand">NEW <span>CORRETOR</span></div><div class="sub">Correção inteligente de avaliações — leitor OMR V3.1</div>
 <nav><button onclick="show('inicio')">🏠 Início</button><button onclick="show('avaliacao')">📝 Avaliação</button><button onclick="show('corrigir')">📷 Corrigir</button><button onclick="show('cartao')">📄 Cartão</button><button onclick="show('resultados')">📊 Resultados</button></nav></header>
 <main>
-<section id="inicio" class="page"><div class="card"><h1>NEW CORRETOR</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V3.1:</b> o leitor calcula as posições das bolhas a partir dos próprios quadros das questões. A mesma leitura alimenta diagnóstico, sequência e tabela.</div><div class="actions"><button class="primary" onclick="show('avaliacao')">Configurar avaliação</button><button class="secondary" onclick="show('corrigir')">Corrigir cartão</button></div></div></section>
+<section id="inicio" class="page"><div class="card"><h1>NEW CORRETOR</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V3.3:</b> o leitor calcula as posições das bolhas a partir dos próprios quadros das questões. A mesma leitura alimenta diagnóstico, sequência e tabela.</div><div class="actions"><button class="primary" onclick="show('avaliacao')">Configurar avaliação</button><button class="secondary" onclick="show('corrigir')">Corrigir cartão</button></div></div></section>
 
 <section id="avaliacao" class="page hidden"><div class="card"><h2>📝 Avaliação</h2><div class="grid"><label>Título<input id="titulo" value="AVALIAÇÃO DE MATEMÁTICA"></label><label>Questões<input id="nq" type="number" min="1" max="50" value="10" onchange="buildKey()"></label><label>Alternativas<select id="na" onchange="buildKey()"><option value="5">A até E</option><option value="4">A até D</option></select></label><label>Valor por questão<input id="valor" type="number" step=".01" value="1"></label></div><h3 style="margin-top:18px">Gabarito</h3><div id="key" class="qgrid"></div><div class="actions"><button class="primary" onclick="saveKey()">Salvar gabarito</button></div><div id="keymsg" class="status info">Configure o gabarito.</div></div></section>
 
@@ -74,13 +74,27 @@ function findQuestionBoxes(warp){
 }
 
 function localInk(gray,x,y,r){
- let best=0,bx=x,by=y;
- for(let dy=-6;dy<=6;dy++)for(let dx=-6;dx<=6;dx++){
-  let cx=Math.round(x+dx),cy=Math.round(y+dy),rr=Math.max(5,Math.round(r*.45)),sum=0,n=0;
-  for(let yy=cy-rr;yy<=cy+rr;yy++)for(let xx=cx-rr;xx<=cx+rr;xx++)if(xx>=0&&yy>=0&&xx<gray.cols&&yy<gray.rows&&(xx-cx)**2+(yy-cy)**2<=rr*rr){n++;if(gray.ucharPtr(yy,xx)[0]<135)sum++}
-  let score=sum/Math.max(1,n);if(score>best){best=score;bx=cx;by=cy}
+ // V3.3: lê o centro da bolha, evitando bordas, linhas e textos próximos.
+ // A busca de deslocamento é pequena para não "pular" para a bolha vizinha.
+ let best=-1,bx=Math.round(x),by=Math.round(y);
+ const rr=Math.max(5,Math.min(8,Math.round(r*.38)));
+ for(let dy=-3;dy<=3;dy++)for(let dx=-3;dx<=3;dx++){
+  const cx=Math.round(x+dx),cy=Math.round(y+dy);
+  let dark=0,ink=0,n=0;
+  for(let yy=cy-rr;yy<=cy+rr;yy++)for(let xx=cx-rr;xx<=cx+rr;xx++){
+   if(xx<0||yy<0||xx>=gray.cols||yy>=gray.rows)continue;
+   const dd=(xx-cx)**2+(yy-cy)**2;
+   if(dd<=rr*rr){
+     const g=gray.ucharPtr(yy,xx)[0]; n++;
+     if(g<90) ink++;
+     dark += (255-g)/255;
+   }
+  }
+  // Combina tinta realmente escura com escuridão média do centro.
+  const score=(ink/Math.max(1,n))*0.75+(dark/Math.max(1,n))*0.25;
+  if(score>best){best=score;bx=cx;by=cy}
  }
- return {score:best,x:bx,y:by}
+ return {score:Math.max(0,best),x:bx,y:by}
 }
 
 function detectAnswers(warp){
@@ -97,9 +111,9 @@ function detectAnswers(warp){
    for(let j=0;j<ls.length;j++){let p=localInk(gray,start+(span*j/(ls.length-1)),y,18);vals.push(p.score);pts.push({x:p.x,y:p.y})}
    let sorted=[...vals].sort((a,b)=>b-a),max=sorted[0]||0,second=sorted[1]||0,ans='—',status='Em branco';
    // Filled bubbles are substantially darker than the printed interior of an unfilled bubble.
-   if(max>=.30){
+   if(max>=.28){
      let idx=vals.indexOf(max);
-     if(second>=.80*max && second>=.30)status='Dupla marcação / revisar';
+     if(second>=.78*max && second>=.28)status='Dupla marcação / revisar';
      else{ans=ls[idx];status='Marcada'}
    }
    out.push({q:i+1,ans,status,vals,pts});
@@ -108,7 +122,7 @@ function detectAnswers(warp){
  gray.delete();return {answers:out,raw:raw.join('\\n')};
 }
 function drawDiagnostic(warp,a){
- let out=new cv.Mat();warp.copyTo(out);a.forEach(z=>z.pts.forEach((p,j)=>{let chosen=z.ans===L[j];cv.circle(out,new cv.Point(p.x,p.y),18,chosen?new cv.Scalar(60,190,90,255):new cv.Scalar(60,100,235,255),2)}));cv.imshow(diag,out);out.delete();
+ let out=new cv.Mat();warp.copyTo(out);a.forEach(z=>z.pts.forEach((p,j)=>{let chosen=z.ans===L[j];cv.circle(out,new cv.Point(p.x,p.y),12,chosen?new cv.Scalar(60,190,90,255):new cv.Scalar(60,100,235,255),2)}));cv.imshow(diag,out);out.delete();
 }
 function renderResults(a,raw){
  let ac=0,wr=0,bl=0,du=0,v=Math.max(.01,+valor.value||1);
