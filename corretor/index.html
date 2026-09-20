@@ -107,6 +107,7 @@ flex-wrap:nowrap;
   .picker-button{width:100%;box-sizing:border-box}
   .file-name{padding:8px 2px}
 }
+.smallbtn{padding:6px 9px;font-size:12px}
 </style>
 </head>
 <body>
@@ -301,10 +302,35 @@ function renderHistory(){
   const av=(document.getElementById('histAvaliacao')?.value||'').toLowerCase().trim();
   const h=getHistory().filter(x=>(!busca||`${x.aluno} ${x.turma}`.toLowerCase().includes(busca))&&(!av||(x.avaliacao||'').toLowerCase().includes(av)));
   if(!h.length){box.innerHTML='<div class="status info">Nenhuma correção encontrada.</div>';return}
-  box.innerHTML='<div style="overflow:auto"><table><thead><tr><th>Data</th><th>Estudante</th><th>Turma</th><th>Avaliação</th><th>Acertos</th><th>Nota</th></tr></thead><tbody>'+
-    h.map(x=>`<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos}/${x.total}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td></tr>`).join('')+
+  box.innerHTML='<div style="overflow:auto"><table><thead><tr><th>Data</th><th>Estudante</th><th>Turma</th><th>Avaliação</th><th>Acertos</th><th>Nota</th><th>Relatório</th></tr></thead><tbody>'+
+    h.map(x=>`<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos}/${x.total}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td><td><button type="button" class="secondary smallbtn" onclick="gerarRelatorioPDF(${getHistory().indexOf(x)})">📄 PDF</button></td></tr>`).join('')+
     '</tbody></table></div>';
 }
+function gerarRelatorioPDF(index){
+  const h=getHistory(), x=h[index];
+  if(!x){alert('Correção não encontrada no histórico.');return}
+  const respostas=Array.isArray(x.respostas)?x.respostas:[];
+  const linhas=respostas.map((r,i)=>{
+    const g=(x.gabarito&&x.gabarito[i])?x.gabarito[i]:'—';
+    const ok=(r&&g&&r===g);
+    return `<tr><td>${String(i+1).padStart(2,'0')}</td><td>${esc(r||'—')}</td><td>${esc(g)}</td><td class="${ok?'ok':'bad'}">${ok?'Correta':'Incorreta'}</td></tr>`;
+  }).join('');
+  const w=window.open('','_blank');
+  if(!w){alert('O navegador bloqueou o relatório. Permita pop-ups para o NEW PROF. CORRETOR.');return}
+  w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Relatório</title>
+  <style>@page{size:A4;margin:14mm}body{font-family:Arial,sans-serif;color:#172033;margin:0}.top{border-bottom:3px solid #1857c7;padding-bottom:10px;margin-bottom:18px}h1{font-size:22px;margin:0 0 4px;color:#1857c7}.sub{font-size:12px;color:#555}.info{display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px;margin:14px 0}.box{border:1px solid #d5dbe6;border-radius:8px;padding:10px}.label{font-size:10px;color:#687386;text-transform:uppercase}.value{font-weight:700;margin-top:3px}.score{font-size:30px;font-weight:800;color:#1857c7;margin:12px 0}.stats{display:flex;gap:10px;margin:10px 0 18px}.stat{padding:10px 14px;border-radius:8px;background:#f1f5fb}table{width:100%;border-collapse:collapse;margin-top:12px;font-size:12px}th,td{border:1px solid #d5dbe6;padding:7px;text-align:center}th{background:#eef3f9}.ok{color:#087f3d;font-weight:700}.bad{color:#c62828;font-weight:700}.foot{margin-top:20px;border-top:1px solid #ddd;padding-top:8px;font-size:10px;color:#687386}@media print{.no-print{display:none}}</style>
+  </head><body><div class="top"><h1>NEW PROF. CORRETOR INTELIGENTE DE AVALIAÇÕES</h1><div class="sub">Relatório de correção de avaliação</div></div>
+  <div class="info"><div class="box"><div class="label">Estudante</div><div class="value">${esc(x.aluno||'Não informado')}</div></div><div class="box"><div class="label">Turma</div><div class="value">${esc(x.turma||'—')}</div></div><div class="box"><div class="label">Data</div><div class="value">${esc(x.data||'')}</div></div></div>
+  <div class="box"><div class="label">Avaliação</div><div class="value">${esc(x.avaliacao||'—')}</div></div>
+  <div class="score">Nota: ${Number(x.nota||0).toFixed(1)}</div>
+  <div class="stats"><div class="stat"><b>Acertos:</b> ${x.acertos||0}</div><div class="stat"><b>Erros:</b> ${x.erros||0}</div><div class="stat"><b>Brancas:</b> ${x.brancas||0}</div><div class="stat"><b>Revisar:</b> ${x.revisar||0}</div></div>
+  <h3>Desempenho por questão</h3><table><thead><tr><th>Questão</th><th>Resposta</th><th>Gabarito</th><th>Situação</th></tr></thead><tbody>${linhas}</tbody></table>
+  <div class="foot">Relatório gerado pelo NEW PROF. CORRETOR INTELIGENTE DE AVALIAÇÕES.</div>
+  <div class="no-print" style="margin-top:18px"><button onclick="window.print()">🖨️ Imprimir / Salvar como PDF</button></div>
+  <script>setTimeout(()=>window.print(),350)<\/script></body></html>`);
+  w.document.close();
+}
+
 function clearHistory(){
   if(confirm('Apagar todo o histórico salvo neste aparelho?')){
     localStorage.removeItem('newCorretorHistorico');renderHistory();
