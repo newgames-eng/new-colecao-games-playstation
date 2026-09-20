@@ -746,12 +746,14 @@ show('inicio');
       if(!data.ok || !data.found){
         loginMsg.textContent='E-mail não encontrado. Primeiro solicite acesso.';loginMsg.style.background='#fee2e2';loginMsg.style.color='#991b1b';return;
       }
-      const s=data.status;
+      const s=(data.request&&data.request.status)||data.status||'';
       if(s!=='LIBERADO'){
         const mensagens={PENDENTE:'Acesso PENDENTE. Aguarde a liberação do administrador.',BLOQUEADO:'Acesso BLOQUEADO. Procure o administrador.',EXPIRADO:'Acesso EXPIRADO. Procure o administrador.',RECUSADO:'Solicitação RECUSADA. Procure o administrador.'};
-        loginMsg.textContent=mensagens[s]||('Acesso '+s+'.');
+        loginMsg.textContent=mensagens[s]||'Não foi possível identificar o status do seu acesso.';
         loginMsg.style.background='#fff4d6';loginMsg.style.color='#8a5a00';return;
       }
+      loginMsg.textContent='✓ Acesso liberado. Preparando autenticação segura...';
+      loginMsg.style.background='#dcfce7';loginMsg.style.color='#166534';
       localStorage.setItem(SESSION,JSON.stringify({email,at:iso(now())}));
       document.body.classList.remove('access-locked');
       document.getElementById('accessGate').style.display='none';
