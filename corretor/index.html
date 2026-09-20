@@ -142,9 +142,13 @@ flex-wrap:nowrap;
   .access-tabs button{width:100%}
 }
 </style>
+<style id="access-lock-css">
+body.access-locked>header,
+body.access-locked>main{display:none!important}
+</style>
 
 </head>
-<body>
+<body class="access-locked">
 
 <div id="accessGate">
   <div class="access-box">
@@ -749,6 +753,7 @@ show('inicio');
         loginMsg.style.background='#fff4d6';loginMsg.style.color='#8a5a00';return;
       }
       localStorage.setItem(SESSION,JSON.stringify({email,at:iso(now())}));
+      document.body.classList.remove('access-locked');
       document.getElementById('accessGate').style.display='none';
     }catch(e){
       loginMsg.textContent='Não foi possível consultar o servidor. Verifique sua internet e tente novamente.';
@@ -952,6 +957,7 @@ show('inicio');
   function escA(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 
   function initAccessScreen(){
+    document.body.classList.add('access-locked');
     accessTab('entrar');
     document.getElementById('accessGate').style.display='flex';
   }
