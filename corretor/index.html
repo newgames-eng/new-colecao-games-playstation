@@ -39,9 +39,14 @@ table{width:100%;border-collapse:collapse;margin-top:13px;font-size:14px}th,td{b
 .card-subtitle{text-align:center;font-size:10pt;font-weight:800;letter-spacing:1.5px;margin:-1mm 0 5mm;color:#26364d}
 .ident-box{border:1.5px solid #111;margin:0 2mm 4mm}
 .ident-title{background:#173f8f;color:#fff;font-size:10pt;font-weight:900;padding:2.5mm 3mm;letter-spacing:.5px}
-.ident-grid{display:grid;grid-template-columns:1.8fr .8fr 1.05fr;gap:0;min-width:0}
-.ident-cell{padding:2mm 2.5mm;border-right:1px solid #aaa;border-top:1px solid #aaa;min-height:14mm;min-width:0;overflow:hidden}
-.ident-cell:nth-child(3n){border-right:0}
+.ident-grid{display:block;min-width:0}
+.ident-row{display:grid;gap:0}
+.ident-row-top{grid-template-columns:2.2fr 1fr}
+.ident-row-student{grid-template-columns:1.75fr .72fr .72fr}
+.ident-cell{padding:2.2mm 2.7mm;border-right:1px solid #aaa;border-top:1px solid #aaa;min-height:15mm;min-width:0;overflow:hidden;background:#fff}
+.ident-row .ident-cell:last-child{border-right:0}
+.ident-label{font-size:7.5pt;font-weight:900;text-transform:uppercase;color:#173f8f;margin-bottom:2mm;letter-spacing:.2px}
+.ident-value{font-size:10.5pt;font-weight:700;min-height:5mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ident-label{font-size:7.5pt;font-weight:800;text-transform:uppercase;color:#4b5563;margin-bottom:2mm}
 .ident-value{font-size:10.5pt;font-weight:700;min-height:5mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .reg-code{font-family:"Courier New",monospace;letter-spacing:1.3px;font-size:10pt}
@@ -120,7 +125,6 @@ flex-wrap:nowrap;
  .a4-sheet.print-page:last-child{page-break-after:auto;break-after:auto}
 }
 
-.ident-wide{grid-column:span 2}
 </style>
 </head>
 <body>
@@ -169,8 +173,12 @@ Selecione uma alternativa em cada questão. A alternativa selecionada ficará ma
       <input id="studentCount" type="number" min="1" max="100" value="1" onchange="updateStudentFields()">
     </label>
     <label>Data do cartão
-      <input id="cardDate" type="date">
-      <small id="card-date-help" style="display:block;color:#64748b;margin-top:3px">Escolha a data que será impressa no cartão.</small>
+      <select id="cardDateMode" onchange="toggleCardDate()">
+        <option value="blank">Deixar em branco</option>
+        <option value="choose">Escolher data</option>
+      </select>
+      <input id="cardDate" type="date" style="display:none;margin-top:6px" onchange="renderCard()">
+      <small id="card-date-help" style="display:block;color:#64748b;margin-top:3px">Escolha se a data será preenchida ou deixada em branco no cartão.</small>
     </label>
     <label>Código da avaliação
       <input id="cardCodigo" class="reg-code" readonly>
@@ -380,13 +388,17 @@ function cardMarkup(alunoCard, turmaCard, pageClass=''){
    </div>
    <div class="card-subtitle">${esc(tituloCard)}</div>
    <div class="ident-box">
-     <div class="ident-title">IDENTIFICAÇÃO DA AVALIAÇÃO</div>
+     <div class="ident-title">IDENTIFICAÇÃO</div>
      <div class="ident-grid">
-       <div class="ident-cell ident-wide"><div class="ident-label">Avaliação</div><div class="ident-value">${esc(tituloCard)}</div></div>
-       <div class="ident-cell"><div class="ident-label">Código da avaliação</div><div class="ident-value reg-code">${esc(codigo)}</div></div>
-       <div class="ident-cell"><div class="ident-label">Nome do estudante</div><div class="ident-value">${esc(alunoCard)||'________________________________________________________________'}</div></div>
-       <div class="ident-cell"><div class="ident-label">Turma</div><div class="ident-value">${esc(turmaCard)||'________________'}</div></div>
-       <div class="ident-cell"><div class="ident-label">Data</div><div class="ident-value">${fmtDate(dataCard)}</div></div>
+       <div class="ident-row ident-row-top">
+         <div class="ident-cell"><div class="ident-label">Avaliação</div><div class="ident-value">${esc(tituloCard)}</div></div>
+         <div class="ident-cell"><div class="ident-label">Código da avaliação</div><div class="ident-value reg-code">${esc(codigo)}</div></div>
+       </div>
+       <div class="ident-row ident-row-student">
+         <div class="ident-cell"><div class="ident-label">Estudante</div><div class="ident-value">${esc(alunoCard)||'________________________________________________'}</div></div>
+         <div class="ident-cell"><div class="ident-label">Ano / Turma</div><div class="ident-value">${esc(turmaCard)||'________________'}</div></div>
+         <div class="ident-cell"><div class="ident-label">Data</div><div class="ident-value">${dataCard ? fmtDate(dataCard) : '____/____/________'}</div></div>
+       </div>
      </div>
    </div>
    <div class="instructions"><b>ORIENTAÇÕES:</b> Preencha completamente apenas uma alternativa por questão. Use lápis ou caneta preta/azul. Não faça marcas fora dos círculos. Não dobre nem corte o cartão.</div>
@@ -398,30 +410,44 @@ function cardMarkup(alunoCard, turmaCard, pageClass=''){
 }
 
 function getCardDate(){
-  return document.getElementById('cardDate')?.value || '';
+  const mode=document.getElementById('cardDateMode')?.value||'blank';
+  return mode==='choose' ? (document.getElementById('cardDate')?.value||'') : '';
 }
 function formatDateBR(v){
-  if(!v)return '—';
+  if(!v)return '';
   const p=v.split('-');
   return p.length===3 ? `${p[2]}/${p[1]}/${p[0]}` : v;
 }
-function initCardDate(){
-  const el=document.getElementById('cardDate');
-  if(!el)return;
-  if(!el.value){
-    const d=new Date();
-    const local=new Date(d.getTime()-d.getTimezoneOffset()*60000);
-    el.value=local.toISOString().slice(0,10);
+function toggleCardDate(){
+  const mode=document.getElementById('cardDateMode');
+  const input=document.getElementById('cardDate');
+  if(!mode||!input)return;
+  if(mode.value==='choose'){
+    input.style.display='block';
+    if(!input.value){
+      const d=new Date();
+      const local=new Date(d.getTime()-d.getTimezoneOffset()*60000);
+      input.value=local.toISOString().slice(0,10);
+    }
+  }else{
+    input.style.display='none';
   }
-  if(!el.dataset.bound){
-    el.addEventListener('change',()=>renderCard());
-    el.dataset.bound='1';
-  }
+  renderCard();
 }
-
+function initCardDate(){
+  const mode=document.getElementById('cardDateMode');
+  const input=document.getElementById('cardDate');
+  if(!mode||!input)return;
+  toggleCardDateUIOnly();
+}
+function toggleCardDateUIOnly(){
+  const mode=document.getElementById('cardDateMode');
+  const input=document.getElementById('cardDate');
+  if(!mode||!input)return;
+  input.style.display=mode.value==='choose'?'block':'none';
+}
 function renderCard(){
   initCardDate();
-  const cp=document.getElementById('cardPreviewDate'); if(cp) cp.textContent=formatDateBR(getCardDate());
  const printCardEl=document.getElementById('printCard'); if(!printCardEl)return;
  const turmaCard=document.getElementById('cardTurma')?.value||'';
  const mode=document.getElementById('printMode')?.value||'blank';
