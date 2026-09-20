@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>New Prof. Corretor Inteligente de Avaliações</title>
 <script async src="https://docs.opencv.org/4.x/opencv.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f2f5fa;color:#17243a}
 header{background:linear-gradient(135deg,#123b91,#1764e8);color:#fff;padding:22px 18px;position:sticky;top:0;z-index:20;box-shadow:0 3px 12px #0003}
@@ -264,20 +263,10 @@ Selecione uma alternativa em cada questão. A alternativa selecionada ficará ma
 
   <div id="studentFields" class="student-list"></div>
   <div id="studentPreviewNote" class="print-preview-note"></div>
-
-  <label style="display:block;max-width:320px;margin-top:12px">
-    Formato de saída
-    <select id="cardFormato">
-      <option value="pdf" selected>PDF</option>
-      <option value="png">Imagem PNG — A4</option>
-      <option value="jpg">Imagem JPG — A4</option>
-      <option value="print">Imprimir diretamente</option>
-    </select>
-  </label>
-  <div class="actions">
+<div class="actions">
     <button class="primary" onclick="renderCard()">🔄 Atualizar cartão</button>
     <button class="secondary" onclick="newCardCode()">🔐 Novo código</button>
-    <button class="primary" onclick="exportCard()">⬇️ Gerar arquivo</button>
+    <button class="primary" onclick="window.print()">📄 Gerar PDF</button>
   </div>
   <div class="status warn">⚠️ Imprima em <b>100%</b>. Não recorte, dobre ou cubra os quatro marcadores pretos dos cantos.</div>
 </div>
@@ -696,137 +685,6 @@ function exportHistoryCSV(){
   setTimeout(()=>URL.revokeObjectURL(a.href),1000);
 }
 
-
-async function cardToCanvas(dpi=150){
-  const source=document.getElementById('printCard');
-  if(!source) throw new Error('Cartão não encontrado.');
-
-  const A4_W_MM=210, A4_H_MM=297;
-  const pxPerMm=dpi/25.4;
-  const outW=Math.round(A4_W_MM*pxPerMm);
-  const outH=Math.round(A4_H_MM*pxPerMm);
-
-  // Cria uma cópia isolada com exatamente o mesmo tamanho físico da folha A4.
-  // Assim, a imagem não depende da largura da tela, zoom ou layout responsivo.
-  const holder=document.createElement('div');
-  holder.style.position='fixed';
-  holder.style.left='-100000px';
-  holder.style.top='0';
-  holder.style.width='210mm';
-  holder.style.height='297mm';
-  holder.style.overflow='hidden';
-  holder.style.background='#fff';
-  holder.style.zIndex='-1';
-
-  const clone=source.cloneNode(true);
-  clone.removeAttribute('id');
-  clone.style.width='210mm';
-  clone.style.height='297mm';
-  clone.style.minWidth='210mm';
-  clone.style.minHeight='297mm';
-  clone.style.maxWidth='210mm';
-  clone.style.maxHeight='297mm';
-  clone.style.margin='0';
-  clone.style.padding='13mm 12mm 12mm';
-  clone.style.boxSizing='border-box';
-  clone.style.overflow='hidden';
-  clone.style.background='#fff';
-  clone.style.boxShadow='none';
-  clone.style.border='0';
-
-  holder.appendChild(clone);
-  document.body.appendChild(holder);
-
-  // Aguarda o navegador recalcular o layout do A4 antes da captura.
-  await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
-
-  let canvas;
-  try{
-    canvas=await html2canvas(clone,{
-      scale:1,
-      width:clone.offsetWidth,
-      height:clone.offsetHeight,
-      backgroundColor:'#ffffff',
-      useCORS:true,
-      logging:false,
-      scrollX:0,
-      scrollY:0,
-      windowWidth:Math.ceil(210*96/25.4),
-      windowHeight:Math.ceil(297*96/25.4)
-    });
-  }finally{
-    holder.remove();
-  }
-
-  // Converte para uma imagem raster A4 exata.
-  const out=document.createElement('canvas');
-  out.width=outW;
-  out.height=outH;
-
-  const ctx=out.getContext('2d');
-  ctx.fillStyle='#fff';
-  ctx.fillRect(0,0,outW,outH);
-
-  // A proporção é exatamente 210:297, sem corte e sem deformação.
-  ctx.drawImage(canvas,0,0,outW,outH);
-
-  return out;
-}
-
-async function exportCard(){
-  const fmt=document.getElementById('cardFormato')?.value||'pdf';
-  renderCard();
-
-  if(fmt==='print'){
-    window.print();
-    return;
-  }
-
-  try{
-    if(typeof html2canvas==='undefined'){
-      alert('A exportação ainda está carregando. Aguarde alguns segundos e tente novamente.');
-      return;
-    }
-
-    // 150 DPI = 1240 × 1754 px para A4.
-    // A proporção e o tamanho físico correspondem à folha A4.
-    const canvas=await cardToCanvas(150);
-    const safe=((document.getElementById('cardTitulo')?.value||'cartao-resposta')
-      .trim().replace(/[^\wÀ-ÿ\-]+/g,'_')).replace(/^_+|_+$/g,'')||'cartao-resposta';
-
-    if(fmt==='png' || fmt==='jpg'){
-      const mime=fmt==='png'?'image/png':'image/jpeg';
-      const ext=fmt==='png'?'png':'jpg';
-      const a=document.createElement('a');
-      a.href=canvas.toDataURL(mime,0.95);
-      a.download=`${safe}-cartao-A4.${ext}`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      return;
-    }
-
-    if(!window.jspdf || !window.jspdf.jsPDF){
-      alert('A exportação PDF ainda está carregando. Aguarde alguns segundos e tente novamente.');
-      return;
-    }
-
-    const pdf=new window.jspdf.jsPDF({
-      orientation:'portrait',
-      unit:'mm',
-      format:'a4',
-      compress:true
-    });
-    pdf.addImage(
-      canvas.toDataURL('image/jpeg',0.95),
-      'JPEG',0,0,210,297,undefined,'FAST'
-    );
-    pdf.save(`${safe}-cartao.pdf`);
-  }catch(e){
-    console.error(e);
-    alert('Não foi possível gerar o arquivo: '+e.message);
-  }
-}
 
 function setStatus(t,c){readStatus.textContent=t;readStatus.className='status '+c}
 function resetRead(){photo.value='';photoName.textContent='Nenhuma foto selecionada';results.innerHTML='';diag.getContext('2d').clearRect(0,0,diag.width,diag.height);ultimaLeitura=null;summary.className='status info';summary.textContent='Nenhuma correção realizada nesta sessão.';setStatus('Aguardando fotografia.','info')}
