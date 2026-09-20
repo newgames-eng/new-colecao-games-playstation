@@ -130,13 +130,78 @@ flex-wrap:nowrap;
 .blank-line.short{width:100%}
 .student-value{white-space:nowrap;overflow:hidden;text-overflow:clip}
 
+
+.app-guide{margin-top:18px;background:#fff;border:1px solid #d9e1ef;border-radius:14px;padding:22px;box-shadow:0 4px 14px rgba(20,45,90,.07)}
+.app-guide h2{margin:0 0 8px;color:#164da5;font-size:21px}
+.app-guide h3{margin:18px 0 10px;color:#163d78;font-size:16px}
+.app-guide>p{margin:0;color:#334155;line-height:1.55;font-size:14px}
+.guide-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.guide-item{border:1px solid #dbe4f0;border-radius:10px;padding:13px;background:#f8fbff}
+.guide-title{font-weight:800;color:#1557b5;font-size:14px;margin-bottom:5px}
+.guide-item p{margin:0;color:#40516a;font-size:12.5px;line-height:1.5}
+.guide-flow{margin-top:14px;padding:12px;border-radius:9px;background:#eef5ff;color:#163f80;font-size:12.5px;line-height:1.6}
+.guide-flow span{font-weight:800}
+.guide-tip{margin-top:10px;padding:12px;border-radius:9px;background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;font-size:12.5px;line-height:1.5}
+@media(max-width:700px){.guide-grid{grid-template-columns:1fr}.app-guide{padding:15px}}
+
 </style>
 </head>
 <body>
 <header><div class="brand">NEW <span>PROF. CORRETOR</span></div><div class="sub">Corretor Inteligente de Avaliações — OMR</div>
 <nav><button onclick="show('inicio')">🏠 Início</button><button onclick="show('avaliacao')">📝 Avaliação</button><button onclick="show('corrigir')">📷 Corrigir</button><button onclick="show('cartao')">📄 Cartão</button><button onclick="show('resultados')">📊 Resultados</button><button onclick="show('historico')">📚 Histórico</button></nav></header>
 <main>
-<section id="inicio" class="page"><div class="card"><h1>NEW PROF. CORRETOR INTELIGENTE</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V4.10:</b> Leitor OMR testado com fotografias reais. Histórico local e câmera integrados.<br><br><b>Base preservada:</b> o leitor calcula as posições das bolhas a partir dos próprios quadros das questões. A mesma leitura alimenta diagnóstico, sequência e tabela.</div><div class="actions"><button class="primary" onclick="show('avaliacao')">Configurar avaliação</button><button class="secondary" onclick="show('corrigir')">Corrigir cartão</button></div></div></section>
+<section id="inicio" class="page"><div class="card"><h1>NEW PROF. CORRETOR INTELIGENTE</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V4.14:</b> Leitor OMR testado com fotografias reais. Histórico local e câmera integrados.<br><br><b>Base preservada:</b> o leitor calcula as posições das bolhas a partir dos próprios quadros das questões. A mesma leitura alimenta diagnóstico, sequência e tabela.</div>
+<div class="app-guide">
+  <h2>📘 Como funciona o NEW PROF. CORRETOR?</h2>
+  <p>
+    O <b>NEW PROF. CORRETOR INTELIGENTE DE AVALIAÇÕES</b> foi desenvolvido para facilitar a
+    correção de avaliações por meio da leitura automática de <b>cartões-resposta fotografados</b>.
+    O professor configura a avaliação, informa o gabarito, gera os cartões e, depois da aplicação,
+    fotografa o cartão preenchido. O sistema identifica as marcações, compara as respostas com o
+    gabarito e apresenta os resultados.
+  </p>
+
+  <h3>📚 Conheça cada aba</h3>
+
+  <div class="guide-grid">
+    <div class="guide-item">
+      <div class="guide-title">📝 Avaliação</div>
+      <p>Configure a avaliação uma única vez. Informe o título, a quantidade de questões e o número de alternativas e marque o <b>gabarito</b> de cada questão. Essas informações serão utilizadas automaticamente nas demais etapas.</p>
+    </div>
+
+    <div class="guide-item">
+      <div class="guide-title">📄 Cartão</div>
+      <p>Configure e gere os cartões-resposta em formato A4. As informações da avaliação são carregadas automaticamente. Informe a turma, escolha a quantidade de estudantes, insira os nomes e defina se a data será preenchida ou deixada em branco.</p>
+    </div>
+
+    <div class="guide-item">
+      <div class="guide-title">📷 Corrigir</div>
+      <p>Informe o estudante e a turma e selecione ou fotografe o cartão-resposta preenchido. O sistema analisa a imagem, identifica as alternativas marcadas e compara cada resposta com o gabarito.</p>
+    </div>
+
+    <div class="guide-item">
+      <div class="guide-title">📊 Resultados</div>
+      <p>Apresenta o resultado da correção: acertos, erros, questões em branco, questões para revisão e nota. Também permite conferir as respostas identificadas pelo leitor.</p>
+    </div>
+
+    <div class="guide-item">
+      <div class="guide-title">📚 Histórico</div>
+      <p>Armazena as correções realizadas neste aparelho para consulta posterior. Permite pesquisar estudantes ou turmas, consultar avaliações, exportar CSV e gerar um relatório geral em PDF.</p>
+    </div>
+  </div>
+
+  <div class="guide-flow">
+    <b>🔄 Fluxo recomendado:</b>
+    <span>1. Avaliação</span> → <span>2. Cartão</span> → <span>3. Aplicação da prova</span> →
+    <span>4. Corrigir</span> → <span>5. Resultados</span> → <span>6. Histórico</span>
+  </div>
+
+  <div class="guide-tip">
+    💡 <b>Dica:</b> configure a avaliação primeiro. Depois, acesse <b>Cartão</b> para gerar os cartões.
+    Após a aplicação, utilize <b>Corrigir</b> para fotografar os cartões e obter os resultados.
+  </div>
+</div>
+<div class="actions"><button class="primary" onclick="show('avaliacao')">Configurar avaliação</button><button class="secondary" onclick="show('corrigir')">Corrigir cartão</button></div></div></section>
 
 <section id="avaliacao" class="page hidden">
 <div class="card">
