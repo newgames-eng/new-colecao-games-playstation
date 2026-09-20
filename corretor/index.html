@@ -325,6 +325,7 @@ function gerarRelatorioHistoricoPDF(){
   const totalBrancas=registros.reduce((s,x)=>s+Number(x.brancas||0),0);
   const totalRevisar=registros.reduce((s,x)=>s+Number(x.revisar||0),0);
   const media=registros.length ? registros.reduce((s,x)=>s+Number(x.nota||0),0)/registros.length : 0;
+  const agora=new Date().toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'});
 
   const rows=registros.map((x,idx)=>{
     const respostas=Array.isArray(x.respostas)?x.respostas:[];
@@ -342,50 +343,64 @@ function gerarRelatorioHistoricoPDF(){
   if(!w){alert('O navegador bloqueou o relatório. Permita pop-ups para o NEW PROF. CORRETOR.');return}
 
   w.document.write(`<!doctype html><html><head><meta charset="utf-8">
-  <title>Relatório geral - NEW PROF. CORRETOR</title>
+  <title>Relatório - NEW PROF. CORRETOR</title>
   <style>
-    @page{size:A4 landscape;margin:10mm}
-    *{box-sizing:border-box}body{font-family:Arial,sans-serif;color:#172033;margin:0;font-size:10px}
-    .top{border-bottom:3px solid #1857c7;padding-bottom:9px;margin-bottom:12px}
-    h1{font-size:20px;margin:0 0 3px;color:#1857c7}.sub{font-size:11px;color:#555}
-    .summary{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin:10px 0 14px}
-    .box{border:1px solid #d5dbe6;border-radius:7px;padding:8px;background:#fff}
-    .label{font-size:8px;color:#687386;text-transform:uppercase}.value{font-size:16px;font-weight:800;margin-top:3px}
-    .filters{margin-bottom:10px;color:#555}
+    @page{size:A4 portrait;margin:7mm 7mm 8mm}
+    *{box-sizing:border-box}
+    body{font-family:Arial,sans-serif;color:#172033;margin:0;font-size:9px;background:#fff}
+    .top{display:flex;align-items:center;gap:10px;border-bottom:2px solid #1857c7;padding:0 0 7px;margin-bottom:9px}
+    .logo{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#1857c7,#38a4ff);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:21px;box-shadow:0 2px 5px rgba(0,0,0,.15)}
+    h1{font-size:18px;line-height:1.05;margin:0;color:#1857c7}
+    .sub{font-size:9px;color:#596579;margin-top:3px}
+    .gen{font-size:8px;color:#687386;margin-left:auto;text-align:right}
+    .summary{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin:7px 0 9px}
+    .box{border:1px solid #cfd7e3;border-radius:5px;padding:6px;background:#fff}
+    .label{font-size:7px;color:#687386;text-transform:uppercase}
+    .value{font-size:13px;font-weight:800;margin-top:2px}
+    .filters{margin-bottom:7px;color:#555;font-size:8px}
     table{width:100%;border-collapse:collapse;table-layout:fixed}
-    th,td{border:1px solid #cfd7e3;padding:5px 4px;text-align:center;vertical-align:top}
-    th{background:#eaf0f8;font-size:9px}td{font-size:8.5px}
-    .answers{text-align:left;line-height:1.35}
-    .footer{margin-top:12px;border-top:1px solid #ddd;padding-top:6px;font-size:8px;color:#687386}
-    .no-print{margin-top:15px}.no-print button{padding:9px 14px;border:0;border-radius:7px;background:#1857c7;color:white;font-weight:700}
+    th,td{border:1px solid #cfd7e3;padding:4px 3px;text-align:center;vertical-align:top}
+    th{background:#eaf0f8;font-size:7.5px}
+    td{font-size:7.5px;line-height:1.2}
+    .answers{text-align:left;word-break:break-word}
+    .footer{margin-top:8px;border-top:1px solid #ddd;padding-top:5px;font-size:7px;color:#687386}
+    .no-print{margin-top:12px}
+    .no-print button{padding:8px 12px;border:0;border-radius:6px;background:#1857c7;color:#fff;font-weight:700}
     @media print{.no-print{display:none}}
   </style></head><body>
   <div class="top">
-    <h1>NEW PROF. CORRETOR INTELIGENTE DE AVALIAÇÕES</h1>
-    <div class="sub">Relatório geral de correções — ${registros.length} registro(s)</div>
+    <div class="logo">NP</div>
+    <div>
+      <h1>NEW PROF. CORRETOR</h1>
+      <div class="sub">Inteligente de Avaliações · Relatório Geral de Correções</div>
+    </div>
+    <div class="gen"><b>Gerado em</b><br>${esc(agora)}</div>
   </div>
+
   <div class="summary">
     <div class="box"><div class="label">Correções</div><div class="value">${registros.length}</div></div>
     <div class="box"><div class="label">Questões corrigidas</div><div class="value">${totalQuestoes}</div></div>
     <div class="box"><div class="label">Acertos</div><div class="value">${totalAcertos}</div></div>
     <div class="box"><div class="label">Erros</div><div class="value">${totalErros}</div></div>
-    <div class="box"><div class="label">Brancas</div><div class="value">${totalBrancas}</div></div>
+    <div class="box"><div class="label">Brancas / Revisar</div><div class="value">${totalBrancas} / ${totalRevisar}</div></div>
     <div class="box"><div class="label">Média das notas</div><div class="value">${media.toFixed(1)}</div></div>
   </div>
-  <div class="filters">
-    <b>Filtros utilizados:</b>
+
+  <div class="filters"><b>Filtros utilizados:</b>
     ${busca?`Estudante/Turma: ${esc(busca)} · `:''}${av?`Avaliação: ${esc(av)}`:'Todas as avaliações'}
   </div>
+
   <table>
     <thead><tr>
-      <th style="width:3%">#</th><th style="width:9%">Data</th><th style="width:12%">Estudante</th>
+      <th style="width:3%">#</th><th style="width:10%">Data</th><th style="width:12%">Estudante</th>
       <th style="width:7%">Turma</th><th style="width:13%">Avaliação</th>
       <th style="width:6%">Acertos</th><th style="width:5%">Nota</th>
-      <th style="width:15%">Resultado</th><th style="width:30%">Alternativas marcadas</th>
+      <th style="width:15%">Resultado</th><th style="width:29%">Alternativas marcadas</th>
     </tr></thead>
     <tbody>${rows}</tbody>
   </table>
-  <div class="footer">Gerado pelo NEW PROF. CORRETOR INTELIGENTE DE AVALIAÇÕES. O relatório reúne as correções salvas neste aparelho.</div>
+
+  <div class="footer">Relatório gerado pelo NEW PROF. CORRETOR INTELIGENTE DE AVALIAÇÕES · ${esc(agora)}</div>
   <div class="no-print"><button onclick="window.print()">🖨️ Imprimir / Salvar como PDF</button></div>
   <script>setTimeout(()=>window.print(),350)<\/script>
   </body></html>`);
