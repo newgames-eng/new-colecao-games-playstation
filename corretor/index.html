@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>New Prof. Corretor Inteligente de Avaliações</title>
 <script async src="https://docs.opencv.org/4.x/opencv.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f2f5fa;color:#17243a}
 header{background:linear-gradient(135deg,#123b91,#1764e8);color:#fff;padding:22px 18px;position:sticky;top:0;z-index:20;box-shadow:0 3px 12px #0003}
@@ -263,9 +265,19 @@ Selecione uma alternativa em cada questão. A alternativa selecionada ficará ma
   <div id="studentFields" class="student-list"></div>
   <div id="studentPreviewNote" class="print-preview-note"></div>
 
+  <label style="display:block;max-width:320px;margin-top:12px">
+    Formato de saída
+    <select id="cardFormato">
+      <option value="pdf" selected>PDF</option>
+      <option value="png">Imagem PNG</option>
+      <option value="jpg">Imagem JPG</option>
+      <option value="print">Imprimir diretamente</option>
+    </select>
+  </label>
   <div class="actions">
-    <button class="primary" type="button" onclick="renderCard()">🔄 Atualizar cartão</button>
-    <button class="primary" type="button" onclick="printCards()">🖨️ Imprimir cartões</button>
+    <button class="primary" onclick="renderCard()">🔄 Atualizar cartão</button>
+    <button class="secondary" onclick="newCardCode()">🔐 Novo código</button>
+    <button class="primary" onclick="exportCard()">⬇️ Gerar arquivo</button>
   </div>
   <div class="status warn">⚠️ Imprima em <b>100%</b>. Não recorte, dobre ou cubra os quatro marcadores pretos dos cantos.</div>
 </div>
@@ -682,6 +694,71 @@ function exportHistoryCSV(){
   const blob=new Blob(['\\ufeff'+csv],{type:'text/csv;charset=utf-8'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='new-prof-corretor-historico.csv';a.click();
   setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+
+
+async function cardToCanvas(scale=2){
+  const sheet=document.getElementById('printCard');
+  if(!sheet) throw new Error('Cartão não encontrado.');
+  return await html2canvas(sheet,{
+    scale:scale,
+    backgroundColor:'#ffffff',
+    useCORS:true,
+    logging:false
+  });
+}
+
+async function exportCard(){
+  const fmt=document.getElementById('cardFormato')?.value||'pdf';
+  renderCard();
+
+  if(fmt==='print'){
+    window.print();
+    return;
+  }
+
+  try{
+    if(typeof html2canvas==='undefined'){
+      alert('A exportação ainda está carregando. Aguarde alguns segundos e tente novamente.');
+      return;
+    }
+
+    const canvas=await cardToCanvas(2);
+    const safe=((document.getElementById('cardTitulo')?.value||'cartao-resposta')
+      .trim().replace(/[^\wÀ-ÿ\-]+/g,'_')).replace(/^_+|_+$/g,'')||'cartao-resposta';
+
+    if(fmt==='png' || fmt==='jpg'){
+      const mime=fmt==='png'?'image/png':'image/jpeg';
+      const ext=fmt==='png'?'png':'jpg';
+      const a=document.createElement('a');
+      a.href=canvas.toDataURL(mime,0.95);
+      a.download=`${safe}-cartao.${ext}`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      return;
+    }
+
+    if(!window.jspdf || !window.jspdf.jsPDF){
+      alert('A exportação PDF ainda está carregando. Aguarde alguns segundos e tente novamente.');
+      return;
+    }
+
+    const pdf=new window.jspdf.jsPDF({
+      orientation:'portrait',
+      unit:'mm',
+      format:'a4',
+      compress:true
+    });
+    pdf.addImage(
+      canvas.toDataURL('image/jpeg',0.95),
+      'JPEG',0,0,210,297,undefined,'FAST'
+    );
+    pdf.save(`${safe}-cartao.pdf`);
+  }catch(e){
+    console.error(e);
+    alert('Não foi possível gerar o arquivo: '+e.message);
+  }
 }
 
 function setStatus(t,c){readStatus.textContent=t;readStatus.className='status '+c}
