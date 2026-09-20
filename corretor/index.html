@@ -269,8 +269,8 @@ Selecione uma alternativa em cada questão. A alternativa selecionada ficará ma
     Formato de saída
     <select id="cardFormato">
       <option value="pdf" selected>PDF</option>
-      <option value="png">Imagem PNG</option>
-      <option value="jpg">Imagem JPG</option>
+      <option value="png">Imagem PNG — A4</option>
+      <option value="jpg">Imagem JPG — A4</option>
       <option value="print">Imprimir diretamente</option>
     </select>
   </label>
@@ -697,15 +697,80 @@ function exportHistoryCSV(){
 }
 
 
-async function cardToCanvas(scale=2){
-  const sheet=document.getElementById('printCard');
-  if(!sheet) throw new Error('Cartão não encontrado.');
-  return await html2canvas(sheet,{
-    scale:scale,
-    backgroundColor:'#ffffff',
-    useCORS:true,
-    logging:false
-  });
+async function cardToCanvas(dpi=150){
+  const source=document.getElementById('printCard');
+  if(!source) throw new Error('Cartão não encontrado.');
+
+  const A4_W_MM=210, A4_H_MM=297;
+  const pxPerMm=dpi/25.4;
+  const outW=Math.round(A4_W_MM*pxPerMm);
+  const outH=Math.round(A4_H_MM*pxPerMm);
+
+  // Cria uma cópia isolada com exatamente o mesmo tamanho físico da folha A4.
+  // Assim, a imagem não depende da largura da tela, zoom ou layout responsivo.
+  const holder=document.createElement('div');
+  holder.style.position='fixed';
+  holder.style.left='-100000px';
+  holder.style.top='0';
+  holder.style.width='210mm';
+  holder.style.height='297mm';
+  holder.style.overflow='hidden';
+  holder.style.background='#fff';
+  holder.style.zIndex='-1';
+
+  const clone=source.cloneNode(true);
+  clone.removeAttribute('id');
+  clone.style.width='210mm';
+  clone.style.height='297mm';
+  clone.style.minWidth='210mm';
+  clone.style.minHeight='297mm';
+  clone.style.maxWidth='210mm';
+  clone.style.maxHeight='297mm';
+  clone.style.margin='0';
+  clone.style.padding='13mm 12mm 12mm';
+  clone.style.boxSizing='border-box';
+  clone.style.overflow='hidden';
+  clone.style.background='#fff';
+  clone.style.boxShadow='none';
+  clone.style.border='0';
+
+  holder.appendChild(clone);
+  document.body.appendChild(holder);
+
+  // Aguarda o navegador recalcular o layout do A4 antes da captura.
+  await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+
+  let canvas;
+  try{
+    canvas=await html2canvas(clone,{
+      scale:1,
+      width:clone.offsetWidth,
+      height:clone.offsetHeight,
+      backgroundColor:'#ffffff',
+      useCORS:true,
+      logging:false,
+      scrollX:0,
+      scrollY:0,
+      windowWidth:Math.ceil(210*96/25.4),
+      windowHeight:Math.ceil(297*96/25.4)
+    });
+  }finally{
+    holder.remove();
+  }
+
+  // Converte para uma imagem raster A4 exata.
+  const out=document.createElement('canvas');
+  out.width=outW;
+  out.height=outH;
+
+  const ctx=out.getContext('2d');
+  ctx.fillStyle='#fff';
+  ctx.fillRect(0,0,outW,outH);
+
+  // A proporção é exatamente 210:297, sem corte e sem deformação.
+  ctx.drawImage(canvas,0,0,outW,outH);
+
+  return out;
 }
 
 async function exportCard(){
@@ -723,7 +788,9 @@ async function exportCard(){
       return;
     }
 
-    const canvas=await cardToCanvas(2);
+    // 150 DPI = 1240 × 1754 px para A4.
+    // A proporção e o tamanho físico correspondem à folha A4.
+    const canvas=await cardToCanvas(150);
     const safe=((document.getElementById('cardTitulo')?.value||'cartao-resposta')
       .trim().replace(/[^\wÀ-ÿ\-]+/g,'_')).replace(/^_+|_+$/g,'')||'cartao-resposta';
 
@@ -732,7 +799,7 @@ async function exportCard(){
       const ext=fmt==='png'?'png':'jpg';
       const a=document.createElement('a');
       a.href=canvas.toDataURL(mime,0.95);
-      a.download=`${safe}-cartao.${ext}`;
+      a.download=`${safe}-cartao-A4.${ext}`;
       document.body.appendChild(a);
       a.click();
       a.remove();
