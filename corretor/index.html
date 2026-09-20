@@ -304,7 +304,7 @@ function renderHistory(){
   const h=getHistory().filter(x=>(!busca||`${x.aluno} ${x.turma}`.toLowerCase().includes(busca))&&(!av||(x.avaliacao||'').toLowerCase().includes(av)));
   if(!h.length){box.innerHTML='<div class="status info">Nenhuma correção encontrada.</div>';return}
   box.innerHTML='<div style="overflow:auto"><table><thead><tr><th>Data</th><th>Estudante</th><th>Turma</th><th>Avaliação</th><th>Acertos</th><th>Nota</th></tr></thead><tbody>'+
-    h.map(x=>`<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos}/${x.total}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td><td><button type="button" class="secondary smallbtn" onclick="gerarRelatorioPDF(${getHistory().indexOf(x)})">📄 PDF</button></td></tr>`).join('')+
+    h.map(x=>`<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos}/${x.total}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td></tr>`).join('')+
     '</tbody></table></div>';
 }
 function gerarRelatorioHistoricoPDF(){
