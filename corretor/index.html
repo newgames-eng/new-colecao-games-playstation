@@ -19,7 +19,7 @@ button{cursor:pointer}.primary{background:#1764e8;color:#fff;border:0;border-rad
 table{width:100%;border-collapse:collapse;margin-top:13px;font-size:14px}th,td{border:1px solid #d9e1ea;padding:9px;text-align:center}th{background:#edf3fa}
 .correct{color:#16803d;font-weight:800}.wrong{color:#c62828;font-weight:800}.blank{color:#64748b;font-weight:800}.double{color:#a15c00;font-weight:800}
 .score{font-size:34px;color:#1764e8;font-weight:900}.keyline{font-family:monospace;background:#f1f5f9;padding:12px;border-radius:9px;font-size:18px;letter-spacing:3px;word-break:break-all}
-.qgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.qbox{border:1px solid #cbd5e1;border-radius:8px;padding:8px}.qopts{display:flex;gap:4px;margin-top:6px}.qopts button{width:27px;height:27px;border-radius:50%;border:1px solid #64748b;background:#fff}.qopts button.sel{background:#16a34a;color:#fff;border-color:#15803d;color:#fff}.gabarito-help{margin:0 0 12px;padding:10px 12px;border-radius:8px;background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;font-size:13px;line-height:1.45}.green-dot{color:#16a34a;font-weight:800}
+.qgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.qbox{border:1px solid #cbd5e1;border-radius:8px;padding:8px}.qopts{display:flex;gap:5px;margin-top:6px}.qopts button{width:30px;height:30px;border-radius:50%;border:1px solid #64748b;background:#fff}.qopts button.sel{background:#16a34a;color:#fff;border-color:#15803d;color:#fff}.gabarito-help{margin:0 0 12px;padding:10px 12px;border-radius:8px;background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;font-size:13px;line-height:1.45}.green-dot{color:#16a34a;font-weight:800}
 .raw{font:12px/1.5 monospace;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px;overflow:auto;white-space:pre}
 @media(max-width:600px){.brand{font-size:28px}.qgrid{grid-template-columns:repeat(2,1fr)}nav button{font-size:15px}}
 
@@ -150,7 +150,7 @@ flex-wrap:nowrap;
 <header><div class="brand">NEW <span>PROF. CORRETOR</span></div><div class="sub">Corretor Inteligente de Avaliações — OMR</div>
 <nav><button onclick="show('inicio')">🏠 Início</button><button onclick="show('avaliacao')">📝 Avaliação</button><button onclick="show('corrigir')">📷 Corrigir</button><button onclick="show('cartao')">📄 Cartão</button><button onclick="show('resultados')">📊 Resultados</button><button onclick="show('historico')">📚 Histórico</button></nav></header>
 <main>
-<section id="inicio" class="page"><div class="card"><h1>NEW PROF. CORRETOR INTELIGENTE</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V4.14:</b> Leitor OMR testado com fotografias reais. Histórico local e câmera integrados.<br><br><b>Base preservada:</b> o leitor calcula as posições das bolhas a partir dos próprios quadros das questões. A mesma leitura alimenta diagnóstico, sequência e tabela.</div>
+<section id="inicio" class="page"><div class="card"><h1>NEW PROF. CORRETOR INTELIGENTE</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V4.16:</b> Leitor OMR testado com fotografias reais. Histórico local e câmera integrados.<br><br><b>Base preservada:</b> o leitor calcula as posições das bolhas a partir dos próprios quadros das questões. A mesma leitura alimenta diagnóstico, sequência e tabela.</div>
 <div class="app-guide">
   <h2>📘 Como funciona o NEW PROF. CORRETOR?</h2>
   <p>
@@ -910,9 +910,9 @@ function detectAnswersLegacy(warp){
    const vals=[],pts=[];
 
    // As bolhas ficam centralizadas horizontalmente dentro da moldura.
-   // Tamanho real do círculo: 4,7 mm; espaçamento: 1,7 mm.
+   // Tamanho real do círculo: 5,2 mm; espaçamento: 1,9 mm.
    const mm=1200/210;
-   const bubbleW=4.7*mm, gap=1.7*mm;
+   const bubbleW=5.2*mm, gap=1.9*mm;
    const total=ls.length*bubbleW+(ls.length-1)*gap;
    const start=b.x+(b.w-total)/2+bubbleW/2;
 
