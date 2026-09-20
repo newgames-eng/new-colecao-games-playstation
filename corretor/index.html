@@ -120,6 +120,7 @@ flex-wrap:nowrap;
  .a4-sheet.print-page:last-child{page-break-after:auto;break-after:auto}
 }
 
+.ident-wide{grid-column:span 2}
 </style>
 </head>
 <body>
@@ -134,11 +135,9 @@ flex-wrap:nowrap;
 <p>Configure a avaliação uma única vez. Essas informações serão carregadas automaticamente no menu <b>Cartão</b>.</p>
 <div class="grid">
 <label>Título da avaliação<input id="titulo" value="AVALIAÇÃO DE MATEMÁTICA"></label>
-<label>Data<input id="dataAvaliacao" type="date"></label>
 <label>Questões<input id="nq" type="number" min="1" max="50" value="10" onchange="buildKey()"></label>
 <label>Alternativas<select id="na" onchange="buildKey()"><option value="3">A até C</option><option value="4">A até D</option><option value="5" selected>A até E</option></select></label>
 <label>Valor por questão<input id="valor" type="number" step=".01" value="1"></label>
-<label>Data do cartão<input id="cardDate" type="date"><small id="card-date-help" style="display:block;color:#64748b;margin-top:3px">Preenchida com a data da avaliação; você pode alterar para a data da aplicação.</small></label>
 <label>Código da avaliação<input id="codigoAvaliacao" class="reg-code" readonly></label>
 </div>
 <h3 style="margin-top:18px;text-transform:uppercase">GABARITO</h3>
@@ -168,6 +167,10 @@ Selecione uma alternativa em cada questão. A alternativa selecionada ficará ma
     </label>
     <label>Quantidade de estudantes
       <input id="studentCount" type="number" min="1" max="100" value="1" onchange="updateStudentFields()">
+    </label>
+    <label>Data do cartão
+      <input id="cardDate" type="date">
+      <small id="card-date-help" style="display:block;color:#64748b;margin-top:3px">Escolha a data que será impressa no cartão.</small>
     </label>
     <label>Código da avaliação
       <input id="cardCodigo" class="reg-code" readonly>
@@ -332,7 +335,7 @@ function fmtDate(v){
  if(!v)return '____/____/________';
  const p=v.split('-'); return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:v;
 }
-function getCardData(){return document.getElementById('dataAvaliacao')?.value||''}
+function getCardData(){return document.getElementById('cardDate')?.value||''}
 
 function updateStudentFields(){
   const mode=document.getElementById('printMode')?.value||'blank';
@@ -379,12 +382,11 @@ function cardMarkup(alunoCard, turmaCard, pageClass=''){
    <div class="ident-box">
      <div class="ident-title">IDENTIFICAÇÃO DA AVALIAÇÃO</div>
      <div class="ident-grid">
-       <div class="ident-cell"><div class="ident-label">Avaliação</div><div class="ident-value">${esc(tituloCard)}</div></div>
-       <div class="ident-cell"><div class="ident-label">Data</div><div class="ident-value">${fmtDate(dataCard)}</div></div>
+       <div class="ident-cell ident-wide"><div class="ident-label">Avaliação</div><div class="ident-value">${esc(tituloCard)}</div></div>
        <div class="ident-cell"><div class="ident-label">Código da avaliação</div><div class="ident-value reg-code">${esc(codigo)}</div></div>
        <div class="ident-cell"><div class="ident-label">Nome do estudante</div><div class="ident-value">${esc(alunoCard)||'________________________________________________________________'}</div></div>
        <div class="ident-cell"><div class="ident-label">Turma</div><div class="ident-value">${esc(turmaCard)||'________________'}</div></div>
-       <div class="ident-cell"><div class="ident-label">Questões / alternativas</div><div class="ident-value">${n} questões · A até ${ls[ls.length-1]}</div></div>
+       <div class="ident-cell"><div class="ident-label">Data</div><div class="ident-value">${fmtDate(dataCard)}</div></div>
      </div>
    </div>
    <div class="instructions"><b>ORIENTAÇÕES:</b> Preencha completamente apenas uma alternativa por questão. Use lápis ou caneta preta/azul. Não faça marcas fora dos círculos. Não dobre nem corte o cartão.</div>
@@ -396,8 +398,7 @@ function cardMarkup(alunoCard, turmaCard, pageClass=''){
 }
 
 function getCardDate(){
-  const el=document.getElementById('cardDate');
-  return el && el.value ? el.value : (document.getElementById('data')?.value || '');
+  return document.getElementById('cardDate')?.value || '';
 }
 function formatDateBR(v){
   if(!v)return '—';
@@ -407,9 +408,15 @@ function formatDateBR(v){
 function initCardDate(){
   const el=document.getElementById('cardDate');
   if(!el)return;
-  const source=document.getElementById('data');
-  if(!el.value && source && source.value) el.value=source.value;
-  el.addEventListener('change',()=>renderCard());
+  if(!el.value){
+    const d=new Date();
+    const local=new Date(d.getTime()-d.getTimezoneOffset()*60000);
+    el.value=local.toISOString().slice(0,10);
+  }
+  if(!el.dataset.bound){
+    el.addEventListener('change',()=>renderCard());
+    el.dataset.bound='1';
+  }
 }
 
 function renderCard(){
