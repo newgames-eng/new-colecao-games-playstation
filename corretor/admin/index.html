@@ -1,1 +1,217 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NEW PROF. CORRETOR — Administração</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f1f5f9;color:#17345d}
+header{background:#dc2626;color:#fff;padding:18px 24px}
+header h1{margin:0;font-size:26px} header p{margin:6px 0 0}
+.top-tabs{display:flex;gap:8px;background:#fff;padding:10px 14px;border-bottom:1px solid #d7dee9;position:sticky;top:0;z-index:10}
+.tab{border:0;border-radius:9px;padding:12px 18px;font-weight:900;cursor:pointer;background:#e8eef7;color:#17345d}
+.tab.active{background:#dc2626;color:#fff}.tab.corr{background:#2563eb;color:#fff}
+.wrap{padding:16px;max-width:1500px;margin:auto}
+.panel{background:#fff;border-radius:15px;border:1px solid #dbe3ef;box-shadow:0 3px 15px #17345d12;padding:16px;margin-bottom:14px}
+.toolbar{display:flex;gap:9px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.btn{border:0;border-radius:8px;padding:10px 14px;font-weight:900;cursor:pointer}
+.btn:disabled{opacity:.55;cursor:wait}
+.blue{background:#2563eb;color:#fff}.green{background:#16a34a;color:#fff}.red{background:#dc2626;color:#fff}.gray{background:#e8eef7;color:#17345d}.yellow{background:#facc15;color:#5b4300}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:12px}
+.stat{padding:16px;border-radius:12px;text-align:center;font-weight:900;border:0;width:100%;cursor:pointer;font:inherit;color:#17345d;transition:.15s}
+.stat:hover{transform:translateY(-1px);box-shadow:0 4px 10px #17345d20}
+.stat:focus{outline:3px solid #17345d}.stat b{display:block;font-size:24px;margin-bottom:5px}
+.s-p{background:#fff2c7}.s-l{background:#d9fbe5}.s-b{background:#fee0e0}.s-e{background:#fff0c7}.s-r{background:#e9eef5}
+.stat.active{outline:3px solid #17345d}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.filter.active{outline:3px solid #cbd5e1}
+.table-wrap{overflow:auto;margin-top:14px}
+table{width:100%;border-collapse:collapse;min-width:950px}
+th,td{padding:10px;border-bottom:1px solid #e2e8f0;text-align:left;vertical-align:top}th{background:#f8fafc}
+.badge{display:inline-block;border-radius:999px;padding:6px 9px;font-size:12px;font-weight:900}
+.pendente{background:#fff0bd;color:#8a5a00}.liberado{background:#d6f8e1;color:#166534}.bloqueado{background:#ffdede;color:#991b1b}.expirado{background:#fff0c7;color:#8a5a00}.recusado{background:#e5e7eb;color:#475569}
+.actions{display:flex;gap:6px;flex-wrap:wrap}.actions .btn{padding:7px 9px;font-size:12px}
+#corretorPanel{display:none;padding:0}
+.framebar{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;padding:12px 14px;background:#eff6ff;border-radius:12px 12px 0 0}
+iframe{width:100%;height:calc(100vh - 155px);min-height:700px;border:0;border-radius:0 0 12px 12px;background:#fff}
+.notice{padding:11px;border-radius:10px;background:#e8f1ff;margin-top:10px}
+#loading{display:none;margin-top:10px;padding:10px;border-radius:8px;background:#fff7d6;font-weight:900}
+#errorBox{display:none;margin-top:10px;padding:10px;border-radius:8px;background:#ffdede;color:#991b1b;font-weight:900}
+@media(max-width:850px){.stats{grid-template-columns:repeat(2,1fr)}iframe{min-height:800px;height:calc(100vh - 180px)}}
+</style>
+</head>
+<body>
+<header>
+<h1>NEW PROF. CORRETOR — Administração</h1>
+<p>Administrador autenticado pelo Cloudflare Access</p>
+</header>
 
+<div class="top-tabs">
+<button id="tabAdmin" class="tab active" onclick="showTab('admin')">⚙️ Administração</button>
+<button id="tabCorretor" class="tab corr" onclick="showTab('corretor')">📚 Sistema de Correção</button>
+<button class="tab" onclick="logout()">🔒 Sair</button>
+</div>
+
+<div class="wrap">
+<section id="adminPanel">
+<div class="panel">
+<div class="toolbar">
+<h2 style="margin:0">Controle de acesso</h2>
+<button id="btnRefresh" class="btn blue" onclick="load()">↻ Atualizar</button>
+</div>
+<div class="notice">As alterações são gravadas diretamente no D1. O Cloudflare Access controla a autenticação deste painel.</div>
+<div id="loading">⏳ Atualizando solicitações...</div>
+<div id="errorBox"></div>
+
+<div class="stats">
+<button class="stat s-p" data-f="PENDENTE" onclick="filterRows('PENDENTE',this)"><b id="cP">0</b>Pendentes</button>
+<button class="stat s-l" data-f="LIBERADO" onclick="filterRows('LIBERADO',this)"><b id="cL">0</b>Liberados</button>
+<button class="stat s-b" data-f="BLOQUEADO" onclick="filterRows('BLOQUEADO',this)"><b id="cB">0</b>Bloqueados</button>
+<button class="stat s-e" data-f="EXPIRADO" onclick="filterRows('EXPIRADO',this)"><b id="cE">0</b>Expirados</button>
+<button class="stat s-r" data-f="RECUSADO" onclick="filterRows('RECUSADO',this)"><b id="cR">0</b>Recusados</button>
+</div>
+
+<div class="filters">
+<button class="btn gray filter active" data-f="TODOS" onclick="filterRows('TODOS',this)">Todos</button>
+<button class="btn gray filter" data-f="PENDENTE" onclick="filterRows('PENDENTE',this)">🟡 Pendentes</button>
+<button class="btn gray filter" data-f="LIBERADO" onclick="filterRows('LIBERADO',this)">🟢 Liberados</button>
+<button class="btn gray filter" data-f="BLOQUEADO" onclick="filterRows('BLOQUEADO',this)">🔴 Bloqueados</button>
+<button class="btn gray filter" data-f="EXPIRADO" onclick="filterRows('EXPIRADO',this)">⏰ Expirados</button>
+<button class="btn gray filter" data-f="RECUSADO" onclick="filterRows('RECUSADO',this)">⚪ Recusados</button>
+</div>
+</div>
+
+<div class="panel table-wrap">
+<table>
+<thead><tr><th>Professor</th><th>E-mail</th><th>Escola</th><th>Status</th><th>Período</th><th>Solicitação</th><th>Ações</th></tr></thead>
+<tbody id="tbody"><tr><td colspan="7">Carregando...</td></tr></tbody>
+</table>
+</div>
+</section>
+
+<section id="corretorPanel" class="panel">
+<div class="framebar">
+<div><b>📚 NEW PROF. CORRETOR</b><div style="font-size:12px;color:#52637b">Sistema completo de avaliação, cartão, correção, resultados e histórico.</div></div>
+<button class="btn gray" onclick="openCorretor()">↗ Abrir em nova aba</button>
+</div>
+<iframe id="corretorFrame" title="Sistema de Correção" allow="camera; microphone"></iframe>
+</section>
+</div>
+
+<script>
+const ADMIN_API = "https://new-prof-corretor-admin.parqueclube1bloco2d.workers.dev";
+const CORRETOR_URL = "https://newgames-eng.github.io/new-colecao-games-playstation/corretor/index.html";
+
+let rows=[];
+let currentFilter="TODOS";
+
+function normalizeStatus(v){return String(v??"").trim().toUpperCase();}
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
+function fmt(v){if(!v)return "—";const d=new Date(v);return isNaN(d)?esc(v):d.toLocaleString("pt-BR");}
+
+async function api(path,body){
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),12000);
+  try{
+    const r=await fetch(ADMIN_API+path,{
+      method:body?"POST":"GET",
+      credentials:"include",
+      headers:body?{"content-type":"application/json"}:{},
+      body:body?JSON.stringify(body):undefined,
+      signal:controller.signal
+    });
+    const text=await r.text();
+    let d={}; try{d=text?JSON.parse(text):{};}catch{}
+    if(!r.ok||d.ok===false) throw new Error(d.message||d.error||("HTTP "+r.status));
+    return d;
+  }catch(e){
+    if(e.name==="AbortError") throw new Error("O servidor demorou para responder.");
+    throw e;
+  }finally{clearTimeout(timer);}
+}
+
+async function load(){
+  const btn=document.getElementById("btnRefresh");
+  const loading=document.getElementById("loading");
+  const error=document.getElementById("errorBox");
+  const body=document.getElementById("tbody");
+  btn.disabled=true; loading.style.display="block"; error.style.display="none";
+  body.innerHTML='<tr><td colspan="7">⏳ Carregando solicitações...</td></tr>';
+  try{
+    const d=await api("/api/admin/list");
+    rows=Array.isArray(d.requests)?d.requests:[];
+    renderStats(); render();
+  }catch(e){
+    body.innerHTML='<tr><td colspan="7">Não foi possível carregar as solicitações.</td></tr>';
+    error.textContent="Erro: "+e.message;
+    error.style.display="block";
+  }finally{
+    btn.disabled=false; loading.style.display="none";
+  }
+}
+
+function renderStats(){
+  const c={PENDENTE:0,LIBERADO:0,BLOQUEADO:0,EXPIRADO:0,RECUSADO:0};
+  rows.forEach(r=>{const s=normalizeStatus(r.status);if(c[s]!==undefined)c[s]++;});
+  cP.textContent=c.PENDENTE;cL.textContent=c.LIBERADO;cB.textContent=c.BLOQUEADO;cE.textContent=c.EXPIRADO;cR.textContent=c.RECUSADO;
+}
+
+function filterRows(f,el){
+  currentFilter=normalizeStatus(f)==="TODOS"?"TODOS":normalizeStatus(f);
+  document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));
+  document.querySelectorAll(".stat").forEach(x=>x.classList.remove("active"));
+  const filter=document.querySelector('.filter[data-f="'+currentFilter+'"]');
+  if(filter)filter.classList.add("active");
+  const card=document.querySelector('.stat[data-f="'+currentFilter+'"]');
+  if(card)card.classList.add("active");
+  render();
+}
+
+function badge(s){const st=normalizeStatus(s);return '<span class="badge '+st.toLowerCase()+'">'+esc(st)+'</span>';}
+
+function render(){
+  const body=document.getElementById("tbody");
+  const list=currentFilter==="TODOS"?rows:rows.filter(r=>normalizeStatus(r.status)===currentFilter);
+  body.innerHTML=list.length?list.map(r=>{
+    const st=normalizeStatus(r.status);
+    let actions="";
+    if(st==="PENDENTE")actions+='<button class="btn green" onclick="release('+r.id+')">Liberar</button><button class="btn red" onclick="reject('+r.id+')">Recusar</button>';
+    if(st==="LIBERADO")actions+='<button class="btn yellow" onclick="renew('+r.id+')">Renovar</button><button class="btn red" onclick="block('+r.id+')">Bloquear</button>';
+    if(["BLOQUEADO","EXPIRADO","RECUSADO"].includes(st))actions+='<button class="btn green" onclick="reopen('+r.id+')">Reabrir</button>';
+    return '<tr><td><b>'+esc(r.name)+'</b></td><td>'+esc(r.email)+'</td><td>'+esc(r.school)+'</td><td>'+badge(st)+'</td><td>'+fmt(r.start_at)+'<br>até '+fmt(r.expires_at)+'</td><td>'+fmt(r.requested_at)+'</td><td><div class="actions">'+actions+'</div></td></tr>';
+  }).join(""):'<tr><td colspan="7">Nenhum registro nesta categoria.</td></tr>';
+}
+
+async function chooseDuration(title){
+  const d=prompt(title+"\nDigite: 1d, 1w, 1m, none ou custom");
+  if(d===null)return null;
+  const duration=d.trim().toLowerCase();
+  if(!["1d","1w","1m","none","custom"].includes(duration)){alert("Opção inválida.");return null;}
+  let customEnd=null;
+  if(duration==="custom"){customEnd=prompt("Informe a data final no formato AAAA-MM-DD");if(!customEnd)return null;}
+  return {duration,customEnd};
+}
+async function release(id){const x=await chooseDuration("Liberar acesso");if(!x)return;try{await api("/api/admin/release",{id,...x});await load();alert("Acesso liberado.")}catch(e){alert(e.message)}}
+async function renew(id){const x=await chooseDuration("Renovar acesso");if(!x)return;try{await api("/api/admin/release",{id,...x});await load();alert("Acesso renovado.")}catch(e){alert(e.message)}}
+async function block(id){if(!confirm("Bloquear este acesso?"))return;try{await api("/api/admin/block",{id});await load()}catch(e){alert(e.message)}}
+async function reject(id){if(!confirm("Recusar esta solicitação?"))return;try{await api("/api/admin/reject",{id});await load()}catch(e){alert(e.message)}}
+async function reopen(id){if(!confirm("Reabrir esta solicitação?"))return;try{await api("/api/admin/reopen",{id});await load()}catch(e){alert(e.message)}}
+
+function showTab(which){
+  document.getElementById("adminPanel").style.display=which==="admin"?"block":"none";
+  document.getElementById("corretorPanel").style.display=which==="corretor"?"block":"none";
+  document.getElementById("tabAdmin").classList.toggle("active",which==="admin");
+  document.getElementById("tabCorretor").classList.toggle("active",which==="corretor");
+  if(which==="corretor"){
+    const f=document.getElementById("corretorFrame");
+    if(!f.src)f.src=CORRETOR_URL;
+  }
+}
+function openCorretor(){window.open(CORRETOR_URL,"_blank","noopener")}
+function logout(){window.location.href=ADMIN_API+"/cdn-cgi/access/logout";}
+
+load();
+</script>
+</body>
+</html>
