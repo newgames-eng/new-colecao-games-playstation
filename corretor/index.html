@@ -108,54 +108,84 @@ flex-wrap:nowrap;
   .file-name{padding:8px 2px}
 }
 .smallbtn{padding:6px 9px;font-size:12px}.pdf-all-btn{background:#c62828;color:#fff;border:0;border-radius:8px;padding:9px 14px;font-weight:700;cursor:pointer}.pdf-all-btn:hover{background:#a91f1f}
+
+.student-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px;margin-top:10px}
+.student-list label{font-size:12px}.student-list input{font-size:14px}
+.print-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-top:12px}
+.radio-card{border:1px solid #cbd5e1;border-radius:10px;padding:10px;background:#f8fafc}
+.radio-card input{width:auto;margin-right:6px}
+.print-preview-note{font-size:12px;color:#64748b;margin-top:8px}
+@media print{
+ .a4-sheet.print-page{page-break-after:always;break-after:page}
+ .a4-sheet.print-page:last-child{page-break-after:auto;break-after:auto}
+}
+
 </style>
 </head>
 <body>
 <header><div class="brand">NEW <span>PROF. CORRETOR</span></div><div class="sub">Corretor Inteligente de Avaliações — OMR</div>
 <nav><button onclick="show('inicio')">🏠 Início</button><button onclick="show('avaliacao')">📝 Avaliação</button><button onclick="show('corrigir')">📷 Corrigir</button><button onclick="show('cartao')">📄 Cartão</button><button onclick="show('resultados')">📊 Resultados</button><button onclick="show('historico')">📚 Histórico</button></nav></header>
 <main>
-<section id="inicio" class="page"><div class="card"><h1>NEW PROF. CORRETOR INTELIGENTE</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V4.4:</b> Leitor OMR testado com fotografias reais. Histórico local e câmera integrados.<br><br><b>Base preservada:</b> o leitor calcula as posições das bolhas a partir dos próprios quadros das questões. A mesma leitura alimenta diagnóstico, sequência e tabela.</div><div class="actions"><button class="primary" onclick="show('avaliacao')">Configurar avaliação</button><button class="secondary" onclick="show('corrigir')">Corrigir cartão</button></div></div></section>
+<section id="inicio" class="page"><div class="card"><h1>NEW PROF. CORRETOR INTELIGENTE</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V4.9:</b> Leitor OMR testado com fotografias reais. Histórico local e câmera integrados.<br><br><b>Base preservada:</b> o leitor calcula as posições das bolhas a partir dos próprios quadros das questões. A mesma leitura alimenta diagnóstico, sequência e tabela.</div><div class="actions"><button class="primary" onclick="show('avaliacao')">Configurar avaliação</button><button class="secondary" onclick="show('corrigir')">Corrigir cartão</button></div></div></section>
 
-<section id="avaliacao" class="page hidden"><div class="card"><h2>📝 Avaliação</h2><div class="grid"><label>Título<input id="titulo" value="AVALIAÇÃO DE MATEMÁTICA"></label><label>Questões<input id="nq" type="number" min="1" max="50" value="10" onchange="buildKey()"></label><label>Alternativas<select id="na" onchange="buildKey()"><option value="3">A até C</option><option value="4">A até D</option><option value="5" selected>A até E</option></select></label><label>Valor por questão<input id="valor" type="number" step=".01" value="1"></label></div><h3 style="margin-top:18px">Gabarito</h3><div id="key" class="qgrid"></div><div class="actions"><button class="primary" onclick="saveKey()">Salvar gabarito</button></div><div id="keymsg" class="status info">Configure o gabarito.</div></div></section>
+<section id="avaliacao" class="page hidden">
+<div class="card">
+<h2>📝 Avaliação</h2>
+<p>Configure a avaliação uma única vez. Essas informações serão carregadas automaticamente no menu <b>Cartão</b>.</p>
+<div class="grid">
+<label>Título da avaliação<input id="titulo" value="AVALIAÇÃO DE MATEMÁTICA"></label>
+<label>Data<input id="dataAvaliacao" type="date"></label>
+<label>Questões<input id="nq" type="number" min="1" max="50" value="10" onchange="buildKey()"></label>
+<label>Alternativas<select id="na" onchange="buildKey()"><option value="3">A até C</option><option value="4">A até D</option><option value="5" selected>A até E</option></select></label>
+<label>Valor por questão<input id="valor" type="number" step=".01" value="1"></label>
+<label>Código da avaliação<input id="codigoAvaliacao" class="reg-code" readonly></label>
+</div>
+<h3 style="margin-top:18px">Gabarito</h3>
+<div id="key" class="qgrid"></div>
+<div class="actions">
+<button class="primary" type="button" onclick="saveEvaluation()">💾 Salvar avaliação</button>
+<button class="secondary" type="button" onclick="newAssessmentCode()">🔢 Novo código</button>
+</div>
+<div id="keymsg" class="status info">Configure o gabarito e salve a avaliação.</div>
+</div></section>
 
 <section id="cartao" class="page hidden">
 <div class="card no-print">
   <h2>📄 Cartão-resposta</h2>
-  <p>Configure a identificação e gere um cartão profissional em <b>A4, escala 100%</b>, preparado para leitura OMR.</p>
-  <div class="card-config">
-    <label>Identificação da Avaliação
-      <input id="cardTitulo" value="AVALIAÇÃO DE MATEMÁTICA" oninput="renderCard()">
+  <p>As informações da avaliação são carregadas automaticamente. Aqui você define a turma e os estudantes para impressão.</p>
+  <div class="grid">
+    <label>Ano / Turma
+      <input id="cardTurma" placeholder="Ex.: 5º A">
     </label>
-    <label>Data
-      <input id="cardData" type="date" oninput="renderCard()">
-    </label>
-    <label>Nome do estudante
-      <input id="cardAluno" placeholder="Nome completo" oninput="renderCard()">
-    </label>
-    <label>Turma
-      <input id="cardTurma" placeholder="Ex.: 5º A" oninput="renderCard()">
-    </label>
-    <label>Questões
-      <input id="cardQuestoes" type="number" min="1" max="50" value="10" oninput="syncCardConfig()">
-    </label>
-    <label>Alternativas
-      <select id="cardAlternativas" onchange="syncCardConfig()">
-        <option value="3">A até C</option>
-        <option value="4">A até D</option>
-        <option value="5" selected>A até E</option>
+    <label>Modo de impressão
+      <select id="printMode" onchange="updateStudentFields()">
+        <option value="blank">Cartões em branco</option>
+        <option value="named">Cartões com nomes dos estudantes</option>
       </select>
     </label>
-    <label>Código de registro da prova
+    <label>Quantidade de estudantes
+      <input id="studentCount" type="number" min="1" max="100" value="1" onchange="updateStudentFields()">
+    </label>
+    <label>Código da avaliação
       <input id="cardCodigo" class="reg-code" readonly>
     </label>
   </div>
+
+  <div class="status info">
+    <b id="cardInfoTitulo">Avaliação</b><br>
+    <span id="cardInfoDetalhes">10 questões · A até E</span>
+  </div>
+
+  <div id="studentFields" class="student-list"></div>
+  <div id="studentPreviewNote" class="print-preview-note"></div>
+
   <div class="actions">
-    <button class="primary" onclick="renderCard()">🔄 Atualizar cartão</button>
-    <button class="secondary" onclick="newCardCode()">🔐 Novo código</button>
-    <button class="primary" onclick="window.print()">🖨️ Imprimir A4</button>
+    <button class="primary" type="button" onclick="renderCard()">🔄 Atualizar cartão</button>
+    <button class="primary" type="button" onclick="printCards()">🖨️ Imprimir cartões</button>
   </div>
   <div class="status warn">⚠️ Imprima em <b>100%</b>. Não recorte, dobre ou cubra os quatro marcadores pretos dos cantos.</div>
 </div>
+
 <div class="a4-wrap">
   <div id="printCard" class="a4-sheet"></div>
 </div>
@@ -200,6 +230,7 @@ flex-wrap:nowrap;
 
 <script>
 let gabarito=[],ultimaLeitura=null,busy=false;
+
 photo.addEventListener('change',()=>{
   const f=photo.files?.[0];
   photoName.textContent=f?`✓ ${f.name}`:'Nenhuma foto selecionada';
@@ -208,59 +239,133 @@ photo.addEventListener('change',()=>{
 
 const L='ABCDE';
 
-function show(id){document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');if(id==='avaliacao')buildKey();if(id==='cartao')renderCard();if(id==='historico')renderHistory()}
-function buildKey(){const n=Math.max(1,Math.min(50,+nq.value||10)),ls=L.slice(0,+na.value||5),old=[...gabarito];gabarito=Array.from({length:n},(_,i)=>ls.includes(old[i])?old[i]:'A');key.innerHTML='';gabarito.forEach((v,i)=>{let d=document.createElement('div');d.className='qbox';d.innerHTML='<b style="font-size:12px">QUESTÃO '+String(i+1).padStart(2,'0')+'</b><div class="qopts">'+[...ls].map(x=>`<button class="${v===x?'sel':''}" onclick="setKey(${i},'${x}')">${x}</button>`).join('')+'</div>';key.appendChild(d)});if(document.getElementById('cardQuestoes'))document.getElementById('cardQuestoes').value=n;if(document.getElementById('cardAlternativas'))document.getElementById('cardAlternativas').value=String(ls.length);renderCard()}
-function setKey(i,x){gabarito[i]=x;buildKey()}
-function saveKey(){localStorage.setItem('newCorretorGabarito',JSON.stringify(gabarito));keymsg.textContent='✓ Gabarito salvo neste aparelho.';keymsg.className='status ok';renderCard()}
-function loadKey(){try{let x=JSON.parse(localStorage.getItem('newCorretorGabarito'));if(Array.isArray(x)&&x.length){gabarito=x;nq.value=x.length}}catch(e){}}
-function getCardCode(){
- let c=localStorage.getItem('newCorretorCardCode');
- if(!c){c='NC-'+Math.random().toString(36).slice(2,8).toUpperCase()+'-'+Math.random().toString(36).slice(2,6).toUpperCase();localStorage.setItem('newCorretorCardCode',c)}
- return c;
+function show(id){
+  document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  if(id==='avaliacao'){buildKey()}
+  if(id==='cartao'){syncCardFromAssessment();updateStudentFields();renderCard()}
+  if(id==='historico'){renderHistory()}
 }
-function newCardCode(){
- const c='NC-'+Math.random().toString(36).slice(2,8).toUpperCase()+'-'+Math.random().toString(36).slice(2,6).toUpperCase();
- localStorage.setItem('newCorretorCardCode',c);
- if(cardCodigo)cardCodigo.value=c;
- renderCard();
+
+function getAssessmentCode(){
+  let c=localStorage.getItem('newCorretorAssessmentCode');
+  if(!c){
+    let seq=Number(localStorage.getItem('newCorretorAssessmentSeq')||0)+1;
+    localStorage.setItem('newCorretorAssessmentSeq',String(seq));
+    c='AV-'+String(seq).padStart(3,'0');
+    localStorage.setItem('newCorretorAssessmentCode',c);
+  }
+  return c;
+}
+function newAssessmentCode(){
+  let seq=Number(localStorage.getItem('newCorretorAssessmentSeq')||0)+1;
+  const c='AV-'+String(seq).padStart(3,'0');
+  localStorage.setItem('newCorretorAssessmentSeq',String(seq));
+  localStorage.setItem('newCorretorAssessmentCode',c);
+  if(document.getElementById('codigoAvaliacao'))document.getElementById('codigoAvaliacao').value=c;
+  if(document.getElementById('cardCodigo'))document.getElementById('cardCodigo').value=c;
+  renderCard();
+}
+function buildKey(){
+  const n=Math.max(1,Math.min(50,+nq.value||10)),ls=L.slice(0,+na.value||5),old=[...gabarito];
+  gabarito=Array.from({length:n},(_,i)=>ls.includes(old[i])?old[i]:'A');
+  key.innerHTML='';
+  gabarito.forEach((v,i)=>{
+    let d=document.createElement('div');d.className='qbox';
+    d.innerHTML='<b style="font-size:12px">QUESTÃO '+String(i+1).padStart(2,'0')+'</b><div class="qopts">'+
+      [...ls].map(x=>`<button type="button" class="${v===x?'sel':''}" onclick="setKey(${i},'${x}')">${x}</button>`).join('')+
+      '</div>';
+    key.appendChild(d);
+  });
+  syncCardFromAssessment();
+}
+function setKey(i,x){gabarito[i]=x;buildKey()}
+function saveEvaluation(){
+  const data={
+    titulo:titulo.value||'AVALIAÇÃO',
+    data:document.getElementById('dataAvaliacao')?.value||'',
+    questoes:Math.max(1,Math.min(50,+nq.value||10)),
+    alternativas:+na.value||5,
+    valor:+valor.value||1,
+    codigo:getAssessmentCode(),
+    gabarito:[...gabarito]
+  };
+  localStorage.setItem('newCorretorAvaliacao',JSON.stringify(data));
+  localStorage.setItem('newCorretorGabarito',JSON.stringify(gabarito));
+  if(document.getElementById('codigoAvaliacao'))document.getElementById('codigoAvaliacao').value=data.codigo;
+  keymsg.textContent='✓ Avaliação salva. As informações serão carregadas no Cartão.';
+  keymsg.className='status ok';
+  syncCardFromAssessment();
+}
+function loadEvaluation(){
+  try{
+    const a=JSON.parse(localStorage.getItem('newCorretorAvaliacao')||'null');
+    if(a){
+      if(a.titulo)titulo.value=a.titulo;
+      if(a.data)document.getElementById('dataAvaliacao').value=a.data;
+      if(a.questoes)nq.value=a.questoes;
+      if(a.alternativas)na.value=String(a.alternativas);
+      if(a.valor!=null)valor.value=a.valor;
+      if(a.codigo)localStorage.setItem('newCorretorAssessmentCode',a.codigo);
+      if(Array.isArray(a.gabarito))gabarito=a.gabarito;
+    }else{
+      const old=JSON.parse(localStorage.getItem('newCorretorGabarito')||'null');
+      if(Array.isArray(old)&&old.length){gabarito=old;nq.value=old.length}
+    }
+  }catch(e){}
+  if(document.getElementById('codigoAvaliacao'))document.getElementById('codigoAvaliacao').value=getAssessmentCode();
+}
+function syncCardFromAssessment(){
+  const n=Math.max(1,Math.min(50,+nq.value||10));
+  const a=Math.max(3,Math.min(5,+na.value||5));
+  const tituloEl=document.getElementById('cardInfoTitulo');
+  const det=document.getElementById('cardInfoDetalhes');
+  const code=document.getElementById('cardCodigo');
+  if(tituloEl)tituloEl.textContent=(titulo.value||'AVALIAÇÃO').toUpperCase();
+  if(det)det.textContent=`${n} questões · A até ${L[a-1]}`;
+  if(code)code.value=getAssessmentCode();
 }
 function fmtDate(v){
  if(!v)return '____/____/________';
  const p=v.split('-'); return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:v;
 }
-function syncCardConfig(){
- const q=document.getElementById('cardQuestoes');
- const a=document.getElementById('cardAlternativas');
- if(q) nq.value=Math.max(1,Math.min(50,+q.value||10));
- if(a) na.value=a.value;
- buildKey();
- renderCard();
+function getCardData(){return document.getElementById('dataAvaliacao')?.value||''}
+
+function updateStudentFields(){
+  const mode=document.getElementById('printMode')?.value||'blank';
+  const count=Math.max(1,Math.min(100,+document.getElementById('studentCount')?.value||1));
+  const box=document.getElementById('studentFields');
+  const note=document.getElementById('studentPreviewNote');
+  if(!box)return;
+  if(mode==='blank'){
+    box.innerHTML='';
+    note.textContent=`Serão gerados ${count} cartão(ões) em branco para preenchimento manual.`;
+    return;
+  }
+  const old=[...box.querySelectorAll('input')].map(x=>x.value);
+  box.innerHTML='';
+  for(let i=0;i<count;i++){
+    const lab=document.createElement('label');
+    lab.innerHTML=`${String(i+1).padStart(2,'0')}. Nome do estudante<input class="student-name" data-index="${i}" value="${esc(old[i]||'')}" placeholder="Nome completo">`;
+    box.appendChild(lab);
+  }
+  note.textContent=`Serão gerados ${count} cartão(ões), um por página, com os nomes preenchidos.`;
 }
-function renderCard(){
- const printCardEl=document.getElementById('printCard');
- if(!printCardEl)return;
+function getStudentNames(){
+  return [...document.querySelectorAll('.student-name')].map(x=>x.value.trim());
+}
+function cardMarkup(alunoCard, turmaCard, pageClass=''){
  const n=Math.min(50,Math.max(1,+nq.value||10));
  const ls=L.slice(0,+na.value||5);
- const tituloCard=(document.getElementById('cardTitulo')?.value||titulo?.value||'AVALIAÇÃO').toUpperCase();
- const dataCard=document.getElementById('cardData')?.value||'';
- const alunoCard=document.getElementById('cardAluno')?.value||'';
- const turmaCard=document.getElementById('cardTurma')?.value||'';
- const codigo=getCardCode();
-
- if(document.getElementById('cardCodigo'))document.getElementById('cardCodigo').value=codigo;
- if(document.getElementById('cardQuestoes'))document.getElementById('cardQuestoes').value=n;
- if(document.getElementById('cardAlternativas'))document.getElementById('cardAlternativas').value=String(ls.length);
-
- // Até 10 questões por coluna. Ex.: 15 = 10 na 1ª coluna + 5 na 2ª.
- const rows=Math.min(10,n);
- const cols=Math.ceil(n/10);
- const gridH = '122mm';
-
+ const tituloCard=(titulo?.value||'AVALIAÇÃO').toUpperCase();
+ const dataCard=getCardData();
+ const codigo=getAssessmentCode();
+ const rows=Math.min(10,n),cols=Math.ceil(n/10),gridH='122mm';
  let qs='';
  for(let i=0;i<n;i++){
    qs+=`<div class="omr-q"><div class="omr-qnum">QUESTÃO ${String(i+1).padStart(2,'0')}</div><div class="omr-options">${[...ls].map(x=>`<span class="omr-opt">${x}</span>`).join('')}</div></div>`;
  }
- document.getElementById('printCard').innerHTML=`
+ return `<div class="a4-sheet ${pageClass}">
    <i class="omr-marker omr-tl"></i><i class="omr-marker omr-tr"></i>
    <i class="omr-marker omr-bl"></i><i class="omr-marker omr-br"></i>
    <div class="card-head">
@@ -273,7 +378,7 @@ function renderCard(){
      <div class="ident-grid">
        <div class="ident-cell"><div class="ident-label">Avaliação</div><div class="ident-value">${esc(tituloCard)}</div></div>
        <div class="ident-cell"><div class="ident-label">Data</div><div class="ident-value">${fmtDate(dataCard)}</div></div>
-       <div class="ident-cell"><div class="ident-label">Código de registro da prova</div><div class="ident-value reg-code">${esc(codigo)}</div></div>
+       <div class="ident-cell"><div class="ident-label">Código da avaliação</div><div class="ident-value reg-code">${esc(codigo)}</div></div>
        <div class="ident-cell"><div class="ident-label">Nome do estudante</div><div class="ident-value">${esc(alunoCard)||'________________________________________________________________'}</div></div>
        <div class="ident-cell"><div class="ident-label">Turma</div><div class="ident-value">${esc(turmaCard)||'________________'}</div></div>
        <div class="ident-cell"><div class="ident-label">Questões / alternativas</div><div class="ident-value">${n} questões · A até ${ls[ls.length-1]}</div></div>
@@ -283,9 +388,36 @@ function renderCard(){
    <div class="answer-title">MARQUE A ALTERNATIVA CORRESPONDENTE À SUA RESPOSTA</div>
    <div class="answer-help">Preencha o círculo escolhido de forma completa. Os marcadores pretos dos quatro cantos são utilizados pelo sistema para localizar e corrigir o cartão.</div>
    <div class="omr-grid" style="--rows:${rows};--cols:${cols};--grid-h:${gridH}">${qs}</div>
-   <div class="card-footer"><strong>NEW PROF. CORRETOR</strong> · Cartão-resposta para correção automática por imagem · Código ${esc(codigo)}</div>`;
+   <div class="card-footer"><strong>NEW PROF. CORRETOR</strong> · Cartão-resposta para correção automática por imagem · Código ${esc(codigo)}</div>
+ </div>`;
 }
-
+function renderCard(){
+ const printCardEl=document.getElementById('printCard'); if(!printCardEl)return;
+ const turmaCard=document.getElementById('cardTurma')?.value||'';
+ const mode=document.getElementById('printMode')?.value||'blank';
+ const names=getStudentNames();
+ const aluno=mode==='named'?(names[0]||''):'';
+ printCardEl.innerHTML=cardMarkup(aluno,turmaCard);
+ syncCardFromAssessment();
+}
+function printCards(){
+ const printCardEl=document.getElementById('printCard');
+ if(!printCardEl)return;
+ const turmaCard=document.getElementById('cardTurma')?.value||'';
+ const mode=document.getElementById('printMode')?.value||'blank';
+ const count=Math.max(1,Math.min(100,+document.getElementById('studentCount')?.value||1));
+ let names=mode==='named'?getStudentNames():Array(count).fill('');
+ if(mode==='named' && names.some((n)=>!n)){
+   const faltam=names.map((n,i)=>n?'':i+1).filter(Boolean);
+   if(!confirm(`Há ${faltam.length} nome(s) em branco. Deseja imprimir mesmo assim?`))return;
+ }
+ const old=printCardEl.innerHTML;
+ printCardEl.innerHTML=names.slice(0,count).map((n)=>cardMarkup(n,turmaCard,'print-page')).join('');
+ let restored=false;
+ const restore=()=>{if(restored)return;restored=true;printCardEl.innerHTML=old;window.removeEventListener('afterprint',restore)};
+ window.addEventListener('afterprint',restore);
+ setTimeout(()=>window.print(),120);
+}
 
 function getHistory(){
   try{const x=JSON.parse(localStorage.getItem('newCorretorHistorico')||'[]');return Array.isArray(x)?x:[]}
@@ -702,7 +834,7 @@ function renderResults(a,raw){
  let rows=a.map(x=>{let cls='',sit=x.status;if(x.status.startsWith('Dupla')){du++;cls='double'}else if(x.status==='Em branco'){bl++;cls='blank'}else if(x.ans===gabarito[x.q-1]){ac++;cls='correct';sit='✓ Correta'}else{wr++;cls='wrong';sit='✗ Incorreta'}return `<tr><td>${String(x.q).padStart(2,'0')}</td><td class="${cls}">${x.ans}</td><td>${gabarito[x.q-1]||'—'}</td><td class="${cls}">${sit}</td><td>${x.vals.map(z=>Math.round(z*100)+'%').join(' / ')}</td></tr>`}).join('');
  let nota=ac*v;
  results.innerHTML=`<h2>Respostas identificadas</h2><div class="status info"><b>Estudante:</b> ${esc(aluno.value)||'Não informado'} &nbsp; <b>Turma:</b> ${esc(turma.value)||'—'}</div><div class="keyline">${a.map(x=>x.ans).join(' | ')}</div><div class="grid"><div class="status ok">Acertos<br><b>${ac}</b></div><div class="status bad">Erros<br><b>${wr}</b></div><div class="status warn">Brancas<br><b>${bl}</b></div><div class="status warn">Revisar<br><b>${du}</b></div></div><div class="card"><div class="score">${nota.toFixed(1)}</div>Nota — ${ac} acertos × ${v.toFixed(2)}</div><details><summary><b>🔎 Leitura bruta para conferência</b></summary><pre class="raw">${esc(raw)}</pre></details><div style="overflow:auto"><table><thead><tr><th>Questão</th><th>Leitura</th><th>Gabarito</th><th>Situação</th><th>Índice das alternativas</th></tr></thead><tbody>${rows}</tbody></table></div>`;
- saveHistory({data:new Date().toLocaleString('pt-BR'),aluno:aluno.value||'Não informado',turma:turma.value||'—',avaliacao:titulo.value||'Avaliação',acertos:ac,erros:wr,brancas:bl,revisar:du,total:a.length,nota:Number(nota.toFixed(2)),respostas:a.map(x=>x.ans)});
+ saveHistory({data:new Date().toLocaleString('pt-BR'),aluno:aluno.value||'Não informado',turma:turma.value||'—',avaliacao:titulo.value||'Avaliação',codigo:getAssessmentCode(),acertos:ac,erros:wr,brancas:bl,revisar:du,total:a.length,nota:Number(nota.toFixed(2)),respostas:a.map(x=>x.ans)});
  summary.className='status ok';summary.innerHTML=`<b>${esc(aluno.value)||'Estudante'}</b> — ${esc(turma.value)||'Turma não informada'} — ${ac} acertos, ${wr} erros, ${bl} brancas, ${du} para revisar — Nota <b>${nota.toFixed(1)}</b>.`;
 }
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
@@ -720,10 +852,9 @@ async function readPhoto(){
  }catch(e){console.error(e);setStatus('Erro na leitura: '+e.message,'bad')}finally{finish()}
 }
 function finish(){busy=false;btnRead.disabled=false}
-loadKey();
-if(document.getElementById('cardData')&&!document.getElementById('cardData').value)document.getElementById('cardData').value=new Date().toISOString().slice(0,10);
-if(document.getElementById('cardQuestoes'))document.getElementById('cardQuestoes').value=Math.max(1,Math.min(50,+nq.value||10));
-if(document.getElementById('cardAlternativas'))document.getElementById('cardAlternativas').value=String(na.value||5);
+loadEvaluation();
+if(document.getElementById('dataAvaliacao')&&!document.getElementById('dataAvaliacao').value)document.getElementById('dataAvaliacao').value=new Date().toISOString().slice(0,10);
+if(document.getElementById('codigoAvaliacao'))document.getElementById('codigoAvaliacao').value=getAssessmentCode();
 buildKey();
 show('inicio');
 </script>
