@@ -138,6 +138,7 @@ flex-wrap:nowrap;
 <label>Questões<input id="nq" type="number" min="1" max="50" value="10" onchange="buildKey()"></label>
 <label>Alternativas<select id="na" onchange="buildKey()"><option value="3">A até C</option><option value="4">A até D</option><option value="5" selected>A até E</option></select></label>
 <label>Valor por questão<input id="valor" type="number" step=".01" value="1"></label>
+<label>Data do cartão<input id="cardDate" type="date"><small id="card-date-help" style="display:block;color:#64748b;margin-top:3px">Preenchida com a data da avaliação; você pode alterar para a data da aplicação.</small></label>
 <label>Código da avaliação<input id="codigoAvaliacao" class="reg-code" readonly></label>
 </div>
 <h3 style="margin-top:18px;text-transform:uppercase">GABARITO</h3>
@@ -393,7 +394,27 @@ function cardMarkup(alunoCard, turmaCard, pageClass=''){
    <div class="card-footer"><strong>NEW PROF. CORRETOR</strong> · Cartão-resposta para correção automática por imagem · Código ${esc(codigo)}</div>
  </div>`;
 }
+
+function getCardDate(){
+  const el=document.getElementById('cardDate');
+  return el && el.value ? el.value : (document.getElementById('data')?.value || '');
+}
+function formatDateBR(v){
+  if(!v)return '—';
+  const p=v.split('-');
+  return p.length===3 ? `${p[2]}/${p[1]}/${p[0]}` : v;
+}
+function initCardDate(){
+  const el=document.getElementById('cardDate');
+  if(!el)return;
+  const source=document.getElementById('data');
+  if(!el.value && source && source.value) el.value=source.value;
+  el.addEventListener('change',()=>renderCard());
+}
+
 function renderCard(){
+  initCardDate();
+  const cp=document.getElementById('cardPreviewDate'); if(cp) cp.textContent=formatDateBR(getCardDate());
  const printCardEl=document.getElementById('printCard'); if(!printCardEl)return;
  const turmaCard=document.getElementById('cardTurma')?.value||'';
  const mode=document.getElementById('printMode')?.value||'blank';
