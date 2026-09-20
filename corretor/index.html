@@ -3,8 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NEW PROF. CORRETOR — V4.22</title>
+<title>New Prof. Corretor Inteligente de Avaliações</title>
 <script async src="https://docs.opencv.org/4.x/opencv.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f2f5fa;color:#17243a}
 header{background:linear-gradient(135deg,#123b91,#1764e8);color:#fff;padding:22px 18px;position:sticky;top:0;z-index:20;box-shadow:0 3px 12px #0003}
@@ -19,7 +21,7 @@ button{cursor:pointer}.primary{background:#1764e8;color:#fff;border:0;border-rad
 table{width:100%;border-collapse:collapse;margin-top:13px;font-size:14px}th,td{border:1px solid #d9e1ea;padding:9px;text-align:center}th{background:#edf3fa}
 .correct{color:#16803d;font-weight:800}.wrong{color:#c62828;font-weight:800}.blank{color:#64748b;font-weight:800}.double{color:#a15c00;font-weight:800}
 .score{font-size:34px;color:#1764e8;font-weight:900}.keyline{font-family:monospace;background:#f1f5f9;padding:12px;border-radius:9px;font-size:18px;letter-spacing:3px;word-break:break-all}
-.qgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.qbox{border:1px solid #cbd5e1;border-radius:8px;padding:8px}.qopts{display:flex;gap:4px;margin-top:6px}.qopts button{width:27px;height:27px;border-radius:50%;border:1px solid #64748b;background:#fff}.qopts button.sel{background:#1764e8;color:#fff}
+.qgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.qbox{border:1px solid #cbd5e1;border-radius:8px;padding:8px}.qopts{display:flex;gap:5px;margin-top:6px}.qopts button{width:30px;height:30px;border-radius:50%;border:1px solid #64748b;background:#fff}.qopts button.sel{background:#16a34a;color:#fff;border-color:#15803d;color:#fff}.gabarito-help{margin:0 0 12px;padding:10px 12px;border-radius:8px;background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;font-size:13px;line-height:1.45}.green-dot{color:#16a34a;font-weight:800}
 .raw{font:12px/1.5 monospace;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px;overflow:auto;white-space:pre}
 @media(max-width:600px){.brand{font-size:28px}.qgrid{grid-template-columns:repeat(2,1fr)}nav button{font-size:15px}}
 
@@ -39,9 +41,14 @@ table{width:100%;border-collapse:collapse;margin-top:13px;font-size:14px}th,td{b
 .card-subtitle{text-align:center;font-size:10pt;font-weight:800;letter-spacing:1.5px;margin:-1mm 0 5mm;color:#26364d}
 .ident-box{border:1.5px solid #111;margin:0 2mm 4mm}
 .ident-title{background:#173f8f;color:#fff;font-size:10pt;font-weight:900;padding:2.5mm 3mm;letter-spacing:.5px}
-.ident-grid{display:grid;grid-template-columns:1.8fr .8fr 1.05fr;gap:0;min-width:0}
-.ident-cell{padding:2mm 2.5mm;border-right:1px solid #aaa;border-top:1px solid #aaa;min-height:14mm;min-width:0;overflow:hidden}
-.ident-cell:nth-child(3n){border-right:0}
+.ident-grid{display:block;min-width:0}
+.ident-row{display:grid;gap:0}
+.ident-row-top{grid-template-columns:2.2fr 1fr}
+.ident-row-student{grid-template-columns:1.75fr .72fr .72fr}
+.ident-cell{padding:2.2mm 2.7mm;border-right:1px solid #aaa;border-top:1px solid #aaa;min-height:15mm;min-width:0;overflow:hidden;background:#fff}
+.ident-row .ident-cell:last-child{border-right:0}
+.ident-label{font-size:7.5pt;font-weight:900;text-transform:uppercase;color:#173f8f;margin-bottom:2mm;letter-spacing:.2px}
+.ident-value{font-size:10.5pt;font-weight:700;min-height:5mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ident-label{font-size:7.5pt;font-weight:800;text-transform:uppercase;color:#4b5563;margin-bottom:2mm}
 .ident-value{font-size:10.5pt;font-weight:700;min-height:5mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .reg-code{font-family:"Courier New",monospace;letter-spacing:1.3px;font-size:10pt}
@@ -97,314 +104,961 @@ flex-wrap:nowrap;
  .card-config label:first-child{grid-column:span 2}
  .a4-wrap{width:100%;overflow-x:auto;margin-left:0;margin-right:0}
 }
-</style>
 
-
-
-
-<style id="access-v423-css">
-.access-filterbar{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
-.access-filterbar button{border:1px solid #d4deeb;background:#fff;color:#17345d;border-radius:10px;padding:10px 13px;font-weight:900;cursor:pointer}
-.access-filterbar button.active{background:#1764e8;color:#fff;border-color:#1764e8}
-.access-bulk{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:12px;background:#f8fafc;border:1px solid #dbe3ed;border-radius:12px;margin-bottom:12px}
-.access-bulk select{padding:9px;border:1px solid #cbd5e1;border-radius:8px;font-weight:800}
-.access-bulk button{border:0;border-radius:9px;padding:10px 13px;font-weight:900;cursor:pointer}
-.bulk-green{background:#16a34a;color:#fff}.bulk-red{background:#dc2626;color:#fff}.bulk-gray{background:#e8eef7;color:#17345d}
-.access-check{width:19px;height:19px;margin:0;accent-color:#1764e8}
-.access-user.selected{border-color:#1764e8;box-shadow:0 0 0 2px #1764e822}
-.access-user-head-left{display:flex;gap:10px;align-items:flex-start;min-width:0}
-.access-user-head-left>div:last-child{min-width:0}
-.access-empty{padding:18px;text-align:center;color:#64748b;border:1px dashed #cbd5e1;border-radius:12px;background:#fafcff}
-.access-actions select,.access-actions input[type=date]{min-height:40px}
-.access-mini{font-size:12px;color:#64748b;margin-top:8px}
-</style>
-
-
-
-
-
-<style id="access-entry-tabs-css">
-.access-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px}
-.access-tabs button{
-  min-height:48px;border:0!important;border-radius:10px!important;
-  font-weight:900!important;color:#fff!important;cursor:pointer;
-  transition:.15s ease;opacity:.88;
-}
-.access-tabs button:hover{opacity:1;transform:translateY(-1px)}
-.access-tabs button.active{opacity:1;box-shadow:0 0 0 3px #ffffff55}
-#tabEntrar{background:#16a34a!important}
-#tabSolicitar{background:#1764e8!important}
-#tabAdmin{background:#dc2626!important}
-.access-panel{display:none!important}
-.access-panel.active{display:block!important}
+.photo-picker{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}
+.picker-button{display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:12px 16px;border-radius:10px}
+.file-hidden{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.file-name{font-size:.95rem;color:#334155;overflow-wrap:anywhere}
 @media(max-width:600px){
-  .access-tabs{grid-template-columns:1fr}
-  .access-tabs button{width:100%}
+  .photo-picker{display:block}
+  .picker-button{width:100%;box-sizing:border-box}
+  .file-name{padding:8px 2px}
 }
-</style>
-<style id="access-lock-css">
-body.access-locked>header,
-body.access-locked>main{display:none!important}
-</style>
+.smallbtn{padding:6px 9px;font-size:12px}.pdf-all-btn{background:#c62828;color:#fff;border:0;border-radius:8px;padding:9px 14px;font-weight:700;cursor:pointer}.pdf-all-btn:hover{background:#a91f1f}
 
+.student-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px;margin-top:10px}
+.student-list label{font-size:12px}.student-list input{font-size:14px}
+.print-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-top:12px}
+.radio-card{border:1px solid #cbd5e1;border-radius:10px;padding:10px;background:#f8fafc}
+.radio-card input{width:auto;margin-right:6px}
+.print-preview-note{font-size:12px;color:#64748b;margin-top:8px}
+@media print{
+ .a4-sheet.print-page{page-break-after:always;break-after:page}
+ .a4-sheet.print-page:last-child{page-break-after:auto;break-after:auto}
+}
+
+
+.blank-line{display:block;width:100%;height:6mm;border-bottom:1.2px solid #111}
+.blank-line.short{width:100%}
+.student-value{white-space:nowrap;overflow:hidden;text-overflow:clip}
+
+
+.app-guide{margin-top:18px;background:#fff;border:1px solid #d9e1ef;border-radius:14px;padding:22px;box-shadow:0 4px 14px rgba(20,45,90,.07)}
+.app-guide h2{margin:0 0 8px;color:#164da5;font-size:21px}
+.app-guide h3{margin:18px 0 10px;color:#163d78;font-size:16px}
+.app-guide>p{margin:0;color:#334155;line-height:1.55;font-size:14px}
+.guide-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.guide-item{border:1px solid #dbe4f0;border-radius:10px;padding:13px;background:#f8fbff}
+.guide-title{font-weight:800;color:#1557b5;font-size:14px;margin-bottom:5px}
+.guide-item p{margin:0;color:#40516a;font-size:12.5px;line-height:1.5}
+.guide-flow{margin-top:14px;padding:12px;border-radius:9px;background:#eef5ff;color:#163f80;font-size:12.5px;line-height:1.6}
+.guide-flow span{font-weight:800}
+.guide-tip{margin-top:10px;padding:12px;border-radius:9px;background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;font-size:12.5px;line-height:1.5}
+@media(max-width:700px){.guide-grid{grid-template-columns:1fr}.app-guide{padding:15px}}
+
+
+/* ===== V4.30 — CAMADA DE ACESSO + D1 ===== */
+#accessGate{
+  min-height:100vh;
+  background:linear-gradient(135deg,#eef4ff,#f8fafc);
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding:28px 15px 50px;
+  box-sizing:border-box;
+}
+.access-shell{width:min(1050px,100%);margin:auto}
+.access-brand{text-align:center;margin:8px 0 22px}
+.access-brand .t{font-size:30px;font-weight:900;color:#123b91}
+.access-brand .t span{color:#1764e8}
+.access-brand .s{margin-top:5px;color:#52637b}
+.access-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.access-tab{border:0;border-radius:12px;padding:14px 10px;color:#fff;font-size:15px;font-weight:900;cursor:pointer}
+.access-tab.green{background:#16a34a}.access-tab.blue{background:#2563eb}.access-tab.red{background:#dc2626}
+.access-panel{background:#fff;border:1px solid #dbe3ef;border-radius:16px;padding:22px;box-shadow:0 5px 20px #173b7112}
+.access-panel h2{margin:0 0 7px;color:#173f8f}
+.access-panel p{color:#52637b;line-height:1.5}
+.access-panel .access-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.access-panel label{display:block;font-weight:800;font-size:14px}
+.access-panel input{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:8px;margin-top:5px;font-size:16px;box-sizing:border-box}
+.access-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+.access-btn{border:0;border-radius:9px;padding:12px 17px;font-weight:900;cursor:pointer}
+.access-btn.primary{background:#1764e8;color:#fff}
+.access-btn.secondary{background:#e8eef7;color:#17345d}
+.access-msg{display:none;padding:12px;border-radius:10px;margin-top:12px;font-weight:800;line-height:1.4}
+.access-msg.info{display:block;background:#e8f1ff;color:#174a96}
+.access-msg.ok{display:block;background:#dcfce7;color:#166534}
+.access-msg.warn{display:block;background:#fff4d6;color:#8a5a00}
+.access-msg.bad{display:block;background:#fee2e2;color:#991b1b}
+.access-small{font-size:12px;color:#64748b;margin-top:12px}
+#appShell{display:none}
+@media(max-width:700px){
+  .access-tabs{grid-template-columns:1fr}
+  .access-panel .access-grid{grid-template-columns:1fr}
+  .access-brand .t{font-size:25px}
+}
+
+</style>
 </head>
-<body class="access-locked">
-
+<body>
 <div id="accessGate">
-  <div class="access-box">
-    <div class="access-brand">NEW <span>PROF. CORRETOR</span></div>
-    <div class="access-sub">Área de acesso — V4.23</div>
+  <div class="access-shell">
+    <div class="access-brand">
+      <div class="t">NEW <span>PROF. CORRETOR</span></div>
+      <div class="s">Corretor Inteligente de Avaliações</div>
+    </div>
 
     <div class="access-tabs">
-      <button id="tabEntrar" class="active" onclick="accessTab('entrar')">🔐 Acesso ao Sistema</button>
-      <button id="tabSolicitar" onclick="accessTab('solicitar')">📝 Solicitar acesso</button>
-      <button id="tabAdmin" onclick="accessTab('admin')">⚙️ Administrador</button>
+      <button class="access-tab green" type="button" onclick="showAccessPanel('login')">🔐 Acesso ao Sistema</button>
+      <button class="access-tab blue" type="button" onclick="showAccessPanel('request')">📝 Solicitar acesso</button>
+      <button class="access-tab red" type="button" onclick="openAdmin()">⚙️ Administrador</button>
     </div>
 
-    <section id="accessEntrar" class="access-panel active">
-      <div class="access-grid">
-        <label class="full">E-mail
-          <input id="loginEmail" type="email" placeholder="seuemail@escola.com">
-        </label>
+    <div id="accessLogin" class="access-panel">
+      <h2>🔐 Acesso ao Sistema</h2>
+      <p>Informe o e-mail cadastrado para verificar sua autorização de acesso.</p>
+      <label>E-mail
+        <input id="accessLoginEmail" type="email" autocomplete="email" placeholder="seuemail@escola.com">
+      </label>
+      <div class="access-actions">
+        <button class="access-btn primary" type="button" onclick="checkAccess()">Entrar</button>
       </div>
-      <div class="actions" style="margin-top:14px">
-        <button class="access-btn access-primary" onclick="accessLogin()">Entrar</button>
-      </div>
-      <div id="loginMsg" class="access-msg">Informe o e-mail utilizado no cadastro.</div>
-    </section>
+      <div id="accessLoginMsg" class="access-msg info">Informe o e-mail utilizado no cadastro.</div>
+    </div>
 
-    <section id="accessSolicitar" class="access-panel">
+    <div id="accessRequest" class="access-panel" style="display:none">
+      <h2>📝 Solicitar acesso</h2>
+      <p>Preencha os dados abaixo. A solicitação ficará pendente até a análise do administrador.</p>
       <div class="access-grid">
-        <label>Nome
-          <input id="reqNome" placeholder="Nome completo">
+        <label>Nome completo
+          <input id="accessReqName" type="text" autocomplete="name" placeholder="Nome completo">
         </label>
         <label>E-mail
-          <input id="reqEmail" type="email" placeholder="seuemail@escola.com">
+          <input id="accessReqEmail" type="email" autocomplete="email" placeholder="seuemail@escola.com">
         </label>
-        <label class="full">Escola
-          <input id="reqEscola" placeholder="Nome da escola">
+        <label>Escola
+          <input id="accessReqSchool" type="text" autocomplete="organization" placeholder="Nome da escola">
         </label>
       </div>
-      <div class="actions" style="margin-top:14px">
-        <button class="access-btn access-primary" onclick="accessRequest()">Enviar solicitação</button>
+      <div class="access-actions">
+        <button class="access-btn primary" type="button" onclick="requestAccess()">Enviar solicitação</button>
+        <button class="access-btn secondary" type="button" onclick="showAccessPanel('login')">Voltar</button>
       </div>
-      <div id="reqMsg" class="access-msg">A solicitação ficará como 🟡 PENDENTE até a análise do administrador.</div>
-    </section>
+      <div id="accessRequestMsg" class="access-msg info">Os dados serão enviados ao cadastro de acesso.</div>
+    </div>
 
-    <section id="accessAdmin" class="access-panel">
-      <div id="adminLoginBox">
-        <div class="access-grid">
-          <label class="full">Código administrativo de demonstração
-            <input id="adminPin" type="password" placeholder="Digite o código">
-          </label>
-        </div>
-        <div class="actions" style="margin-top:14px">
-          <button class="access-btn access-primary" onclick="accessAdminLogin()">Acessar painel</button>
-        </div>
-        <div class="access-msg">Protótipo local: código inicial <b>ADMIN-2026</b>. Este código NÃO é segurança de produção.</div>
-      </div>
-
-      
-<div id="adminPanel" style="display:none">
-  <div class="access-topline">
-    <b>Controle de acesso</b>
-    <button class="access-btn access-secondary" onclick="accessAdminLogout()">Sair</button>
-  </div>
-
-  <div class="access-msg">
-    O administrador pode analisar cada solicitação individualmente ou realizar ações em lote.
-    O prazo é definido livremente no momento de liberar ou renovar.
-  </div>
-
-  <div id="adminStats" class="access-msg"></div>
-
-  <div class="access-filterbar">
-    <button id="filterTodos" class="active" onclick="setAdminFilter('TODOS')">📋 Todos</button>
-    <button id="filterPendentes" onclick="setAdminFilter('PENDENTE')">🟡 Pendentes</button>
-    <button id="filterLiberados" onclick="setAdminFilter('LIBERADO')">🟢 Liberados</button>
-    <button id="filterBloqueados" onclick="setAdminFilter('BLOQUEADO')">🔴 Bloqueados</button>
-    <button id="filterExpirados" onclick="setAdminFilter('EXPIRADO')">⏰ Expirados</button>
-    <button id="filterRecusados" onclick="setAdminFilter('RECUSADO')">⚪ Recusados</button>
-  </div>
-
-  <div class="access-bulk">
-    <label style="display:flex;align-items:center;gap:8px;font-weight:900">
-      <input id="selectAllAccess" class="access-check" type="checkbox" onchange="toggleAllVisible(this.checked)">
-      Selecionar todos os exibidos
-    </label>
-    <button class="bulk-green" onclick="bulkAction('LIBERAR')">✓ Liberar selecionados</button>
-    <button class="bulk-green" onclick="bulkAction('LIBERAR_TODOS')">✓ Liberar todos</button>
-    <button class="bulk-red" onclick="bulkAction('BLOQUEAR')">Bloquear selecionados</button>
-    <button class="bulk-gray" onclick="bulkAction('RECUSAR')">Recusar selecionados</button>
-    <span class="access-mini" id="selectedCount">0 selecionado(s)</span>
-  </div>
-
-  <div id="bulkDuration" class="access-bulk" style="display:none">
-    <b>Prazo da liberação:</b>
-    <select id="bulkDur">
-      <option value="1d">1 dia</option>
-      <option value="1w">1 semana</option>
-      <option value="1m">1 mês</option>
-      <option value="none">Sem prazo</option>
-      <option value="custom">Personalizado</option>
-    </select>
-    <input id="bulkDate" type="date" style="display:none">
-    <button class="bulk-green" onclick="confirmBulkRelease()">Confirmar liberação</button>
-    <button class="bulk-gray" onclick="cancelBulkRelease()">Cancelar</button>
-  </div>
-
-  <div id="adminList" class="access-list"></div>
-</div>
-</section>
-
-
-    <div class="access-note">
-      <b>V4.22 — protótipo de fluxo.</b> Os dados de acesso ficam neste navegador apenas para teste.
-      Na etapa de produção, a autorização será transferida para Cloudflare Access + Worker + D1.
-      O leitor OMR abaixo não é alterado por esta camada.
+    <div class="access-small">
+      O acesso é controlado pelo cadastro administrativo do NEW PROF. CORRETOR.
     </div>
   </div>
 </div>
 
-<header><div class="brand">NEW <span>CORRETOR</span></div><div class="sub">Correção inteligente de avaliações — leitor OMR V4.1</div>
-<nav><button onclick="show('inicio')">🏠 Início</button><button onclick="show('avaliacao')">📝 Avaliação</button><button onclick="show('corrigir')">📷 Corrigir</button><button onclick="show('cartao')">📄 Cartão</button><button onclick="show('resultados')">📊 Resultados</button></nav></header>
+<div id="appShell">
+<header><div class="brand">NEW <span>PROF. CORRETOR</span></div><div class="sub">Corretor Inteligente de Avaliações — OMR</div>
+<nav><button onclick="show('inicio')">🏠 Início</button><button onclick="show('avaliacao')">📝 Avaliação</button><button onclick="show('corrigir')">📷 Corrigir</button><button onclick="show('cartao')">📄 Cartão</button><button onclick="show('resultados')">📊 Resultados</button><button onclick="show('historico')">📚 Histórico</button><button onclick="logoutAccess()">🔒 Sair</button></nav></header>
 <main>
-<section id="inicio" class="page"><div class="card"><h1>NEW CORRETOR</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V4.1:</b> o leitor calcula as posições das bolhas a partir dos próprios quadros das questões. A mesma leitura alimenta diagnóstico, sequência e tabela.</div><div class="actions"><button class="primary" onclick="show('avaliacao')">Configurar avaliação</button><button class="secondary" onclick="show('corrigir')">Corrigir cartão</button></div></div></section>
+<section id="inicio" class="page"><div class="card"><h1>NEW PROF. CORRETOR INTELIGENTE</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V4.16:</b> Leitor OMR testado com fotografias reais. Histórico local e câmera integrados.<br><br><b>Base preservada:</b> o leitor calcula as posições das bolhas a partir dos próprios quadros das questões. A mesma leitura alimenta diagnóstico, sequência e tabela.</div>
+<div class="app-guide">
+  <h2>📘 Como funciona o NEW PROF. CORRETOR?</h2>
+  <p>
+    O <b>NEW PROF. CORRETOR INTELIGENTE DE AVALIAÇÕES</b> foi desenvolvido para facilitar a
+    correção de avaliações por meio da leitura automática de <b>cartões-resposta fotografados</b>.
+    O professor configura a avaliação, informa o gabarito, gera os cartões e, depois da aplicação,
+    fotografa o cartão preenchido. O sistema identifica as marcações, compara as respostas com o
+    gabarito e apresenta os resultados.
+  </p>
 
-<section id="avaliacao" class="page hidden"><div class="card"><h2>📝 Avaliação</h2><div class="grid"><label>Título<input id="titulo" value="AVALIAÇÃO DE MATEMÁTICA"></label><label>Questões<input id="nq" type="number" min="1" max="50" value="10" onchange="buildKey()"></label><label>Alternativas<select id="na" onchange="buildKey()"><option value="3">A até C</option><option value="4">A até D</option><option value="5" selected>A até E</option></select></label><label>Valor por questão<input id="valor" type="number" step=".01" value="1"></label></div><h3 style="margin-top:18px">Gabarito</h3><div id="key" class="qgrid"></div><div class="actions"><button class="primary" onclick="saveKey()">Salvar gabarito</button></div><div id="keymsg" class="status info">Configure o gabarito.</div></div></section>
+  <h3>📚 Conheça cada aba</h3>
+
+  <div class="guide-grid">
+    <div class="guide-item">
+      <div class="guide-title">📝 Avaliação</div>
+      <p>Configure a avaliação uma única vez. Informe o título, a quantidade de questões e o número de alternativas e marque o <b>gabarito</b> de cada questão. Essas informações serão utilizadas automaticamente nas demais etapas.</p>
+    </div>
+
+    <div class="guide-item">
+      <div class="guide-title">📄 Cartão</div>
+      <p>Configure e gere os cartões-resposta em formato A4. As informações da avaliação são carregadas automaticamente. Informe a turma, escolha a quantidade de estudantes, insira os nomes e defina se a data será preenchida ou deixada em branco.</p>
+    </div>
+
+    <div class="guide-item">
+      <div class="guide-title">📷 Corrigir</div>
+      <p>Informe o estudante e a turma e selecione ou fotografe o cartão-resposta preenchido. O sistema analisa a imagem, identifica as alternativas marcadas e compara cada resposta com o gabarito.</p>
+    </div>
+
+    <div class="guide-item">
+      <div class="guide-title">📊 Resultados</div>
+      <p>Apresenta o resultado da correção: acertos, erros, questões em branco, questões para revisão e nota. Também permite conferir as respostas identificadas pelo leitor.</p>
+    </div>
+
+    <div class="guide-item">
+      <div class="guide-title">📚 Histórico</div>
+      <p>Armazena as correções realizadas neste aparelho para consulta posterior. Permite pesquisar estudantes ou turmas, consultar avaliações, exportar CSV e gerar um relatório geral em PDF.</p>
+    </div>
+  </div>
+
+  <div class="guide-flow">
+    <b>🔄 Fluxo recomendado:</b>
+    <span>1. Avaliação</span> → <span>2. Cartão</span> → <span>3. Aplicação da prova</span> →
+    <span>4. Corrigir</span> → <span>5. Resultados</span> → <span>6. Histórico</span>
+  </div>
+
+  <div class="guide-tip">
+    💡 <b>Dica:</b> configure a avaliação primeiro. Depois, acesse <b>Cartão</b> para gerar os cartões.
+    Após a aplicação, utilize <b>Corrigir</b> para fotografar os cartões e obter os resultados.
+  </div>
+</div>
+<div class="actions"><button class="primary" onclick="show('avaliacao')">Configurar avaliação</button><button class="secondary" onclick="show('corrigir')">Corrigir cartão</button></div></div></section>
+
+<section id="avaliacao" class="page hidden">
+<div class="card">
+<h2>📝 Avaliação</h2>
+<p>Configure a avaliação uma única vez. Essas informações serão carregadas automaticamente no menu <b>Cartão</b>.</p>
+<div class="grid">
+<label>Título da avaliação<input id="titulo" value="AVALIAÇÃO DE MATEMÁTICA"></label>
+<label>Questões<input id="nq" type="number" min="1" max="50" value="10" onchange="buildKey()"></label>
+<label>Alternativas<select id="na" onchange="buildKey()"><option value="3">A até C</option><option value="4">A até D</option><option value="5" selected>A até E</option></select></label>
+<label>Valor por questão<input id="valor" type="number" step=".01" value="1"></label>
+<label>Código da avaliação<input id="codigoAvaliacao" class="reg-code" readonly></label>
+</div>
+<h3 style="margin-top:18px;text-transform:uppercase">GABARITO</h3>
+<p class="gabarito-help"><b>Professor(a), marque as questões corretas abaixo e, ao finalizar, salve a avaliação.</b><br>
+Selecione uma alternativa em cada questão. A alternativa selecionada ficará marcada em <span class="green-dot">verde</span>.</p>
+<div id="key" class="qgrid"></div>
+<div class="actions">
+<button class="primary" type="button" onclick="saveEvaluation()">💾 Salvar avaliação</button>
+<button class="secondary" type="button" onclick="newAssessmentCode()">🔢 Novo código</button>
+</div>
+<div id="keymsg" class="status info">Configure o gabarito e salve a avaliação.</div>
+</div></section>
 
 <section id="cartao" class="page hidden">
 <div class="card no-print">
   <h2>📄 Cartão-resposta</h2>
-  <p>Configure a identificação e gere um cartão profissional em <b>A4, escala 100%</b>, preparado para leitura OMR.</p>
-  <div class="card-config">
-    <label>Identificação da Avaliação
-      <input id="cardTitulo" value="AVALIAÇÃO DE MATEMÁTICA" oninput="renderCard()">
+  <p>As informações da avaliação são carregadas automaticamente. Aqui você define a turma e os estudantes para impressão.</p>
+  <div class="grid">
+    <label>Ano / Turma
+      <input id="cardTurma" placeholder="Ex.: 5º A">
     </label>
-    <label>Data
-      <input id="cardData" type="date" oninput="renderCard()">
-    </label>
-    <label>Nome do estudante
-      <input id="cardAluno" placeholder="Nome completo" oninput="renderCard()">
-    </label>
-    <label>Turma
-      <input id="cardTurma" placeholder="Ex.: 5º A" oninput="renderCard()">
-    </label>
-    <label>Questões
-      <input id="cardQuestoes" type="number" min="1" max="50" value="10" oninput="syncCardConfig()">
-    </label>
-    <label>Alternativas
-      <select id="cardAlternativas" onchange="syncCardConfig()">
-        <option value="3">A até C</option>
-        <option value="4">A até D</option>
-        <option value="5" selected>A até E</option>
+    <label>Modo de impressão
+      <select id="printMode" onchange="updateStudentFields()">
+        <option value="blank">Cartões em branco</option>
+        <option value="named">Cartões com nomes dos estudantes</option>
       </select>
     </label>
-    <label>Código de registro da prova
+    <label>Quantidade de estudantes
+      <input id="studentCount" type="number" min="1" max="100" value="1" onchange="updateStudentFields()">
+    </label>
+    <label>Data do cartão
+      <select id="cardDateMode" onchange="toggleCardDate()">
+        <option value="blank" selected>Deixar em branco</option>
+        <option value="choose">Escolher data</option>
+      </select>
+      <input id="cardDate" type="date" style="display:none;margin-top:6px" onchange="renderCard()">
+      <small id="card-date-help" style="display:block;color:#64748b;margin-top:3px">Escolha se a data será preenchida ou deixada em branco no cartão.</small>
+    </label>
+    <label>Código da avaliação
       <input id="cardCodigo" class="reg-code" readonly>
     </label>
   </div>
+
+  <div class="status info">
+    <b id="cardInfoTitulo">Avaliação</b><br>
+    <span id="cardInfoDetalhes">10 questões · A até E</span>
+  </div>
+
+  <div id="studentFields" class="student-list"></div>
+  <div id="studentPreviewNote" class="print-preview-note"></div>
+
+  <label style="display:block;max-width:320px;margin-top:12px">
+    Formato de saída
+    <select id="cardFormato">
+      <option value="pdf" selected>PDF</option>
+      <option value="png">Imagem PNG — A4</option>
+      <option value="jpg">Imagem JPG — A4</option>
+      <option value="print">Imprimir diretamente</option>
+    </select>
+  </label>
   <div class="actions">
     <button class="primary" onclick="renderCard()">🔄 Atualizar cartão</button>
     <button class="secondary" onclick="newCardCode()">🔐 Novo código</button>
-    <button class="primary" onclick="window.print()">🖨️ Imprimir A4</button>
+    <button class="primary" onclick="exportCard()">⬇️ Gerar arquivo</button>
   </div>
   <div class="status warn">⚠️ Imprima em <b>100%</b>. Não recorte, dobre ou cubra os quatro marcadores pretos dos cantos.</div>
 </div>
+
 <div class="a4-wrap">
   <div id="printCard" class="a4-sheet"></div>
 </div>
 </section>
 
-<section id="corrigir" class="page hidden"><div class="card"><h2>📷 Corrigir cartão</h2><p>Preencha os dados do estudante e fotografe o cartão inteiro.</p><div class="grid"><label>Nome do estudante<input id="aluno" placeholder="Nome completo"></label><label>Turma<input id="turma" placeholder="Ex.: 5º A"></label></div><div class="small">O nome escrito no cartão não é usado como OCR nesta versão; informe o nome aqui para garantir a identificação.</div><input id="photo" type="file" accept="image/*" capture="environment" style="margin-top:12px"><div class="actions"><button id="btnRead" class="primary" onclick="readPhoto()">🔎 Ler cartão</button><button class="secondary" onclick="resetRead()">Limpar</button></div><div id="readStatus" class="status info">Aguardando fotografia.</div><canvas id="diag" class="preview"></canvas><div id="results"></div></div></section>
+<section id="corrigir" class="page hidden"><div class="card">
+<h2>📷 Corrigir cartão</h2>
+<p>Informe o estudante e abra a <b>galeria, câmera ou arquivos</b> do aparelho para escolher a foto do cartão inteiro.</p>
+<div class="grid"><label>Nome do estudante<input id="aluno" placeholder="Nome completo"></label><label>Turma<input id="turma" placeholder="Ex.: 5º A"></label></div>
+
+<div class="photo-picker">
+  <label for="photo" class="primary picker-button">📷 Abrir galeria / câmera / arquivos</label>
+  <input id="photo" type="file" accept="image/*" class="file-hidden">
+  <div id="photoName" class="file-name">Nenhuma foto selecionada</div>
+</div>
+
+<div class="small">No celular, o seletor do próprio aparelho poderá oferecer <b>Câmera</b>, <b>Fotos/Galeria</b> e <b>Arquivos</b>, inclusive serviços de nuvem disponíveis no aparelho. No computador, será aberto o seletor de arquivos.</div>
+
+<div class="actions"><button id="btnRead" type="button" class="primary" onclick="readPhoto()">🔎 Ler cartão</button><button type="button" class="secondary" onclick="resetRead()">Limpar</button></div>
+<div id="readStatus" class="status info">Aguardando fotografia.</div><canvas id="diag" class="preview"></canvas><div id="results"></div>
+</div></section>
 
 <section id="resultados" class="page hidden"><div class="card"><h2>📊 Resultado</h2><div id="summary" class="status info">Nenhuma correção realizada nesta sessão.</div></div></section>
+
+<section id="historico" class="page hidden">
+  <div class="card">
+    <h2>📚 Histórico de correções</h2>
+    <p>Correções ficam salvas <b>neste aparelho</b> para consulta rápida.</p>
+    <div class="grid">
+      <label>Pesquisar estudante ou turma<input id="histBusca" oninput="renderHistory()" placeholder="Digite para filtrar"></label>
+      <label>Avaliação<input id="histAvaliacao" oninput="renderHistory()" placeholder="Título da avaliação"></label>
+    </div>
+    <div class="actions">
+      <button class="primary" onclick="exportHistoryCSV()">⬇️ Exportar CSV</button>
+      <button type="button" class="pdf-all-btn" onclick="gerarRelatorioHistoricoPDF()">📄 Exportar PDF</button>
+      <button class="secondary" onclick="clearHistory()">🗑️ Limpar histórico</button>
+    </div>
+    <div id="historyList"></div>
+  </div>
+</section>
 </main>
 
 <script>
+/* ===== V4.30 — ACESSO D1 ===== */
+const ACCESS_API = 'https://new-prof-corretor-api.parqueclube1bloco2d.workers.dev';
+
+function normalizeAccessEmail(v){
+  return String(v || '').trim().toLowerCase();
+}
+
+function setAccessMessage(id, text, type){
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.textContent=text;
+  el.className='access-msg '+(type||'info');
+}
+
+function showAccessPanel(panel){
+  document.getElementById('accessLogin').style.display=panel==='login'?'block':'none';
+  document.getElementById('accessRequest').style.display=panel==='request'?'block':'none';
+  if(panel==='login') document.getElementById('accessLoginEmail')?.focus();
+}
+
+function openAdmin(){
+  window.location.href='https://new-prof-corretor-admin.parqueclube1bloco2d.workers.dev/';
+}
+
+function revealApp(email){
+  localStorage.setItem('newProfCorretorAccessEmail', email);
+  document.getElementById('accessGate').style.display='none';
+  document.getElementById('appShell').style.display='block';
+  if(typeof show==='function') show('inicio');
+}
+
+function logoutAccess(){
+  localStorage.removeItem('newProfCorretorAccessEmail');
+  document.getElementById('appShell').style.display='none';
+  document.getElementById('accessGate').style.display='flex';
+  showAccessPanel('login');
+}
+
+async function getAccessStatus(email){
+  const r=await fetch(`${ACCESS_API}/api/access/status?email=${encodeURIComponent(email)}`,{
+    method:'GET',
+    headers:{'Accept':'application/json'}
+  });
+  let data=null;
+  try{data=await r.json()}catch(e){}
+  if(!r.ok || !data) throw new Error((data&&data.message)||'Não foi possível consultar o acesso.');
+  return data;
+}
+
+async function checkAccess(){
+  const email=normalizeAccessEmail(document.getElementById('accessLoginEmail')?.value);
+  if(!email){
+    setAccessMessage('accessLoginMsg','Informe um e-mail válido.','warn');
+    return;
+  }
+  setAccessMessage('accessLoginMsg','Consultando autorização...','info');
+  try{
+    const data=await getAccessStatus(email);
+    const item=data.request || data;
+    const status=String(item.status || data.status || '').toUpperCase();
+
+    if(status==='LIBERADO'){
+      setAccessMessage('accessLoginMsg','✓ Acesso liberado. Abrindo o NEW PROF. CORRETOR...','ok');
+      setTimeout(()=>revealApp(email),250);
+      return;
+    }
+    if(status==='PENDENTE'){
+      setAccessMessage('accessLoginMsg','🟡 Solicitação pendente. Aguarde a análise do administrador.','warn');
+      return;
+    }
+    if(status==='BLOQUEADO'){
+      setAccessMessage('accessLoginMsg','🔴 Este acesso está bloqueado pelo administrador.','bad');
+      return;
+    }
+    if(status==='EXPIRADO'){
+      setAccessMessage('accessLoginMsg','⏰ Este acesso está expirado. Solicite uma renovação ao administrador.','warn');
+      return;
+    }
+    if(status==='RECUSADO'){
+      setAccessMessage('accessLoginMsg','⚪ A solicitação de acesso foi recusada.','bad');
+      return;
+    }
+
+    setAccessMessage('accessLoginMsg','E-mail não encontrado no cadastro. Clique em “Solicitar acesso” para realizar o cadastro.','info');
+  }catch(e){
+    console.error(e);
+    setAccessMessage('accessLoginMsg','Não foi possível consultar o acesso agora. Verifique sua conexão e tente novamente.','bad');
+  }
+}
+
+async function requestAccess(){
+  const name=document.getElementById('accessReqName')?.value.trim();
+  const email=normalizeAccessEmail(document.getElementById('accessReqEmail')?.value);
+  const school=document.getElementById('accessReqSchool')?.value.trim();
+
+  if(!name || !email || !school){
+    setAccessMessage('accessRequestMsg','Preencha Nome, E-mail e Escola.','warn');
+    return;
+  }
+
+  setAccessMessage('accessRequestMsg','Enviando solicitação...','info');
+  try{
+    const r=await fetch(`${ACCESS_API}/api/access/request`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify({name,email,school})
+    });
+    const data=await r.json().catch(()=>null);
+
+    if(!r.ok || !data?.ok){
+      setAccessMessage('accessRequestMsg',data?.message||'Não foi possível enviar a solicitação.','bad');
+      return;
+    }
+
+    setAccessMessage('accessRequestMsg','✓ Solicitação enviada com sucesso. Aguarde a análise do administrador.','ok');
+    document.getElementById('accessReqName').value='';
+    document.getElementById('accessReqEmail').value='';
+    document.getElementById('accessReqSchool').value='';
+  }catch(e){
+    console.error(e);
+    setAccessMessage('accessRequestMsg','Não foi possível enviar a solicitação agora. Verifique sua conexão e tente novamente.','bad');
+  }
+}
+
+(function initAccessGate(){
+  // Sempre começa na tela de acesso. Não revela o corretor automaticamente.
+  document.getElementById('accessGate').style.display='flex';
+  document.getElementById('appShell').style.display='none';
+  showAccessPanel('login');
+})();
+</script>
+
+<script>
 let gabarito=[],ultimaLeitura=null,busy=false;
+
+photo.addEventListener('change',()=>{
+  const f=photo.files?.[0];
+  photoName.textContent=f?`✓ ${f.name}`:'Nenhuma foto selecionada';
+  if(f) setStatus('Foto selecionada. Clique em “Ler cartão”.','info');
+});
+
 const L='ABCDE';
 
-function show(id){document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');if(id==='avaliacao')buildKey();if(id==='cartao')renderCard()}
-function buildKey(){const n=Math.max(1,Math.min(50,+nq.value||10)),ls=L.slice(0,+na.value||5),old=[...gabarito];gabarito=Array.from({length:n},(_,i)=>ls.includes(old[i])?old[i]:'A');key.innerHTML='';gabarito.forEach((v,i)=>{let d=document.createElement('div');d.className='qbox';d.innerHTML='<b style="font-size:12px">QUESTÃO '+String(i+1).padStart(2,'0')+'</b><div class="qopts">'+[...ls].map(x=>`<button class="${v===x?'sel':''}" onclick="setKey(${i},'${x}')">${x}</button>`).join('')+'</div>';key.appendChild(d)});if(document.getElementById('cardQuestoes'))document.getElementById('cardQuestoes').value=n;if(document.getElementById('cardAlternativas'))document.getElementById('cardAlternativas').value=String(ls.length);renderCard()}
-function setKey(i,x){gabarito[i]=x;buildKey()}
-function saveKey(){localStorage.setItem('newCorretorGabarito',JSON.stringify(gabarito));keymsg.textContent='✓ Gabarito salvo neste aparelho.';keymsg.className='status ok';renderCard()}
-function loadKey(){try{let x=JSON.parse(localStorage.getItem('newCorretorGabarito'));if(Array.isArray(x)&&x.length){gabarito=x;nq.value=x.length}}catch(e){}}
-function getCardCode(){
- let c=localStorage.getItem('newCorretorCardCode');
- if(!c){c='NC-'+Math.random().toString(36).slice(2,8).toUpperCase()+'-'+Math.random().toString(36).slice(2,6).toUpperCase();localStorage.setItem('newCorretorCardCode',c)}
- return c;
+function show(id){
+  document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  if(id==='avaliacao'){buildKey()}
+  if(id==='cartao'){syncCardFromAssessment();updateStudentFields();renderCard()}
+  if(id==='historico'){renderHistory()}
 }
-function newCardCode(){
- const c='NC-'+Math.random().toString(36).slice(2,8).toUpperCase()+'-'+Math.random().toString(36).slice(2,6).toUpperCase();
- localStorage.setItem('newCorretorCardCode',c);
- if(cardCodigo)cardCodigo.value=c;
- renderCard();
+
+function getAssessmentCode(){
+  let c=localStorage.getItem('newCorretorAssessmentCode');
+  if(!c){
+    let seq=Number(localStorage.getItem('newCorretorAssessmentSeq')||0)+1;
+    localStorage.setItem('newCorretorAssessmentSeq',String(seq));
+    c='AV-'+String(seq).padStart(3,'0');
+    localStorage.setItem('newCorretorAssessmentCode',c);
+  }
+  return c;
+}
+function newAssessmentCode(){
+  let seq=Number(localStorage.getItem('newCorretorAssessmentSeq')||0)+1;
+  const c='AV-'+String(seq).padStart(3,'0');
+  localStorage.setItem('newCorretorAssessmentSeq',String(seq));
+  localStorage.setItem('newCorretorAssessmentCode',c);
+  if(document.getElementById('codigoAvaliacao'))document.getElementById('codigoAvaliacao').value=c;
+  if(document.getElementById('cardCodigo'))document.getElementById('cardCodigo').value=c;
+  renderCard();
+}
+function buildKey(){
+  const n=Math.max(1,Math.min(50,+nq.value||10)),ls=L.slice(0,+na.value||5),old=[...gabarito];
+  gabarito=Array.from({length:n},(_,i)=>ls.includes(old[i])?old[i]:'A');
+  key.innerHTML='';
+  gabarito.forEach((v,i)=>{
+    let d=document.createElement('div');d.className='qbox';
+    d.innerHTML='<b style="font-size:12px">QUESTÃO '+String(i+1).padStart(2,'0')+'</b><div class="qopts">'+
+      [...ls].map(x=>`<button type="button" class="${v===x?'sel':''}" onclick="setKey(${i},'${x}')">${x}</button>`).join('')+
+      '</div>';
+    key.appendChild(d);
+  });
+  syncCardFromAssessment();
+}
+function setKey(i,x){gabarito[i]=x;buildKey()}
+function saveEvaluation(){
+  const data={
+    titulo:titulo.value||'AVALIAÇÃO',
+    data:document.getElementById('dataAvaliacao')?.value||'',
+    questoes:Math.max(1,Math.min(50,+nq.value||10)),
+    alternativas:+na.value||5,
+    valor:+valor.value||1,
+    codigo:getAssessmentCode(),
+    gabarito:[...gabarito]
+  };
+  localStorage.setItem('newCorretorAvaliacao',JSON.stringify(data));
+  localStorage.setItem('newCorretorGabarito',JSON.stringify(gabarito));
+  if(document.getElementById('codigoAvaliacao'))document.getElementById('codigoAvaliacao').value=data.codigo;
+  keymsg.textContent='✓ Avaliação salva. As informações serão carregadas no Cartão.';
+  keymsg.className='status ok';
+  syncCardFromAssessment();
+}
+function loadEvaluation(){
+  try{
+    const a=JSON.parse(localStorage.getItem('newCorretorAvaliacao')||'null');
+    if(a){
+      if(a.titulo)titulo.value=a.titulo;
+      if(a.data)document.getElementById('dataAvaliacao').value=a.data;
+      if(a.questoes)nq.value=a.questoes;
+      if(a.alternativas)na.value=String(a.alternativas);
+      if(a.valor!=null)valor.value=a.valor;
+      if(a.codigo)localStorage.setItem('newCorretorAssessmentCode',a.codigo);
+      if(Array.isArray(a.gabarito))gabarito=a.gabarito;
+    }else{
+      const old=JSON.parse(localStorage.getItem('newCorretorGabarito')||'null');
+      if(Array.isArray(old)&&old.length){gabarito=old;nq.value=old.length}
+    }
+  }catch(e){}
+  if(document.getElementById('codigoAvaliacao'))document.getElementById('codigoAvaliacao').value=getAssessmentCode();
+}
+function syncCardFromAssessment(){
+  const n=Math.max(1,Math.min(50,+nq.value||10));
+  const a=Math.max(3,Math.min(5,+na.value||5));
+  const tituloEl=document.getElementById('cardInfoTitulo');
+  const det=document.getElementById('cardInfoDetalhes');
+  const code=document.getElementById('cardCodigo');
+  if(tituloEl)tituloEl.textContent=(titulo.value||'AVALIAÇÃO').toUpperCase();
+  if(det)det.textContent=`${n} questões · A até ${L[a-1]}`;
+  if(code)code.value=getAssessmentCode();
 }
 function fmtDate(v){
  if(!v)return '____/____/________';
  const p=v.split('-'); return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:v;
 }
-function syncCardConfig(){
- const q=document.getElementById('cardQuestoes');
- const a=document.getElementById('cardAlternativas');
- if(q) nq.value=Math.max(1,Math.min(50,+q.value||10));
- if(a) na.value=a.value;
- buildKey();
- renderCard();
+function getCardData(){
+  const mode=document.getElementById('cardDateMode')?.value||'blank';
+  return mode==='choose' ? (document.getElementById('cardDate')?.value||'') : '';
 }
-function renderCard(){
- const printCardEl=document.getElementById('printCard');
- if(!printCardEl)return;
+
+function updateStudentFields(){
+  const mode=document.getElementById('printMode')?.value||'blank';
+  const count=Math.max(1,Math.min(100,+document.getElementById('studentCount')?.value||1));
+  const box=document.getElementById('studentFields');
+  const note=document.getElementById('studentPreviewNote');
+  if(!box)return;
+  if(mode==='blank'){
+    box.innerHTML='';
+    note.textContent=`Serão gerados ${count} cartão(ões) em branco para preenchimento manual.`;
+    return;
+  }
+  const old=[...box.querySelectorAll('input')].map(x=>x.value);
+  box.innerHTML='';
+  for(let i=0;i<count;i++){
+    const lab=document.createElement('label');
+    lab.innerHTML=`${String(i+1).padStart(2,'0')}. Nome do estudante<input class="student-name" data-index="${i}" value="${esc(old[i]||'')}" placeholder="Nome completo">`;
+    box.appendChild(lab);
+  }
+  note.textContent=`Serão gerados ${count} cartão(ões), um por página, com os nomes preenchidos.`;
+}
+function getStudentNames(){
+  return [...document.querySelectorAll('.student-name')].map(x=>x.value.trim());
+}
+function cardMarkup(alunoCard, turmaCard, pageClass=''){
  const n=Math.min(50,Math.max(1,+nq.value||10));
  const ls=L.slice(0,+na.value||5);
- const tituloCard=(document.getElementById('cardTitulo')?.value||titulo?.value||'AVALIAÇÃO').toUpperCase();
- const dataCard=document.getElementById('cardData')?.value||'';
- const alunoCard=document.getElementById('cardAluno')?.value||'';
- const turmaCard=document.getElementById('cardTurma')?.value||'';
- const codigo=getCardCode();
-
- if(document.getElementById('cardCodigo'))document.getElementById('cardCodigo').value=codigo;
- if(document.getElementById('cardQuestoes'))document.getElementById('cardQuestoes').value=n;
- if(document.getElementById('cardAlternativas'))document.getElementById('cardAlternativas').value=String(ls.length);
-
- // Até 10 questões por coluna. Ex.: 15 = 10 na 1ª coluna + 5 na 2ª.
- const rows=Math.min(10,n);
- const cols=Math.ceil(n/10);
- const gridH = '122mm';
-
+ const tituloCard=(titulo?.value||'AVALIAÇÃO').toUpperCase();
+ const dataCard=getCardData();
+ const codigo=getAssessmentCode();
+ const rows=Math.min(10,n),cols=Math.ceil(n/10),gridH='122mm';
  let qs='';
  for(let i=0;i<n;i++){
    qs+=`<div class="omr-q"><div class="omr-qnum">QUESTÃO ${String(i+1).padStart(2,'0')}</div><div class="omr-options">${[...ls].map(x=>`<span class="omr-opt">${x}</span>`).join('')}</div></div>`;
  }
- document.getElementById('printCard').innerHTML=`
+ return `<div class="a4-sheet ${pageClass}">
    <i class="omr-marker omr-tl"></i><i class="omr-marker omr-tr"></i>
    <i class="omr-marker omr-bl"></i><i class="omr-marker omr-br"></i>
    <div class="card-head">
      <div class="main-title">CARTÃO-RESPOSTA</div>
-     <div class="brand"><strong>NEW CORRETOR</strong>LEITOR OMR</div>
+     <div class="brand"><strong>NEW PROF. CORRETOR</strong>LEITOR OMR</div>
    </div>
    <div class="card-subtitle">${esc(tituloCard)}</div>
    <div class="ident-box">
-     <div class="ident-title">IDENTIFICAÇÃO DA AVALIAÇÃO</div>
+     <div class="ident-title">IDENTIFICAÇÃO</div>
      <div class="ident-grid">
-       <div class="ident-cell"><div class="ident-label">Avaliação</div><div class="ident-value">${esc(tituloCard)}</div></div>
-       <div class="ident-cell"><div class="ident-label">Data</div><div class="ident-value">${fmtDate(dataCard)}</div></div>
-       <div class="ident-cell"><div class="ident-label">Código de registro da prova</div><div class="ident-value reg-code">${esc(codigo)}</div></div>
-       <div class="ident-cell"><div class="ident-label">Nome do estudante</div><div class="ident-value">${esc(alunoCard)||'________________________________________________________________'}</div></div>
-       <div class="ident-cell"><div class="ident-label">Turma</div><div class="ident-value">${esc(turmaCard)||'________________'}</div></div>
-       <div class="ident-cell"><div class="ident-label">Questões / alternativas</div><div class="ident-value">${n} questões · A até ${ls[ls.length-1]}</div></div>
+       <div class="ident-row ident-row-top">
+         <div class="ident-cell"><div class="ident-label">Avaliação</div><div class="ident-value">${esc(tituloCard)}</div></div>
+         <div class="ident-cell"><div class="ident-label">Código da avaliação</div><div class="ident-value reg-code">${esc(codigo)}</div></div>
+       </div>
+       <div class="ident-row ident-row-student">
+         <div class="ident-cell"><div class="ident-label">Estudante</div><div class="ident-value student-value">${alunoCard ? esc(alunoCard) : '<span class="blank-line"></span>'}</div></div>
+         <div class="ident-cell"><div class="ident-label">Ano / Turma</div><div class="ident-value student-value">${turmaCard ? esc(turmaCard) : '<span class="blank-line short"></span>'}</div></div>
+         <div class="ident-cell"><div class="ident-label">Data</div><div class="ident-value student-value">${dataCard ? fmtDate(dataCard) : '<span class="blank-line short"></span>'}</div></div>
+       </div>
      </div>
    </div>
    <div class="instructions"><b>ORIENTAÇÕES:</b> Preencha completamente apenas uma alternativa por questão. Use lápis ou caneta preta/azul. Não faça marcas fora dos círculos. Não dobre nem corte o cartão.</div>
    <div class="answer-title">MARQUE A ALTERNATIVA CORRESPONDENTE À SUA RESPOSTA</div>
    <div class="answer-help">Preencha o círculo escolhido de forma completa. Os marcadores pretos dos quatro cantos são utilizados pelo sistema para localizar e corrigir o cartão.</div>
    <div class="omr-grid" style="--rows:${rows};--cols:${cols};--grid-h:${gridH}">${qs}</div>
-   <div class="card-footer"><strong>NEW CORRETOR</strong> · Cartão-resposta para correção automática por imagem · Código ${esc(codigo)}</div>`;
+   <div class="card-footer"><strong>NEW PROF. CORRETOR</strong> · Cartão-resposta para correção automática por imagem · Código ${esc(codigo)}</div>
+ </div>`;
+}
+
+function getCardDate(){
+  const mode=document.getElementById('cardDateMode')?.value||'blank';
+  return mode==='choose' ? (document.getElementById('cardDate')?.value||'') : '';
+}
+function formatDateBR(v){
+  if(!v)return '';
+  const p=v.split('-');
+  return p.length===3 ? `${p[2]}/${p[1]}/${p[0]}` : v;
+}
+function toggleCardDate(){
+  const mode=document.getElementById('cardDateMode');
+  const input=document.getElementById('cardDate');
+  if(!mode||!input)return;
+  if(mode.value==='choose'){
+    input.style.display='block';
+    if(!input.value){
+      const d=new Date();
+      const local=new Date(d.getTime()-d.getTimezoneOffset()*60000);
+      input.value=local.toISOString().slice(0,10);
+    }
+  }else{
+    input.style.display='none';
+    input.value='';
+  }
+  renderCard();
+}
+function initCardDate(){
+  const mode=document.getElementById('cardDateMode');
+  const input=document.getElementById('cardDate');
+  if(!mode||!input)return;
+  toggleCardDateUIOnly();
+}
+function toggleCardDateUIOnly(){
+  const mode=document.getElementById('cardDateMode');
+  const input=document.getElementById('cardDate');
+  if(!mode||!input)return;
+  input.style.display=mode.value==='choose'?'block':'none';
+}
+function renderCard(){
+  initCardDate();
+ const printCardEl=document.getElementById('printCard'); if(!printCardEl)return;
+ const turmaCard=document.getElementById('cardTurma')?.value||'';
+ const mode=document.getElementById('printMode')?.value||'blank';
+ const names=getStudentNames();
+ const aluno=mode==='named'?(names[0]||''):'';
+ printCardEl.innerHTML=cardMarkup(aluno,turmaCard);
+ syncCardFromAssessment();
+}
+function printCards(){
+ const printCardEl=document.getElementById('printCard');
+ if(!printCardEl)return;
+ const turmaCard=document.getElementById('cardTurma')?.value||'';
+ const mode=document.getElementById('printMode')?.value||'blank';
+ const count=Math.max(1,Math.min(100,+document.getElementById('studentCount')?.value||1));
+ let names=mode==='named'?getStudentNames():Array(count).fill('');
+ if(mode==='named' && names.some((n)=>!n)){
+   const faltam=names.map((n,i)=>n?'':i+1).filter(Boolean);
+   if(!confirm(`Há ${faltam.length} nome(s) em branco. Deseja imprimir mesmo assim?`))return;
+ }
+ const old=printCardEl.innerHTML;
+ printCardEl.innerHTML=names.slice(0,count).map((n)=>cardMarkup(n,turmaCard,'print-page')).join('');
+ let restored=false;
+ const restore=()=>{if(restored)return;restored=true;printCardEl.innerHTML=old;window.removeEventListener('afterprint',restore)};
+ window.addEventListener('afterprint',restore);
+ setTimeout(()=>window.print(),120);
+}
+
+function getHistory(){
+  try{const x=JSON.parse(localStorage.getItem('newCorretorHistorico')||'[]');return Array.isArray(x)?x:[]}
+  catch(e){return []}
+}
+function saveHistory(item){
+  const h=getHistory();
+  h.unshift(item);
+  localStorage.setItem('newCorretorHistorico',JSON.stringify(h.slice(0,500)));
+  renderHistory();
+}
+function renderHistory(){
+  const box=document.getElementById('historyList'); if(!box)return;
+  const busca=(document.getElementById('histBusca')?.value||'').toLowerCase().trim();
+  const av=(document.getElementById('histAvaliacao')?.value||'').toLowerCase().trim();
+  const h=getHistory().filter(x=>(!busca||`${x.aluno} ${x.turma}`.toLowerCase().includes(busca))&&(!av||(x.avaliacao||'').toLowerCase().includes(av)));
+  if(!h.length){box.innerHTML='<div class="status info">Nenhuma correção encontrada.</div>';return}
+  box.innerHTML='<div style="overflow:auto"><table><thead><tr><th>Data</th><th>Estudante</th><th>Turma</th><th>Avaliação</th><th>Acertos</th><th>Nota</th></tr></thead><tbody>'+
+    h.map(x=>`<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos}/${x.total}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td></tr>`).join('')+
+    '</tbody></table></div>';
+}
+function gerarRelatorioHistoricoPDF(){
+  const h=getHistory();
+  if(!h.length){alert('Não há correções salvas no histórico.');return}
+
+  const busca=(document.getElementById('histBusca')?.value||'').toLowerCase().trim();
+  const av=(document.getElementById('histAvaliacao')?.value||'').toLowerCase().trim();
+  const registros=h.filter(x=>
+    (!busca||`${x.aluno} ${x.turma}`.toLowerCase().includes(busca)) &&
+    (!av||(x.avaliacao||'').toLowerCase().includes(av))
+  );
+  if(!registros.length){alert('Nenhuma correção corresponde aos filtros atuais.');return}
+
+  const totalQuestoes=registros.reduce((s,x)=>s+Number(x.total||0),0);
+  const totalAcertos=registros.reduce((s,x)=>s+Number(x.acertos||0),0);
+  const totalErros=registros.reduce((s,x)=>s+Number(x.erros||0),0);
+  const totalBrancas=registros.reduce((s,x)=>s+Number(x.brancas||0),0);
+  const totalRevisar=registros.reduce((s,x)=>s+Number(x.revisar||0),0);
+  const media=registros.length ? registros.reduce((s,x)=>s+Number(x.nota||0),0)/registros.length : 0;
+  const agora=new Date().toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'});
+
+  const rows=registros.map((x,idx)=>{
+    const respostas=Array.isArray(x.respostas)?x.respostas:[];
+    const marcadas=respostas.map((r,i)=>`${String(i+1).padStart(2,'0')}: ${r||'—'}`).join(' · ');
+    const situacao=`${x.acertos||0} acertos / ${x.erros||0} erros / ${x.brancas||0} brancas / ${x.revisar||0} revisar`;
+    return `<tr>
+      <td>${idx+1}</td><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td>
+      <td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td>
+      <td>${x.acertos||0}/${x.total||0}</td><td>${Number(x.nota||0).toFixed(1)}</td>
+      <td>${esc(situacao)}</td><td class="answers">${esc(marcadas)}</td>
+    </tr>`;
+  }).join('');
+
+  const w=window.open('','_blank');
+  if(!w){alert('O navegador bloqueou o relatório. Permita pop-ups para o NEW PROF. CORRETOR.');return}
+
+  w.document.write(`<!doctype html><html><head><meta charset="utf-8">
+  <title>Relatório - NEW PROF. CORRETOR</title>
+  <style>
+    @page{size:A4 portrait;margin:7mm 7mm 8mm}
+    *{box-sizing:border-box}
+    body{font-family:Arial,sans-serif;color:#172033;margin:0;font-size:9px;background:#fff}
+    .top{display:flex;align-items:center;gap:10px;border-bottom:2px solid #1857c7;padding:0 0 7px;margin-bottom:9px}
+    .logo{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#1857c7,#38a4ff);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:21px;box-shadow:0 2px 5px rgba(0,0,0,.15)}
+    h1{font-size:18px;line-height:1.05;margin:0;color:#1857c7}
+    .sub{font-size:9px;color:#596579;margin-top:3px}
+    .gen{font-size:8px;color:#687386;margin-left:auto;text-align:right}
+    .summary{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin:7px 0 9px}
+    .box{border:1px solid #cfd7e3;border-radius:5px;padding:6px;background:#fff}
+    .label{font-size:7px;color:#687386;text-transform:uppercase}
+    .value{font-size:13px;font-weight:800;margin-top:2px}
+    .filters{margin-bottom:7px;color:#555;font-size:8px}
+    table{width:100%;border-collapse:collapse;table-layout:fixed}
+    th,td{border:1px solid #cfd7e3;padding:4px 3px;text-align:center;vertical-align:top}
+    th{background:#eaf0f8;font-size:7.5px}
+    td{font-size:7.5px;line-height:1.2}
+    .answers{text-align:left;word-break:break-word}
+    .footer{margin-top:8px;border-top:1px solid #ddd;padding-top:5px;font-size:7px;color:#687386}
+    .no-print{margin-top:12px}
+    .no-print button{padding:8px 12px;border:0;border-radius:6px;background:#1857c7;color:#fff;font-weight:700}
+    @media print{.no-print{display:none}}
+  </style></head><body>
+  <div class="top">
+    <div class="logo">NP</div>
+    <div>
+      <h1>NEW PROF. CORRETOR</h1>
+      <div class="sub">Inteligente de Avaliações · Relatório Geral de Correções</div>
+    </div>
+    <div class="gen"><b>Gerado em</b><br>${esc(agora)}</div>
+  </div>
+
+  <div class="summary">
+    <div class="box"><div class="label">Correções</div><div class="value">${registros.length}</div></div>
+    <div class="box"><div class="label">Questões corrigidas</div><div class="value">${totalQuestoes}</div></div>
+    <div class="box"><div class="label">Acertos</div><div class="value">${totalAcertos}</div></div>
+    <div class="box"><div class="label">Erros</div><div class="value">${totalErros}</div></div>
+    <div class="box"><div class="label">Brancas / Revisar</div><div class="value">${totalBrancas} / ${totalRevisar}</div></div>
+    <div class="box"><div class="label">Média das notas</div><div class="value">${media.toFixed(1)}</div></div>
+  </div>
+
+  <div class="filters"><b>Filtros utilizados:</b>
+    ${busca?`Estudante/Turma: ${esc(busca)} · `:''}${av?`Avaliação: ${esc(av)}`:'Todas as avaliações'}
+  </div>
+
+  <table>
+    <thead><tr>
+      <th style="width:3%">#</th><th style="width:10%">Data</th><th style="width:12%">Estudante</th>
+      <th style="width:7%">Turma</th><th style="width:13%">Avaliação</th>
+      <th style="width:6%">Acertos</th><th style="width:5%">Nota</th>
+      <th style="width:15%">Resultado</th><th style="width:29%">Alternativas marcadas</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>
+
+  <div class="footer">Relatório gerado pelo NEW PROF. CORRETOR INTELIGENTE DE AVALIAÇÕES · ${esc(agora)}</div>
+  <div class="no-print"><button onclick="window.print()">🖨️ Imprimir / Salvar como PDF</button></div>
+  <script>setTimeout(()=>window.print(),350)<\/script>
+  </div>
+</body></html>`);
+  w.document.close();
+}
+function clearHistory(){
+  if(confirm('Apagar todo o histórico salvo neste aparelho?')){
+    localStorage.removeItem('newCorretorHistorico');renderHistory();
+  }
+}
+function exportHistoryCSV(){
+  const h=getHistory();
+  if(!h.length){alert('Não há correções no histórico.');return}
+  const head=['Data','Estudante','Turma','Avaliação','Acertos','Erros','Brancas','Revisar','Nota','Respostas'];
+  const rows=h.map(x=>[x.data,x.aluno,x.turma,x.avaliacao,x.acertos,x.erros,x.brancas,x.revisar,x.nota,(x.respostas||[]).join(' | ')]);
+  const csv=[head,...rows].map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(';')).join('\n');
+  const blob=new Blob(['\\ufeff'+csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='new-prof-corretor-historico.csv';a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+
+
+async function cardToCanvas(dpi=150){
+  const source=document.getElementById('printCard');
+  if(!source) throw new Error('Cartão não encontrado.');
+
+  const A4_W_MM=210, A4_H_MM=297;
+  const pxPerMm=dpi/25.4;
+  const outW=Math.round(A4_W_MM*pxPerMm);
+  const outH=Math.round(A4_H_MM*pxPerMm);
+
+  // Cria uma cópia isolada com exatamente o mesmo tamanho físico da folha A4.
+  // Assim, a imagem não depende da largura da tela, zoom ou layout responsivo.
+  const holder=document.createElement('div');
+  holder.style.position='fixed';
+  holder.style.left='-100000px';
+  holder.style.top='0';
+  holder.style.width='210mm';
+  holder.style.height='297mm';
+  holder.style.overflow='hidden';
+  holder.style.background='#fff';
+  holder.style.zIndex='-1';
+
+  const clone=source.cloneNode(true);
+  clone.removeAttribute('id');
+  clone.style.width='210mm';
+  clone.style.height='297mm';
+  clone.style.minWidth='210mm';
+  clone.style.minHeight='297mm';
+  clone.style.maxWidth='210mm';
+  clone.style.maxHeight='297mm';
+  clone.style.margin='0';
+  clone.style.padding='13mm 12mm 12mm';
+  clone.style.boxSizing='border-box';
+  clone.style.overflow='hidden';
+  clone.style.background='#fff';
+  clone.style.boxShadow='none';
+  clone.style.border='0';
+
+  holder.appendChild(clone);
+  document.body.appendChild(holder);
+
+  // Aguarda o navegador recalcular o layout do A4 antes da captura.
+  await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+
+  let canvas;
+  try{
+    canvas=await html2canvas(clone,{
+      scale:1,
+      width:clone.offsetWidth,
+      height:clone.offsetHeight,
+      backgroundColor:'#ffffff',
+      useCORS:true,
+      logging:false,
+      scrollX:0,
+      scrollY:0,
+      windowWidth:Math.ceil(210*96/25.4),
+      windowHeight:Math.ceil(297*96/25.4)
+    });
+  }finally{
+    holder.remove();
+  }
+
+  // Converte para uma imagem raster A4 exata.
+  const out=document.createElement('canvas');
+  out.width=outW;
+  out.height=outH;
+
+  const ctx=out.getContext('2d');
+  ctx.fillStyle='#fff';
+  ctx.fillRect(0,0,outW,outH);
+
+  // A proporção é exatamente 210:297, sem corte e sem deformação.
+  ctx.drawImage(canvas,0,0,outW,outH);
+
+  return out;
+}
+
+async function exportCard(){
+  const fmt=document.getElementById('cardFormato')?.value||'pdf';
+  renderCard();
+
+  if(fmt==='print'){
+    window.print();
+    return;
+  }
+
+  try{
+    if(typeof html2canvas==='undefined'){
+      alert('A exportação ainda está carregando. Aguarde alguns segundos e tente novamente.');
+      return;
+    }
+
+    // 150 DPI = 1240 × 1754 px para A4.
+    // A proporção e o tamanho físico correspondem à folha A4.
+    const canvas=await cardToCanvas(150);
+    const safe=((document.getElementById('cardTitulo')?.value||'cartao-resposta')
+      .trim().replace(/[^\wÀ-ÿ\-]+/g,'_')).replace(/^_+|_+$/g,'')||'cartao-resposta';
+
+    if(fmt==='png' || fmt==='jpg'){
+      const mime=fmt==='png'?'image/png':'image/jpeg';
+      const ext=fmt==='png'?'png':'jpg';
+      const a=document.createElement('a');
+      a.href=canvas.toDataURL(mime,0.95);
+      a.download=`${safe}-cartao-A4.${ext}`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      return;
+    }
+
+    if(!window.jspdf || !window.jspdf.jsPDF){
+      alert('A exportação PDF ainda está carregando. Aguarde alguns segundos e tente novamente.');
+      return;
+    }
+
+    const pdf=new window.jspdf.jsPDF({
+      orientation:'portrait',
+      unit:'mm',
+      format:'a4',
+      compress:true
+    });
+    pdf.addImage(
+      canvas.toDataURL('image/jpeg',0.95),
+      'JPEG',0,0,210,297,undefined,'FAST'
+    );
+    pdf.save(`${safe}-cartao.pdf`);
+  }catch(e){
+    console.error(e);
+    alert('Não foi possível gerar o arquivo: '+e.message);
+  }
 }
 
 function setStatus(t,c){readStatus.textContent=t;readStatus.className='status '+c}
-function resetRead(){photo.value='';results.innerHTML='';diag.getContext('2d').clearRect(0,0,diag.width,diag.height);ultimaLeitura=null;summary.className='status info';summary.textContent='Nenhuma correção realizada nesta sessão.';setStatus('Aguardando fotografia.','info')}
+function resetRead(){photo.value='';photoName.textContent='Nenhuma foto selecionada';results.innerHTML='';diag.getContext('2d').clearRect(0,0,diag.width,diag.height);ultimaLeitura=null;summary.className='status info';summary.textContent='Nenhuma correção realizada nesta sessão.';setStatus('Aguardando fotografia.','info')}
 
 function loadImage(f){return new Promise((ok,no)=>{let im=new Image();im.onload=()=>ok(im);im.onerror=no;im.src=URL.createObjectURL(f)})}
 function orderPts(p){let s=p.map(a=>a.x+a.y),d=p.map(a=>a.x-a.y);return[p[s.indexOf(Math.min(...s))],p[d.indexOf(Math.max(...d))],p[s.indexOf(Math.max(...s))],p[d.indexOf(Math.min(...d))]]}
@@ -554,7 +1208,64 @@ function localInk(gray,x,y,r){
  return {score:Math.max(0,best),x:bx,y:by}
 }
 
+
+// ===== OMR V4.4 — leitor calibrado para o cartão NEW CORRETOR de 10 questões =====
+// Esta geometria é a mesma do protótipo sem Python que passou nos testes com fotos reais.
+const OMR10_LETTERS=['A','B','C','D','E'];
+const OMR10_X=[547,584,621,658,694];
+const OMR10_Y=[677,750,822,894,964,1035,1107,1179,1253,1325];
+const OMR10_DEST=[{x:80,y:67},{x:1165,y:67},{x:1165,y:1698},{x:80,y:1698}];
+
+function warpCardOMR10(src,m){
+  const a=cv.matFromArray(4,1,cv.CV_32FC2,m.flatMap(p=>[p.x,p.y]));
+  const b=cv.matFromArray(4,1,cv.CV_32FC2,OMR10_DEST.flatMap(p=>[p.x,p.y]));
+  const M=cv.getPerspectiveTransform(a,b),d=new cv.Mat();
+  cv.warpPerspective(src,d,M,new cv.Size(1245,1754),cv.INTER_LINEAR,cv.BORDER_CONSTANT,new cv.Scalar(255,255,255,255));
+  a.delete();b.delete();M.delete();
+  return d;
+}
+
+function omr10Sample(gray,x,y){
+  const r=9; let n=0,dark=0,sum=0;
+  for(let yy=y-r;yy<=y+r;yy++) for(let xx=x-r;xx<=x+r;xx++){
+    if(xx<0||yy<0||xx>=gray.cols||yy>=gray.rows) continue;
+    if((xx-x)*(xx-x)+(yy-y)*(yy-y)<=r*r){
+      const v=gray.ucharPtr(yy,xx)[0]; n++; sum+=(255-v)/255; if(v<100) dark++;
+    }
+  }
+  return .70*(dark/Math.max(1,n))+.30*(sum/Math.max(1,n));
+}
+
+function detectAnswersOMR10(warp){
+  const gray=new cv.Mat(); cv.cvtColor(warp,gray,cv.COLOR_RGBA2GRAY);
+  const ls=L.slice(0,+na.value||5).slice(0,5);
+  const count=Math.min(10,gabarito.length);
+  const out=[],raw=[];
+  for(let q=0;q<count;q++){
+    const vals=OMR10_X.slice(0,ls.length).map(x=>omr10Sample(gray,x,OMR10_Y[q]));
+    const sorted=[...vals].sort((a,b)=>b-a), max=sorted[0]||0, second=sorted[1]||0;
+    const idx=vals.indexOf(max); let ans='—', status='Em branco';
+    const margin=max-second;
+    // Regra aprovada no protótipo V3: aceita marca mais fraca quando há predominância clara.
+    if(max>=0.32 && margin>=0.10){
+      if(second/max>0.78) status='Dupla marcação / revisar';
+      else {ans=ls[idx]||'—'; status='Marcada';}
+    }
+    const pts=OMR10_X.slice(0,ls.length).map((x,j)=>({x,y:OMR10_Y[q]}));
+    out.push({q:q+1,ans,status,vals,pts});
+    raw.push(`Q${String(q+1).padStart(2,'0')}  ${[...ls].map((x,j)=>x+':'+Math.round((vals[j]||0)*100)+'%').join('  ')}  → ${ans}`);
+  }
+  // Se houver menos de 10 questões, o restante não participa da leitura.
+  gray.delete();
+  return {answers:out,raw:raw.join('\n')};
+}
+
 function detectAnswers(warp){
+  if(gabarito.length===10) return detectAnswersOMR10(warp);
+  return detectAnswersLegacy(warp);
+}
+
+function detectAnswersLegacy(warp){
  let gray=new cv.Mat();cv.cvtColor(warp,gray,cv.COLOR_RGBA2GRAY);
  const count=gabarito.length, ls=L.slice(0,+na.value||5);
  let boxes=findQuestionBoxes(warp);
@@ -572,9 +1283,9 @@ function detectAnswers(warp){
    const vals=[],pts=[];
 
    // As bolhas ficam centralizadas horizontalmente dentro da moldura.
-   // Tamanho real do círculo: 4,7 mm; espaçamento: 1,7 mm.
+   // Tamanho real do círculo: 5,2 mm; espaçamento: 1,9 mm.
    const mm=1200/210;
-   const bubbleW=4.7*mm, gap=1.7*mm;
+   const bubbleW=5.2*mm, gap=1.9*mm;
    const total=ls.length*bubbleW+(ls.length-1)*gap;
    const start=b.x+(b.w-total)/2+bubbleW/2;
 
@@ -626,6 +1337,7 @@ function renderResults(a,raw){
  let rows=a.map(x=>{let cls='',sit=x.status;if(x.status.startsWith('Dupla')){du++;cls='double'}else if(x.status==='Em branco'){bl++;cls='blank'}else if(x.ans===gabarito[x.q-1]){ac++;cls='correct';sit='✓ Correta'}else{wr++;cls='wrong';sit='✗ Incorreta'}return `<tr><td>${String(x.q).padStart(2,'0')}</td><td class="${cls}">${x.ans}</td><td>${gabarito[x.q-1]||'—'}</td><td class="${cls}">${sit}</td><td>${x.vals.map(z=>Math.round(z*100)+'%').join(' / ')}</td></tr>`}).join('');
  let nota=ac*v;
  results.innerHTML=`<h2>Respostas identificadas</h2><div class="status info"><b>Estudante:</b> ${esc(aluno.value)||'Não informado'} &nbsp; <b>Turma:</b> ${esc(turma.value)||'—'}</div><div class="keyline">${a.map(x=>x.ans).join(' | ')}</div><div class="grid"><div class="status ok">Acertos<br><b>${ac}</b></div><div class="status bad">Erros<br><b>${wr}</b></div><div class="status warn">Brancas<br><b>${bl}</b></div><div class="status warn">Revisar<br><b>${du}</b></div></div><div class="card"><div class="score">${nota.toFixed(1)}</div>Nota — ${ac} acertos × ${v.toFixed(2)}</div><details><summary><b>🔎 Leitura bruta para conferência</b></summary><pre class="raw">${esc(raw)}</pre></details><div style="overflow:auto"><table><thead><tr><th>Questão</th><th>Leitura</th><th>Gabarito</th><th>Situação</th><th>Índice das alternativas</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+ saveHistory({data:new Date().toLocaleString('pt-BR'),aluno:aluno.value||'Não informado',turma:turma.value||'—',avaliacao:titulo.value||'Avaliação',codigo:getAssessmentCode(),acertos:ac,erros:wr,brancas:bl,revisar:du,total:a.length,nota:Number(nota.toFixed(2)),respostas:a.map(x=>x.ans)});
  summary.className='status ok';summary.innerHTML=`<b>${esc(aluno.value)||'Estudante'}</b> — ${esc(turma.value)||'Turma não informada'} — ${ac} acertos, ${wr} erros, ${bl} brancas, ${du} para revisar — Nota <b>${nota.toFixed(1)}</b>.`;
 }
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
@@ -639,342 +1351,15 @@ async function readPhoto(){
   c.width=Math.round(im.naturalWidth*scale);c.height=Math.round(im.naturalHeight*scale);c.getContext('2d').drawImage(im,0,0,c.width,c.height);
   let src=cv.imread(c),m=findMarkers(src);if(!m){src.delete();setStatus('Não encontrei os 4 marcadores. Fotografe o cartão inteiro, sem cortar os cantos.','bad');finish();return}
   setStatus('✓ 4 marcadores encontrados. Corrigindo perspectiva e localizando cada quadro...','info');
-  let warp=warpCard(src,m),r=detectAnswers(warp);ultimaLeitura=r.answers;drawDiagnostic(warp,r.answers);renderResults(r.answers,r.raw);setStatus('✓ Leitura concluída. Confira a sequência e a leitura bruta antes de usar.','ok');src.delete();warp.delete();
+  let warp=(gabarito.length===10?warpCardOMR10(src,m):warpCard(src,m)),r=detectAnswers(warp);ultimaLeitura=r.answers;drawDiagnostic(warp,r.answers);renderResults(r.answers,r.raw);setStatus('✓ Leitura concluída. Confira a sequência e a leitura bruta antes de usar.','ok');src.delete();warp.delete();
  }catch(e){console.error(e);setStatus('Erro na leitura: '+e.message,'bad')}finally{finish()}
 }
 function finish(){busy=false;btnRead.disabled=false}
-loadKey();
-if(document.getElementById('cardData')&&!document.getElementById('cardData').value)document.getElementById('cardData').value=new Date().toISOString().slice(0,10);
-if(document.getElementById('cardQuestoes'))document.getElementById('cardQuestoes').value=Math.max(1,Math.min(50,+nq.value||10));
-if(document.getElementById('cardAlternativas'))document.getElementById('cardAlternativas').value=String(na.value||5);
+loadEvaluation();
+if(document.getElementById('dataAvaliacao')&&!document.getElementById('dataAvaliacao').value)document.getElementById('dataAvaliacao').value=new Date().toISOString().slice(0,10);
+if(document.getElementById('codigoAvaliacao'))document.getElementById('codigoAvaliacao').value=getAssessmentCode();
 buildKey();
 show('inicio');
-</script>
-
-
-
-
-<script id="access-v423-js">
-(function(){
-  const KEY='newProfCorretorAccessV422';
-  const SESSION='newProfCorretorSessionV422';
-  const API_BASE='https://new-prof-corretor-api.parqueclube1bloco2d.workers.dev';
-  let adminFilter='TODOS';
-
-  function db(){try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){return []}}
-  function save(x){localStorage.setItem(KEY,JSON.stringify(x))}
-  function uid(){return 'USR-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,6).toUpperCase()}
-  function now(){return new Date()}
-  function iso(d){return d?new Date(d).toISOString():null}
-  function fmt(d){return d?new Date(d).toLocaleString('pt-BR'):'Sem prazo'}
-  function calcStatus(u){
-    if(u.status==='BLOQUEADO'||u.status==='RECUSADO'||u.status==='PENDENTE')return u.status;
-    if(u.endAt && new Date(u.endAt)<=now())return 'EXPIRADO';
-    return 'LIBERADO';
-  }
-  function normalize(){
-    let x=db(),changed=false;
-    x=x.map(u=>{
-      const s=calcStatus(u);
-      if(s!==u.status && u.status==='LIBERADO'){u.status=s;changed=true}
-      return u;
-    });
-    if(changed)save(x);
-    return x;
-  }
-  function statusClass(s){return 'st-'+s.toLowerCase()}
-
-  window.accessTab=function(t){
-    const map={
-      entrar:{panel:'accessEntrar',tab:'tabEntrar'},
-      solicitar:{panel:'accessSolicitar',tab:'tabSolicitar'},
-      admin:{panel:'accessAdmin',tab:'tabAdmin'}
-    };
-    Object.keys(map).forEach(key=>{
-      const item=map[key];
-      const panel=document.getElementById(item.panel);
-      const tab=document.getElementById(item.tab);
-      if(panel)panel.classList.toggle('active',key===t);
-      if(tab)tab.classList.toggle('active',key===t);
-    });
-  };
-
-  async function apiJson(path, options={}){
-    const response=await fetch(API_BASE+path, options);
-    let data=null;
-    try{data=await response.json()}catch(e){data={ok:false,message:'Resposta inválida da API.'};}
-    if(!response.ok && data && !data.message)data.message='Erro HTTP '+response.status+'.';
-    return data;
-  }
-
-  window.accessRequest=async function(){
-    const nome=reqNome.value.trim(),email=reqEmail.value.trim().toLowerCase(),escola=reqEscola.value.trim();
-    if(!nome||!email||!escola){
-      reqMsg.textContent='Preencha Nome, E-mail e Escola.';
-      reqMsg.style.background='#fee2e2';reqMsg.style.color='#991b1b';return;
-    }
-    reqMsg.textContent='Enviando solicitação...';
-    reqMsg.style.background='#eef4ff';reqMsg.style.color='#17345d';
-    try{
-      const data=await apiJson('/api/access/request',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({name:nome,email,school:escola})
-      });
-      if(!data.ok){
-        reqMsg.textContent=data.message||'Não foi possível enviar a solicitação.';
-        reqMsg.style.background='#fee2e2';reqMsg.style.color='#991b1b';return;
-      }
-      reqNome.value=reqEmail.value=reqEscola.value='';
-      reqMsg.textContent='✓ Solicitação enviada. Aguarde a análise do administrador.';
-      reqMsg.style.background='#dcfce7';reqMsg.style.color='#166534';
-    }catch(e){
-      reqMsg.textContent='Não foi possível conectar ao servidor. Verifique sua internet e tente novamente.';
-      reqMsg.style.background='#fee2e2';reqMsg.style.color='#991b1b';
-    }
-  };
-
-  window.accessLogin=async function(){
-    const email=loginEmail.value.trim().toLowerCase();
-    if(!email){
-      loginMsg.textContent='Informe seu e-mail.';loginMsg.style.background='#fee2e2';loginMsg.style.color='#991b1b';return;
-    }
-    loginMsg.textContent='Consultando seu acesso...';
-    loginMsg.style.background='#eef4ff';loginMsg.style.color='#17345d';
-    try{
-      const data=await apiJson('/api/access/status?email='+encodeURIComponent(email));
-      if(!data.ok || !data.found){
-        loginMsg.textContent='E-mail não encontrado. Primeiro solicite acesso.';loginMsg.style.background='#fee2e2';loginMsg.style.color='#991b1b';return;
-      }
-      const s=(data.request&&data.request.status)||data.status||'';
-      if(s!=='LIBERADO'){
-        const mensagens={PENDENTE:'Acesso PENDENTE. Aguarde a liberação do administrador.',BLOQUEADO:'Acesso BLOQUEADO. Procure o administrador.',EXPIRADO:'Acesso EXPIRADO. Procure o administrador.',RECUSADO:'Solicitação RECUSADA. Procure o administrador.'};
-        loginMsg.textContent=mensagens[s]||'Não foi possível identificar o status do seu acesso.';
-        loginMsg.style.background='#fff4d6';loginMsg.style.color='#8a5a00';return;
-      }
-      loginMsg.textContent='✓ Acesso liberado. Preparando autenticação segura...';
-      loginMsg.style.background='#dcfce7';loginMsg.style.color='#166534';
-      localStorage.setItem(SESSION,JSON.stringify({email,at:iso(now())}));
-      document.body.classList.remove('access-locked');
-      document.getElementById('accessGate').style.display='none';
-    }catch(e){
-      loginMsg.textContent='Não foi possível consultar o servidor. Verifique sua internet e tente novamente.';
-      loginMsg.style.background='#fee2e2';loginMsg.style.color='#991b1b';
-    }
-  };
-
-  window.accessAdminLogin=function(){
-    if(adminPin.value!=='ADMIN-2026')return;
-    adminLoginBox.style.display='none';adminPanel.style.display='block';renderAdmin();
-  };
-  window.accessAdminLogout=function(){adminLoginBox.style.display='block';adminPanel.style.display='none'};
-
-  function selectedIds(){
-    return [...document.querySelectorAll('.access-row-check:checked')].map(x=>x.value);
-  }
-  function visibleUsers(){
-    return filteredUsers(normalize());
-  }
-  function filteredUsers(x){
-    return adminFilter==='TODOS'?x:x.filter(u=>calcStatus(u)===adminFilter);
-  }
-
-  window.setAdminFilter=function(filter){
-    adminFilter=filter;
-    document.querySelectorAll('.access-filterbar button').forEach(b=>b.classList.remove('active'));
-    const map={TODOS:'filterTodos',PENDENTE:'filterPendentes',LIBERADO:'filterLiberados',BLOQUEADO:'filterBloqueados',EXPIRADO:'filterExpirados',RECUSADO:'filterRecusados'};
-    document.getElementById(map[filter]).classList.add('active');
-    renderAdmin();
-  };
-
-  window.toggleAllVisible=function(checked){
-    document.querySelectorAll('.access-row-check').forEach(c=>c.checked=checked);
-    updateSelectedUI();
-  };
-
-  window.updateSelectedUI=function(){
-    const ids=selectedIds();
-    selectedCount.textContent=ids.length+' selecionado(s)';
-    const visible=document.querySelectorAll('.access-row-check');
-    selectAllAccess.checked=visible.length>0 && ids.length===visible.length;
-    document.querySelectorAll('.access-row-check').forEach(c=>{
-      const row=document.getElementById('row-'+c.value);
-      if(row)row.classList.toggle('selected',c.checked);
-    });
-  };
-
-  window.prepareBulkRelease=function(){
-    const ids=selectedIds();
-    if(!ids.length){alert('Selecione pelo menos um cadastro.');return}
-    bulkDuration.style.display='flex';
-  };
-
-  window.confirmBulkRelease=function(){
-    const ids=selectedIds();
-    if(!ids.length){cancelBulkRelease();return}
-    const dur=bulkDur.value;
-    let x=normalize(),start=now();
-    let end=null;
-    if(dur==='1d')end=new Date(start.getTime()+86400000);
-    if(dur==='1w')end=new Date(start.getTime()+7*86400000);
-    if(dur==='1m'){end=new Date(start);end.setMonth(end.getMonth()+1)}
-    if(dur==='custom'){
-      if(!bulkDate.value){alert('Escolha a data final.');return}
-      end=new Date(bulkDate.value+'T23:59:59');
-      if(end<=start){alert('A data final precisa ser posterior a agora.');return}
-    }
-    x.forEach(u=>{
-      if(ids.includes(u.id)){
-        u.status='LIBERADO';u.startAt=iso(start);u.endAt=iso(end);u.duration=dur;u.approvedBy='Administrador';
-      }
-    });
-    save(x);cancelBulkRelease();renderAdmin();
-  };
-
-  window.cancelBulkRelease=function(){
-    bulkDuration.style.display='none';
-    bulkDur.value='1d';bulkDate.value='';bulkDate.style.display='none';
-  };
-
-  bulkDur.addEventListener('change',()=>{bulkDate.style.display=bulkDur.value==='custom'?'block':'none'});
-
-  window.bulkAction=function(action){
-    const ids=selectedIds();
-    if(action==='LIBERAR'||action==='LIBERAR_TODOS'){
-      if(action==='LIBERAR_TODOS'){
-        if(!confirm('Liberar todos os cadastros que podem receber acesso?'))return;
-        const x=normalize(),start=now();
-        const dur=prompt('Prazo: digite 1d, 1w, 1m ou none','1d');
-        if(!['1d','1w','1m','none'].includes(dur||'')){alert('Prazo inválido. Para personalizado use a liberação individual.');return}
-        let end=null;
-        if(dur==='1d')end=new Date(start.getTime()+86400000);
-        if(dur==='1w')end=new Date(start.getTime()+7*86400000);
-        if(dur==='1m'){end=new Date(start);end.setMonth(end.getMonth()+1)}
-        x.forEach(u=>{
-          if(['PENDENTE','EXPIRADO'].includes(calcStatus(u))){
-            u.status='LIBERADO';u.startAt=iso(start);u.endAt=iso(end);u.duration=dur;u.approvedBy='Administrador';
-          }
-        });
-        save(x);renderAdmin();return;
-      }
-      prepareBulkRelease();return;
-    }
-    if(!ids.length){alert('Selecione pelo menos um cadastro.');return}
-    let x=normalize();
-    if(action==='BLOQUEAR')x.forEach(u=>{if(ids.includes(u.id))u.status='BLOQUEADO'});
-    if(action==='RECUSAR')x.forEach(u=>{if(ids.includes(u.id))u.status='RECUSADO'});
-    save(x);renderAdmin();
-  };
-
-  window.adminRelease=function(id){
-    const u=normalize().find(x=>x.id===id);if(!u)return;
-    const dur=document.getElementById('dur-'+id).value;
-    let end=null,start=now();
-    if(dur==='1d')end=new Date(start.getTime()+86400000);
-    if(dur==='1w')end=new Date(start.getTime()+7*86400000);
-    if(dur==='1m'){end=new Date(start);end.setMonth(end.getMonth()+1)}
-    if(dur==='custom'){
-      const v=document.getElementById('date-'+id).value;
-      if(!v){alert('Escolha a data final.');return}
-      end=new Date(v+'T23:59:59');
-      if(end<=start){alert('A data final precisa ser posterior a agora.');return}
-    }
-    u.status='LIBERADO';u.startAt=iso(start);u.endAt=iso(end);u.duration=dur;u.approvedBy='Administrador';
-    let x=normalize();save(x);renderAdmin();
-  };
-
-  window.adminBlock=function(id){
-    let x=normalize(),u=x.find(x=>x.id===id);if(!u)return;
-    u.status='BLOQUEADO';save(x);renderAdmin();
-  };
-
-  window.adminReject=function(id){
-    let x=normalize(),u=x.find(x=>x.id===id);if(!u)return;
-    u.status='RECUSADO';save(x);renderAdmin();
-  };
-
-  window.adminRenew=function(id){adminRelease(id)};
-
-  window.adminUnblock=function(id){
-    let x=normalize(),u=x.find(x=>x.id===id);if(!u)return;
-    u.status='PENDENTE';u.startAt=null;u.endAt=null;u.duration=null;save(x);renderAdmin();
-  };
-
-  window.adminDelete=function(id){
-    if(!confirm('Excluir este registro do protótipo?'))return;
-    save(normalize().filter(x=>x.id!==id));renderAdmin();
-  };
-
-  window.toggleCustom=function(id){
-    const s=document.getElementById('dur-'+id),d=document.getElementById('date-'+id);
-    d.style.display=s.value==='custom'?'block':'none';
-  };
-
-  window.renderAdmin=function(){
-    const x=normalize();
-    const c={PENDENTE:0,LIBERADO:0,BLOQUEADO:0,EXPIRADO:0,RECUSADO:0};
-    x.forEach(u=>c[calcStatus(u)]++);
-    adminStats.innerHTML=`🟡 ${c.PENDENTE} pendente(s) &nbsp; 🟢 ${c.LIBERADO} liberado(s) &nbsp; 🔴 ${c.BLOQUEADO} bloqueado(s) &nbsp; ⏰ ${c.EXPIRADO} expirado(s) &nbsp; ⚪ ${c.RECUSADO} recusado(s)`;
-
-    const rows=filteredUsers(x);
-    selectAllAccess.checked=false;
-    if(!rows.length){
-      adminList.innerHTML='<div class="access-empty">Nenhum cadastro nesta categoria.</div>';
-      selectedCount.textContent='0 selecionado(s)';
-      return;
-    }
-
-    adminList.innerHTML=rows.map(u=>{
-      const s=calcStatus(u);
-      const canRelease=['PENDENTE','EXPIRADO','LIBERADO','BLOQUEADO'].includes(s);
-      return `<div id="row-${u.id}" class="access-user">
-        <div class="access-user-head">
-          <div class="access-user-head-left">
-            <input class="access-check access-row-check" type="checkbox" value="${u.id}" onchange="updateSelectedUI()" aria-label="Selecionar ${escA(u.nome)}">
-            <div><b>${escA(u.nome)}</b><br><small>${escA(u.email)} · ${escA(u.escola)}</small></div>
-          </div>
-          <span class="access-status ${statusClass(s)}">${s}</span>
-        </div>
-        <div style="margin-top:8px;font-size:12px;color:#64748b">
-          Solicitado: ${fmt(u.requestedAt)} · Início: ${fmt(u.startAt)} · Fim: ${fmt(u.endAt)}
-        </div>
-        ${canRelease ? `<div class="access-actions">
-          <select id="dur-${u.id}" onchange="toggleCustom('${u.id}')">
-            <option value="1d">1 dia</option>
-            <option value="1w">1 semana</option>
-            <option value="1m">1 mês</option>
-            <option value="none">Sem prazo</option>
-            <option value="custom">Personalizado</option>
-          </select>
-          <input id="date-${u.id}" type="date" style="display:none;padding:8px;border:1px solid #cbd5e1;border-radius:8px">
-          <button class="access-btn access-ok" onclick="adminRelease('${u.id}')">${s==='LIBERADO'?'↻ Renovar':'✓ Liberar'}</button>
-          ${s!=='BLOQUEADO'?'<button class="access-btn access-danger" onclick="adminBlock(\''+u.id+'\')">Bloquear</button>':'<button class="access-btn access-secondary" onclick="adminUnblock(\''+u.id+'\')">Reabrir</button>'}
-          ${s==='PENDENTE'?'<button class="access-btn access-secondary" onclick="adminReject(\''+u.id+'\')">Recusar</button>':''}
-          <button class="access-btn access-secondary" onclick="adminDelete('${u.id}')">Excluir</button>
-        </div>`:''}
-      </div>`;
-    }).join('');
-    updateSelectedUI();
-  };
-  function escA(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
-
-  function initAccessScreen(){
-    document.body.classList.add('access-locked');
-    accessTab('entrar');
-    document.getElementById('accessGate').style.display='flex';
-  }
-
-  function restoreSession(){
-    // A autorização real é consultada no servidor; não liberar acesso apenas pelo localStorage.
-    localStorage.removeItem(SESSION);
-  }
-
-  window.addEventListener('load',()=>{
-    initAccessScreen();
-    setTimeout(restoreSession,100);
-    renderAdmin();
-  });
-})();
 </script>
 
 
