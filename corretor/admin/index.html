@@ -271,11 +271,11 @@ function render(){
   body.innerHTML=list.length?list.map(r=>{
     const st=normalizeStatus(r.status);
     let actions="";
-    actions+='<button class="btn gray" onclick="showDetails('+JSON.stringify(String(r.id))+')">Detalhes</button>';
-    if(st==="PENDENTE")actions+='<button class="btn green" onclick="release('+JSON.stringify(String(r.id))+')">Liberar</button><button class="btn red" onclick="reject('+JSON.stringify(String(r.id))+')">Recusar</button>';
-    if(st==="LIBERADO")actions+='<button class="btn yellow" onclick="renew('+JSON.stringify(String(r.id))+')">Renovar</button><button class="btn black" onclick="block('+JSON.stringify(String(r.id))+')">Bloquear</button>';
-    if(["BLOQUEADO","EXPIRADO","RECUSADO"].includes(st))actions+='<button class="btn green" onclick="reopen('+JSON.stringify(String(r.id))+')">Reabrir</button>';
-    actions+='<button class="btn red" onclick="deleteUser('+JSON.stringify(String(r.id))+')">Excluir</button>';
+    actions+='<button class="btn gray" onclick="showDetails(\''+String(r.id)+'\')">Detalhes</button>';
+    if(st==="PENDENTE")actions+='<button class="btn green" onclick="release(\''+String(r.id)+'\')">Liberar</button><button class="btn red" onclick="reject(\''+String(r.id)+'\')">Recusar</button>';
+    if(st==="LIBERADO")actions+='<button class="btn yellow" onclick="renew(\''+String(r.id)+'\')">Renovar</button><button class="btn black" onclick="block(\''+String(r.id)+'\')">Bloquear</button>';
+    if(["BLOQUEADO","EXPIRADO","RECUSADO"].includes(st))actions+='<button class="btn green" onclick="reopen(\''+String(r.id)+'\')">Reabrir</button>';
+    actions+='<button class="btn red" onclick="deleteUser(\''+String(r.id)+'\')">Excluir</button>';
     return '<tr><td><b>'+esc(r.name)+'</b></td><td>'+esc(r.email)+'</td><td>'+esc(r.school)+'</td><td>'+badge(st)+'</td><td>'+fmt(r.start_at)+'<br>até '+fmt(r.expires_at)+'</td><td>'+fmt(r.requested_at)+'</td><td id="actions-'+r.id+'"><div class="actions">'+actions+'</div></td></tr>';
   }).join(""):'<tr><td colspan="7">Nenhum registro nesta categoria.</td></tr>';
 }
