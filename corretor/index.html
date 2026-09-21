@@ -82,29 +82,9 @@ table{width:100%;border-collapse:collapse;margin-top:13px;font-size:14px}th,td{b
 .instructions b{color:#173f8f}
 .answer-title{text-align:center;font-size:8pt;font-weight:900;margin:2.8mm 2mm 1.2mm;letter-spacing:.4px}
 .answer-help{text-align:center;font-size:5.3pt;margin:0 2mm 2mm;color:#444}
-.omr-grid{
-display:grid;
-grid-auto-flow:column;
-grid-template-rows:repeat(var(--rows,10),minmax(0,1fr));
-grid-template-columns:repeat(var(--cols,1),minmax(0,1fr));
-gap:1.8mm;
-margin:0 2mm;
-align-content:start;
-justify-content:stretch;
-height:var(--grid-h,122mm);
-}
-.omr-q{
-border:1px solid #111;
-min-height:0;
-height:auto;
-padding:1mm 1mm;
-text-align:center;
-break-inside:avoid;
-display:flex;
-flex-direction:column;
-justify-content:center;
-box-sizing:border-box;
-}
+.omr-grid-fixed{display:flex;gap:1.8mm;margin:0 2mm;height:122mm;align-items:stretch;overflow:visible}
+.omr-column{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:1.8mm;height:100%;overflow:visible}
+.omr-q{border:1px solid #111;flex:1 1 0;min-height:0;padding:1mm 1mm;text-align:center;break-inside:avoid;display:flex;flex-direction:column;justify-content:center;box-sizing:border-box;background:#fff;overflow:visible}
 .omr-qnum{font-size:5.8pt;font-weight:900;margin-bottom:.7mm;line-height:1}
 .omr-options{
 display:flex;
@@ -122,7 +102,7 @@ flex-wrap:nowrap;
   #cartao{display:block!important}
   #cartao>.card{border:0!important;box-shadow:none!important;padding:0!important;margin:0!important;background:#fff!important}
   .a4-wrap{margin:0!important;width:210mm!important;overflow:visible!important}
-  .a4-sheet{box-shadow:none!important;border:0!important;margin:0!important;overflow:visible!important}
+  .a4-sheet{box-shadow:none!important;border:0!important;margin:0!important}
   @page{size:A4 portrait;margin:0}
 }
 @media(max-width:700px){
@@ -352,7 +332,6 @@ Selecione uma alternativa em cada questão. A alternativa selecionada ficará ma
     <button class="secondary" onclick="newCardCode()">🔐 Novo código</button>
     <button class="primary" onclick="exportCard()">📄 Gerar cartão-resposta em PDF</button>
   </div>
-  <div class="status info" style="margin-bottom:8px">🎯 <b>Importante:</b> os quatro quadrados pretos nos cantos são marcadores OMR obrigatórios para o sistema localizar e corrigir o cartão.</div>
   <div class="status warn">⚠️ Imprima em <b>100%</b>. Não recorte, dobre ou cubra os quatro marcadores pretos dos cantos.</div>
 </div>
 
@@ -533,10 +512,17 @@ function cardMarkup(alunoCard, turmaCard, pageClass=''){
  const tituloCard=(titulo?.value||'AVALIAÇÃO').toUpperCase();
  const dataCard=getCardData();
  const codigo=getAssessmentCode();
- const rows=Math.min(10,n),cols=Math.ceil(n/10),gridH='122mm';
- let qs='';
- for(let i=0;i<n;i++){
-   qs+=`<div class="omr-q"><div class="omr-qnum">QUESTÃO ${String(i+1).padStart(2,'0')}</div><div class="omr-options">${[...ls].map(x=>`<span class="omr-opt">${x}</span>`).join('')}</div></div>`;
+ const perCol=10;
+ const cols=Math.ceil(n/perCol);
+ let columns='';
+ for(let c=0;c<cols;c++){
+   let items='';
+   const ini=c*perCol;
+   const fim=Math.min(ini+perCol,n);
+   for(let i=ini;i<fim;i++){
+     items+=`<div class="omr-q"><div class="omr-qnum">QUESTÃO ${String(i+1).padStart(2,'0')}</div><div class="omr-options">${[...ls].map(x=>`<span class="omr-opt">${x}</span>`).join('')}</div></div>`;
+   }
+   columns+=`<div class="omr-column">${items}</div>`;
  }
  return `<div class="a4-sheet ${pageClass}">
    <i class="omr-marker omr-tl"></i><i class="omr-marker omr-tr"></i>
@@ -563,11 +549,10 @@ function cardMarkup(alunoCard, turmaCard, pageClass=''){
    <div class="instructions"><b>ORIENTAÇÕES:</b> Preencha completamente apenas uma alternativa por questão. Use lápis ou caneta preta/azul. Não faça marcas fora dos círculos. Não dobre nem corte o cartão.</div>
    <div class="answer-title">MARQUE A ALTERNATIVA CORRESPONDENTE À SUA RESPOSTA</div>
    <div class="answer-help">Preencha o círculo escolhido de forma completa. Os marcadores pretos dos quatro cantos são utilizados pelo sistema para localizar e corrigir o cartão.</div>
-   <div class="omr-grid" style="--rows:${rows};--cols:${cols};--grid-h:${gridH}">${qs}</div>
+   <div class="omr-grid-fixed">${columns}</div>
    <div class="card-footer"><strong>NEW PROF. CORRETOR</strong> · Cartão-resposta para correção automática por imagem · Código ${esc(codigo)}</div>
  </div>`;
 }
-
 function getCardDate(){
   const mode=document.getElementById('cardDateMode')?.value||'blank';
   return mode==='choose' ? (document.getElementById('cardDate')?.value||'') : '';
