@@ -773,17 +773,13 @@ function exportHistoryCSV(){
 }
 
 
-async function cardToCanvas(dpi=150){
+async function cardToCanvas(dpi=300){
   const source=document.getElementById('printCard');
   if(!source) throw new Error('Cartão não encontrado.');
 
-  const A4_W_MM=210, A4_H_MM=297;
-  const pxPerMm=dpi/25.4;
-  const outW=Math.round(A4_W_MM*pxPerMm);
-  const outH=Math.round(A4_H_MM*pxPerMm);
-
-  // Cria uma cópia isolada com exatamente o mesmo tamanho físico da folha A4.
-  // Assim, a imagem não depende da largura da tela, zoom ou layout responsivo.
+  // Mantém o cartão em tamanho A4 e captura diretamente em alta resolução.
+  // Não fazemos redimensionamento posterior, pois isso deixava o texto e
+  // os círculos OMR borrados.
   const holder=document.createElement('div');
   holder.style.position='fixed';
   holder.style.left='-100000px';
@@ -817,13 +813,13 @@ async function cardToCanvas(dpi=150){
   holder.appendChild(clone);
   document.body.appendChild(holder);
 
-  // Aguarda o navegador recalcular o layout do A4 antes da captura.
   await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
 
-  let canvas;
   try{
-    canvas=await html2canvas(clone,{
-      scale:1,
+    // 300 DPI: A4 = aproximadamente 2480 x 3508 pixels.
+    // A captura já nasce nessa resolução; não há upscale depois.
+    return await html2canvas(clone,{
+      scale:dpi/96,
       width:clone.offsetWidth,
       height:clone.offsetHeight,
       backgroundColor:'#ffffff',
@@ -832,25 +828,13 @@ async function cardToCanvas(dpi=150){
       scrollX:0,
       scrollY:0,
       windowWidth:Math.ceil(210*96/25.4),
-      windowHeight:Math.ceil(297*96/25.4)
+      windowHeight:Math.ceil(297*96/25.4),
+      imageTimeout:0,
+      removeContainer:true
     });
   }finally{
     holder.remove();
   }
-
-  // Converte para uma imagem raster A4 exata.
-  const out=document.createElement('canvas');
-  out.width=outW;
-  out.height=outH;
-
-  const ctx=out.getContext('2d');
-  ctx.fillStyle='#fff';
-  ctx.fillRect(0,0,outW,outH);
-
-  // A proporção é exatamente 210:297, sem corte e sem deformação.
-  ctx.drawImage(canvas,0,0,outW,outH);
-
-  return out;
 }
 
 async function exportCard(){
@@ -869,7 +853,7 @@ async function exportCard(){
       return;
     }
 
-    // 150 DPI = 1240 × 1754 px para A4.
+    // 300 DPI = aproximadamente 2480 × 3508 px para A4, em alta resolução.
     // A proporção e o tamanho físico correspondem à folha A4.
     const canvas=await cardToCanvas(150);
     const safe=((document.getElementById('cardTitulo')?.value||'cartao-resposta')
