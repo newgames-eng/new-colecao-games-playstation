@@ -1271,28 +1271,47 @@ async function requestAccess(){
   const email=emailEl.value.trim().toLowerCase();
   const school=schoolEl.value.trim();
 
-  // Os três campos são obrigatórios.
+  // Limpa o estado visual anterior.
+  [nameEl,emailEl,schoolEl].forEach(el=>{
+    el.style.borderColor="";
+    el.removeAttribute("aria-invalid");
+  });
+
+  function erro(el,mensagem){
+    el.style.borderColor="#dc2626";
+    el.setAttribute("aria-invalid","true");
+    accessMessage("requestMsg","⚠️ "+mensagem,"bad");
+    el.focus();
+  }
+
+  // Todos os campos são obrigatórios.
   if(!name){
-    accessMessage("requestMsg","Preencha o nome completo.","warn");
-    nameEl.focus();
+    erro(nameEl,"Informe seu nome completo.");
+    return;
+  }
+
+  if(name.length<3){
+    erro(nameEl,"Informe um nome completo válido.");
     return;
   }
 
   if(!email){
-    accessMessage("requestMsg","Preencha o e-mail.","warn");
-    emailEl.focus();
+    erro(emailEl,"Informe seu e-mail.");
     return;
   }
 
   if(!validEmail(email)){
-    accessMessage("requestMsg","Digite um e-mail válido, por exemplo: professor@escola.com.br","warn");
-    emailEl.focus();
+    erro(emailEl,"Informe um e-mail válido.");
     return;
   }
 
   if(!school){
-    accessMessage("requestMsg","Preencha o nome da escola.","warn");
-    schoolEl.focus();
+    erro(schoolEl,"Informe o nome da escola.");
+    return;
+  }
+
+  if(school.length<2){
+    erro(schoolEl,"Informe um nome de escola válido.");
     return;
   }
 
@@ -1302,18 +1321,19 @@ async function requestAccess(){
   accessMessage("requestMsg","Enviando sua solicitação...","warn");
 
   try{
-    const d=await accessApi("/api/access/request",{
+    await accessApi("/api/access/request",{
       method:"POST",
       body:JSON.stringify({name,email,school})
     });
 
+    // Confirmação diretamente na página.
     accessMessage(
       "requestMsg",
-      "Solicitação enviada com sucesso! Aguarde aprovação!",
+      "✅ Solicitação enviada com sucesso! Aguarde liberação.",
       "ok"
     );
 
-    // Limpa os campos somente depois da confirmação do servidor.
+    // Mantém a confirmação visível e limpa os campos após envio.
     nameEl.value="";
     emailEl.value="";
     schoolEl.value="";
@@ -1321,7 +1341,7 @@ async function requestAccess(){
     console.error("Erro ao solicitar acesso:",e);
     accessMessage(
       "requestMsg",
-      e.message || "Não foi possível enviar a solicitação. Tente novamente.",
+      "❌ "+(e.message||"Não foi possível enviar a solicitação. Tente novamente."),
       "bad"
     );
   }finally{
