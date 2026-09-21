@@ -31,7 +31,7 @@ table{width:100%;border-collapse:collapse;min-width:950px}
 th,td{padding:10px;border-bottom:1px solid #e2e8f0;text-align:left;vertical-align:top}th{background:#f8fafc}
 .badge{display:inline-block;border-radius:999px;padding:6px 9px;font-size:12px;font-weight:900}
 .pendente{background:#fff0bd;color:#8a5a00}.liberado{background:#d6f8e1;color:#166534}.bloqueado{background:#ffdede;color:#991b1b}.expirado{background:#fff0c7;color:#8a5a00}.recusado{background:#e5e7eb;color:#475569}
-.actions{display:flex;gap:6px;flex-wrap:wrap}.actions .btn{padding:7px 9px;font-size:12px}
+.actions{display:flex;gap:6px;flex-wrap:wrap}.actions .btn{padding:7px 9px;font-size:12px}.duration-picker{margin-top:9px;padding:10px;background:#f1f5f9;border:1px solid #cbd5e1;border-radius:10px;min-width:250px}.duration-title{font-weight:900;margin-bottom:8px;color:#17345d}.duration-options{display:flex;gap:6px;flex-wrap:wrap}.duration-options .btn{padding:7px 9px;font-size:12px}.duration-custom{display:none;margin-top:8px}.duration-custom input{width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:7px;font-size:14px}.duration-footer{display:flex;gap:6px;margin-top:8px}.duration-footer .btn{padding:7px 9px;font-size:12px}
 #corretorPanel{display:none;padding:0}
 .framebar{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;padding:12px 14px;background:#eff6ff;border-radius:12px 12px 0 0}
 iframe{width:100%;height:calc(100vh - 155px);min-height:700px;border:0;border-radius:0 0 12px 12px;background:#fff}
@@ -179,21 +179,97 @@ function render(){
     if(st==="PENDENTE")actions+='<button class="btn green" onclick="release('+r.id+')">Liberar</button><button class="btn red" onclick="reject('+r.id+')">Recusar</button>';
     if(st==="LIBERADO")actions+='<button class="btn yellow" onclick="renew('+r.id+')">Renovar</button><button class="btn red" onclick="block('+r.id+')">Bloquear</button>';
     if(["BLOQUEADO","EXPIRADO","RECUSADO"].includes(st))actions+='<button class="btn green" onclick="reopen('+r.id+')">Reabrir</button>';
-    return '<tr><td><b>'+esc(r.name)+'</b></td><td>'+esc(r.email)+'</td><td>'+esc(r.school)+'</td><td>'+badge(st)+'</td><td>'+fmt(r.start_at)+'<br>até '+fmt(r.expires_at)+'</td><td>'+fmt(r.requested_at)+'</td><td><div class="actions">'+actions+'</div></td></tr>';
+    return '<tr><td><b>'+esc(r.name)+'</b></td><td>'+esc(r.email)+'</td><td>'+esc(r.school)+'</td><td>'+badge(st)+'</td><td>'+fmt(r.start_at)+'<br>até '+fmt(r.expires_at)+'</td><td>'+fmt(r.requested_at)+'</td><td id="actions-'+r.id+'"><div class="actions">'+actions+'</div></td></tr>';
   }).join(""):'<tr><td colspan="7">Nenhum registro nesta categoria.</td></tr>';
 }
 
-async function chooseDuration(title){
-  const d=prompt(title+"\nDigite: 1d, 1w, 1m, none ou custom");
-  if(d===null)return null;
-  const duration=d.trim().toLowerCase();
-  if(!["1d","1w","1m","none","custom"].includes(duration)){alert("Opção inválida.");return null;}
-  let customEnd=null;
-  if(duration==="custom"){customEnd=prompt("Informe a data final no formato AAAA-MM-DD");if(!customEnd)return null;}
-  return {duration,customEnd};
+function closeDurationPicker(id){
+  const el=document.getElementById("duration-picker-"+id);
+  if(el)el.remove();
 }
-async function release(id){const x=await chooseDuration("Liberar acesso");if(!x)return;try{await api("/api/admin/release",{id,...x});await load();alert("Acesso liberado.")}catch(e){alert(e.message)}}
-async function renew(id){const x=await chooseDuration("Renovar acesso");if(!x)return;try{await api("/api/admin/release",{id,...x});await load();alert("Acesso renovado.")}catch(e){alert(e.message)}}
+
+function showDurationPicker(id, action){
+  closeDurationPicker(id);
+  const cell=document.getElementById("actions-"+id);
+  if(!cell)return;
+
+  const box=document.createElement("div");
+  box.id="duration-picker-"+id;
+  box.className="duration-picker";
+  box.innerHTML=`
+    <div class="duration-title">${action==="release"?"Escolha o período de acesso":"Escolha o novo período de acesso"}</div>
+    <div class="duration-options">
+      <button class="btn blue" data-duration="1d">1 dia</button>
+      <button class="btn blue" data-duration="1w">1 semana</button>
+      <button class="btn blue" data-duration="1m">1 mês</button>
+      <button class="btn yellow" data-duration="custom">Período</button>
+    </div>
+    <div class="duration-custom">
+      <label style="font-weight:900;font-size:12px;display:block;margin-bottom:5px">Até que dia:</label>
+      <input type="date" class="custom-date">
+    </div>
+    <div class="duration-footer">
+      <button class="btn green duration-confirm" style="display:none">Confirmar</button>
+      <button class="btn gray duration-cancel">Cancelar</button>
+    </div>`;
+  cell.appendChild(box);
+
+  let selected=null;
+  const custom=box.querySelector(".duration-custom");
+  const date=box.querySelector(".custom-date");
+  const confirmBtn=box.querySelector(".duration-confirm");
+
+  box.querySelectorAll("[data-duration]").forEach(btn=>{
+    btn.onclick=()=>{
+      selected=btn.dataset.duration;
+      box.querySelectorAll("[data-duration]").forEach(b=>b.style.outline="");
+      btn.style.outline="3px solid #17345d";
+      confirmBtn.style.display="inline-block";
+      if(selected==="custom"){
+        custom.style.display="block";
+        date.focus();
+      }else{
+        custom.style.display="none";
+      }
+    };
+  });
+
+  box.querySelector(".duration-confirm").onclick=async()=>{
+    if(!selected)return;
+    let customEnd=null;
+    if(selected==="custom"){
+      customEnd=date.value;
+      if(!customEnd){alert("Escolha a data final do acesso.");return;}
+      const chosen=new Date(customEnd+"T23:59:59");
+      if(isNaN(chosen.getTime()) || chosen<=new Date()){
+        alert("Escolha uma data futura.");return;
+      }
+    }
+    box.querySelectorAll("button").forEach(b=>b.disabled=true);
+    try{
+      await api("/api/admin/release",{id,duration:selected,customEnd});
+      closeDurationPicker(id);
+      await load();
+      alert(action==="release"?"Acesso liberado.":"Acesso renovado.");
+    }catch(e){
+      box.querySelectorAll("button").forEach(b=>b.disabled=false);
+      alert(e.message);
+    }
+  };
+
+  box.querySelector(".duration-cancel").onclick=()=>closeDurationPicker(id);
+}
+
+function release(id){
+  if(!confirm("Deseja liberar o acesso deste professor?"))return;
+  showDurationPicker(id,"release");
+}
+
+function renew(id){
+  if(!confirm("Deseja renovar o acesso deste professor?"))return;
+  showDurationPicker(id,"renew");
+}
+
 async function block(id){if(!confirm("Bloquear este acesso?"))return;try{await api("/api/admin/block",{id});await load()}catch(e){alert(e.message)}}
 async function reject(id){if(!confirm("Recusar esta solicitação?"))return;try{await api("/api/admin/reject",{id});await load()}catch(e){alert(e.message)}}
 async function reopen(id){if(!confirm("Reabrir esta solicitação?"))return;try{await api("/api/admin/reopen",{id});await load()}catch(e){alert(e.message)}}
