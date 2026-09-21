@@ -31,13 +31,6 @@
 .access-loading{opacity:.65;pointer-events:none}
 #appShell{display:none}
 @media(max-width:560px){.access-tabs{grid-template-columns:1fr}.access-box{padding:19px}}
-
-/* FINAL A4 SAFE AREA */
-.a4-sheet .ident-label{font-size:6pt!important;margin-bottom:.7mm!important}
-.a4-sheet .ident-value{font-size:7.2pt!important;min-height:3mm!important}
-.a4-sheet .card-head .main-title{font-size:16pt!important}
-.a4-sheet .card-head .brand{font-size:7pt!important}
-.a4-sheet .card-head .brand strong{font-size:9pt!important}
 </style>
 
 <style>
@@ -63,36 +56,56 @@ table{width:100%;border-collapse:collapse;margin-top:13px;font-size:14px}th,td{b
 .card-config label{font-weight:800;font-size:13px}
 .card-config label:first-child{grid-column:span 2}
 .card-config input,.card-config select{width:100%;margin-top:5px;padding:10px;border:1px solid #cbd5e1;border-radius:8px}
-.a4-wrap{width:210mm;height:297mm;margin:10px auto;overflow:visible;box-sizing:border-box}
-.a4-sheet{width:210mm;height:297mm;min-width:210mm;min-height:297mm;max-width:210mm;max-height:297mm;box-sizing:border-box;background:#fff!important;background-color:#fff!important;color:#111;position:relative;padding:10mm 15mm 10mm;border:0;box-shadow:none!important;font-family:Arial,Helvetica,sans-serif;color-scheme:light;overflow:visible}
-.omr-marker{display:block;position:absolute;width:7mm;height:7mm;background:#000!important;box-sizing:border-box;z-index:100;opacity:1!important;filter:none!important;border:0!important}
-.omr-tl{left:5mm;top:5mm}.omr-tr{right:5mm;top:5mm}.omr-bl{left:5mm;bottom:5mm}.omr-br{right:5mm;bottom:5mm}
-.card-head{border-bottom:1.2px solid #173f8f;padding:0 1.5mm 1.8mm;margin:0 1.5mm 2mm;display:flex;align-items:end;justify-content:space-between;gap:5mm}
-.card-head .main-title{font-size:16pt;font-weight:900;letter-spacing:.2px;color:#102a56;line-height:1}
-.card-head .brand{font-size:7pt;font-weight:800;color:#173f8f;text-align:right;line-height:1}
-.card-head .brand strong{display:block;font-size:9pt}
-.card-subtitle{text-align:center;font-size:7.5pt;font-weight:800;letter-spacing:1.1px;margin:0 0 2mm;color:#26364d}
-.ident-box{border:1.2px solid #111;margin:0 1.5mm 2.5mm}
-.ident-title{background:#173f8f;color:#fff;font-size:7pt;font-weight:900;padding:1.4mm 2mm;letter-spacing:.4px}
+.a4-wrap{width:210mm;margin:18px auto;overflow:visible}
+.a4-sheet{width:210mm;height:297mm;min-width:210mm;min-height:297mm;max-height:297mm;background:#fff;color:#111;position:relative;padding:13mm 12mm 12mm;border:1px solid #bbb;box-shadow:0 3px 18px #0002;font-family:Arial,Helvetica,sans-serif}
+.omr-marker{position:absolute;width:8mm;height:8mm;background:#000}
+.omr-tl{left:7mm;top:7mm}.omr-tr{right:7mm;top:7mm}.omr-bl{left:7mm;bottom:7mm}.omr-br{right:7mm;bottom:7mm}
+.card-head{border-bottom:2px solid #173f8f;padding:0 2mm 3mm;margin:0 2mm 3.5mm;display:flex;align-items:end;justify-content:space-between;gap:8mm}
+.card-head .main-title{font-size:21pt;font-weight:900;letter-spacing:.5px;color:#102a56}
+.card-head .brand{font-size:10pt;font-weight:800;color:#173f8f;text-align:right}
+.card-head .brand strong{display:block;font-size:13pt}
+.card-subtitle{text-align:center;font-size:10pt;font-weight:800;letter-spacing:1.5px;margin:-1mm 0 5mm;color:#26364d}
+.ident-box{border:1.5px solid #111;margin:0 2mm 4mm}
+.ident-title{background:#173f8f;color:#fff;font-size:10pt;font-weight:900;padding:2.5mm 3mm;letter-spacing:.5px}
 .ident-grid{display:block;min-width:0}
 .ident-row{display:grid;gap:0}
 .ident-row-top{grid-template-columns:2.2fr 1fr}
 .ident-row-student{grid-template-columns:1.75fr .72fr .72fr}
-.ident-cell{padding:1.2mm 1.8mm;border-right:1px solid #aaa;border-top:1px solid #aaa;min-height:8.5mm;min-width:0;overflow:hidden;background:#fff}
+.ident-cell{padding:2.2mm 2.7mm;border-right:1px solid #aaa;border-top:1px solid #aaa;min-height:15mm;min-width:0;overflow:hidden;background:#fff}
 .ident-row .ident-cell:last-child{border-right:0}
 .ident-label{font-size:7.5pt;font-weight:900;text-transform:uppercase;color:#173f8f;margin-bottom:2mm;letter-spacing:.2px}
 .ident-value{font-size:10.5pt;font-weight:700;min-height:5mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ident-label{font-size:6pt;font-weight:800;text-transform:uppercase;color:#4b5563;margin-bottom:.7mm}
-.ident-value{font-size:7.2pt;font-weight:700;min-height:3mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ident-label{font-size:7.5pt;font-weight:800;text-transform:uppercase;color:#4b5563;margin-bottom:2mm}
+.ident-value{font-size:10.5pt;font-weight:700;min-height:5mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .reg-code{font-family:"Courier New",monospace;letter-spacing:1.3px;font-size:10pt}
-.instructions{font-size:4.6pt;margin:0 1.5mm .8mm;border:1px solid #bbb;padding:.9mm 1.3mm;line-height:1.1}
+.instructions{font-size:6pt;margin:0 2mm 1.5mm;border:1px solid #bbb;padding:1.8mm 2.2mm;line-height:1.25}
 .instructions b{color:#173f8f}
-.answer-title{text-align:center;font-size:7pt;font-weight:900;margin:1.2mm 1.5mm .5mm;letter-spacing:.3px}
-.answer-help{text-align:center;font-size:4pt;margin:0 1.5mm .6mm;color:#444}
-.omr-grid-fixed{display:flex;gap:1.8mm;margin:0 1.5mm;height:165mm;align-items:stretch;overflow:visible}
-.omr-column{flex:1 1 0;min-width:0;height:160mm;display:flex;flex-direction:column;gap:1.2mm;overflow:visible}
-.omr-q{border:1px solid #111;height:15.6mm;min-height:15.6mm;max-height:15.6mm;flex:0 0 15.6mm;padding:.35mm .6mm;text-align:center;break-inside:avoid;display:flex;flex-direction:column;justify-content:center;align-items:center;box-sizing:border-box;background:#fff;overflow:hidden}
-.omr-qnum{font-size:4.6pt;font-weight:900;margin-bottom:.25mm;line-height:1}
+.answer-title{text-align:center;font-size:8pt;font-weight:900;margin:2.8mm 2mm 1.2mm;letter-spacing:.4px}
+.answer-help{text-align:center;font-size:5.3pt;margin:0 2mm 2mm;color:#444}
+.omr-grid{
+display:grid;
+grid-auto-flow:column;
+grid-template-rows:repeat(var(--rows,10),minmax(0,1fr));
+grid-template-columns:repeat(var(--cols,1),minmax(0,1fr));
+gap:1.8mm;
+margin:0 2mm;
+align-content:start;
+justify-content:stretch;
+height:var(--grid-h,122mm);
+}
+.omr-q{
+border:1px solid #111;
+min-height:0;
+height:auto;
+padding:1mm 1mm;
+text-align:center;
+break-inside:avoid;
+display:flex;
+flex-direction:column;
+justify-content:center;
+box-sizing:border-box;
+}
+.omr-qnum{font-size:5.8pt;font-weight:900;margin-bottom:.7mm;line-height:1}
 .omr-options{
 display:flex;
 justify-content:center;
@@ -100,16 +113,16 @@ align-items:center;
 gap:1.7mm;
 flex-wrap:nowrap;
 }
-.omr-opt{width:3.8mm;height:3.8mm;border:1px solid #111;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:4.8pt;font-weight:700;box-sizing:border-box}
-.card-footer{position:absolute;left:10mm;right:10mm;bottom:7mm;text-align:center;border-top:1px solid #aaa;padding-top:1.2mm;font-size:5pt;color:#555}
-.card-footer strong{font-size:6pt;color:#173f8f}
+.omr-opt{width:4.7mm;height:4.7mm;border:1px solid #111;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:6.2pt;font-weight:700;box-sizing:border-box}
+.card-footer{position:absolute;left:12mm;right:12mm;bottom:17mm;text-align:center;border-top:1px solid #aaa;padding-top:3mm;font-size:7pt;color:#555}
+.card-footer strong{font-size:8pt;color:#173f8f}
 @media print{
   body{background:#fff!important}
   header,main>.card:not(#cartao .card),#cartao>.card>h2,#cartao>.card>p,#cartao>.card>.status,#cartao>.card>.actions,.no-print{display:none!important}
   #cartao{display:block!important}
   #cartao>.card{border:0!important;box-shadow:none!important;padding:0!important;margin:0!important;background:#fff!important}
-  .a4-wrap{margin:0!important;width:210mm!important;height:297mm!important;overflow:visible!important}
-  .a4-sheet{box-shadow:none!important;border:0!important;margin:0!important;width:210mm!important;height:297mm!important;overflow:visible!important}
+  .a4-wrap{margin:0!important;width:210mm!important;overflow:visible!important}
+  .a4-sheet{box-shadow:none!important;border:0!important;margin:0!important}
   @page{size:A4 portrait;margin:0}
 }
 @media(max-width:700px){
@@ -160,160 +173,6 @@ flex-wrap:nowrap;
 @media(max-width:700px){.guide-grid{grid-template-columns:1fr}.app-guide{padding:15px}}
 
 </style>
-
-<style id="final-a4-omr-fix">
-/* ===== CARTÃO A4 — DIMENSÕES FÍSICAS FIXAS ===== */
-.a4-wrap{
-  width:210mm!important;
-  height:297mm!important;
-  margin:0 auto!important;
-  overflow:visible!important;
-}
-.a4-sheet{
-  width:210mm!important;
-  height:297mm!important;
-  min-width:210mm!important;
-  min-height:297mm!important;
-  max-width:210mm!important;
-  max-height:297mm!important;
-  box-sizing:border-box!important;
-  padding:7mm 10mm 8mm!important;
-  margin:0!important;
-  overflow:visible!important;
-  position:relative!important;
-  background:#fff!important;
-}
-
-/* ===== 4 MARCADORES OMR — DENTRO DA FOLHA ===== */
-.a4-sheet .omr-marker{
-  width:7mm!important;
-  height:7mm!important;
-  background:#000!important;
-  display:block!important;
-  position:absolute!important;
-  z-index:9999!important;
-  opacity:1!important;
-  filter:none!important;
-}
-.a4-sheet .omr-tl{left:8mm!important;top:8mm!important}
-.a4-sheet .omr-tr{right:8mm!important;top:8mm!important}
-.a4-sheet .omr-bl{left:8mm!important;bottom:8mm!important}
-.a4-sheet .omr-br{right:8mm!important;bottom:8mm!important}
-
-/* ===== CABEÇALHO COMPACTO ===== */
-.a4-sheet .card-head{
-  margin:0 5mm 1.2mm!important;
-  padding:0 1mm 1.2mm!important;
-  gap:3mm!important;
-}
-.a4-sheet .card-head .main-title{
-  font-size:13pt!important;
-  line-height:1!important;
-}
-.a4-sheet .card-head .brand{
-  font-size:6pt!important;
-  line-height:1!important;
-}
-.a4-sheet .card-head .brand strong{
-  font-size:8pt!important;
-}
-.a4-sheet .card-subtitle{
-  font-size:6pt!important;
-  margin:0 0 1.5mm!important;
-}
-
-/* ===== IDENTIFICAÇÃO COMPACTA ===== */
-.a4-sheet .ident-box{
-  margin:0 1mm 1.8mm!important;
-}
-.a4-sheet .ident-title{
-  font-size:6.5pt!important;
-  padding:1.1mm 1.6mm!important;
-}
-.a4-sheet .ident-cell{
-  padding:1mm 1.4mm!important;
-  min-height:7mm!important;
-}
-.a4-sheet .ident-label{
-  font-size:5.5pt!important;
-  margin-bottom:.6mm!important;
-}
-.a4-sheet .ident-value{
-  font-size:6.8pt!important;
-  min-height:2.7mm!important;
-}
-
-/* ===== ÁREA DE QUESTÕES ===== */
-.a4-sheet .instructions{
-  font-size:4.4pt!important;
-  margin:0 1mm .8mm!important;
-  padding:.8mm 1.1mm!important;
-  line-height:1.05!important;
-}
-.a4-sheet .answer-title{
-  font-size:6.5pt!important;
-  margin:1.1mm 1mm .5mm!important;
-}
-.a4-sheet .answer-help{
-  font-size:4pt!important;
-  margin:0 1mm .8mm!important;
-}
-.a4-sheet .omr-grid-fixed{
-  margin:0 1mm!important;
-  height:116mm!important;
-  gap:1.1mm!important;
-}
-.a4-sheet .omr-column{
-  height:116mm!important;
-  gap:1.1mm!important;
-}
-.a4-sheet .omr-q{
-  height:10.8mm!important;
-  min-height:10.8mm!important;
-  max-height:10.8mm!important;
-  flex:0 0 10.8mm!important;
-  padding:.25mm .45mm!important;
-}
-.a4-sheet .omr-qnum{
-  font-size:4.4pt!important;
-  margin-bottom:.25mm!important;
-}
-.a4-sheet .omr-options{
-  gap:1.15mm!important;
-}
-.a4-sheet .omr-opt{
-  width:3.5mm!important;
-  height:3.5mm!important;
-  font-size:4.8pt!important;
-}
-
-/* ===== RODAPÉ DENTRO DA ÁREA SEGURA ===== */
-.a4-sheet .card-footer{
-  left:10mm!important;
-  right:10mm!important;
-  bottom:5mm!important;
-  padding-top:1mm!important;
-  font-size:4.8pt!important;
-}
-.a4-sheet .card-footer strong{font-size:5.5pt!important}
-
-@media print{
-  .a4-wrap{
-    width:210mm!important;
-    height:297mm!important;
-    margin:0!important;
-  }
-  .a4-sheet{
-    width:210mm!important;
-    height:297mm!important;
-    margin:0!important;
-    padding:7mm 10mm 8mm!important;
-    box-sizing:border-box!important;
-    overflow:visible!important;
-  }
-}
-</style>
-
 </head>
 <body>
 
@@ -353,9 +212,9 @@ flex-wrap:nowrap;
         <label>Escola
           <input id="requestSchool" required autocomplete="organization" type="text" placeholder="Nome da escola">
         </label>
-        <button id="requestBtn" class="access-btn access-blue" onclick="requestAccess()">Enviar solicitação</button>
+        <button id="requestBtn" type="button" class="access-btn access-blue" onclick="requestAccess()">Enviar solicitação</button>
       </div>
-      <div id="requestMsg" class="access-msg"></div>
+      <div id="requestMsg" class="access-msg" role="status" aria-live="polite"></div>
     </section>
 
     <section id="access-admin" class="access-panel">
@@ -485,13 +344,19 @@ Selecione uma alternativa em cada questão. A alternativa selecionada ficará ma
   <div id="studentFields" class="student-list"></div>
   <div id="studentPreviewNote" class="print-preview-note"></div>
 
-  <div class="status info" style="margin-top:12px">
-    📄 <b>Formato de saída:</b> PDF A4 para impressão do cartão-resposta.
-  </div>
+  <label style="display:block;max-width:320px;margin-top:12px">
+    Formato de saída
+    <select id="cardFormato">
+      <option value="pdf" selected>PDF</option>
+      <option value="png">Imagem PNG — A4</option>
+      <option value="jpg">Imagem JPG — A4</option>
+      <option value="print">Imprimir diretamente</option>
+    </select>
+  </label>
   <div class="actions">
     <button class="primary" onclick="renderCard()">🔄 Atualizar cartão</button>
     <button class="secondary" onclick="newCardCode()">🔐 Novo código</button>
-    <button class="primary" onclick="exportCard()">📄 Gerar cartão-resposta em PDF</button>
+    <button class="primary" onclick="exportCard()">⬇️ Gerar arquivo</button>
   </div>
   <div class="status warn">⚠️ Imprima em <b>100%</b>. Não recorte, dobre ou cubra os quatro marcadores pretos dos cantos.</div>
 </div>
@@ -673,17 +538,10 @@ function cardMarkup(alunoCard, turmaCard, pageClass=''){
  const tituloCard=(titulo?.value||'AVALIAÇÃO').toUpperCase();
  const dataCard=getCardData();
  const codigo=getAssessmentCode();
- const perCol=10;
- const cols=Math.ceil(n/perCol);
- let columns='';
- for(let c=0;c<cols;c++){
-   let items='';
-   const ini=c*perCol;
-   const fim=Math.min(ini+perCol,n);
-   for(let i=ini;i<fim;i++){
-     items+=`<div class="omr-q"><div class="omr-qnum">QUESTÃO ${String(i+1).padStart(2,'0')}</div><div class="omr-options">${[...ls].map(x=>`<span class="omr-opt">${x}</span>`).join('')}</div></div>`;
-   }
-   columns+=`<div class="omr-column">${items}</div>`;
+ const rows=Math.min(10,n),cols=Math.ceil(n/10),gridH='122mm';
+ let qs='';
+ for(let i=0;i<n;i++){
+   qs+=`<div class="omr-q"><div class="omr-qnum">QUESTÃO ${String(i+1).padStart(2,'0')}</div><div class="omr-options">${[...ls].map(x=>`<span class="omr-opt">${x}</span>`).join('')}</div></div>`;
  }
  return `<div class="a4-sheet ${pageClass}">
    <i class="omr-marker omr-tl"></i><i class="omr-marker omr-tr"></i>
@@ -710,10 +568,11 @@ function cardMarkup(alunoCard, turmaCard, pageClass=''){
    <div class="instructions"><b>ORIENTAÇÕES:</b> Preencha completamente apenas uma alternativa por questão. Use lápis ou caneta preta/azul. Não faça marcas fora dos círculos. Não dobre nem corte o cartão.</div>
    <div class="answer-title">MARQUE A ALTERNATIVA CORRESPONDENTE À SUA RESPOSTA</div>
    <div class="answer-help">Preencha o círculo escolhido de forma completa. Os marcadores pretos dos quatro cantos são utilizados pelo sistema para localizar e corrigir o cartão.</div>
-   <div class="omr-grid-fixed">${columns}</div>
+   <div class="omr-grid" style="--rows:${rows};--cols:${cols};--grid-h:${gridH}">${qs}</div>
    <div class="card-footer"><strong>NEW PROF. CORRETOR</strong> · Cartão-resposta para correção automática por imagem · Código ${esc(codigo)}</div>
  </div>`;
 }
+
 function getCardDate(){
   const mode=document.getElementById('cardDateMode')?.value||'blank';
   return mode==='choose' ? (document.getElementById('cardDate')?.value||'') : '';
@@ -920,267 +779,134 @@ function exportHistoryCSV(){
 }
 
 
-function drawNativeCardPage(pdf, alunoCard, turmaCard, pageIndex, totalPages){
-  const n=Math.min(50,Math.max(1,+nq.value||10));
-  const ls=L.slice(0,+na.value||5);
-  const tituloCard=(titulo?.value||'AVALIAÇÃO').toUpperCase();
-  const dataCard=getCardData();
-  const codigo=getAssessmentCode();
+async function cardToCanvas(dpi=150){
+  const source=document.getElementById('printCard');
+  if(!source) throw new Error('Cartão não encontrado.');
 
-  const W=210, H=297;
-  const mx=15, contentW=180;
-  const marker=7, markerX=8, markerY=8;
+  const A4_W_MM=210, A4_H_MM=297;
+  const pxPerMm=dpi/25.4;
+  const outW=Math.round(A4_W_MM*pxPerMm);
+  const outH=Math.round(A4_H_MM*pxPerMm);
 
-  // Fundo branco e quatro marcadores OMR em coordenadas físicas A4.
-  pdf.setFillColor(255,255,255); pdf.rect(0,0,W,H,'F');
-  pdf.setFillColor(0,0,0);
-  pdf.rect(markerX,markerY,marker,marker,'F');
-  pdf.rect(W-markerX-marker,markerY,marker,marker,'F');
-  pdf.rect(markerX,H-markerY-marker,marker,marker,'F');
-  pdf.rect(W-markerX-marker,H-markerY-marker,marker,marker,'F');
+  // Cria uma cópia isolada com exatamente o mesmo tamanho físico da folha A4.
+  // Assim, a imagem não depende da largura da tela, zoom ou layout responsivo.
+  const holder=document.createElement('div');
+  holder.style.position='fixed';
+  holder.style.left='-100000px';
+  holder.style.top='0';
+  holder.style.width='210mm';
+  holder.style.height='297mm';
+  holder.style.overflow='hidden';
+  holder.style.background='#fff';
+  holder.style.zIndex='-1';
 
-  // Cabeçalho compacto.
-  pdf.setTextColor(18,45,86);
-  pdf.setFont('helvetica','bold'); pdf.setFontSize(17);
-  pdf.text('CARTÃO-RESPOSTA',mx,19);
-  pdf.setFontSize(8.5); pdf.text('NEW PROF. CORRETOR',W-mx,16,{align:'right'});
-  pdf.setFontSize(7); pdf.text('LEITOR OMR',W-mx,21,{align:'right'});
-  pdf.setDrawColor(23,63,143); pdf.setLineWidth(0.45); pdf.line(mx,24,W-mx,24);
-  pdf.setFontSize(8); pdf.text(tituloCard,mx+contentW/2,30,{align:'center'});
+  const clone=source.cloneNode(true);
+  clone.removeAttribute('id');
+  clone.style.width='210mm';
+  clone.style.height='297mm';
+  clone.style.minWidth='210mm';
+  clone.style.minHeight='297mm';
+  clone.style.maxWidth='210mm';
+  clone.style.maxHeight='297mm';
+  clone.style.margin='0';
+  clone.style.padding='13mm 12mm 12mm';
+  clone.style.boxSizing='border-box';
+  clone.style.overflow='hidden';
+  clone.style.background='#fff';
+  clone.style.boxShadow='none';
+  clone.style.border='0';
 
-  // Identificação.
-  const iy=35, ih=34, titleH=7;
-  pdf.setDrawColor(40,40,40); pdf.setLineWidth(0.3);
-  pdf.setFillColor(23,63,143); pdf.rect(mx,iy,contentW,titleH,'F');
-  pdf.setTextColor(255,255,255); pdf.setFontSize(8); pdf.setFont('helvetica','bold'); pdf.text('IDENTIFICAÇÃO',mx+3,iy+5);
-  pdf.setDrawColor(80,80,80); pdf.rect(mx,iy,contentW,ih);
-  pdf.line(mx,iy+titleH,W-mx,iy+titleH);
-  const split=mx+contentW*0.76;
-  pdf.line(split,iy+titleH,split,iy+22);
-  pdf.line(mx,iy+22,W-mx,iy+22);
-  const s2=mx+contentW*0.58, s3=mx+contentW*0.82;
-  pdf.line(s2,iy+22,s2,iy+ih); pdf.line(s3,iy+22,s3,iy+ih);
-  pdf.setTextColor(70,78,90); pdf.setFontSize(5.5);
-  pdf.text('AVALIAÇÃO',mx+2,iy+12); pdf.text('CÓDIGO DA AVALIAÇÃO',split+2,iy+12);
-  pdf.setTextColor(25,25,25); pdf.setFontSize(8); pdf.setFont('helvetica','bold');
-  pdf.text(tituloCard,mx+2,iy+18); pdf.text(codigo,split+2,iy+18);
-  pdf.setTextColor(70,78,90); pdf.setFontSize(5.5); pdf.setFont('helvetica','bold');
-  pdf.text('ESTUDANTE',mx+2,iy+27); pdf.text('ANO / TURMA',s2+2,iy+27); pdf.text('DATA',s3+2,iy+27);
-  pdf.setTextColor(25,25,25); pdf.setFontSize(7.5);
-  if(alunoCard) pdf.text(String(alunoCard).slice(0,45),mx+2,iy+32); else pdf.line(mx+2,iy+32,mx+contentW*0.57,iy+32);
-  if(turmaCard) pdf.text(String(turmaCard).slice(0,18),s2+2,iy+32); else pdf.line(s2+2,iy+32,s3-2,iy+32);
-  if(dataCard) pdf.text(fmtDate(dataCard),s3+2,iy+32); else pdf.line(s3+2,iy+32,W-mx-2,iy+32);
+  holder.appendChild(clone);
+  document.body.appendChild(holder);
 
-  // Orientações.
-  const oy=73;
-  pdf.setDrawColor(170,170,170); pdf.rect(mx,oy,contentW,6);
-  pdf.setFontSize(4.8); pdf.setFont('helvetica','bold'); pdf.setTextColor(23,63,143); pdf.text('ORIENTAÇÕES:',mx+2,oy+4);
-  pdf.setFont('helvetica','normal'); pdf.setTextColor(55,55,55);
-  pdf.text('Preencha completamente apenas uma alternativa por questão. Use lápis ou caneta preta/azul. Não faça marcas fora dos círculos. Não dobre nem corte o cartão.',mx+22,oy+4);
+  // Aguarda o navegador recalcular o layout do A4 antes da captura.
+  await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
 
-  const titleY=84;
-  pdf.setFont('helvetica','bold'); pdf.setFontSize(7.5); pdf.setTextColor(20,20,20);
-  pdf.text('MARQUE A ALTERNATIVA CORRESPONDENTE À SUA RESPOSTA',W/2,titleY,{align:'center'});
-  pdf.setFont('helvetica','normal'); pdf.setFontSize(4.7);
-  pdf.text('Preencha o círculo escolhido de forma completa. Os marcadores pretos dos quatro cantos são utilizados pelo sistema para localizar e corrigir o cartão.',W/2,titleY+5,{align:'center'});
-
-  // Duas colunas, dez questões por coluna. Altura total fixa e segura dentro do A4.
-  const gridY=92, gridH=166, gap=2, colGap=3, colW=(contentW-colGap)/2;
-  const rows=Math.ceil(Math.min(n,20)/2); // para o cartão padrão de 20 questões
-  const qH=(gridH-(rows-1)*gap)/rows;
-  const qFont=5.2, optR=2.6;
-  for(let i=0;i<Math.min(n,20);i++){
-    const col=i<10?0:1, row=i<10?i:i-10;
-    const x=mx+col*(colW+colGap), y=gridY+row*(qH+gap);
-    pdf.setDrawColor(70,70,70); pdf.setLineWidth(0.25); pdf.rect(x,y,colW,qH);
-    pdf.setFont('helvetica','bold'); pdf.setFontSize(qFont); pdf.setTextColor(25,25,25);
-    pdf.text(`QUESTÃO ${String(i+1).padStart(2,'0')}`,x+colW/2,y+5,{align:'center'});
-    const totalW=(ls.length-1)*8;
-    const start=x+colW/2-totalW/2;
-    ls.forEach((lab,j)=>{
-      const cx=start+j*8, cy=y+qH/2+2;
-      pdf.setDrawColor(35,35,35); pdf.setLineWidth(0.35); pdf.circle(cx,cy,optR);
-      pdf.setFont('helvetica','bold'); pdf.setFontSize(5.2); pdf.text(String(lab),cx,cy+1.7,{align:'center'});
+  let canvas;
+  try{
+    canvas=await html2canvas(clone,{
+      scale:1,
+      width:clone.offsetWidth,
+      height:clone.offsetHeight,
+      backgroundColor:'#ffffff',
+      useCORS:true,
+      logging:false,
+      scrollX:0,
+      scrollY:0,
+      windowWidth:Math.ceil(210*96/25.4),
+      windowHeight:Math.ceil(297*96/25.4)
     });
+  }finally{
+    holder.remove();
   }
 
-  // Rodapé dentro da área segura.
-  const fy=285;
-  pdf.setDrawColor(170,170,170); pdf.setLineWidth(0.3); pdf.line(mx,fy,W-mx,fy);
-  pdf.setFont('helvetica','bold'); pdf.setFontSize(5.8); pdf.setTextColor(23,63,143);
-  pdf.text('NEW PROF. CORRETOR',W/2-18,292,{align:'right'});
-  pdf.setFont('helvetica','normal'); pdf.setTextColor(80,80,80); pdf.text(` · Cartão-resposta para correção automática por imagem · Código ${codigo}`,W/2-17,292);
+  // Converte para uma imagem raster A4 exata.
+  const out=document.createElement('canvas');
+  out.width=outW;
+  out.height=outH;
+
+  const ctx=out.getContext('2d');
+  ctx.fillStyle='#fff';
+  ctx.fillRect(0,0,outW,outH);
+
+  // A proporção é exatamente 210:297, sem corte e sem deformação.
+  ctx.drawImage(canvas,0,0,outW,outH);
+
+  return out;
 }
 
-async function exportCardNative(){
-  try{
-    // jsPDF 2.5.x via UMD expõe a classe em window.jspdf.jsPDF.
-    const JsPDF =
-      (window.jspdf && window.jspdf.jsPDF) ||
-      window.jsPDF;
+async function exportCard(){
+  const fmt=document.getElementById('cardFormato')?.value||'pdf';
+  renderCard();
 
-    if(typeof JsPDF !== "function"){
-      alert("O gerador de PDF ainda está carregando. Aguarde alguns segundos e tente novamente.");
+  if(fmt==='print'){
+    window.print();
+    return;
+  }
+
+  try{
+    if(typeof html2canvas==='undefined'){
+      alert('A exportação ainda está carregando. Aguarde alguns segundos e tente novamente.');
       return;
     }
 
-    renderCard();
+    // 150 DPI = 1240 × 1754 px para A4.
+    // A proporção e o tamanho físico correspondem à folha A4.
+    const canvas=await cardToCanvas(150);
+    const safe=((document.getElementById('cardTitulo')?.value||'cartao-resposta')
+      .trim().replace(/[^\wÀ-ÿ\-]+/g,'_')).replace(/^_+|_+$/g,'')||'cartao-resposta';
 
-    const pdf = new JsPDF({
-      orientation:"portrait",
-      unit:"mm",
-      format:"a4",
-      compress:true
-    });
-
-    // A4 físico: 210 × 297 mm.
-    // O cartão é desenhado diretamente no PDF, sem html2canvas.
-    const W=210, H=297;
-    const M=12;
-
-    // Marcadores OMR — sempre dentro da folha.
-    const marker=7;
-    const mx=6;
-    const my=6;
-    pdf.setFillColor(0,0,0);
-    pdf.rect(mx,my,marker,marker,"F");
-    pdf.rect(W-mx-marker,my,marker,marker,"F");
-    pdf.rect(mx,H-my-marker,marker,marker,"F");
-    pdf.rect(W-mx-marker,H-my-marker,marker,marker,"F");
-
-    // Cabeçalho compacto.
-    pdf.setTextColor(23,63,143);
-    pdf.setFont("helvetica","bold");
-    pdf.setFontSize(18);
-    pdf.text("CARTÃO-RESPOSTA",M+5,22);
-
-    pdf.setFontSize(9);
-    pdf.text("NEW PROF. CORRETOR",W-M-5,20,{align:"right"});
-    pdf.setFontSize(7);
-    pdf.text("LEITOR OMR",W-M-5,24,{align:"right"});
-
-    pdf.setDrawColor(23,63,143);
-    pdf.setLineWidth(.5);
-    pdf.line(M,28,W-M,28);
-
-    const titulo = document.getElementById("cardTitulo")?.value || "AVALIAÇÃO";
-    pdf.setFontSize(9);
-    pdf.text(String(titulo).toUpperCase(),W/2,35,{align:"center"});
-
-    // Identificação.
-    let y=42;
-    const boxW=W-2*M;
-    pdf.setDrawColor(30,30,30);
-    pdf.setLineWidth(.35);
-    pdf.setFillColor(23,63,143);
-    pdf.rect(M,y,boxW,8,"F");
-    pdf.setTextColor(255,255,255);
-    pdf.setFontSize(8);
-    pdf.text("IDENTIFICAÇÃO",M+3,y+5.3);
-
-    y+=8;
-    pdf.setTextColor(20,20,20);
-    pdf.setFontSize(6.5);
-    pdf.setFont("helvetica","bold");
-
-    pdf.rect(M,y,boxW,14);
-    pdf.line(M+145,y,M+145,y+14);
-    pdf.text("AVALIAÇÃO",M+2,y+4);
-    pdf.text(String(titulo).toUpperCase(),M+2,y+9);
-
-    pdf.text("CÓDIGO DA AVALIAÇÃO",M+148,y+4);
-    pdf.setFont("helvetica","normal");
-    pdf.text(document.getElementById("cardCodigo")?.value || "AV-001",M+148,y+9);
-
-    y+=14;
-    pdf.rect(M,y,boxW,14);
-    pdf.line(M+100,y,M+100,y+14);
-    pdf.line(M+155,y,M+155,y+14);
-    pdf.setFont("helvetica","bold");
-    pdf.text("ESTUDANTE",M+2,y+4);
-    pdf.text("ANO / TURMA",M+102,y+4);
-    pdf.text("DATA",M+157,y+4);
-    pdf.line(M+2,y+11,M+95,y+11);
-    pdf.line(M+102,y+11,M+150,y+11);
-    pdf.line(M+157,y+11,W-M-2,y+11);
-
-    y+=19;
-
-    // Orientações.
-    pdf.setDrawColor(170,170,170);
-    pdf.rect(M,y,boxW,7);
-    pdf.setTextColor(23,63,143);
-    pdf.setFontSize(5.5);
-    pdf.setFont("helvetica","bold");
-    pdf.text("ORIENTAÇÕES:",M+2,y+4.4);
-    pdf.setTextColor(50,50,50);
-    pdf.setFont("helvetica","normal");
-    pdf.text("Preencha completamente apenas uma alternativa por questão. Use lápis ou caneta preta/azul. Não faça marcas fora dos círculos.",M+22,y+4.4);
-
-    y+=12;
-    pdf.setTextColor(20,20,20);
-    pdf.setFont("helvetica","bold");
-    pdf.setFontSize(8);
-    pdf.text("MARQUE A ALTERNATIVA CORRESPONDENTE À SUA RESPOSTA",W/2,y,{align:"center"});
-    y+=4;
-    pdf.setFont("helvetica","normal");
-    pdf.setFontSize(5);
-    pdf.text("Os marcadores pretos dos quatro cantos são utilizados pelo sistema para localizar e corrigir o cartão.",W/2,y,{align:"center"});
-
-    // Questões: 10 por coluna, compactas e dentro do A4.
-    y+=6;
-    const cols=[M,M+98];
-    const qW=92;
-    const qH=10.5;
-    const gap=1.4;
-    const opts=["A","B","C","D","E"];
-
-    pdf.setTextColor(15,15,15);
-    for(let i=0;i<20;i++){
-      const col=i<10?0:1;
-      const row=i%10;
-      const x=cols[col];
-      const yy=y+row*(qH+gap);
-
-      pdf.setDrawColor(30,30,30);
-      pdf.setLineWidth(.3);
-      pdf.rect(x,yy,qW,qH);
-
-      pdf.setFont("helvetica","bold");
-      pdf.setFontSize(5.2);
-      pdf.text(`QUESTÃO ${String(i+1).padStart(2,"0")}`,x+qW/2,yy+3.2,{align:"center"});
-
-      const startX=x+qW/2-14;
-      opts.forEach((op,j)=>{
-        const cx=startX+j*7;
-        const cy=yy+7;
-        pdf.setDrawColor(20,20,20);
-        pdf.circle(cx,cy,2.15,"S");
-        pdf.setFont("helvetica","normal");
-        pdf.setFontSize(5.2);
-        pdf.text(op,cx,cy+1.6,{align:"center"});
-      });
+    if(fmt==='png' || fmt==='jpg'){
+      const mime=fmt==='png'?'image/png':'image/jpeg';
+      const ext=fmt==='png'?'png':'jpg';
+      const a=document.createElement('a');
+      a.href=canvas.toDataURL(mime,0.95);
+      a.download=`${safe}-cartao-A4.${ext}`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      return;
     }
 
-    // Rodapé.
-    const fy=H-12;
-    pdf.setDrawColor(160,160,160);
-    pdf.line(M,fy-3,W-M,fy-3);
-    pdf.setTextColor(23,63,143);
-    pdf.setFont("helvetica","bold");
-    pdf.setFontSize(6);
-    pdf.text("NEW PROF. CORRETOR",W/2-30,fy+2);
-    pdf.setTextColor(80,80,80);
-    pdf.setFont("helvetica","normal");
-    pdf.text(" - Cartão-resposta para correção automática por imagem - Código AV-001",W/2-5,fy+2);
+    if(!window.jspdf || !window.jspdf.jsPDF){
+      alert('A exportação PDF ainda está carregando. Aguarde alguns segundos e tente novamente.');
+      return;
+    }
 
-    const safe=((titulo||"cartao-resposta").trim()
-      .replace(/[^\wÀ-ÿ-]+/g,"_").replace(/^_+|_+$/g,""))||"cartao-resposta";
-
+    const pdf=new window.jspdf.jsPDF({
+      orientation:'portrait',
+      unit:'mm',
+      format:'a4',
+      compress:true
+    });
+    pdf.addImage(
+      canvas.toDataURL('image/jpeg',0.95),
+      'JPEG',0,0,210,297,undefined,'FAST'
+    );
     pdf.save(`${safe}-cartao.pdf`);
   }catch(e){
-    console.error("Erro ao gerar PDF:",e);
-    alert("Não foi possível gerar o PDF: "+(e?.message||e));
+    console.error(e);
+    alert('Não foi possível gerar o arquivo: '+e.message);
   }
 }
 
@@ -1532,25 +1258,41 @@ async function accessApi(path,options={}){
 }
 
 function validEmail(email){
-  return /^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/i.test(email);
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i.test(email);
 }
 
 async function requestAccess(){
-  const name=document.getElementById("requestName").value.trim();
-  const email=document.getElementById("requestEmail").value.trim().toLowerCase();
-  const school=document.getElementById("requestSchool").value.trim();
+  const nameEl=document.getElementById("requestName");
+  const emailEl=document.getElementById("requestEmail");
+  const schoolEl=document.getElementById("requestSchool");
   const btn=document.getElementById("requestBtn");
 
-  // Todos os campos são obrigatórios.
-  if(!name || !email || !school){
-    accessMessage("requestMsg","Todos os campos são obrigatórios. Preencha nome, e-mail e escola.","warn");
+  const name=nameEl.value.trim();
+  const email=emailEl.value.trim().toLowerCase();
+  const school=schoolEl.value.trim();
+
+  // Os três campos são obrigatórios.
+  if(!name){
+    accessMessage("requestMsg","Preencha o nome completo.","warn");
+    nameEl.focus();
     return;
   }
 
-  // Validação do formato do e-mail.
+  if(!email){
+    accessMessage("requestMsg","Preencha o e-mail.","warn");
+    emailEl.focus();
+    return;
+  }
+
   if(!validEmail(email)){
     accessMessage("requestMsg","Digite um e-mail válido, por exemplo: professor@escola.com.br","warn");
-    document.getElementById("requestEmail").focus();
+    emailEl.focus();
+    return;
+  }
+
+  if(!school){
+    accessMessage("requestMsg","Preencha o nome da escola.","warn");
+    schoolEl.focus();
     return;
   }
 
@@ -1564,9 +1306,24 @@ async function requestAccess(){
       method:"POST",
       body:JSON.stringify({name,email,school})
     });
-    accessMessage("requestMsg",d.message||"Solicitação enviada com sucesso. Aguarde a liberação do administrador.","ok");
+
+    accessMessage(
+      "requestMsg",
+      "Solicitação enviada com sucesso! Aguarde aprovação!",
+      "ok"
+    );
+
+    // Limpa os campos somente depois da confirmação do servidor.
+    nameEl.value="";
+    emailEl.value="";
+    schoolEl.value="";
   }catch(e){
-    accessMessage("requestMsg",e.message||"Não foi possível enviar a solicitação. Tente novamente.","bad");
+    console.error("Erro ao solicitar acesso:",e);
+    accessMessage(
+      "requestMsg",
+      e.message || "Não foi possível enviar a solicitação. Tente novamente.",
+      "bad"
+    );
   }finally{
     btn.disabled=false;
     btn.textContent=originalText;
@@ -1612,4 +1369,3 @@ function openAdmin(){window.location.href=ADMIN_URL;}
 </script>
 
 </body></html>
-<script>window.exportCard = window.exportCardNative;</script>
