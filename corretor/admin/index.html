@@ -142,6 +142,9 @@ iframe{width:100%;height:calc(100vh - 155px);min-height:700px;border:0;border-ra
 </div>
 
 <script>
+window.addEventListener("error",function(e){
+  console.error("NEW PROF. CORRETOR ADMIN:",e.error||e.message);
+});
 const ADMIN_API = "https://new-prof-corretor-admin.parqueclube1bloco2d.workers.dev";
 const CORRETOR_URL = ADMIN_API + "/sistema";
 
@@ -323,7 +326,7 @@ async function deleteUser(id){
   );
   if(!ok)return;
   try{
-    const res=await api("/api/admin/delete",{method:"POST",body:{id:r.id}});
+    const res=await api("/api/admin/delete",{id:r.id});
     if(!res.ok)throw new Error(res.error||res.message||"Não foi possível excluir o usuário.");
     alert("Usuário excluído com sucesso.");
     await load();
