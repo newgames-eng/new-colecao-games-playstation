@@ -270,7 +270,7 @@ function render(){
   body.innerHTML=list.length?list.map(r=>{
     const st=normalizeStatus(r.status);
     let actions="";
-    actions+='<button class="btn gray" onclick="showDetails('+r.id+')">Detalhes</button>';
+    actions+='<button class="btn gray" onclick="showDetails('+r.id+')">Detalhes</button><button class="btn red" onclick="deleteUser('+r.id+')">Excluir</button>';
     if(st==="PENDENTE")actions+='<button class="btn green" onclick="release('+r.id+')">Liberar</button><button class="btn red" onclick="reject('+r.id+')">Recusar</button>';
     if(st==="LIBERADO")actions+='<button class="btn yellow" onclick="renew('+r.id+')">Renovar</button><button class="btn red" onclick="block('+r.id+')">Bloquear</button>';
     if(["BLOQUEADO","EXPIRADO","RECUSADO"].includes(st))actions+='<button class="btn green" onclick="reopen('+r.id+')">Reabrir</button>';
@@ -304,6 +304,30 @@ function showDetails(id){
 function closeDetails(event){
   if(event && event.target!==document.getElementById("detailsOverlay"))return;
   document.getElementById("detailsOverlay").style.display="none";
+}
+
+
+async function deleteUser(id){
+  const r=rows.find(x=>String(x.id)===String(id));
+  if(!r)return;
+  const name=String(r.name||"este professor");
+  const email=String(r.email||"");
+  const ok=confirm(
+    "EXCLUIR USUÁRIO\n\n"+
+    "Professor: "+name+"\n"+
+    "E-mail: "+email+"\n\n"+
+    "Esta ação excluirá o cadastro do banco de dados e não poderá ser desfeita.\n\n"+
+    "Deseja realmente excluir?"
+  );
+  if(!ok)return;
+  try{
+    const res=await api("/api/admin/delete",{method:"POST",body:{id:r.id}});
+    if(!res.ok)throw new Error(res.error||res.message||"Não foi possível excluir o usuário.");
+    alert("Usuário excluído com sucesso.");
+    await load();
+  }catch(e){
+    alert(e.message||"Erro ao excluir usuário.");
+  }
 }
 
 function closeDurationPicker(id){
