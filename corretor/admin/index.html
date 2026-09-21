@@ -1,1371 +1,456 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>New Prof. Corretor Inteligente de Avaliações</title>
-<script async src="https://docs.opencv.org/4.x/opencv.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
+<title>NEW PROF. CORRETOR — Administração</title>
 <style>
-/* ===== CAMADA DE ACESSO ===== */
-#accessGate{position:fixed;inset:0;background:linear-gradient(135deg,#f2f6fc,#eaf1fb);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto}
-.access-box{width:min(560px,100%);background:#fff;border:1px solid #dbe4ef;border-radius:20px;box-shadow:0 12px 40px #17345d22;padding:26px}
-.access-brand{font-size:28px;font-weight:900;color:#173f8f}.access-brand span{color:#1764e8}
-.access-sub{color:#64748b;margin:5px 0 20px}
-.access-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px}
-.access-tab{border:0;border-radius:10px;padding:12px 8px;font-weight:900;color:#fff;cursor:pointer}
-.access-tab.system{background:#16a34a}.access-tab.request{background:#1764e8}.access-tab.admin{background:#dc2626}
-.access-panel{display:none}.access-panel.active{display:block}
-.access-panel h2{margin:0 0 8px;color:#17345d}.access-panel p{color:#52637b;line-height:1.45}
-.access-form{display:grid;gap:11px;margin-top:15px}.access-form label{display:block}
-.access-form input{width:100%;box-sizing:border-box;padding:12px;border:1px solid #cbd5e1;border-radius:9px;margin-top:5px;font-size:16px}
-.access-btn{border:0;border-radius:9px;padding:12px 16px;font-weight:900;color:#fff;cursor:pointer}
-.access-green{background:#16a34a}.access-blue{background:#1764e8}.access-red{background:#dc2626}
-.access-msg{display:none;padding:11px;border-radius:9px;margin-top:12px;font-weight:700}
-.access-msg.info{display:block;background:#e8f1ff;color:#174a96}
-.access-msg.ok{display:block;background:#dcfce7;color:#166534}
-.access-msg.warn{display:block;background:#fff4d6;color:#8a5a00}
-.access-msg.bad{display:block;background:#fee2e2;color:#991b1b}
-.access-loading{opacity:.65;pointer-events:none}
-#appShell{display:none}
-@media(max-width:560px){.access-tabs{grid-template-columns:1fr}.access-box{padding:19px}}
-</style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f1f5f9;color:#17345d}
+header{background:#dc2626;color:#fff;padding:18px 24px}
+header h1{margin:0;font-size:26px} header p{margin:6px 0 0}
+.top-tabs{display:flex;gap:8px;background:#fff;padding:10px 14px;border-bottom:1px solid #d7dee9;position:sticky;top:0;z-index:10}
+.tab{border:0;border-radius:9px;padding:12px 18px;font-weight:900;cursor:pointer;background:#e8eef7;color:#17345d}
+.tab.active{background:#dc2626;color:#fff}.tab.corr{background:#2563eb;color:#fff}
+.wrap{padding:16px;max-width:1500px;margin:auto}
+.panel{background:#fff;border-radius:15px;border:1px solid #dbe3ef;box-shadow:0 3px 15px #17345d12;padding:16px;margin-bottom:14px}
+.toolbar{display:flex;gap:9px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.btn{border:0;border-radius:8px;padding:10px 14px;font-weight:900;cursor:pointer}
+.black{background:#000;color:#fff}.black:hover{background:#222}
+.btn:disabled{opacity:.55;cursor:wait}
+.blue{background:#2563eb;color:#fff}.green{background:#16a34a;color:#fff}.red{background:#dc2626;color:#fff}.gray{background:#e8eef7;color:#17345d}.yellow{background:#facc15;color:#5b4300}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:12px}
+.stat{padding:16px;border-radius:12px;text-align:center;font-weight:900;border:0;width:100%;cursor:pointer;font:inherit;color:#17345d;transition:.15s}
+.stat:hover{transform:translateY(-1px);box-shadow:0 4px 10px #17345d20}
+.stat:focus{outline:3px solid #17345d}.stat b{display:block;font-size:24px;margin-bottom:5px}
+.s-p{background:#fff2c7}.s-l{background:#d9fbe5}.s-b{background:#fee0e0}.s-e{background:#fff0c7}.s-r{background:#e9eef5}
+.stat.active{outline:3px solid #17345d}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.filter.active{outline:3px solid #cbd5e1}
+.table-wrap{overflow:auto;margin-top:14px}
+table{width:100%;border-collapse:collapse;min-width:950px}
+th,td{padding:10px;border-bottom:1px solid #e2e8f0;text-align:left;vertical-align:top}th{background:#f8fafc}
+.badge{display:inline-block;border-radius:999px;padding:6px 9px;font-size:12px;font-weight:900}
+.pendente{background:#fff0bd;color:#8a5a00}.liberado{background:#d6f8e1;color:#166534}.bloqueado{background:#ffdede;color:#991b1b}.expirado{background:#fff0c7;color:#8a5a00}.recusado{background:#e5e7eb;color:#475569}
+.actions{display:flex;gap:6px;flex-wrap:wrap}.actions .btn{padding:7px 9px;font-size:12px}.duration-picker{margin-top:9px;padding:10px;background:#f1f5f9;border:1px solid #cbd5e1;border-radius:10px;min-width:250px}.duration-title{font-weight:900;margin-bottom:8px;color:#17345d}.duration-options{display:flex;gap:6px;flex-wrap:wrap}.duration-options .btn{padding:7px 9px;font-size:12px}.duration-custom{display:none;margin-top:8px}.duration-custom input{width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:7px;font-size:14px}.duration-footer{display:flex;gap:6px;margin-top:8px}.duration-footer .btn{padding:7px 9px;font-size:12px}
+#corretorPanel{display:none;padding:0}
+.framebar{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;padding:12px 14px;background:#eff6ff;border-radius:12px 12px 0 0}
+iframe{width:100%;height:calc(100vh - 155px);min-height:700px;border:0;border-radius:0 0 12px 12px;background:#fff}
+.notice{padding:11px;border-radius:10px;background:#e8f1ff;margin-top:10px}
+#loading{display:none;margin-top:10px;padding:10px;border-radius:8px;background:#fff7d6;font-weight:900}
+#errorBox{display:none;margin-top:10px;padding:10px;border-radius:8px;background:#ffdede;color:#991b1b;font-weight:900}
 
-<style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f2f5fa;color:#17243a}
-header{background:linear-gradient(135deg,#123b91,#1764e8);color:#fff;padding:22px 18px;position:sticky;top:0;z-index:20;box-shadow:0 3px 12px #0003}
-.brand{font-size:31px;font-weight:900}.brand span{color:#9dccff}.sub{margin-top:5px;color:#e4efff}
-nav{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}nav button{border:1px solid #ffffff55;background:#ffffff22;color:#fff;border-radius:12px;padding:12px 17px;font-size:16px;font-weight:800;cursor:pointer}
-main{max-width:1050px;margin:auto;padding:22px 15px 60px}.card{background:#fff;border:1px solid #e1e7ef;border-radius:17px;padding:19px;margin-bottom:18px;box-shadow:0 2px 12px #173b7112}
-h1,h2,h3{margin-top:0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
-label{font-weight:700;font-size:14px}input,select{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;margin-top:5px;font-size:16px}
-button{cursor:pointer}.primary{background:#1764e8;color:#fff;border:0;border-radius:9px;padding:12px 17px;font-weight:800}.secondary{background:#e8eef7;color:#17345d;border:0;border-radius:9px;padding:12px 17px;font-weight:800}
-.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.status{padding:13px;border-radius:11px;margin-top:12px;font-weight:700}.info{background:#e8f1ff;color:#174a96}.ok{background:#dcfce7;color:#166534}.warn{background:#fff4d6;color:#8a5a00}.bad{background:#fee2e2;color:#991b1b}
-.hidden{display:none}.preview{width:100%;max-height:650px;object-fit:contain;border:1px solid #d5dde8;border-radius:11px;margin-top:13px;background:#fafcff}
-table{width:100%;border-collapse:collapse;margin-top:13px;font-size:14px}th,td{border:1px solid #d9e1ea;padding:9px;text-align:center}th{background:#edf3fa}
-.correct{color:#16803d;font-weight:800}.wrong{color:#c62828;font-weight:800}.blank{color:#64748b;font-weight:800}.double{color:#a15c00;font-weight:800}
-.score{font-size:34px;color:#1764e8;font-weight:900}.keyline{font-family:monospace;background:#f1f5f9;padding:12px;border-radius:9px;font-size:18px;letter-spacing:3px;word-break:break-all}
-.qgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.qbox{border:1px solid #cbd5e1;border-radius:8px;padding:8px}.qopts{display:flex;gap:5px;margin-top:6px}.qopts button{width:30px;height:30px;border-radius:50%;border:1px solid #64748b;background:#fff}.qopts button.sel{background:#16a34a;color:#fff;border-color:#15803d;color:#fff}.gabarito-help{margin:0 0 12px;padding:10px 12px;border-radius:8px;background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;font-size:13px;line-height:1.45}.green-dot{color:#16a34a;font-weight:800}
-.raw{font:12px/1.5 monospace;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px;overflow:auto;white-space:pre}
-@media(max-width:600px){.brand{font-size:28px}.qgrid{grid-template-columns:repeat(2,1fr)}nav button{font-size:15px}}
+.license-card{margin-top:14px;padding:16px;border:1px solid #cbd5e1;border-radius:14px;background:linear-gradient(135deg,#eff6ff,#ffffff)}
+.license-head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.license-title{font-size:18px;font-weight:900;color:#17345d}.license-count{font-size:24px;font-weight:900;color:#2563eb}
+.license-sub{color:#52637b;margin-top:3px}.license-bar{height:12px;background:#e2e8f0;border-radius:999px;overflow:hidden;margin-top:12px}
+.license-fill{height:100%;width:0;background:#2563eb;border-radius:999px;transition:.25s}
+.license-foot{display:flex;justify-content:space-between;gap:10px;margin-top:7px;font-size:13px;font-weight:800}
+.search-row{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:14px}
+.search-row input{flex:1;min-width:260px;padding:11px 13px;border:1px solid #cbd5e1;border-radius:9px;font-size:14px;color:#17345d}
+.search-row input:focus{outline:3px solid #dbeafe;border-color:#2563eb}
+.result-count{font-weight:900;color:#52637b}
+.details-overlay{display:none;position:fixed;inset:0;background:#17345d66;z-index:1000;align-items:center;justify-content:center;padding:18px}
+.details-modal{background:#fff;border-radius:16px;max-width:620px;width:100%;max-height:90vh;overflow:auto;box-shadow:0 20px 60px #17345d44}
+.details-head{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid #e2e8f0}
+.details-head h3{margin:0;color:#17345d}.details-body{padding:18px}
+.detail-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.detail-item{padding:11px;border:1px solid #e2e8f0;border-radius:10px;background:#f8fafc}.detail-item small{display:block;color:#64748b;font-weight:800;margin-bottom:3px}.detail-item b{color:#17345d;word-break:break-word}
+.activity{margin-top:16px}.activity h3{margin:0 0 8px}.activity-item{padding:9px 0;border-bottom:1px solid #e2e8f0;font-size:13px}
+@media(max-width:650px){.detail-grid{grid-template-columns:1fr}.license-count{font-size:21px}}
 
-/* ===== CARTÃO-RESPOSTA A4 V4.1 ===== */
-.card-config{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}
-.card-config label{font-weight:800;font-size:13px}
-.card-config label:first-child{grid-column:span 2}
-.card-config input,.card-config select{width:100%;margin-top:5px;padding:10px;border:1px solid #cbd5e1;border-radius:8px}
-.a4-wrap{width:210mm;margin:18px auto;overflow:visible}
-.a4-sheet{width:210mm;height:297mm;min-width:210mm;min-height:297mm;max-height:297mm;background:#fff;color:#111;position:relative;padding:13mm 12mm 12mm;border:1px solid #bbb;box-shadow:0 3px 18px #0002;font-family:Arial,Helvetica,sans-serif}
-.omr-marker{position:absolute;width:8mm;height:8mm;background:#000}
-.omr-tl{left:7mm;top:7mm}.omr-tr{right:7mm;top:7mm}.omr-bl{left:7mm;bottom:7mm}.omr-br{right:7mm;bottom:7mm}
-.card-head{border-bottom:2px solid #173f8f;padding:0 2mm 3mm;margin:0 2mm 3.5mm;display:flex;align-items:end;justify-content:space-between;gap:8mm}
-.card-head .main-title{font-size:21pt;font-weight:900;letter-spacing:.5px;color:#102a56}
-.card-head .brand{font-size:10pt;font-weight:800;color:#173f8f;text-align:right}
-.card-head .brand strong{display:block;font-size:13pt}
-.card-subtitle{text-align:center;font-size:10pt;font-weight:800;letter-spacing:1.5px;margin:-1mm 0 5mm;color:#26364d}
-.ident-box{border:1.5px solid #111;margin:0 2mm 4mm}
-.ident-title{background:#173f8f;color:#fff;font-size:10pt;font-weight:900;padding:2.5mm 3mm;letter-spacing:.5px}
-.ident-grid{display:block;min-width:0}
-.ident-row{display:grid;gap:0}
-.ident-row-top{grid-template-columns:2.2fr 1fr}
-.ident-row-student{grid-template-columns:1.75fr .72fr .72fr}
-.ident-cell{padding:2.2mm 2.7mm;border-right:1px solid #aaa;border-top:1px solid #aaa;min-height:15mm;min-width:0;overflow:hidden;background:#fff}
-.ident-row .ident-cell:last-child{border-right:0}
-.ident-label{font-size:7.5pt;font-weight:900;text-transform:uppercase;color:#173f8f;margin-bottom:2mm;letter-spacing:.2px}
-.ident-value{font-size:10.5pt;font-weight:700;min-height:5mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ident-label{font-size:7.5pt;font-weight:800;text-transform:uppercase;color:#4b5563;margin-bottom:2mm}
-.ident-value{font-size:10.5pt;font-weight:700;min-height:5mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.reg-code{font-family:"Courier New",monospace;letter-spacing:1.3px;font-size:10pt}
-.instructions{font-size:6pt;margin:0 2mm 1.5mm;border:1px solid #bbb;padding:1.8mm 2.2mm;line-height:1.25}
-.instructions b{color:#173f8f}
-.answer-title{text-align:center;font-size:8pt;font-weight:900;margin:2.8mm 2mm 1.2mm;letter-spacing:.4px}
-.answer-help{text-align:center;font-size:5.3pt;margin:0 2mm 2mm;color:#444}
-.omr-grid{
-display:grid;
-grid-auto-flow:column;
-grid-template-rows:repeat(var(--rows,10),minmax(0,1fr));
-grid-template-columns:repeat(var(--cols,1),minmax(0,1fr));
-gap:1.8mm;
-margin:0 2mm;
-align-content:start;
-justify-content:stretch;
-height:var(--grid-h,122mm);
-}
-.omr-q{
-border:1px solid #111;
-min-height:0;
-height:auto;
-padding:1mm 1mm;
-text-align:center;
-break-inside:avoid;
-display:flex;
-flex-direction:column;
-justify-content:center;
-box-sizing:border-box;
-}
-.omr-qnum{font-size:5.8pt;font-weight:900;margin-bottom:.7mm;line-height:1}
-.omr-options{
-display:flex;
-justify-content:center;
-align-items:center;
-gap:1.7mm;
-flex-wrap:nowrap;
-}
-.omr-opt{width:4.7mm;height:4.7mm;border:1px solid #111;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:6.2pt;font-weight:700;box-sizing:border-box}
-.card-footer{position:absolute;left:12mm;right:12mm;bottom:17mm;text-align:center;border-top:1px solid #aaa;padding-top:3mm;font-size:7pt;color:#555}
-.card-footer strong{font-size:8pt;color:#173f8f}
-@media print{
-  body{background:#fff!important}
-  header,main>.card:not(#cartao .card),#cartao>.card>h2,#cartao>.card>p,#cartao>.card>.status,#cartao>.card>.actions,.no-print{display:none!important}
-  #cartao{display:block!important}
-  #cartao>.card{border:0!important;box-shadow:none!important;padding:0!important;margin:0!important;background:#fff!important}
-  .a4-wrap{margin:0!important;width:210mm!important;overflow:visible!important}
-  .a4-sheet{box-shadow:none!important;border:0!important;margin:0!important}
-  @page{size:A4 portrait;margin:0}
-}
-@media(max-width:700px){
- .card-config{grid-template-columns:1fr 1fr}
- .card-config label:first-child{grid-column:span 2}
- .a4-wrap{width:100%;overflow-x:auto;margin-left:0;margin-right:0}
-}
-
-.photo-picker{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}
-.picker-button{display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:12px 16px;border-radius:10px}
-.file-hidden{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
-.file-name{font-size:.95rem;color:#334155;overflow-wrap:anywhere}
-@media(max-width:600px){
-  .photo-picker{display:block}
-  .picker-button{width:100%;box-sizing:border-box}
-  .file-name{padding:8px 2px}
-}
-.smallbtn{padding:6px 9px;font-size:12px}.pdf-all-btn{background:#c62828;color:#fff;border:0;border-radius:8px;padding:9px 14px;font-weight:700;cursor:pointer}.pdf-all-btn:hover{background:#a91f1f}
-
-.student-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px;margin-top:10px}
-.student-list label{font-size:12px}.student-list input{font-size:14px}
-.print-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-top:12px}
-.radio-card{border:1px solid #cbd5e1;border-radius:10px;padding:10px;background:#f8fafc}
-.radio-card input{width:auto;margin-right:6px}
-.print-preview-note{font-size:12px;color:#64748b;margin-top:8px}
-@media print{
- .a4-sheet.print-page{page-break-after:always;break-after:page}
- .a4-sheet.print-page:last-child{page-break-after:auto;break-after:auto}
-}
-
-
-.blank-line{display:block;width:100%;height:6mm;border-bottom:1.2px solid #111}
-.blank-line.short{width:100%}
-.student-value{white-space:nowrap;overflow:hidden;text-overflow:clip}
-
-
-.app-guide{margin-top:18px;background:#fff;border:1px solid #d9e1ef;border-radius:14px;padding:22px;box-shadow:0 4px 14px rgba(20,45,90,.07)}
-.app-guide h2{margin:0 0 8px;color:#164da5;font-size:21px}
-.app-guide h3{margin:18px 0 10px;color:#163d78;font-size:16px}
-.app-guide>p{margin:0;color:#334155;line-height:1.55;font-size:14px}
-.guide-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.guide-item{border:1px solid #dbe4f0;border-radius:10px;padding:13px;background:#f8fbff}
-.guide-title{font-weight:800;color:#1557b5;font-size:14px;margin-bottom:5px}
-.guide-item p{margin:0;color:#40516a;font-size:12.5px;line-height:1.5}
-.guide-flow{margin-top:14px;padding:12px;border-radius:9px;background:#eef5ff;color:#163f80;font-size:12.5px;line-height:1.6}
-.guide-flow span{font-weight:800}
-.guide-tip{margin-top:10px;padding:12px;border-radius:9px;background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;font-size:12.5px;line-height:1.5}
-@media(max-width:700px){.guide-grid{grid-template-columns:1fr}.app-guide{padding:15px}}
-
+@media(max-width:850px){.stats{grid-template-columns:repeat(2,1fr)}iframe{min-height:800px;height:calc(100vh - 180px)}}
 </style>
 </head>
 <body>
+<header>
+<h1>NEW PROF. CORRETOR — Administração</h1>
+<p>Administrador autenticado por e-mail e senha</p>
+</header>
 
-<div id="accessGate">
-  <div class="access-box">
-    <div class="access-brand">NEW <span>PROF. CORRETOR</span></div>
-    <div class="access-sub">Corretor Inteligente de Avaliações</div>
-
-    <div class="access-tabs">
-      <button class="access-tab system" onclick="accessPanel('system')">🟢 Acesso ao Sistema</button>
-      <button class="access-tab request" onclick="accessPanel('request')">🔵 Solicitar acesso</button>
-      <button class="access-tab admin" onclick="accessPanel('admin')">🔴 Administrador</button>
-    </div>
-
-    <section id="access-system" class="access-panel active">
-      <h2>🟢 Acesso ao Sistema</h2>
-      <p>Informe o e-mail utilizado na solicitação de acesso.</p>
-      <div class="access-form">
-        <label>E-mail
-          <input id="loginEmail" type="email" autocomplete="email" placeholder="professor@escola.com">
-        </label>
-        <button id="loginBtn" class="access-btn access-green" onclick="checkProfessorAccess()">Entrar</button>
-      </div>
-      <div id="loginMsg" class="access-msg"></div>
-    </section>
-
-    <section id="access-request" class="access-panel">
-      <h2>🔵 Solicitar acesso</h2>
-      <p>Preencha seus dados. A solicitação será enviada para análise do administrador.</p>
-      <div class="access-form">
-        <label>Nome
-          <input id="requestName" required autocomplete="name" type="text" placeholder="Nome completo">
-        </label>
-        <label>E-mail
-          <input id="requestEmail" type="email" required autocomplete="email" type="email" autocomplete="email" placeholder="professor@escola.com">
-        </label>
-        <label>Escola
-          <input id="requestSchool" required autocomplete="organization" type="text" placeholder="Nome da escola">
-        </label>
-        <button id="requestBtn" type="button" class="access-btn access-blue" onclick="requestAccess()">Enviar solicitação</button>
-      </div>
-      <div id="requestMsg" class="access-msg" role="status" aria-live="polite"></div>
-    </section>
-
-    <section id="access-admin" class="access-panel">
-      <h2>🔴 Administrador</h2>
-      <p>A área administrativa utiliza o login protegido pelo Cloudflare Access.</p>
-      <button class="access-btn access-red" onclick="openAdmin()">Acessar Administração</button>
-      <div class="access-msg info">O administrador será direcionado para a área protegida por e-mail e código OTP.</div>
-    </section>
-  </div>
+<div class="top-tabs">
+<button id="tabAdmin" class="tab active" onclick="showTab('admin')">⚙️ Administração</button>
+<button id="tabCorretor" class="tab corr" onclick="showTab('corretor')">📚 Sistema de Correção</button>
+<button class="tab" onclick="logout()">🔒 Sair</button>
 </div>
 
-<div id="appShell">
-
-<header><div class="brand">NEW <span>PROF. CORRETOR</span></div><div class="sub">Corretor Inteligente de Avaliações — OMR</div>
-<nav><button onclick="show('inicio')">🏠 Início</button><button onclick="show('avaliacao')">📝 Avaliação</button><button onclick="show('corrigir')">📷 Corrigir</button><button onclick="show('cartao')">📄 Cartão</button><button onclick="show('resultados')">📊 Resultados</button><button onclick="show('historico')">📚 Histórico</button></nav></header>
-<main>
-<section id="inicio" class="page"><div class="card"><h1>NEW PROF. CORRETOR INTELIGENTE</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V4.16:</b> Leitor OMR testado com fotografias reais. Histórico local e câmera integrados.<br><br><b>Base preservada:</b> o leitor calcula as posições das bolhas a partir dos próprios quadros das questões. A mesma leitura alimenta diagnóstico, sequência e tabela.</div>
-<div class="app-guide">
-  <h2>📘 Como funciona o NEW PROF. CORRETOR?</h2>
-  <p>
-    O <b>NEW PROF. CORRETOR INTELIGENTE DE AVALIAÇÕES</b> foi desenvolvido para facilitar a
-    correção de avaliações por meio da leitura automática de <b>cartões-resposta fotografados</b>.
-    O professor configura a avaliação, informa o gabarito, gera os cartões e, depois da aplicação,
-    fotografa o cartão preenchido. O sistema identifica as marcações, compara as respostas com o
-    gabarito e apresenta os resultados.
-  </p>
-
-  <h3>📚 Conheça cada aba</h3>
-
-  <div class="guide-grid">
-    <div class="guide-item">
-      <div class="guide-title">📝 Avaliação</div>
-      <p>Configure a avaliação uma única vez. Informe o título, a quantidade de questões e o número de alternativas e marque o <b>gabarito</b> de cada questão. Essas informações serão utilizadas automaticamente nas demais etapas.</p>
-    </div>
-
-    <div class="guide-item">
-      <div class="guide-title">📄 Cartão</div>
-      <p>Configure e gere os cartões-resposta em formato A4. As informações da avaliação são carregadas automaticamente. Informe a turma, escolha a quantidade de estudantes, insira os nomes e defina se a data será preenchida ou deixada em branco.</p>
-    </div>
-
-    <div class="guide-item">
-      <div class="guide-title">📷 Corrigir</div>
-      <p>Informe o estudante e a turma e selecione ou fotografe o cartão-resposta preenchido. O sistema analisa a imagem, identifica as alternativas marcadas e compara cada resposta com o gabarito.</p>
-    </div>
-
-    <div class="guide-item">
-      <div class="guide-title">📊 Resultados</div>
-      <p>Apresenta o resultado da correção: acertos, erros, questões em branco, questões para revisão e nota. Também permite conferir as respostas identificadas pelo leitor.</p>
-    </div>
-
-    <div class="guide-item">
-      <div class="guide-title">📚 Histórico</div>
-      <p>Armazena as correções realizadas neste aparelho para consulta posterior. Permite pesquisar estudantes ou turmas, consultar avaliações, exportar CSV e gerar um relatório geral em PDF.</p>
-    </div>
-  </div>
-
-  <div class="guide-flow">
-    <b>🔄 Fluxo recomendado:</b>
-    <span>1. Avaliação</span> → <span>2. Cartão</span> → <span>3. Aplicação da prova</span> →
-    <span>4. Corrigir</span> → <span>5. Resultados</span> → <span>6. Histórico</span>
-  </div>
-
-  <div class="guide-tip">
-    💡 <b>Dica:</b> configure a avaliação primeiro. Depois, acesse <b>Cartão</b> para gerar os cartões.
-    Após a aplicação, utilize <b>Corrigir</b> para fotografar os cartões e obter os resultados.
-  </div>
+<div class="wrap">
+<section id="adminPanel">
+<div class="panel">
+<div class="toolbar">
+<h2 style="margin:0">Controle de acesso</h2>
+<button id="btnRefresh" class="btn blue" onclick="load()">↻ Atualizar</button>
 </div>
-<div class="actions"><button class="primary" onclick="show('avaliacao')">Configurar avaliação</button><button class="secondary" onclick="show('corrigir')">Corrigir cartão</button></div></div></section>
+<div class="notice">As alterações são gravadas diretamente no D1. O acesso administrativo é protegido por sessão segura.</div>
 
-<section id="avaliacao" class="page hidden">
-<div class="card">
-<h2>📝 Avaliação</h2>
-<p>Configure a avaliação uma única vez. Essas informações serão carregadas automaticamente no menu <b>Cartão</b>.</p>
-<div class="grid">
-<label>Título da avaliação<input id="titulo" value="AVALIAÇÃO DE MATEMÁTICA"></label>
-<label>Questões<input id="nq" type="number" min="1" max="50" value="10" onchange="buildKey()"></label>
-<label>Alternativas<select id="na" onchange="buildKey()"><option value="3">A até C</option><option value="4">A até D</option><option value="5" selected>A até E</option></select></label>
-<label>Valor por questão<input id="valor" type="number" step=".01" value="1"></label>
-<label>Código da avaliação<input id="codigoAvaliacao" class="reg-code" readonly></label>
-</div>
-<h3 style="margin-top:18px;text-transform:uppercase">GABARITO</h3>
-<p class="gabarito-help"><b>Professor(a), marque as questões corretas abaixo e, ao finalizar, salve a avaliação.</b><br>
-Selecione uma alternativa em cada questão. A alternativa selecionada ficará marcada em <span class="green-dot">verde</span>.</p>
-<div id="key" class="qgrid"></div>
-<div class="actions">
-<button class="primary" type="button" onclick="saveEvaluation()">💾 Salvar avaliação</button>
-<button class="secondary" type="button" onclick="newAssessmentCode()">🔢 Novo código</button>
-</div>
-<div id="keymsg" class="status info">Configure o gabarito e salve a avaliação.</div>
-</div></section>
-
-<section id="cartao" class="page hidden">
-<div class="card no-print">
-  <h2>📄 Cartão-resposta</h2>
-  <p>As informações da avaliação são carregadas automaticamente. Aqui você define a turma e os estudantes para impressão.</p>
-  <div class="grid">
-    <label>Ano / Turma
-      <input id="cardTurma" placeholder="Ex.: 5º A">
-    </label>
-    <label>Modo de impressão
-      <select id="printMode" onchange="updateStudentFields()">
-        <option value="blank">Cartões em branco</option>
-        <option value="named">Cartões com nomes dos estudantes</option>
-      </select>
-    </label>
-    <label>Quantidade de estudantes
-      <input id="studentCount" type="number" min="1" max="100" value="1" onchange="updateStudentFields()">
-    </label>
-    <label>Data do cartão
-      <select id="cardDateMode" onchange="toggleCardDate()">
-        <option value="blank" selected>Deixar em branco</option>
-        <option value="choose">Escolher data</option>
-      </select>
-      <input id="cardDate" type="date" style="display:none;margin-top:6px" onchange="renderCard()">
-      <small id="card-date-help" style="display:block;color:#64748b;margin-top:3px">Escolha se a data será preenchida ou deixada em branco no cartão.</small>
-    </label>
-    <label>Código da avaliação
-      <input id="cardCodigo" class="reg-code" readonly>
-    </label>
-  </div>
-
-  <div class="status info">
-    <b id="cardInfoTitulo">Avaliação</b><br>
-    <span id="cardInfoDetalhes">10 questões · A até E</span>
-  </div>
-
-  <div id="studentFields" class="student-list"></div>
-  <div id="studentPreviewNote" class="print-preview-note"></div>
-
-  <label style="display:block;max-width:320px;margin-top:12px">
-    Formato de saída
-    <select id="cardFormato">
-      <option value="pdf" selected>PDF</option>
-      <option value="png">Imagem PNG — A4</option>
-      <option value="jpg">Imagem JPG — A4</option>
-      <option value="print">Imprimir diretamente</option>
-    </select>
-  </label>
-  <div class="actions">
-    <button class="primary" onclick="renderCard()">🔄 Atualizar cartão</button>
-    <button class="secondary" onclick="newCardCode()">🔐 Novo código</button>
-    <button class="primary" onclick="exportCard()">⬇️ Gerar arquivo</button>
-  </div>
-  <div class="status warn">⚠️ Imprima em <b>100%</b>. Não recorte, dobre ou cubra os quatro marcadores pretos dos cantos.</div>
-</div>
-
-<div class="a4-wrap">
-  <div id="printCard" class="a4-sheet"></div>
-</div>
-</section>
-
-<section id="corrigir" class="page hidden"><div class="card">
-<h2>📷 Corrigir cartão</h2>
-<p>Informe o estudante e abra a <b>galeria, câmera ou arquivos</b> do aparelho para escolher a foto do cartão inteiro.</p>
-<div class="grid"><label>Nome do estudante<input id="aluno" placeholder="Nome completo"></label><label>Turma<input id="turma" placeholder="Ex.: 5º A"></label></div>
-
-<div class="photo-picker">
-  <label for="photo" class="primary picker-button">📷 Abrir galeria / câmera / arquivos</label>
-  <input id="photo" type="file" accept="image/*" class="file-hidden">
-  <div id="photoName" class="file-name">Nenhuma foto selecionada</div>
-</div>
-
-<div class="small">No celular, o seletor do próprio aparelho poderá oferecer <b>Câmera</b>, <b>Fotos/Galeria</b> e <b>Arquivos</b>, inclusive serviços de nuvem disponíveis no aparelho. No computador, será aberto o seletor de arquivos.</div>
-
-<div class="actions"><button id="btnRead" type="button" class="primary" onclick="readPhoto()">🔎 Ler cartão</button><button type="button" class="secondary" onclick="resetRead()">Limpar</button></div>
-<div id="readStatus" class="status info">Aguardando fotografia.</div><canvas id="diag" class="preview"></canvas><div id="results"></div>
-</div></section>
-
-<section id="resultados" class="page hidden"><div class="card"><h2>📊 Resultado</h2><div id="summary" class="status info">Nenhuma correção realizada nesta sessão.</div></div></section>
-
-<section id="historico" class="page hidden">
-  <div class="card">
-    <h2>📚 Histórico de correções</h2>
-    <p>Correções ficam salvas <b>neste aparelho</b> para consulta rápida.</p>
-    <div class="grid">
-      <label>Pesquisar estudante ou turma<input id="histBusca" oninput="renderHistory()" placeholder="Digite para filtrar"></label>
-      <label>Avaliação<input id="histAvaliacao" oninput="renderHistory()" placeholder="Título da avaliação"></label>
-    </div>
-    <div class="actions">
-      <button class="primary" onclick="exportHistoryCSV()">⬇️ Exportar CSV</button>
-      <button type="button" class="pdf-all-btn" onclick="gerarRelatorioHistoricoPDF()">📄 Exportar PDF</button>
-      <button class="secondary" onclick="clearHistory()">🗑️ Limpar histórico</button>
-    </div>
-    <div id="historyList"></div>
-  </div>
-</section>
-</main>
-
-<script>
-let gabarito=[],ultimaLeitura=null,busy=false;
-
-photo.addEventListener('change',()=>{
-  const f=photo.files?.[0];
-  photoName.textContent=f?`✓ ${f.name}`:'Nenhuma foto selecionada';
-  if(f) setStatus('Foto selecionada. Clique em “Ler cartão”.','info');
-});
-
-const L='ABCDE';
-
-function show(id){
-  document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));
-  document.getElementById(id).classList.remove('hidden');
-  if(id==='avaliacao'){buildKey()}
-  if(id==='cartao'){syncCardFromAssessment();updateStudentFields();renderCard()}
-  if(id==='historico'){renderHistory()}
-}
-
-function getAssessmentCode(){
-  let c=localStorage.getItem('newCorretorAssessmentCode');
-  if(!c){
-    let seq=Number(localStorage.getItem('newCorretorAssessmentSeq')||0)+1;
-    localStorage.setItem('newCorretorAssessmentSeq',String(seq));
-    c='AV-'+String(seq).padStart(3,'0');
-    localStorage.setItem('newCorretorAssessmentCode',c);
-  }
-  return c;
-}
-function newAssessmentCode(){
-  let seq=Number(localStorage.getItem('newCorretorAssessmentSeq')||0)+1;
-  const c='AV-'+String(seq).padStart(3,'0');
-  localStorage.setItem('newCorretorAssessmentSeq',String(seq));
-  localStorage.setItem('newCorretorAssessmentCode',c);
-  if(document.getElementById('codigoAvaliacao'))document.getElementById('codigoAvaliacao').value=c;
-  if(document.getElementById('cardCodigo'))document.getElementById('cardCodigo').value=c;
-  renderCard();
-}
-function buildKey(){
-  const n=Math.max(1,Math.min(50,+nq.value||10)),ls=L.slice(0,+na.value||5),old=[...gabarito];
-  gabarito=Array.from({length:n},(_,i)=>ls.includes(old[i])?old[i]:'A');
-  key.innerHTML='';
-  gabarito.forEach((v,i)=>{
-    let d=document.createElement('div');d.className='qbox';
-    d.innerHTML='<b style="font-size:12px">QUESTÃO '+String(i+1).padStart(2,'0')+'</b><div class="qopts">'+
-      [...ls].map(x=>`<button type="button" class="${v===x?'sel':''}" onclick="setKey(${i},'${x}')">${x}</button>`).join('')+
-      '</div>';
-    key.appendChild(d);
-  });
-  syncCardFromAssessment();
-}
-function setKey(i,x){gabarito[i]=x;buildKey()}
-function saveEvaluation(){
-  const data={
-    titulo:titulo.value||'AVALIAÇÃO',
-    data:document.getElementById('dataAvaliacao')?.value||'',
-    questoes:Math.max(1,Math.min(50,+nq.value||10)),
-    alternativas:+na.value||5,
-    valor:+valor.value||1,
-    codigo:getAssessmentCode(),
-    gabarito:[...gabarito]
-  };
-  localStorage.setItem('newCorretorAvaliacao',JSON.stringify(data));
-  localStorage.setItem('newCorretorGabarito',JSON.stringify(gabarito));
-  if(document.getElementById('codigoAvaliacao'))document.getElementById('codigoAvaliacao').value=data.codigo;
-  keymsg.textContent='✓ Avaliação salva. As informações serão carregadas no Cartão.';
-  keymsg.className='status ok';
-  syncCardFromAssessment();
-}
-function loadEvaluation(){
-  try{
-    const a=JSON.parse(localStorage.getItem('newCorretorAvaliacao')||'null');
-    if(a){
-      if(a.titulo)titulo.value=a.titulo;
-      if(a.data)document.getElementById('dataAvaliacao').value=a.data;
-      if(a.questoes)nq.value=a.questoes;
-      if(a.alternativas)na.value=String(a.alternativas);
-      if(a.valor!=null)valor.value=a.valor;
-      if(a.codigo)localStorage.setItem('newCorretorAssessmentCode',a.codigo);
-      if(Array.isArray(a.gabarito))gabarito=a.gabarito;
-    }else{
-      const old=JSON.parse(localStorage.getItem('newCorretorGabarito')||'null');
-      if(Array.isArray(old)&&old.length){gabarito=old;nq.value=old.length}
-    }
-  }catch(e){}
-  if(document.getElementById('codigoAvaliacao'))document.getElementById('codigoAvaliacao').value=getAssessmentCode();
-}
-function syncCardFromAssessment(){
-  const n=Math.max(1,Math.min(50,+nq.value||10));
-  const a=Math.max(3,Math.min(5,+na.value||5));
-  const tituloEl=document.getElementById('cardInfoTitulo');
-  const det=document.getElementById('cardInfoDetalhes');
-  const code=document.getElementById('cardCodigo');
-  if(tituloEl)tituloEl.textContent=(titulo.value||'AVALIAÇÃO').toUpperCase();
-  if(det)det.textContent=`${n} questões · A até ${L[a-1]}`;
-  if(code)code.value=getAssessmentCode();
-}
-function fmtDate(v){
- if(!v)return '____/____/________';
- const p=v.split('-'); return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:v;
-}
-function getCardData(){
-  const mode=document.getElementById('cardDateMode')?.value||'blank';
-  return mode==='choose' ? (document.getElementById('cardDate')?.value||'') : '';
-}
-
-function updateStudentFields(){
-  const mode=document.getElementById('printMode')?.value||'blank';
-  const count=Math.max(1,Math.min(100,+document.getElementById('studentCount')?.value||1));
-  const box=document.getElementById('studentFields');
-  const note=document.getElementById('studentPreviewNote');
-  if(!box)return;
-  if(mode==='blank'){
-    box.innerHTML='';
-    note.textContent=`Serão gerados ${count} cartão(ões) em branco para preenchimento manual.`;
-    return;
-  }
-  const old=[...box.querySelectorAll('input')].map(x=>x.value);
-  box.innerHTML='';
-  for(let i=0;i<count;i++){
-    const lab=document.createElement('label');
-    lab.innerHTML=`${String(i+1).padStart(2,'0')}. Nome do estudante<input class="student-name" data-index="${i}" value="${esc(old[i]||'')}" placeholder="Nome completo">`;
-    box.appendChild(lab);
-  }
-  note.textContent=`Serão gerados ${count} cartão(ões), um por página, com os nomes preenchidos.`;
-}
-function getStudentNames(){
-  return [...document.querySelectorAll('.student-name')].map(x=>x.value.trim());
-}
-function cardMarkup(alunoCard, turmaCard, pageClass=''){
- const n=Math.min(50,Math.max(1,+nq.value||10));
- const ls=L.slice(0,+na.value||5);
- const tituloCard=(titulo?.value||'AVALIAÇÃO').toUpperCase();
- const dataCard=getCardData();
- const codigo=getAssessmentCode();
- const rows=Math.min(10,n),cols=Math.ceil(n/10),gridH='122mm';
- let qs='';
- for(let i=0;i<n;i++){
-   qs+=`<div class="omr-q"><div class="omr-qnum">QUESTÃO ${String(i+1).padStart(2,'0')}</div><div class="omr-options">${[...ls].map(x=>`<span class="omr-opt">${x}</span>`).join('')}</div></div>`;
- }
- return `<div class="a4-sheet ${pageClass}">
-   <i class="omr-marker omr-tl"></i><i class="omr-marker omr-tr"></i>
-   <i class="omr-marker omr-bl"></i><i class="omr-marker omr-br"></i>
-   <div class="card-head">
-     <div class="main-title">CARTÃO-RESPOSTA</div>
-     <div class="brand"><strong>NEW PROF. CORRETOR</strong>LEITOR OMR</div>
-   </div>
-   <div class="card-subtitle">${esc(tituloCard)}</div>
-   <div class="ident-box">
-     <div class="ident-title">IDENTIFICAÇÃO</div>
-     <div class="ident-grid">
-       <div class="ident-row ident-row-top">
-         <div class="ident-cell"><div class="ident-label">Avaliação</div><div class="ident-value">${esc(tituloCard)}</div></div>
-         <div class="ident-cell"><div class="ident-label">Código da avaliação</div><div class="ident-value reg-code">${esc(codigo)}</div></div>
-       </div>
-       <div class="ident-row ident-row-student">
-         <div class="ident-cell"><div class="ident-label">Estudante</div><div class="ident-value student-value">${alunoCard ? esc(alunoCard) : '<span class="blank-line"></span>'}</div></div>
-         <div class="ident-cell"><div class="ident-label">Ano / Turma</div><div class="ident-value student-value">${turmaCard ? esc(turmaCard) : '<span class="blank-line short"></span>'}</div></div>
-         <div class="ident-cell"><div class="ident-label">Data</div><div class="ident-value student-value">${dataCard ? fmtDate(dataCard) : '<span class="blank-line short"></span>'}</div></div>
-       </div>
-     </div>
-   </div>
-   <div class="instructions"><b>ORIENTAÇÕES:</b> Preencha completamente apenas uma alternativa por questão. Use lápis ou caneta preta/azul. Não faça marcas fora dos círculos. Não dobre nem corte o cartão.</div>
-   <div class="answer-title">MARQUE A ALTERNATIVA CORRESPONDENTE À SUA RESPOSTA</div>
-   <div class="answer-help">Preencha o círculo escolhido de forma completa. Os marcadores pretos dos quatro cantos são utilizados pelo sistema para localizar e corrigir o cartão.</div>
-   <div class="omr-grid" style="--rows:${rows};--cols:${cols};--grid-h:${gridH}">${qs}</div>
-   <div class="card-footer"><strong>NEW PROF. CORRETOR</strong> · Cartão-resposta para correção automática por imagem · Código ${esc(codigo)}</div>
- </div>`;
-}
-
-function getCardDate(){
-  const mode=document.getElementById('cardDateMode')?.value||'blank';
-  return mode==='choose' ? (document.getElementById('cardDate')?.value||'') : '';
-}
-function formatDateBR(v){
-  if(!v)return '';
-  const p=v.split('-');
-  return p.length===3 ? `${p[2]}/${p[1]}/${p[0]}` : v;
-}
-function toggleCardDate(){
-  const mode=document.getElementById('cardDateMode');
-  const input=document.getElementById('cardDate');
-  if(!mode||!input)return;
-  if(mode.value==='choose'){
-    input.style.display='block';
-    if(!input.value){
-      const d=new Date();
-      const local=new Date(d.getTime()-d.getTimezoneOffset()*60000);
-      input.value=local.toISOString().slice(0,10);
-    }
-  }else{
-    input.style.display='none';
-    input.value='';
-  }
-  renderCard();
-}
-function initCardDate(){
-  const mode=document.getElementById('cardDateMode');
-  const input=document.getElementById('cardDate');
-  if(!mode||!input)return;
-  toggleCardDateUIOnly();
-}
-function toggleCardDateUIOnly(){
-  const mode=document.getElementById('cardDateMode');
-  const input=document.getElementById('cardDate');
-  if(!mode||!input)return;
-  input.style.display=mode.value==='choose'?'block':'none';
-}
-function renderCard(){
-  initCardDate();
- const printCardEl=document.getElementById('printCard'); if(!printCardEl)return;
- const turmaCard=document.getElementById('cardTurma')?.value||'';
- const mode=document.getElementById('printMode')?.value||'blank';
- const names=getStudentNames();
- const aluno=mode==='named'?(names[0]||''):'';
- printCardEl.innerHTML=cardMarkup(aluno,turmaCard);
- syncCardFromAssessment();
-}
-function printCards(){
- const printCardEl=document.getElementById('printCard');
- if(!printCardEl)return;
- const turmaCard=document.getElementById('cardTurma')?.value||'';
- const mode=document.getElementById('printMode')?.value||'blank';
- const count=Math.max(1,Math.min(100,+document.getElementById('studentCount')?.value||1));
- let names=mode==='named'?getStudentNames():Array(count).fill('');
- if(mode==='named' && names.some((n)=>!n)){
-   const faltam=names.map((n,i)=>n?'':i+1).filter(Boolean);
-   if(!confirm(`Há ${faltam.length} nome(s) em branco. Deseja imprimir mesmo assim?`))return;
- }
- const old=printCardEl.innerHTML;
- printCardEl.innerHTML=names.slice(0,count).map((n)=>cardMarkup(n,turmaCard,'print-page')).join('');
- let restored=false;
- const restore=()=>{if(restored)return;restored=true;printCardEl.innerHTML=old;window.removeEventListener('afterprint',restore)};
- window.addEventListener('afterprint',restore);
- setTimeout(()=>window.print(),120);
-}
-
-function getHistory(){
-  try{const x=JSON.parse(localStorage.getItem('newCorretorHistorico')||'[]');return Array.isArray(x)?x:[]}
-  catch(e){return []}
-}
-function saveHistory(item){
-  const h=getHistory();
-  h.unshift(item);
-  localStorage.setItem('newCorretorHistorico',JSON.stringify(h.slice(0,500)));
-  renderHistory();
-}
-function renderHistory(){
-  const box=document.getElementById('historyList'); if(!box)return;
-  const busca=(document.getElementById('histBusca')?.value||'').toLowerCase().trim();
-  const av=(document.getElementById('histAvaliacao')?.value||'').toLowerCase().trim();
-  const h=getHistory().filter(x=>(!busca||`${x.aluno} ${x.turma}`.toLowerCase().includes(busca))&&(!av||(x.avaliacao||'').toLowerCase().includes(av)));
-  if(!h.length){box.innerHTML='<div class="status info">Nenhuma correção encontrada.</div>';return}
-  box.innerHTML='<div style="overflow:auto"><table><thead><tr><th>Data</th><th>Estudante</th><th>Turma</th><th>Avaliação</th><th>Acertos</th><th>Nota</th></tr></thead><tbody>'+
-    h.map(x=>`<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos}/${x.total}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td></tr>`).join('')+
-    '</tbody></table></div>';
-}
-function gerarRelatorioHistoricoPDF(){
-  const h=getHistory();
-  if(!h.length){alert('Não há correções salvas no histórico.');return}
-
-  const busca=(document.getElementById('histBusca')?.value||'').toLowerCase().trim();
-  const av=(document.getElementById('histAvaliacao')?.value||'').toLowerCase().trim();
-  const registros=h.filter(x=>
-    (!busca||`${x.aluno} ${x.turma}`.toLowerCase().includes(busca)) &&
-    (!av||(x.avaliacao||'').toLowerCase().includes(av))
-  );
-  if(!registros.length){alert('Nenhuma correção corresponde aos filtros atuais.');return}
-
-  const totalQuestoes=registros.reduce((s,x)=>s+Number(x.total||0),0);
-  const totalAcertos=registros.reduce((s,x)=>s+Number(x.acertos||0),0);
-  const totalErros=registros.reduce((s,x)=>s+Number(x.erros||0),0);
-  const totalBrancas=registros.reduce((s,x)=>s+Number(x.brancas||0),0);
-  const totalRevisar=registros.reduce((s,x)=>s+Number(x.revisar||0),0);
-  const media=registros.length ? registros.reduce((s,x)=>s+Number(x.nota||0),0)/registros.length : 0;
-  const agora=new Date().toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'});
-
-  const rows=registros.map((x,idx)=>{
-    const respostas=Array.isArray(x.respostas)?x.respostas:[];
-    const marcadas=respostas.map((r,i)=>`${String(i+1).padStart(2,'0')}: ${r||'—'}`).join(' · ');
-    const situacao=`${x.acertos||0} acertos / ${x.erros||0} erros / ${x.brancas||0} brancas / ${x.revisar||0} revisar`;
-    return `<tr>
-      <td>${idx+1}</td><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td>
-      <td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td>
-      <td>${x.acertos||0}/${x.total||0}</td><td>${Number(x.nota||0).toFixed(1)}</td>
-      <td>${esc(situacao)}</td><td class="answers">${esc(marcadas)}</td>
-    </tr>`;
-  }).join('');
-
-  const w=window.open('','_blank');
-  if(!w){alert('O navegador bloqueou o relatório. Permita pop-ups para o NEW PROF. CORRETOR.');return}
-
-  w.document.write(`<!doctype html><html><head><meta charset="utf-8">
-  <title>Relatório - NEW PROF. CORRETOR</title>
-  <style>
-    @page{size:A4 portrait;margin:7mm 7mm 8mm}
-    *{box-sizing:border-box}
-    body{font-family:Arial,sans-serif;color:#172033;margin:0;font-size:9px;background:#fff}
-    .top{display:flex;align-items:center;gap:10px;border-bottom:2px solid #1857c7;padding:0 0 7px;margin-bottom:9px}
-    .logo{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#1857c7,#38a4ff);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:21px;box-shadow:0 2px 5px rgba(0,0,0,.15)}
-    h1{font-size:18px;line-height:1.05;margin:0;color:#1857c7}
-    .sub{font-size:9px;color:#596579;margin-top:3px}
-    .gen{font-size:8px;color:#687386;margin-left:auto;text-align:right}
-    .summary{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin:7px 0 9px}
-    .box{border:1px solid #cfd7e3;border-radius:5px;padding:6px;background:#fff}
-    .label{font-size:7px;color:#687386;text-transform:uppercase}
-    .value{font-size:13px;font-weight:800;margin-top:2px}
-    .filters{margin-bottom:7px;color:#555;font-size:8px}
-    table{width:100%;border-collapse:collapse;table-layout:fixed}
-    th,td{border:1px solid #cfd7e3;padding:4px 3px;text-align:center;vertical-align:top}
-    th{background:#eaf0f8;font-size:7.5px}
-    td{font-size:7.5px;line-height:1.2}
-    .answers{text-align:left;word-break:break-word}
-    .footer{margin-top:8px;border-top:1px solid #ddd;padding-top:5px;font-size:7px;color:#687386}
-    .no-print{margin-top:12px}
-    .no-print button{padding:8px 12px;border:0;border-radius:6px;background:#1857c7;color:#fff;font-weight:700}
-    @media print{.no-print{display:none}}
-  </style></head><body>
-  <div class="top">
-    <div class="logo">NP</div>
+<div class="license-card">
+  <div class="license-head">
     <div>
-      <h1>NEW PROF. CORRETOR</h1>
-      <div class="sub">Inteligente de Avaliações · Relatório Geral de Correções</div>
+      <div class="license-title">👥 Cadastro(s) no Sistema</div>
+      <div class="license-sub">Limite de 50 e-mails de professores cadastrados no sistema.</div>
     </div>
-    <div class="gen"><b>Gerado em</b><br>${esc(agora)}</div>
+    <div id="licenseCount" class="license-count">0 / 50</div>
   </div>
-
-  <div class="summary">
-    <div class="box"><div class="label">Correções</div><div class="value">${registros.length}</div></div>
-    <div class="box"><div class="label">Questões corrigidas</div><div class="value">${totalQuestoes}</div></div>
-    <div class="box"><div class="label">Acertos</div><div class="value">${totalAcertos}</div></div>
-    <div class="box"><div class="label">Erros</div><div class="value">${totalErros}</div></div>
-    <div class="box"><div class="label">Brancas / Revisar</div><div class="value">${totalBrancas} / ${totalRevisar}</div></div>
-    <div class="box"><div class="label">Média das notas</div><div class="value">${media.toFixed(1)}</div></div>
+  <div class="license-bar"><div id="licenseFill" class="license-fill"></div></div>
+  <div class="license-foot">
+    <span id="licenseUsed">0 professores cadastrados</span>
+    <span id="licenseAvailable">50 vagas disponíveis</span>
   </div>
+</div>
 
-  <div class="filters"><b>Filtros utilizados:</b>
-    ${busca?`Estudante/Turma: ${esc(busca)} · `:''}${av?`Avaliação: ${esc(av)}`:'Todas as avaliações'}
-  </div>
+<div id="loading">⏳ Atualizando solicitações...</div>
+<div id="errorBox"></div>
 
-  <table>
-    <thead><tr>
-      <th style="width:3%">#</th><th style="width:10%">Data</th><th style="width:12%">Estudante</th>
-      <th style="width:7%">Turma</th><th style="width:13%">Avaliação</th>
-      <th style="width:6%">Acertos</th><th style="width:5%">Nota</th>
-      <th style="width:15%">Resultado</th><th style="width:29%">Alternativas marcadas</th>
-    </tr></thead>
-    <tbody>${rows}</tbody>
-  </table>
-
-  <div class="footer">Relatório gerado pelo NEW PROF. CORRETOR INTELIGENTE DE AVALIAÇÕES · ${esc(agora)}</div>
-  <div class="no-print"><button onclick="window.print()">🖨️ Imprimir / Salvar como PDF</button></div>
-  <script>setTimeout(()=>window.print(),350)<\/script>
-  </div>
+<div class="stats">
+<button class="stat s-p" data-f="PENDENTE" onclick="filterRows('PENDENTE',this)"><b id="cP">0</b>Pendentes</button>
+<button class="stat s-l" data-f="LIBERADO" onclick="filterRows('LIBERADO',this)"><b id="cL">0</b>Liberados</button>
+<button class="stat s-b" data-f="BLOQUEADO" onclick="filterRows('BLOQUEADO',this)"><b id="cB">0</b>Bloqueados</button>
+<button class="stat s-e" data-f="EXPIRADO" onclick="filterRows('EXPIRADO',this)"><b id="cE">0</b>Expirados</button>
+<button class="stat s-r" data-f="RECUSADO" onclick="filterRows('RECUSADO',this)"><b id="cR">0</b>Recusados</button>
+</div>
 
 
-</body></html>`);
-  w.document.close();
-}
-function clearHistory(){
-  if(confirm('Apagar todo o histórico salvo neste aparelho?')){
-    localStorage.removeItem('newCorretorHistorico');renderHistory();
-  }
-}
-function exportHistoryCSV(){
-  const h=getHistory();
-  if(!h.length){alert('Não há correções no histórico.');return}
-  const head=['Data','Estudante','Turma','Avaliação','Acertos','Erros','Brancas','Revisar','Nota','Respostas'];
-  const rows=h.map(x=>[x.data,x.aluno,x.turma,x.avaliacao,x.acertos,x.erros,x.brancas,x.revisar,x.nota,(x.respostas||[]).join(' | ')]);
-  const csv=[head,...rows].map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(';')).join('\n');
-  const blob=new Blob(['\\ufeff'+csv],{type:'text/csv;charset=utf-8'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='new-prof-corretor-historico.csv';a.click();
-  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
-}
+<div class="search-row">
+  <input id="searchBox" type="search" placeholder="🔎 Buscar por nome, e-mail ou escola..." autocomplete="off" oninput="setSearch(this.value)">
+  <span id="resultCount" class="result-count">0 registros</span>
+</div>
 
+<div class="filters">
+<button class="btn gray filter active" data-f="TODOS" onclick="filterRows('TODOS',this)">Todos</button>
+<button class="btn gray filter" data-f="PENDENTE" onclick="filterRows('PENDENTE',this)">🟡 Pendentes</button>
+<button class="btn gray filter" data-f="LIBERADO" onclick="filterRows('LIBERADO',this)">🟢 Liberados</button>
+<button class="btn gray filter" data-f="BLOQUEADO" onclick="filterRows('BLOQUEADO',this)">🔴 Bloqueados</button>
+<button class="btn gray filter" data-f="EXPIRADO" onclick="filterRows('EXPIRADO',this)">⏰ Expirados</button>
+<button class="btn gray filter" data-f="RECUSADO" onclick="filterRows('RECUSADO',this)">⚪ Recusados</button>
+</div>
+</div>
 
-async function cardToCanvas(dpi=150){
-  const source=document.getElementById('printCard');
-  if(!source) throw new Error('Cartão não encontrado.');
+<div class="panel table-wrap">
+<table>
+<thead><tr><th>Professor</th><th>E-mail</th><th>Escola</th><th>Status</th><th>Período</th><th>Solicitação</th><th>Ações</th></tr></thead>
+<tbody id="tbody"><tr><td colspan="7">Carregando...</td></tr></tbody>
+</table>
+</div>
+</section>
 
-  const A4_W_MM=210, A4_H_MM=297;
-  const pxPerMm=dpi/25.4;
-  const outW=Math.round(A4_W_MM*pxPerMm);
-  const outH=Math.round(A4_H_MM*pxPerMm);
-
-  // Cria uma cópia isolada com exatamente o mesmo tamanho físico da folha A4.
-  // Assim, a imagem não depende da largura da tela, zoom ou layout responsivo.
-  const holder=document.createElement('div');
-  holder.style.position='fixed';
-  holder.style.left='-100000px';
-  holder.style.top='0';
-  holder.style.width='210mm';
-  holder.style.height='297mm';
-  holder.style.overflow='hidden';
-  holder.style.background='#fff';
-  holder.style.zIndex='-1';
-
-  const clone=source.cloneNode(true);
-  clone.removeAttribute('id');
-  clone.style.width='210mm';
-  clone.style.height='297mm';
-  clone.style.minWidth='210mm';
-  clone.style.minHeight='297mm';
-  clone.style.maxWidth='210mm';
-  clone.style.maxHeight='297mm';
-  clone.style.margin='0';
-  clone.style.padding='13mm 12mm 12mm';
-  clone.style.boxSizing='border-box';
-  clone.style.overflow='hidden';
-  clone.style.background='#fff';
-  clone.style.boxShadow='none';
-  clone.style.border='0';
-
-  holder.appendChild(clone);
-  document.body.appendChild(holder);
-
-  // Aguarda o navegador recalcular o layout do A4 antes da captura.
-  await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
-
-  let canvas;
-  try{
-    canvas=await html2canvas(clone,{
-      scale:1,
-      width:clone.offsetWidth,
-      height:clone.offsetHeight,
-      backgroundColor:'#ffffff',
-      useCORS:true,
-      logging:false,
-      scrollX:0,
-      scrollY:0,
-      windowWidth:Math.ceil(210*96/25.4),
-      windowHeight:Math.ceil(297*96/25.4)
-    });
-  }finally{
-    holder.remove();
-  }
-
-  // Converte para uma imagem raster A4 exata.
-  const out=document.createElement('canvas');
-  out.width=outW;
-  out.height=outH;
-
-  const ctx=out.getContext('2d');
-  ctx.fillStyle='#fff';
-  ctx.fillRect(0,0,outW,outH);
-
-  // A proporção é exatamente 210:297, sem corte e sem deformação.
-  ctx.drawImage(canvas,0,0,outW,outH);
-
-  return out;
-}
-
-async function exportCard(){
-  const fmt=document.getElementById('cardFormato')?.value||'pdf';
-  renderCard();
-
-  if(fmt==='print'){
-    window.print();
-    return;
-  }
-
-  try{
-    if(typeof html2canvas==='undefined'){
-      alert('A exportação ainda está carregando. Aguarde alguns segundos e tente novamente.');
-      return;
-    }
-
-    // 150 DPI = 1240 × 1754 px para A4.
-    // A proporção e o tamanho físico correspondem à folha A4.
-    const canvas=await cardToCanvas(150);
-    const safe=((document.getElementById('cardTitulo')?.value||'cartao-resposta')
-      .trim().replace(/[^\wÀ-ÿ\-]+/g,'_')).replace(/^_+|_+$/g,'')||'cartao-resposta';
-
-    if(fmt==='png' || fmt==='jpg'){
-      const mime=fmt==='png'?'image/png':'image/jpeg';
-      const ext=fmt==='png'?'png':'jpg';
-      const a=document.createElement('a');
-      a.href=canvas.toDataURL(mime,0.95);
-      a.download=`${safe}-cartao-A4.${ext}`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      return;
-    }
-
-    if(!window.jspdf || !window.jspdf.jsPDF){
-      alert('A exportação PDF ainda está carregando. Aguarde alguns segundos e tente novamente.');
-      return;
-    }
-
-    const pdf=new window.jspdf.jsPDF({
-      orientation:'portrait',
-      unit:'mm',
-      format:'a4',
-      compress:true
-    });
-    pdf.addImage(
-      canvas.toDataURL('image/jpeg',0.95),
-      'JPEG',0,0,210,297,undefined,'FAST'
-    );
-    pdf.save(`${safe}-cartao.pdf`);
-  }catch(e){
-    console.error(e);
-    alert('Não foi possível gerar o arquivo: '+e.message);
-  }
-}
-
-function setStatus(t,c){readStatus.textContent=t;readStatus.className='status '+c}
-function resetRead(){photo.value='';photoName.textContent='Nenhuma foto selecionada';results.innerHTML='';diag.getContext('2d').clearRect(0,0,diag.width,diag.height);ultimaLeitura=null;summary.className='status info';summary.textContent='Nenhuma correção realizada nesta sessão.';setStatus('Aguardando fotografia.','info')}
-
-function loadImage(f){return new Promise((ok,no)=>{let im=new Image();im.onload=()=>ok(im);im.onerror=no;im.src=URL.createObjectURL(f)})}
-function orderPts(p){let s=p.map(a=>a.x+a.y),d=p.map(a=>a.x-a.y);return[p[s.indexOf(Math.min(...s))],p[d.indexOf(Math.max(...d))],p[s.indexOf(Math.max(...s))],p[d.indexOf(Math.min(...d))]]}
-function findMarkers(src){
-  // V3.4: detecção dos quatro marcadores mais tolerante a fotos pequenas,
-  // screenshots, compressão e iluminação. Procura quadrados pretos em toda
-  // a imagem e escolhe o melhor candidato em cada quadrante.
-  let g=new cv.Mat(), bw=new cv.Mat();
-  cv.cvtColor(src,g,cv.COLOR_RGBA2GRAY);
-  // Threshold um pouco mais permissivo para não perder marcadores por compressão.
-  cv.threshold(g,bw,125,255,cv.THRESH_BINARY_INV);
-  let cs=new cv.MatVector(), hi=new cv.Mat();
-  cv.findContours(bw,cs,hi,cv.RETR_EXTERNAL,cv.CHAIN_APPROX_SIMPLE);
-  let cand=[];
-  const imgArea=src.cols*src.rows;
-  const minArea=Math.max(120,imgArea*0.00008);
-  const maxArea=imgArea*0.035;
-  for(let i=0;i<cs.size();i++){
-    let c=cs.get(i), r=cv.boundingRect(c);
-    let ar=r.width*r.height, ratio=r.width/Math.max(1,r.height);
-    // Marcador: aproximadamente quadrado, compacto e suficientemente grande.
-    if(ar>=minArea && ar<=maxArea && r.width>=10 && r.height>=10 &&
-       ratio>=0.65 && ratio<=1.45){
-      // Mede a ocupação preta dentro do retângulo para eliminar texto/linhas.
-      let roi=g.roi(r), mean=cv.mean(roi)[0]; roi.delete();
-      if(mean<125) cand.push({x:r.x+r.width/2,y:r.y+r.height/2,area:ar,w:r.width,h:r.height});
-    }
-    c.delete();
-  }
-  cs.delete();hi.delete();g.delete();bw.delete();
-
-  // Escolhe um marcador por quadrante, priorizando tamanho e proximidade
-  // das bordas. Isso também funciona quando a foto mostra margens ao redor do cartão.
-  let q=[null,null,null,null];
-  const cx=src.cols/2, cy=src.rows/2;
-  for(let x of cand){
-    let k=(x.y<cy?0:2)+(x.x<cx?0:1);
-    let edge=Math.min(x.x,x.y,src.cols-x.x,src.rows-x.y);
-    let score=x.area + Math.max(0,300-edge)*1.5;
-    if(!q[k] || score>q[k].score) q[k]={...x,score};
-  }
-
-  // Se um marcador caiu exatamente numa divisão de quadrante, tenta uma
-  // segunda seleção por distância aos quatro cantos.
-  if(!q.every(Boolean)){
-    const corners=[{x:0,y:0},{x:src.cols,y:0},{x:src.cols,y:src.rows},{x:0,y:src.rows}];
-    let chosen=[];
-    for(let co of corners){
-      let best=null,bestScore=Infinity;
-      for(let x of cand){
-        if(chosen.includes(x)) continue;
-        let d=Math.hypot(x.x-co.x,x.y-co.y);
-        if(d<bestScore){bestScore=d;best=x;}
-      }
-      if(best){chosen.push(best)}
-    }
-    if(chosen.length===4) q=chosen;
-  }
-
-  return q.every(Boolean)?orderPts(q):null;
-}
-function matPts(p){return cv.matFromArray(4,1,cv.CV_32FC2,p.flatMap(a=>[a.x,a.y]))}
-function warpCard(src,m){let M=cv.getPerspectiveTransform(matPts(m),matPts([{x:45,y:35},{x:1155,y:35},{x:1155,y:1662},{x:45,y:1662}])),d=new cv.Mat();cv.warpPerspective(src,d,M,new cv.Size(1200,1697),cv.INTER_LINEAR,cv.BORDER_CONSTANT,new cv.Scalar(255,255,255,255));M.delete();return d}
-
-function findQuestionBoxes(warp){
-  // Localiza as molduras das questões no cartão V4.1/V4.
-  // O cartão pode ter 1 a 5 colunas, sempre com no máximo 10 questões por coluna.
-  let gray=new cv.Mat(),bw=new cv.Mat();
-  cv.cvtColor(warp,gray,cv.COLOR_RGBA2GRAY);
-  cv.threshold(gray,bw,205,255,cv.THRESH_BINARY_INV);
-
-  let cs=new cv.MatVector(),hi=new cv.Mat();
-  cv.findContours(bw,cs,hi,cv.RETR_LIST,cv.CHAIN_APPROX_SIMPLE);
-  let cand=[];
-  for(let i=0;i<cs.size();i++){
-    let c=cs.get(i),r=cv.boundingRect(c);
-    let ratio=r.width/Math.max(1,r.height), area=r.width*r.height;
-    // A área das questões fica abaixo da identificação e acima do rodapé.
-    // Aceita caixas estreitas (muitas colunas) e largas (1 coluna).
-    if(r.y>=520 && r.y<=1400 &&
-       r.width>=140 && r.width<=1130 &&
-       r.height>=25 && r.height<=95 &&
-       ratio>=2.4 && ratio<=18 && area>=5000){
-      cand.push({x:r.x,y:r.y,w:r.width,h:r.height,area});
-    }
-    c.delete();
-  }
-  cs.delete();hi.delete();gray.delete();bw.delete();
-
-  // Remove duplicatas/nested contours.
-  cand.sort((a,b)=>a.y-b.y||a.x-b.x);
-  let unique=[];
-  for(const b of cand){
-    const dup=unique.some(o =>
-      Math.abs(o.x-b.x)<10 && Math.abs(o.y-b.y)<10 &&
-      Math.abs(o.w-b.w)<18 && Math.abs(o.h-b.h)<18);
-    if(!dup) unique.push(b);
-  }
-
-  // O DOM usa grid-auto-flow: column: Q1..Q10 na primeira coluna,
-  // depois Q11..Q20 na segunda etc. Ordenamos por coluna e depois por Y.
-  unique.sort((a,b)=>a.x-b.x||a.y-b.y);
-  return unique.slice(0,50);
-}
-
-function fallbackQuestionBoxes(count){
-  const cols=Math.ceil(count/10), rows=Math.min(10,count);
-  const left=80, right=1120, top=600, totalH=700, gap=10;
-  const colW=(right-left-(cols-1)*gap)/cols;
-  const rowH=(totalH-(rows-1)*gap)/rows;
-  const out=[];
-  for(let c=0;c<cols;c++){
-    const inCol=Math.min(10,Math.max(0,count-c*10));
-    for(let r=0;r<inCol;r++){
-      out.push({
-        x:Math.round(left+c*(colW+gap)),
-        y:Math.round(top+r*(rowH+gap)),
-        w:Math.round(colW),
-        h:Math.round(rowH)
-      });
-    }
-  }
-  return out;
-}
-
-function localInk(gray,x,y,r){
- // V3.4: lê o centro da bolha, evitando bordas, linhas e textos próximos.
- // A busca de deslocamento é pequena para não "pular" para a bolha vizinha.
- let best=-1,bx=Math.round(x),by=Math.round(y);
- const rr=Math.max(5,Math.min(8,Math.round(r*.38)));
- for(let dy=-3;dy<=3;dy++)for(let dx=-3;dx<=3;dx++){
-  const cx=Math.round(x+dx),cy=Math.round(y+dy);
-  let dark=0,ink=0,n=0;
-  for(let yy=cy-rr;yy<=cy+rr;yy++)for(let xx=cx-rr;xx<=cx+rr;xx++){
-   if(xx<0||yy<0||xx>=gray.cols||yy>=gray.rows)continue;
-   const dd=(xx-cx)**2+(yy-cy)**2;
-   if(dd<=rr*rr){
-     const g=gray.ucharPtr(yy,xx)[0]; n++;
-     if(g<90) ink++;
-     dark += (255-g)/255;
-   }
-  }
-  // Combina tinta realmente escura com escuridão média do centro.
-  const score=(ink/Math.max(1,n))*0.75+(dark/Math.max(1,n))*0.25;
-  if(score>best){best=score;bx=cx;by=cy}
- }
- return {score:Math.max(0,best),x:bx,y:by}
-}
-
-
-// ===== OMR V4.4 — leitor calibrado para o cartão NEW CORRETOR de 10 questões =====
-// Esta geometria é a mesma do protótipo sem Python que passou nos testes com fotos reais.
-const OMR10_LETTERS=['A','B','C','D','E'];
-const OMR10_X=[547,584,621,658,694];
-const OMR10_Y=[677,750,822,894,964,1035,1107,1179,1253,1325];
-const OMR10_DEST=[{x:80,y:67},{x:1165,y:67},{x:1165,y:1698},{x:80,y:1698}];
-
-function warpCardOMR10(src,m){
-  const a=cv.matFromArray(4,1,cv.CV_32FC2,m.flatMap(p=>[p.x,p.y]));
-  const b=cv.matFromArray(4,1,cv.CV_32FC2,OMR10_DEST.flatMap(p=>[p.x,p.y]));
-  const M=cv.getPerspectiveTransform(a,b),d=new cv.Mat();
-  cv.warpPerspective(src,d,M,new cv.Size(1245,1754),cv.INTER_LINEAR,cv.BORDER_CONSTANT,new cv.Scalar(255,255,255,255));
-  a.delete();b.delete();M.delete();
-  return d;
-}
-
-function omr10Sample(gray,x,y){
-  const r=9; let n=0,dark=0,sum=0;
-  for(let yy=y-r;yy<=y+r;yy++) for(let xx=x-r;xx<=x+r;xx++){
-    if(xx<0||yy<0||xx>=gray.cols||yy>=gray.rows) continue;
-    if((xx-x)*(xx-x)+(yy-y)*(yy-y)<=r*r){
-      const v=gray.ucharPtr(yy,xx)[0]; n++; sum+=(255-v)/255; if(v<100) dark++;
-    }
-  }
-  return .70*(dark/Math.max(1,n))+.30*(sum/Math.max(1,n));
-}
-
-function detectAnswersOMR10(warp){
-  const gray=new cv.Mat(); cv.cvtColor(warp,gray,cv.COLOR_RGBA2GRAY);
-  const ls=L.slice(0,+na.value||5).slice(0,5);
-  const count=Math.min(10,gabarito.length);
-  const out=[],raw=[];
-  for(let q=0;q<count;q++){
-    const vals=OMR10_X.slice(0,ls.length).map(x=>omr10Sample(gray,x,OMR10_Y[q]));
-    const sorted=[...vals].sort((a,b)=>b-a), max=sorted[0]||0, second=sorted[1]||0;
-    const idx=vals.indexOf(max); let ans='—', status='Em branco';
-    const margin=max-second;
-    // Regra aprovada no protótipo V3: aceita marca mais fraca quando há predominância clara.
-    if(max>=0.32 && margin>=0.10){
-      if(second/max>0.78) status='Dupla marcação / revisar';
-      else {ans=ls[idx]||'—'; status='Marcada';}
-    }
-    const pts=OMR10_X.slice(0,ls.length).map((x,j)=>({x,y:OMR10_Y[q]}));
-    out.push({q:q+1,ans,status,vals,pts});
-    raw.push(`Q${String(q+1).padStart(2,'0')}  ${[...ls].map((x,j)=>x+':'+Math.round((vals[j]||0)*100)+'%').join('  ')}  → ${ans}`);
-  }
-  // Se houver menos de 10 questões, o restante não participa da leitura.
-  gray.delete();
-  return {answers:out,raw:raw.join('\n')};
-}
-
-function detectAnswers(warp){
-  if(gabarito.length===10) return detectAnswersOMR10(warp);
-  return detectAnswersLegacy(warp);
-}
-
-function detectAnswersLegacy(warp){
- let gray=new cv.Mat();cv.cvtColor(warp,gray,cv.COLOR_RGBA2GRAY);
- const count=gabarito.length, ls=L.slice(0,+na.value||5);
- let boxes=findQuestionBoxes(warp);
-
- // O cartão atual tem uma geometria conhecida após a perspectiva.
- // Se a foto não produzir contornos confiáveis, usamos a geometria do próprio cartão.
- if(boxes.length<count) boxes=fallbackQuestionBoxes(count);
-
- // Quando houver exatamente a quantidade esperada, preserva a ordem por coluna.
- boxes=boxes.slice(0,count);
-
- let out=[],raw=[];
- for(let i=0;i<count;i++){
-   const b=boxes[i];
-   const vals=[],pts=[];
-
-   // As bolhas ficam centralizadas horizontalmente dentro da moldura.
-   // Tamanho real do círculo: 5,2 mm; espaçamento: 1,9 mm.
-   const mm=1200/210;
-   const bubbleW=5.2*mm, gap=1.9*mm;
-   const total=ls.length*bubbleW+(ls.length-1)*gap;
-   const start=b.x+(b.w-total)/2+bubbleW/2;
-
-   // A caixa usa flex-column + justify-content:center.
-   // O centro da fileira de bolhas fica aproximadamente em 60% da altura.
-   const y=b.y+b.h*0.60;
-
-   for(let j=0;j<ls.length;j++){
-     const x=start+j*(bubbleW+gap);
-     const p=localInk(gray,x,y,bubbleW*.42);
-     vals.push(p.score);pts.push({x:p.x,y:p.y});
-   }
-
-   const sorted=[...vals].sort((a,b)=>b-a);
-   const max=sorted[0]||0, second=sorted[1]||0;
-   let ans='—',status='Em branco';
-
-   // Centro de bolha vazia contém apenas a letra impressa.
-   // Uma bolha preenchida tem área escura muito maior.
-   if(max>=0.34){
-     const idx=vals.indexOf(max);
-     // Só considera dupla marcação quando duas bolhas têm níveis altos
-     // e próximos; isso reduz falsos positivos causados pelas letras A-E.
-     if(second>=0.86*max && second>=0.34){
-       status='Dupla marcação / revisar';
-     }else{
-       ans=ls[idx];
-       status='Marcada';
-     }
-   }
-
-   out.push({q:i+1,ans,status,vals,pts});
-   raw.push(`Q${String(i+1).padStart(2,'0')}  ${[...ls].map((x,j)=>x+':'+Math.round(vals[j]*100)+'%').join('  ')}  → ${ans}`);
- }
- gray.delete();
- return {answers:out,raw:raw.join('\n')};
-}
-function drawDiagnostic(warp,a){
- let out=new cv.Mat();warp.copyTo(out);
- a.forEach(z=>z.pts.forEach((p,j)=>{
-   const chosen=z.ans===L.slice(0,+na.value||5)[j];
-   cv.circle(out,new cv.Point(Math.round(p.x),Math.round(p.y)),12,
-     chosen?new cv.Scalar(60,190,90,255):new cv.Scalar(60,100,235,255),2)
- }));
- cv.imshow(diag,out);out.delete();
-}
-function renderResults(a,raw){
- let ac=0,wr=0,bl=0,du=0,v=Math.max(.01,+valor.value||1);
- let rows=a.map(x=>{let cls='',sit=x.status;if(x.status.startsWith('Dupla')){du++;cls='double'}else if(x.status==='Em branco'){bl++;cls='blank'}else if(x.ans===gabarito[x.q-1]){ac++;cls='correct';sit='✓ Correta'}else{wr++;cls='wrong';sit='✗ Incorreta'}return `<tr><td>${String(x.q).padStart(2,'0')}</td><td class="${cls}">${x.ans}</td><td>${gabarito[x.q-1]||'—'}</td><td class="${cls}">${sit}</td><td>${x.vals.map(z=>Math.round(z*100)+'%').join(' / ')}</td></tr>`}).join('');
- let nota=ac*v;
- results.innerHTML=`<h2>Respostas identificadas</h2><div class="status info"><b>Estudante:</b> ${esc(aluno.value)||'Não informado'} &nbsp; <b>Turma:</b> ${esc(turma.value)||'—'}</div><div class="keyline">${a.map(x=>x.ans).join(' | ')}</div><div class="grid"><div class="status ok">Acertos<br><b>${ac}</b></div><div class="status bad">Erros<br><b>${wr}</b></div><div class="status warn">Brancas<br><b>${bl}</b></div><div class="status warn">Revisar<br><b>${du}</b></div></div><div class="card"><div class="score">${nota.toFixed(1)}</div>Nota — ${ac} acertos × ${v.toFixed(2)}</div><details><summary><b>🔎 Leitura bruta para conferência</b></summary><pre class="raw">${esc(raw)}</pre></details><div style="overflow:auto"><table><thead><tr><th>Questão</th><th>Leitura</th><th>Gabarito</th><th>Situação</th><th>Índice das alternativas</th></tr></thead><tbody>${rows}</tbody></table></div>`;
- saveHistory({data:new Date().toLocaleString('pt-BR'),aluno:aluno.value||'Não informado',turma:turma.value||'—',avaliacao:titulo.value||'Avaliação',codigo:getAssessmentCode(),acertos:ac,erros:wr,brancas:bl,revisar:du,total:a.length,nota:Number(nota.toFixed(2)),respostas:a.map(x=>x.ans)});
- summary.className='status ok';summary.innerHTML=`<b>${esc(aluno.value)||'Estudante'}</b> — ${esc(turma.value)||'Turma não informada'} — ${ac} acertos, ${wr} erros, ${bl} brancas, ${du} para revisar — Nota <b>${nota.toFixed(1)}</b>.`;
-}
-function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
-async function readPhoto(){
- if(busy)return;busy=true;btnRead.disabled=true;results.innerHTML='';ultimaLeitura=null;
- if(!photo.files[0]){setStatus('Selecione ou fotografe o cartão primeiro.','warn');finish();return}
- if(typeof cv==='undefined'||!cv.Mat){setStatus('O leitor de imagem ainda está carregando. Aguarde alguns segundos.','warn');finish();return}
- setStatus('Lendo cartão... resultado anterior apagado.','info');
- try{
-  let im=await loadImage(photo.files[0]),scale=Math.min(1,1800/Math.max(im.naturalWidth,im.naturalHeight)),c=document.createElement('canvas');
-  c.width=Math.round(im.naturalWidth*scale);c.height=Math.round(im.naturalHeight*scale);c.getContext('2d').drawImage(im,0,0,c.width,c.height);
-  let src=cv.imread(c),m=findMarkers(src);if(!m){src.delete();setStatus('Não encontrei os 4 marcadores. Fotografe o cartão inteiro, sem cortar os cantos.','bad');finish();return}
-  setStatus('✓ 4 marcadores encontrados. Corrigindo perspectiva e localizando cada quadro...','info');
-  let warp=(gabarito.length===10?warpCardOMR10(src,m):warpCard(src,m)),r=detectAnswers(warp);ultimaLeitura=r.answers;drawDiagnostic(warp,r.answers);renderResults(r.answers,r.raw);setStatus('✓ Leitura concluída. Confira a sequência e a leitura bruta antes de usar.','ok');src.delete();warp.delete();
- }catch(e){console.error(e);setStatus('Erro na leitura: '+e.message,'bad')}finally{finish()}
-}
-function finish(){busy=false;btnRead.disabled=false}
-loadEvaluation();
-if(document.getElementById('dataAvaliacao')&&!document.getElementById('dataAvaliacao').value)document.getElementById('dataAvaliacao').value=new Date().toISOString().slice(0,10);
-if(document.getElementById('codigoAvaliacao'))document.getElementById('codigoAvaliacao').value=getAssessmentCode();
-buildKey();
-show('inicio');
-</script>
-
+<section id="corretorPanel" class="panel">
+<div class="framebar">
+<div><b>📚 NEW PROF. CORRETOR</b><div style="font-size:12px;color:#52637b">Sistema completo de avaliação, cartão, correção, resultados e histórico.</div></div>
+<button class="btn gray" onclick="openCorretor()">↗ Abrir em nova aba</button>
+</div>
+<iframe id="corretorFrame" title="Sistema de Correção" allow="camera; microphone"></iframe>
+</section>
+</div>
 
 <script>
-/* ===== ACESSO PÚBLICO — AUTORIZAÇÃO VIA WORKER + D1 ===== */
-const ACCESS_API="https://new-prof-corretor-api.parqueclube1bloco2d.workers.dev";
-const ADMIN_URL="https://new-prof-corretor-admin.parqueclube1bloco2d.workers.dev/";
+window.addEventListener("error",function(e){
+  console.error("NEW PROF. CORRETOR ADMIN:",e.error||e.message);
+});
+const ADMIN_API = "https://new-prof-corretor-admin.parqueclube1bloco2d.workers.dev";
+const CORRETOR_URL = ADMIN_API + "/sistema";
 
-function accessPanel(name){
-  document.querySelectorAll(".access-panel").forEach(p=>p.classList.remove("active"));
-  const el=document.getElementById("access-"+name);
-  if(el)el.classList.add("active");
-  document.getElementById("loginMsg").style.display="none";
-  document.getElementById("requestMsg").style.display="none";
-}
+let rows=[];
+let currentFilter="TODOS";
+let currentSearch="";
+const FREE_LIMIT=50;
 
-function accessMessage(id,msg,type){
-  const el=document.getElementById(id);
-  el.textContent=msg;
-  el.className="access-msg "+type;
-}
+function normalizeStatus(v){return String(v??"").trim().toUpperCase();}
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
+function fmt(v){if(!v)return "—";const d=new Date(v);return isNaN(d)?esc(v):d.toLocaleString("pt-BR");}
 
-async function accessApi(path,options={}){
+async function api(path,body){
   const controller=new AbortController();
-  const timer=setTimeout(()=>controller.abort(),10000);
+  const timer=setTimeout(()=>controller.abort(),12000);
   try{
-    const r=await fetch(ACCESS_API+path,{
-      ...options,
-      mode:"cors",
-      signal:controller.signal,
-      headers:{"content-type":"application/json",...(options.headers||{})}
+    const r=await fetch(ADMIN_API+path,{
+      method:body?"POST":"GET",
+      credentials:"include",
+      headers:body?{"content-type":"application/json"}:{},
+      body:body?JSON.stringify(body):undefined,
+      signal:controller.signal
     });
-    const txt=await r.text();
-    let d={}; try{d=txt?JSON.parse(txt):{};}catch{}
-    if(!r.ok || d.ok===false) throw new Error(d.message||d.error||("HTTP "+r.status));
+    const text=await r.text();
+    let d={}; try{d=text?JSON.parse(text):{};}catch{}
+    if(!r.ok||d.ok===false) throw new Error(d.message||d.error||("HTTP "+r.status));
     return d;
   }catch(e){
-    if(e.name==="AbortError") throw new Error("O servidor demorou para responder. Tente novamente.");
+    if(e.name==="AbortError") throw new Error("O servidor demorou para responder.");
     throw e;
-  }finally{
-    clearTimeout(timer);
-  }
+  }finally{clearTimeout(timer);}
 }
 
-function validEmail(email){
-  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i.test(email);
-}
-
-async function requestAccess(){
-  const nameEl=document.getElementById("requestName");
-  const emailEl=document.getElementById("requestEmail");
-  const schoolEl=document.getElementById("requestSchool");
-  const btn=document.getElementById("requestBtn");
-
-  const name=nameEl.value.trim();
-  const email=emailEl.value.trim().toLowerCase();
-  const school=schoolEl.value.trim();
-
-  // Os três campos são obrigatórios.
-  if(!name){
-    accessMessage("requestMsg","Preencha o nome completo.","warn");
-    nameEl.focus();
-    return;
-  }
-
-  if(!email){
-    accessMessage("requestMsg","Preencha o e-mail.","warn");
-    emailEl.focus();
-    return;
-  }
-
-  if(!validEmail(email)){
-    accessMessage("requestMsg","Digite um e-mail válido, por exemplo: professor@escola.com.br","warn");
-    emailEl.focus();
-    return;
-  }
-
-  if(!school){
-    accessMessage("requestMsg","Preencha o nome da escola.","warn");
-    schoolEl.focus();
-    return;
-  }
-
-  btn.disabled=true;
-  const originalText=btn.textContent;
-  btn.textContent="Enviando...";
-  accessMessage("requestMsg","Enviando sua solicitação...","warn");
-
+async function load(){
+  const btn=document.getElementById("btnRefresh");
+  const loading=document.getElementById("loading");
+  const error=document.getElementById("errorBox");
+  const body=document.getElementById("tbody");
+  btn.disabled=true; loading.style.display="block"; error.style.display="none";
+  body.innerHTML='<tr><td colspan="7">⏳ Carregando solicitações...</td></tr>';
   try{
-    const d=await accessApi("/api/access/request",{
-      method:"POST",
-      body:JSON.stringify({name,email,school})
-    });
-
-    accessMessage(
-      "requestMsg",
-      "Solicitação enviada com sucesso! Aguarde aprovação!",
-      "ok"
-    );
-
-    // Limpa os campos somente depois da confirmação do servidor.
-    nameEl.value="";
-    emailEl.value="";
-    schoolEl.value="";
+    const d=await api("/api/admin/list");
+    rows=Array.isArray(d.requests)?d.requests:[];
+    renderStats(); render();
   }catch(e){
-    console.error("Erro ao solicitar acesso:",e);
-    accessMessage(
-      "requestMsg",
-      e.message || "Não foi possível enviar a solicitação. Tente novamente.",
-      "bad"
-    );
+    body.innerHTML='<tr><td colspan="7">Não foi possível carregar as solicitações.</td></tr>';
+    error.textContent="Erro: "+e.message;
+    error.style.display="block";
   }finally{
-    btn.disabled=false;
-    btn.textContent=originalText;
+    btn.disabled=false; loading.style.display="none";
   }
 }
 
-async function checkProfessorAccess(){
-  const email=document.getElementById("loginEmail").value.trim().toLowerCase();
-  if(!email){accessMessage("loginMsg","Informe o e-mail.","warn");return;}
-  const btn=document.getElementById("loginBtn");
-  btn.disabled=true;
+function renderStats(){
+  const c={PENDENTE:0,LIBERADO:0,BLOQUEADO:0,EXPIRADO:0,RECUSADO:0};
+  rows.forEach(r=>{const s=normalizeStatus(r.status);if(c[s]!==undefined)c[s]++;});
+  cP.textContent=c.PENDENTE;cL.textContent=c.LIBERADO;cB.textContent=c.BLOQUEADO;cE.textContent=c.EXPIRADO;cR.textContent=c.RECUSADO;
+  renderLicense();
+}
+
+
+function registeredEmails(){
+  const set=new Set();
+  rows.forEach(r=>{
+    const st=normalizeStatus(r.status);
+    const email=String(r.email||"").trim().toLowerCase();
+    if(email && ["LIBERADO","BLOQUEADO","EXPIRADO"].includes(st)) set.add(email);
+  });
+  return set;
+}
+
+function renderLicense(){
+  const used=registeredEmails().size;
+  const available=Math.max(0,FREE_LIMIT-used);
+  const pct=Math.min(100,(used/FREE_LIMIT)*100);
+  const count=document.getElementById("licenseCount");
+  const usedEl=document.getElementById("licenseUsed");
+  const availEl=document.getElementById("licenseAvailable");
+  const fill=document.getElementById("licenseFill");
+  if(count)count.textContent=used+" / "+FREE_LIMIT;
+  if(usedEl)usedEl.textContent=used+" "+(used===1?"professor cadastrado":"professores cadastrados");
+  if(availEl)availEl.textContent=available+" "+(available===1?"vaga disponível":"vagas disponíveis");
+  if(fill)fill.style.width=pct+"%";
+  if(used>=FREE_LIMIT){
+    if(count)count.style.color="#dc2626";
+    if(fill)fill.style.background="#dc2626";
+  }else if(used>=40){
+    if(count)count.style.color="#b45309";
+    if(fill)fill.style.background="#f59e0b";
+  }else{
+    if(count)count.style.color="#2563eb";
+    if(fill)fill.style.background="#2563eb";
+  }
+}
+
+function setSearch(value){
+  currentSearch=String(value||"").trim().toLowerCase();
+  render();
+}
+
+function matchesSearch(r){
+  if(!currentSearch)return true;
+  return [r.name,r.email,r.school].some(v=>String(v||"").toLowerCase().includes(currentSearch));
+}
+
+function filterRows(f,el){
+  currentFilter=normalizeStatus(f)==="TODOS"?"TODOS":normalizeStatus(f);
+  document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));
+  document.querySelectorAll(".stat").forEach(x=>x.classList.remove("active"));
+  const filter=document.querySelector('.filter[data-f="'+currentFilter+'"]');
+  if(filter)filter.classList.add("active");
+  const card=document.querySelector('.stat[data-f="'+currentFilter+'"]');
+  if(card)card.classList.add("active");
+  render();
+}
+
+function badge(s){const st=normalizeStatus(s);return '<span class="badge '+st.toLowerCase()+'">'+esc(st)+'</span>';}
+
+function render(){
+  const body=document.getElementById("tbody");
+  const list=rows.filter(r=>{
+    const statusOk=currentFilter==="TODOS" || normalizeStatus(r.status)===currentFilter;
+    return statusOk && matchesSearch(r);
+  });
+  const resultCount=document.getElementById("resultCount");
+  if(resultCount)resultCount.textContent=list.length+" "+(list.length===1?"registro":"registros");
+  body.innerHTML=list.length?list.map(r=>{
+    const st=normalizeStatus(r.status);
+    let actions="";
+    actions+='<button class="btn gray" onclick="showDetails(\''+String(r.id)+'\')">Detalhes</button>';
+    if(st==="PENDENTE")actions+='<button class="btn green" onclick="release(\''+String(r.id)+'\')">Liberar</button><button class="btn red" onclick="reject(\''+String(r.id)+'\')">Recusar</button>';
+    if(st==="LIBERADO")actions+='<button class="btn yellow" onclick="renew(\''+String(r.id)+'\')">Renovar</button><button class="btn black" onclick="block(\''+String(r.id)+'\')">Bloquear</button>';
+    if(["BLOQUEADO","EXPIRADO","RECUSADO"].includes(st))actions+='<button class="btn green" onclick="reopen(\''+String(r.id)+'\')">Reabrir</button>';
+    actions+='<button class="btn red" onclick="deleteUser(\''+String(r.id)+'\')">Excluir</button>';
+    return '<tr><td><b>'+esc(r.name)+'</b></td><td>'+esc(r.email)+'</td><td>'+esc(r.school)+'</td><td>'+badge(st)+'</td><td>'+fmt(r.start_at)+'<br>até '+fmt(r.expires_at)+'</td><td>'+fmt(r.requested_at)+'</td><td id="actions-'+r.id+'"><div class="actions">'+actions+'</div></td></tr>';
+  }).join(""):'<tr><td colspan="7">Nenhum registro nesta categoria.</td></tr>';
+}
+
+
+function showDetails(id){
+  const r=rows.find(x=>String(x.id)===String(id));
+  if(!r)return;
+  const st=normalizeStatus(r.status);
+  const body=document.getElementById("detailsBody");
+  body.innerHTML=`
+    <div class="detail-grid">
+      <div class="detail-item"><small>Professor</small><b>${esc(r.name)||"—"}</b></div>
+      <div class="detail-item"><small>E-mail</small><b>${esc(r.email)||"—"}</b></div>
+      <div class="detail-item"><small>Escola</small><b>${esc(r.school)||"—"}</b></div>
+      <div class="detail-item"><small>Status</small><b>${badge(st)}</b></div>
+      <div class="detail-item"><small>Início do acesso</small><b>${fmt(r.start_at)}</b></div>
+      <div class="detail-item"><small>Acesso até</small><b>${fmt(r.expires_at)}</b></div>
+      <div class="detail-item"><small>Solicitação</small><b>${fmt(r.requested_at)}</b></div>
+      <div class="detail-item"><small>ID do registro</small><b>${esc(r.id)}</b></div>
+    </div>
+    <div class="activity">
+      <h3>ℹ️ Situação</h3>
+      <div class="activity-item">${st==="LIBERADO"?"🟢 Este professor possui acesso ativo.":st==="PENDENTE"?"🟡 Esta solicitação aguarda análise do administrador.":st==="BLOQUEADO"?"🔴 Este acesso está bloqueado.":st==="EXPIRADO"?"⏰ Este acesso expirou.":"⚪ Esta solicitação foi recusada."}</div>
+    </div>`;
+  document.getElementById("detailsOverlay").style.display="flex";
+}
+function closeDetails(event){
+  if(event && event.target!==document.getElementById("detailsOverlay"))return;
+  document.getElementById("detailsOverlay").style.display="none";
+}
+
+
+async function deleteUser(id){
+  const r=rows.find(x=>String(x.id)===String(id));
+  if(!r)return;
+  const name=String(r.name||"este professor");
+  const email=String(r.email||"");
+  const ok=confirm(
+    "EXCLUIR USUÁRIO\n\n"+
+    "Professor: "+name+"\n"+
+    "E-mail: "+email+"\n\n"+
+    "Esta ação excluirá o cadastro do banco de dados e não poderá ser desfeita.\n\n"+
+    "Deseja realmente excluir?"
+  );
+  if(!ok)return;
   try{
-    const d=await accessApi("/api/access/status?email="+encodeURIComponent(email));
-    const row=d.request||d;
-    const status=String(row.status||d.status||"").toUpperCase();
-    if(status==="LIBERADO"){
-      localStorage.setItem("newProfCorretorAccessEmail",email);
-      document.getElementById("accessGate").style.display="none";
-      document.getElementById("appShell").style.display="block";
-      try{ if(typeof show==="function") show("inicio"); }catch{}
-    }else if(status==="PENDENTE"){
-      accessMessage("loginMsg","Sua solicitação está aguardando aprovação do administrador.","warn");
-    }else if(status==="BLOQUEADO"){
-      accessMessage("loginMsg","Seu acesso está bloqueado. Procure o administrador.","bad");
-    }else if(status==="EXPIRADO"){
-      accessMessage("loginMsg","Seu período de acesso terminou. Solicite uma renovação ao administrador.","warn");
-    }else if(status==="RECUSADO"){
-      accessMessage("loginMsg","Sua solicitação de acesso foi recusada.","bad");
-    }else{
-      accessMessage("loginMsg","E-mail não encontrado. Use “Solicitar acesso” para cadastrar-se.","warn");
+    const res=await api("/api/admin/delete",{id:r.id});
+    if(!res.ok)throw new Error(res.error||res.message||"Não foi possível excluir o usuário.");
+    alert("Usuário excluído com sucesso.");
+    await load();
+  }catch(e){
+    alert(e.message||"Erro ao excluir usuário.");
+  }
+}
+
+function closeDurationPicker(id){
+  const el=document.getElementById("duration-picker-"+id);
+  if(el)el.remove();
+}
+
+function showDurationPicker(id, action){
+  closeDurationPicker(id);
+  const cell=document.getElementById("actions-"+id);
+  if(!cell)return;
+
+  const box=document.createElement("div");
+  box.id="duration-picker-"+id;
+  box.className="duration-picker";
+  box.innerHTML=`
+    <div class="duration-title">${action==="release"?"Escolha o período de acesso":"Escolha o novo período de acesso"}</div>
+    <div class="duration-options">
+      <button class="btn blue" data-duration="1d">1 dia</button>
+      <button class="btn blue" data-duration="1w">1 semana</button>
+      <button class="btn blue" data-duration="1m">1 mês</button>
+      <button class="btn yellow" data-duration="custom">Período</button>
+    </div>
+    <div class="duration-custom">
+      <label style="font-weight:900;font-size:12px;display:block;margin-bottom:5px">Até que dia:</label>
+      <input type="date" class="custom-date">
+    </div>
+    <div class="duration-footer">
+      <button class="btn green duration-confirm" style="display:none">Confirmar</button>
+      <button class="btn gray duration-cancel">Cancelar</button>
+    </div>`;
+  cell.appendChild(box);
+
+  let selected=null;
+  const custom=box.querySelector(".duration-custom");
+  const date=box.querySelector(".custom-date");
+  const confirmBtn=box.querySelector(".duration-confirm");
+
+  box.querySelectorAll("[data-duration]").forEach(btn=>{
+    btn.onclick=()=>{
+      selected=btn.dataset.duration;
+      box.querySelectorAll("[data-duration]").forEach(b=>b.style.outline="");
+      btn.style.outline="3px solid #17345d";
+      confirmBtn.style.display="inline-block";
+      if(selected==="custom"){
+        custom.style.display="block";
+        date.focus();
+      }else{
+        custom.style.display="none";
+      }
+    };
+  });
+
+  box.querySelector(".duration-confirm").onclick=async()=>{
+    if(!selected)return;
+    let customEnd=null;
+    if(selected==="custom"){
+      customEnd=date.value;
+      if(!customEnd){alert("Escolha a data final do acesso.");return;}
+      const chosen=new Date(customEnd+"T23:59:59");
+      if(isNaN(chosen.getTime()) || chosen<=new Date()){
+        alert("Escolha uma data futura.");return;
+      }
     }
-  }catch(e){
-    accessMessage("loginMsg","Não foi possível verificar o acesso. Tente novamente.","bad");
-  }finally{btn.disabled=false;}
+    box.querySelectorAll("button").forEach(b=>b.disabled=true);
+    try{
+      await api("/api/admin/release",{id,duration:selected,customEnd});
+      closeDurationPicker(id);
+      await load();
+      alert(action==="release"?"Acesso liberado.":"Acesso renovado.");
+    }catch(e){
+      box.querySelectorAll("button").forEach(b=>b.disabled=false);
+      alert(e.message);
+    }
+  };
+
+  box.querySelector(".duration-cancel").onclick=()=>closeDurationPicker(id);
 }
 
-function openAdmin(){window.location.href=ADMIN_URL;}
+function release(id){
+  if(!confirm("Deseja liberar o acesso deste professor?"))return;
+  showDurationPicker(id,"release");
+}
 
-(function(){
-  document.getElementById("appShell").style.display="none";
-  document.getElementById("accessGate").style.display="flex";
-})();
+function renew(id){
+  if(!confirm("Deseja renovar o acesso deste professor?"))return;
+  showDurationPicker(id,"renew");
+}
+
+async function block(id){if(!confirm("Bloquear este acesso?"))return;try{await api("/api/admin/block",{id});await load()}catch(e){alert(e.message)}}
+async function reject(id){if(!confirm("Recusar esta solicitação?"))return;try{await api("/api/admin/reject",{id});await load()}catch(e){alert(e.message)}}
+async function reopen(id){if(!confirm("Reabrir esta solicitação?"))return;try{await api("/api/admin/reopen",{id});await load()}catch(e){alert(e.message)}}
+
+function showTab(which){
+  document.getElementById("adminPanel").style.display=which==="admin"?"block":"none";
+  document.getElementById("corretorPanel").style.display=which==="corretor"?"block":"none";
+  document.getElementById("tabAdmin").classList.toggle("active",which==="admin");
+  document.getElementById("tabCorretor").classList.toggle("active",which==="corretor");
+  if(which==="corretor"){
+    const f=document.getElementById("corretorFrame");
+    if(!f.src)f.src=CORRETOR_URL;
+  }
+}
+function openCorretor(){window.open(CORRETOR_URL,"_blank","noopener")}
+function logout(){window.location.href=ADMIN_API+"/logout";}
+
+load();
 </script>
 
-</body></html>
+<div id="detailsOverlay" class="details-overlay" onclick="closeDetails(event)">
+  <div class="details-modal" onclick="event.stopPropagation()">
+    <div class="details-head">
+      <h3>👨‍🏫 Detalhes do professor</h3>
+      <button class="btn gray" onclick="closeDetails()">✕ Fechar</button>
+    </div>
+    <div id="detailsBody" class="details-body"></div>
+  </div>
+</div>
+
+</body>
+</html>
