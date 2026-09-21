@@ -16,6 +16,7 @@ header h1{margin:0;font-size:26px} header p{margin:6px 0 0}
 .panel{background:#fff;border-radius:15px;border:1px solid #dbe3ef;box-shadow:0 3px 15px #17345d12;padding:16px;margin-bottom:14px}
 .toolbar{display:flex;gap:9px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .btn{border:0;border-radius:8px;padding:10px 14px;font-weight:900;cursor:pointer}
+.black{background:#000;color:#fff}.black:hover{background:#222}
 .btn:disabled{opacity:.55;cursor:wait}
 .blue{background:#2563eb;color:#fff}.green{background:#16a34a;color:#fff}.red{background:#dc2626;color:#fff}.gray{background:#e8eef7;color:#17345d}.yellow{background:#facc15;color:#5b4300}
 .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:12px}
@@ -84,8 +85,8 @@ iframe{width:100%;height:calc(100vh - 155px);min-height:700px;border:0;border-ra
 <div class="license-card">
   <div class="license-head">
     <div>
-      <div class="license-title">🆓 Plano gratuito</div>
-      <div class="license-sub">Limite de 50 e-mails de professores cadastrados.</div>
+      <div class="license-title">👥 Cadastro(s) no Sistema</div>
+      <div class="license-sub">Limite de 50 e-mails de professores cadastrados no sistema.</div>
     </div>
     <div id="licenseCount" class="license-count">0 / 50</div>
   </div>
@@ -270,11 +271,11 @@ function render(){
   body.innerHTML=list.length?list.map(r=>{
     const st=normalizeStatus(r.status);
     let actions="";
-    actions+='<button class="btn gray" onclick="showDetails('+r.id+')">Detalhes</button>';
-    if(st==="PENDENTE")actions+='<button class="btn green" onclick="release('+r.id+')">Liberar</button><button class="btn red" onclick="reject('+r.id+')">Recusar</button>';
-    if(st==="LIBERADO")actions+='<button class="btn yellow" onclick="renew('+r.id+')">Renovar</button><button class="btn red" onclick="block('+r.id+')">Bloquear</button>';
-    if(["BLOQUEADO","EXPIRADO","RECUSADO"].includes(st))actions+='<button class="btn green" onclick="reopen('+r.id+')">Reabrir</button>';
-    actions+='<button class="btn red" onclick="deleteUser('+r.id+')">Excluir</button>';
+    actions+='<button class="btn gray" onclick="showDetails('+JSON.stringify(String(r.id))+')">Detalhes</button>';
+    if(st==="PENDENTE")actions+='<button class="btn green" onclick="release('+JSON.stringify(String(r.id))+')">Liberar</button><button class="btn red" onclick="reject('+JSON.stringify(String(r.id))+')">Recusar</button>';
+    if(st==="LIBERADO")actions+='<button class="btn yellow" onclick="renew('+JSON.stringify(String(r.id))+')">Renovar</button><button class="btn black" onclick="block('+JSON.stringify(String(r.id))+')">Bloquear</button>';
+    if(["BLOQUEADO","EXPIRADO","RECUSADO"].includes(st))actions+='<button class="btn green" onclick="reopen('+JSON.stringify(String(r.id))+')">Reabrir</button>';
+    actions+='<button class="btn red" onclick="deleteUser('+JSON.stringify(String(r.id))+')">Excluir</button>';
     return '<tr><td><b>'+esc(r.name)+'</b></td><td>'+esc(r.email)+'</td><td>'+esc(r.school)+'</td><td>'+badge(st)+'</td><td>'+fmt(r.start_at)+'<br>até '+fmt(r.expires_at)+'</td><td>'+fmt(r.requested_at)+'</td><td id="actions-'+r.id+'"><div class="actions">'+actions+'</div></td></tr>';
   }).join(""):'<tr><td colspan="7">Nenhum registro nesta categoria.</td></tr>';
 }
