@@ -204,13 +204,13 @@ flex-wrap:nowrap;
       <p>Preencha seus dados. A solicitação será enviada para análise do administrador.</p>
       <div class="access-form">
         <label>Nome
-          <input id="requestName" required autocomplete="name" type="text" placeholder="Nome completo">
+          <input id="requestName" required autocomplete="name" type="text" placeholder="Nome completo" aria-required="true">
         </label>
         <label>E-mail
-          <input id="requestEmail" type="email" required autocomplete="email" placeholder="professor@escola.com">
+          <input id="requestEmail" type="email" required autocomplete="email" placeholder="professor@escola.com" aria-required="true">
         </label>
         <label>Escola
-          <input id="requestSchool" required autocomplete="organization" type="text" placeholder="Nome da escola">
+          <input id="requestSchool" required autocomplete="organization" type="text" placeholder="Nome da escola" aria-required="true">
         </label>
         <button id="requestBtn" type="button" class="access-btn access-blue" onclick="requestAccess()">Enviar solicitação</button>
       </div>
@@ -1258,8 +1258,12 @@ function accessPanel(name){
 
 function accessMessage(id,msg,type){
   const el=document.getElementById(id);
+  if(!el)return;
   el.textContent=msg;
   el.className="access-msg "+type;
+  el.style.display="block";
+  el.style.visibility="visible";
+  el.style.opacity="1";
 }
 
 async function accessApi(path,options={}){
@@ -1300,12 +1304,12 @@ async function requestAccess(){
 
   // Limpa o estado visual anterior.
   [nameEl,emailEl,schoolEl].forEach(el=>{
-    el.style.borderColor="";
+    el.style.border="";
     el.removeAttribute("aria-invalid");
   });
 
   function erro(el,mensagem){
-    el.style.borderColor="#dc2626";
+    el.style.border="2px solid #dc2626";
     el.setAttribute("aria-invalid","true");
     accessMessage("requestMsg","⚠️ "+mensagem,"bad");
     el.focus();
@@ -1356,7 +1360,7 @@ async function requestAccess(){
     // Confirmação diretamente na página.
     accessMessage(
       "requestMsg",
-      "✅ Solicitação enviada com sucesso! Aguarde Autorização de Acesso.",
+      "✅ Solicitação de acesso enviada com sucesso. Aguarde liberação.",
       "ok"
     );
 
@@ -1368,7 +1372,7 @@ async function requestAccess(){
     console.error("Erro ao solicitar acesso:",e);
     accessMessage(
       "requestMsg",
-      "❌ "+(e.message||"Não foi possível enviar a solicitação. Tente novamente."),
+      "❌ "+(e.message||"Não foi possível enviar a solicitação. Verifique os dados e tente novamente."),
       "bad"
     );
   }finally{
