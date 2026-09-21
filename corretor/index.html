@@ -204,13 +204,13 @@ flex-wrap:nowrap;
       <p>Preencha seus dados. A solicitação será enviada para análise do administrador.</p>
       <div class="access-form">
         <label>Nome
-          <input id="requestName" type="text" placeholder="Nome completo">
+          <input id="requestName" required autocomplete="name" type="text" placeholder="Nome completo">
         </label>
         <label>E-mail
-          <input id="requestEmail" type="email" autocomplete="email" placeholder="professor@escola.com">
+          <input id="requestEmail" type="email" required autocomplete="email" type="email" autocomplete="email" placeholder="professor@escola.com">
         </label>
         <label>Escola
-          <input id="requestSchool" type="text" placeholder="Nome da escola">
+          <input id="requestSchool" required autocomplete="organization" type="text" placeholder="Nome da escola">
         </label>
         <button id="requestBtn" class="access-btn access-blue" onclick="requestAccess()">Enviar solicitação</button>
       </div>
@@ -1236,29 +1236,67 @@ function accessMessage(id,msg,type){
 }
 
 async function accessApi(path,options={}){
-  const r=await fetch(ACCESS_API+path,{
-    ...options,
-    headers:{"content-type":"application/json",...(options.headers||{})}
-  });
-  const txt=await r.text();
-  let d={}; try{d=txt?JSON.parse(txt):{};}catch{}
-  if(!r.ok || d.ok===false) throw new Error(d.message||d.error||("HTTP "+r.status));
-  return d;
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),10000);
+  try{
+    const r=await fetch(ACCESS_API+path,{
+      ...options,
+      mode:"cors",
+      signal:controller.signal,
+      headers:{"content-type":"application/json",...(options.headers||{})}
+    });
+    const txt=await r.text();
+    let d={}; try{d=txt?JSON.parse(txt):{};}catch{}
+    if(!r.ok || d.ok===false) throw new Error(d.message||d.error||("HTTP "+r.status));
+    return d;
+  }catch(e){
+    if(e.name==="AbortError") throw new Error("O servidor demorou para responder. Tente novamente.");
+    throw e;
+  }finally{
+    clearTimeout(timer);
+  }
+}
+
+function validEmail(email){
+  return /^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/i.test(email);
 }
 
 async function requestAccess(){
   const name=document.getElementById("requestName").value.trim();
   const email=document.getElementById("requestEmail").value.trim().toLowerCase();
   const school=document.getElementById("requestSchool").value.trim();
-  if(!name||!email||!school){accessMessage("requestMsg","Preencha nome, e-mail e escola.","warn");return;}
   const btn=document.getElementById("requestBtn");
+
+  // Todos os campos são obrigatórios.
+  if(!name || !email || !school){
+    accessMessage("requestMsg","Todos os campos são obrigatórios. Preencha nome, e-mail e escola.","warn");
+    return;
+  }
+
+  // Validação do formato do e-mail.
+  if(!validEmail(email)){
+    accessMessage("requestMsg","Digite um e-mail válido, por exemplo: professor@escola.com.br","warn");
+    document.getElementById("requestEmail").focus();
+    return;
+  }
+
   btn.disabled=true;
+  const originalText=btn.textContent;
+  btn.textContent="Enviando...";
+  accessMessage("requestMsg","Enviando sua solicitação...","warn");
+
   try{
-    const d=await accessApi("/api/access/request",{method:"POST",body:JSON.stringify({name,email,school})});
-    accessMessage("requestMsg",d.message||"Solicitação enviada. Aguarde a liberação do administrador.","ok");
+    const d=await accessApi("/api/access/request",{
+      method:"POST",
+      body:JSON.stringify({name,email,school})
+    });
+    accessMessage("requestMsg",d.message||"Solicitação enviada com sucesso. Aguarde a liberação do administrador.","ok");
   }catch(e){
-    accessMessage("requestMsg",e.message||"Não foi possível enviar a solicitação.","bad");
-  }finally{btn.disabled=false;}
+    accessMessage("requestMsg",e.message||"Não foi possível enviar a solicitação. Tente novamente.","bad");
+  }finally{
+    btn.disabled=false;
+    btn.textContent=originalText;
+  }
 }
 
 async function checkProfessorAccess(){
@@ -1291,7 +1329,11 @@ async function checkProfessorAccess(){
   }finally{btn.disabled=false;}
 }
 
-function openAdmin(){window.location.href=ADMIN_URL;}
+function openAdmin(){
+  // A área administrativa é independente do sistema do professor.
+  // Abre o Worker protegido pelo Cloudflare Access em uma nova aba.
+  window.open(ADMIN_URL, "_blank", "noopener,noreferrer");
+}
 
 (function(){
   document.getElementById("appShell").style.display="none";
