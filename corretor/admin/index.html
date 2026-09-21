@@ -59,6 +59,18 @@ iframe{width:100%;height:calc(100vh - 155px);min-height:700px;border:0;border-ra
 @media(max-width:650px){.detail-grid{grid-template-columns:1fr}.license-count{font-size:21px}}
 
 @media(max-width:850px){.stats{grid-template-columns:repeat(2,1fr)}iframe{min-height:800px;height:calc(100vh - 180px)}}
+
+/* V10 — segurança de exclusão */
+.delete-security-note{margin:14px 0;padding:12px 14px;border:1px solid #f0c36d;border-radius:10px;background:#fff8e7;color:#5f4600;font-size:13px;line-height:1.45}
+.delete-security-note b{color:#7a5200}
+.delete-password-overlay{position:fixed;inset:0;background:rgba(0,0,0,.58);display:none;align-items:center;justify-content:center;z-index:99999;padding:18px}
+.delete-password-modal{width:min(460px,100%);background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.3);padding:22px}
+.delete-password-modal h3{margin:0 0 8px;color:#991b1b}
+.delete-password-modal p{margin:7px 0;color:#475569;line-height:1.45}
+.delete-password-modal label{display:block;margin:16px 0 6px;font-weight:800;color:#17345d}
+.delete-password-modal input{width:100%;box-sizing:border-box;padding:13px;border:1px solid #cbd5e1;border-radius:9px;font-size:16px}
+.delete-password-actions{display:flex;gap:10px;margin-top:16px}
+.delete-password-actions button{flex:1;margin:0}
 </style>
 </head>
 <body>
@@ -312,31 +324,55 @@ function closeDetails(event){
 }
 
 
-async function deleteUser(id){
+function openDeletePassword(id){
   const r=rows.find(x=>String(x.id)===String(id));
   if(!r)return;
   const name=String(r.name||"este professor");
   const email=String(r.email||"");
   const ok=confirm(
-    "EXCLUIR USUÁRIO\n\n"+
+    "ETAPA 1 DE 2 — EXCLUSÃO\n\n"+
     "Professor: "+name+"\n"+
     "E-mail: "+email+"\n\n"+
-    "Esta ação excluirá o cadastro do banco de dados e não poderá ser desfeita.\n\n"+
-    "Deseja realmente excluir?"
+    "O cadastro será removido do banco de dados e esta ação não poderá ser desfeita.\n\n"+
+    "Deseja continuar para a confirmação por senha?"
   );
   if(!ok)return;
-  const password=prompt("CONFIRMAÇÃO DE SEGURANÇA\n\nDigite a senha do administrador para confirmar a exclusão:");
-  if(password===null)return;
-  if(!password){alert("A senha é obrigatória para excluir o cadastro.");return;}
+  document.getElementById("deleteTargetId").value=String(r.id);
+  document.getElementById("deleteTargetName").textContent=name;
+  document.getElementById("deleteTargetEmail").textContent=email;
+  const input=document.getElementById("deletePasswordInput");
+  input.value="";
+  document.getElementById("deletePasswordOverlay").style.display="flex";
+  setTimeout(()=>input.focus(),50);
+}
+
+function closeDeletePassword(){
+  document.getElementById("deletePasswordOverlay").style.display="none";
+  document.getElementById("deletePasswordInput").value="";
+}
+
+async function confirmDeleteWithPassword(){
+  const id=document.getElementById("deleteTargetId").value;
+  const password=document.getElementById("deletePasswordInput").value;
+  if(!password){alert("Digite a senha do administrador para continuar.");return;}
+  const btn=document.getElementById("deleteConfirmBtn");
+  btn.disabled=true;
+  btn.textContent="Excluindo...";
   try{
-    const res=await api("/api/admin/delete",{id:r.id,password});
+    const res=await api("/api/admin/delete",{id:Number(id),password});
     if(!res.ok)throw new Error(res.error||res.message||"Não foi possível excluir o usuário.");
+    closeDeletePassword();
     alert("Usuário excluído com sucesso.");
     await load();
   }catch(e){
-    alert(e.message||"Erro ao excluir usuário.");
+    alert(e.message||"Erro ao excluir o usuário.");
+  }finally{
+    btn.disabled=false;
+    btn.textContent="🔴 Confirmar exclusão";
   }
 }
+
+function deleteUser(id){openDeletePassword(id);}
 
 function closeDurationPicker(id){
   const el=document.getElementById("duration-picker-"+id);
@@ -455,5 +491,20 @@ load();
   </div>
 </div>
 
+
+<div id="deletePasswordOverlay" class="delete-password-overlay" onclick="if(event.target===this)closeDeletePassword()">
+  <div class="delete-password-modal">
+    <h3>🔐 ETAPA 2 DE 2 — CONFIRMAÇÃO</h3>
+    <p>Para excluir definitivamente este cadastro, informe a senha do administrador.</p>
+    <p><b>Professor:</b> <span id="deleteTargetName">—</span><br><b>E-mail:</b> <span id="deleteTargetEmail">—</span></p>
+    <input type="hidden" id="deleteTargetId">
+    <label for="deletePasswordInput">Senha do administrador</label>
+    <input id="deletePasswordInput" type="password" autocomplete="current-password" placeholder="Digite a senha do administrador" onkeydown="if(event.key==='Enter')confirmDeleteWithPassword()">
+    <div class="delete-password-actions">
+      <button class="btn gray" onclick="closeDeletePassword()">Cancelar</button>
+      <button id="deleteConfirmBtn" class="btn red" onclick="confirmDeleteWithPassword()">🔴 Confirmar exclusão</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
