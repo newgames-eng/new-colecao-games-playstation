@@ -31,6 +31,13 @@
 .access-loading{opacity:.65;pointer-events:none}
 #appShell{display:none}
 @media(max-width:560px){.access-tabs{grid-template-columns:1fr}.access-box{padding:19px}}
+
+/* FINAL A4 SAFE AREA */
+.a4-sheet .ident-label{font-size:6pt!important;margin-bottom:.7mm!important}
+.a4-sheet .ident-value{font-size:7.2pt!important;min-height:3mm!important}
+.a4-sheet .card-head .main-title{font-size:16pt!important}
+.a4-sheet .card-head .brand{font-size:7pt!important}
+.a4-sheet .card-head .brand strong{font-size:9pt!important}
 </style>
 
 <style>
@@ -57,35 +64,35 @@ table{width:100%;border-collapse:collapse;margin-top:13px;font-size:14px}th,td{b
 .card-config label:first-child{grid-column:span 2}
 .card-config input,.card-config select{width:100%;margin-top:5px;padding:10px;border:1px solid #cbd5e1;border-radius:8px}
 .a4-wrap{width:210mm;height:297mm;margin:10px auto;overflow:visible;box-sizing:border-box}
-.a4-sheet{width:210mm;height:297mm;min-width:210mm;min-height:297mm;max-width:210mm;max-height:297mm;box-sizing:border-box;background:#fff!important;background-color:#fff!important;color:#111;position:relative;padding:7mm 9mm 7mm;border:0;box-shadow:none!important;font-family:Arial,Helvetica,sans-serif;color-scheme:light;overflow:visible}
-.omr-marker{display:block;position:absolute;width:9mm;height:9mm;background:#000!important;box-sizing:border-box;z-index:100;opacity:1!important;filter:none!important;border:0!important}
-.omr-tl{left:4mm;top:4mm}.omr-tr{right:4mm;top:4mm}.omr-bl{left:4mm;bottom:4mm}.omr-br{right:4mm;bottom:4mm}
+.a4-sheet{width:210mm;height:297mm;min-width:210mm;min-height:297mm;max-width:210mm;max-height:297mm;box-sizing:border-box;background:#fff!important;background-color:#fff!important;color:#111;position:relative;padding:10mm 15mm 10mm;border:0;box-shadow:none!important;font-family:Arial,Helvetica,sans-serif;color-scheme:light;overflow:visible}
+.omr-marker{display:block;position:absolute;width:7mm;height:7mm;background:#000!important;box-sizing:border-box;z-index:100;opacity:1!important;filter:none!important;border:0!important}
+.omr-tl{left:5mm;top:5mm}.omr-tr{right:5mm;top:5mm}.omr-bl{left:5mm;bottom:5mm}.omr-br{right:5mm;bottom:5mm}
 .card-head{border-bottom:1.2px solid #173f8f;padding:0 1.5mm 1.8mm;margin:0 1.5mm 2mm;display:flex;align-items:end;justify-content:space-between;gap:5mm}
-.card-head .main-title{font-size:18pt;font-weight:900;letter-spacing:.3px;color:#102a56;line-height:1}
-.card-head .brand{font-size:8pt;font-weight:800;color:#173f8f;text-align:right;line-height:1}
-.card-head .brand strong{display:block;font-size:10pt}
-.card-subtitle{text-align:center;font-size:8.5pt;font-weight:800;letter-spacing:1.1px;margin:0 0 2.5mm;color:#26364d}
+.card-head .main-title{font-size:16pt;font-weight:900;letter-spacing:.2px;color:#102a56;line-height:1}
+.card-head .brand{font-size:7pt;font-weight:800;color:#173f8f;text-align:right;line-height:1}
+.card-head .brand strong{display:block;font-size:9pt}
+.card-subtitle{text-align:center;font-size:7.5pt;font-weight:800;letter-spacing:1.1px;margin:0 0 2mm;color:#26364d}
 .ident-box{border:1.2px solid #111;margin:0 1.5mm 2.5mm}
-.ident-title{background:#173f8f;color:#fff;font-size:8pt;font-weight:900;padding:1.7mm 2.2mm;letter-spacing:.4px}
+.ident-title{background:#173f8f;color:#fff;font-size:7pt;font-weight:900;padding:1.4mm 2mm;letter-spacing:.4px}
 .ident-grid{display:block;min-width:0}
 .ident-row{display:grid;gap:0}
 .ident-row-top{grid-template-columns:2.2fr 1fr}
 .ident-row-student{grid-template-columns:1.75fr .72fr .72fr}
-.ident-cell{padding:1.5mm 2mm;border-right:1px solid #aaa;border-top:1px solid #aaa;min-height:10mm;min-width:0;overflow:hidden;background:#fff}
+.ident-cell{padding:1.2mm 1.8mm;border-right:1px solid #aaa;border-top:1px solid #aaa;min-height:8.5mm;min-width:0;overflow:hidden;background:#fff}
 .ident-row .ident-cell:last-child{border-right:0}
 .ident-label{font-size:7.5pt;font-weight:900;text-transform:uppercase;color:#173f8f;margin-bottom:2mm;letter-spacing:.2px}
 .ident-value{font-size:10.5pt;font-weight:700;min-height:5mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ident-label{font-size:6pt;font-weight:800;text-transform:uppercase;color:#4b5563;margin-bottom:1mm}
-.ident-value{font-size:8pt;font-weight:700;min-height:3.5mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ident-label{font-size:6pt;font-weight:800;text-transform:uppercase;color:#4b5563;margin-bottom:.7mm}
+.ident-value{font-size:7.2pt;font-weight:700;min-height:3mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .reg-code{font-family:"Courier New",monospace;letter-spacing:1.3px;font-size:10pt}
-.instructions{font-size:5pt;margin:0 1.5mm 1mm;border:1px solid #bbb;padding:1.1mm 1.5mm;line-height:1.15}
+.instructions{font-size:4.6pt;margin:0 1.5mm .8mm;border:1px solid #bbb;padding:.9mm 1.3mm;line-height:1.1}
 .instructions b{color:#173f8f}
-.answer-title{text-align:center;font-size:7.5pt;font-weight:900;margin:1.5mm 1.5mm .6mm;letter-spacing:.3px}
-.answer-help{text-align:center;font-size:4.2pt;margin:0 1.5mm .8mm;color:#444}
-.omr-grid-fixed{display:flex;gap:1.8mm;margin:0 1.5mm;height:160mm;align-items:stretch;overflow:visible}
+.answer-title{text-align:center;font-size:7pt;font-weight:900;margin:1.2mm 1.5mm .5mm;letter-spacing:.3px}
+.answer-help{text-align:center;font-size:4pt;margin:0 1.5mm .6mm;color:#444}
+.omr-grid-fixed{display:flex;gap:1.8mm;margin:0 1.5mm;height:165mm;align-items:stretch;overflow:visible}
 .omr-column{flex:1 1 0;min-width:0;height:160mm;display:flex;flex-direction:column;gap:1.2mm;overflow:visible}
-.omr-q{border:1px solid #111;height:14.98mm;min-height:14.98mm;max-height:14.98mm;flex:0 0 14.98mm;padding:.45mm .7mm;text-align:center;break-inside:avoid;display:flex;flex-direction:column;justify-content:center;align-items:center;box-sizing:border-box;background:#fff;overflow:hidden}
-.omr-qnum{font-size:5pt;font-weight:900;margin-bottom:.35mm;line-height:1}
+.omr-q{border:1px solid #111;height:15.6mm;min-height:15.6mm;max-height:15.6mm;flex:0 0 15.6mm;padding:.35mm .6mm;text-align:center;break-inside:avoid;display:flex;flex-direction:column;justify-content:center;align-items:center;box-sizing:border-box;background:#fff;overflow:hidden}
+.omr-qnum{font-size:4.6pt;font-weight:900;margin-bottom:.25mm;line-height:1}
 .omr-options{
 display:flex;
 justify-content:center;
@@ -93,9 +100,9 @@ align-items:center;
 gap:1.7mm;
 flex-wrap:nowrap;
 }
-.omr-opt{width:4.2mm;height:4.2mm;border:1px solid #111;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:5.2pt;font-weight:700;box-sizing:border-box}
-.card-footer{position:absolute;left:10mm;right:10mm;bottom:7mm;text-align:center;border-top:1px solid #aaa;padding-top:1.5mm;font-size:5.5pt;color:#555}
-.card-footer strong{font-size:6.5pt;color:#173f8f}
+.omr-opt{width:3.8mm;height:3.8mm;border:1px solid #111;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:4.8pt;font-weight:700;box-sizing:border-box}
+.card-footer{position:absolute;left:10mm;right:10mm;bottom:7mm;text-align:center;border-top:1px solid #aaa;padding-top:1.2mm;font-size:5pt;color:#555}
+.card-footer strong{font-size:6pt;color:#173f8f}
 @media print{
   body{background:#fff!important}
   header,main>.card:not(#cartao .card),#cartao>.card>h2,#cartao>.card>p,#cartao>.card>.status,#cartao>.card>.actions,.no-print{display:none!important}
@@ -785,7 +792,7 @@ async function cardToCanvas(dpi=300){
   clone.style.maxWidth='210mm';
   clone.style.maxHeight='297mm';
   clone.style.margin='0';
-  clone.style.padding='8mm 10mm 8mm';
+  clone.style.padding='10mm 15mm 10mm';
   clone.style.boxSizing='border-box';
   clone.style.overflow='visible';
   clone.style.background='#fff';
