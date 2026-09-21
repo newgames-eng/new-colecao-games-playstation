@@ -57,7 +57,7 @@ table{width:100%;border-collapse:collapse;margin-top:13px;font-size:14px}th,td{b
 .card-config label:first-child{grid-column:span 2}
 .card-config input,.card-config select{width:100%;margin-top:5px;padding:10px;border:1px solid #cbd5e1;border-radius:8px}
 .a4-wrap{width:210mm;margin:18px auto;overflow:visible}
-.a4-sheet{width:210mm;height:297mm;min-width:210mm;min-height:297mm;max-height:297mm;background:#fff;color:#111;position:relative;padding:13mm 12mm 12mm;border:1px solid #bbb;box-shadow:0 3px 18px #0002;font-family:Arial,Helvetica,sans-serif}
+.a4-sheet{width:210mm;height:297mm;min-width:210mm;min-height:297mm;max-height:297mm;background:#fff!important;background-color:#fff!important;color:#111;position:relative;padding:13mm 12mm 12mm;border:0;box-shadow:none!important;font-family:Arial,Helvetica,sans-serif;color-scheme:light}
 .omr-marker{position:absolute;width:8mm;height:8mm;background:#000}
 .omr-tl{left:7mm;top:7mm}.omr-tr{right:7mm;top:7mm}.omr-bl{left:7mm;bottom:7mm}.omr-br{right:7mm;bottom:7mm}
 .card-head{border-bottom:2px solid #173f8f;padding:0 2mm 3mm;margin:0 2mm 3.5mm;display:flex;align-items:end;justify-content:space-between;gap:8mm}
@@ -807,8 +807,12 @@ async function cardToCanvas(dpi=150){
   clone.style.boxSizing='border-box';
   clone.style.overflow='hidden';
   clone.style.background='#fff';
+  clone.style.backgroundColor='#fff';
   clone.style.boxShadow='none';
   clone.style.border='0';
+  clone.style.opacity='1';
+  clone.style.filter='none';
+  clone.style.colorScheme='light';
 
   holder.appendChild(clone);
   document.body.appendChild(holder);
@@ -895,8 +899,8 @@ async function exportCard(){
       compress:true
     });
     pdf.addImage(
-      canvas.toDataURL('image/jpeg',0.95),
-      'JPEG',0,0,210,297,undefined,'FAST'
+      canvas.toDataURL('image/png'),
+      'PNG',0,0,210,297,undefined,'FAST'
     );
     pdf.save(`${safe}-cartao.pdf`);
   }catch(e){
