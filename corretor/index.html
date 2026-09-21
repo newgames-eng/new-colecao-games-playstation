@@ -920,139 +920,126 @@ function exportHistoryCSV(){
 }
 
 
-async function cardToCanvas(dpi=300){
-  const source=document.getElementById('printCard');
-  if(!source) throw new Error('Cartão não encontrado.');
+function drawNativeCardPage(pdf, alunoCard, turmaCard, pageIndex, totalPages){
+  const n=Math.min(50,Math.max(1,+nq.value||10));
+  const ls=L.slice(0,+na.value||5);
+  const tituloCard=(titulo?.value||'AVALIAÇÃO').toUpperCase();
+  const dataCard=getCardData();
+  const codigo=getAssessmentCode();
 
-  // Mantém o cartão em tamanho A4 e captura diretamente em alta resolução.
-  // Não fazemos redimensionamento posterior, pois isso deixava o texto e
-  // os círculos OMR borrados.
-  const holder=document.createElement('div');
-  holder.style.position='fixed';
-  holder.style.left='-100000px';
-  holder.style.top='0';
-  holder.style.width='210mm';
-  holder.style.height='297mm';
-  holder.style.overflow='visible';
-  holder.style.background='#fff';
-  holder.style.zIndex='-1';
+  const W=210, H=297;
+  const mx=15, contentW=180;
+  const marker=7, markerX=8, markerY=8;
 
-  const clone=source.cloneNode(true);
-  clone.removeAttribute('id');
-  clone.style.width='210mm';
-  clone.style.height='297mm';
-  clone.style.minWidth='210mm';
-  clone.style.minHeight='297mm';
-  clone.style.maxWidth='210mm';
-  clone.style.maxHeight='297mm';
-  clone.style.margin='0';
-  clone.style.padding='7mm 10mm 8mm';
-  clone.style.boxSizing='border-box';
-  clone.style.overflow='visible';
-  clone.style.background='#fff';
-  clone.style.backgroundColor='#fff';
-  clone.style.boxShadow='none';
-  clone.style.border='0';
-  clone.style.opacity='1';
-  clone.style.filter='none';
-  clone.style.colorScheme='light';
-    clone.querySelectorAll('.omr-marker').forEach((m)=>{
-      m.style.width='6mm';
-      m.style.height='6mm';
-      m.style.background='#000';
-      m.style.opacity='1';
-      m.style.filter='none';
-      m.style.zIndex='9999';
+  // Fundo branco e quatro marcadores OMR em coordenadas físicas A4.
+  pdf.setFillColor(255,255,255); pdf.rect(0,0,W,H,'F');
+  pdf.setFillColor(0,0,0);
+  pdf.rect(markerX,markerY,marker,marker,'F');
+  pdf.rect(W-markerX-marker,markerY,marker,marker,'F');
+  pdf.rect(markerX,H-markerY-marker,marker,marker,'F');
+  pdf.rect(W-markerX-marker,H-markerY-marker,marker,marker,'F');
+
+  // Cabeçalho compacto.
+  pdf.setTextColor(18,45,86);
+  pdf.setFont('helvetica','bold'); pdf.setFontSize(17);
+  pdf.text('CARTÃO-RESPOSTA',mx,19);
+  pdf.setFontSize(8.5); pdf.text('NEW PROF. CORRETOR',W-mx,16,{align:'right'});
+  pdf.setFontSize(7); pdf.text('LEITOR OMR',W-mx,21,{align:'right'});
+  pdf.setDrawColor(23,63,143); pdf.setLineWidth(0.45); pdf.line(mx,24,W-mx,24);
+  pdf.setFontSize(8); pdf.text(tituloCard,mx+contentW/2,30,{align:'center'});
+
+  // Identificação.
+  const iy=35, ih=34, titleH=7;
+  pdf.setDrawColor(40,40,40); pdf.setLineWidth(0.3);
+  pdf.setFillColor(23,63,143); pdf.rect(mx,iy,contentW,titleH,'F');
+  pdf.setTextColor(255,255,255); pdf.setFontSize(8); pdf.setFont('helvetica','bold'); pdf.text('IDENTIFICAÇÃO',mx+3,iy+5);
+  pdf.setDrawColor(80,80,80); pdf.rect(mx,iy,contentW,ih);
+  pdf.line(mx,iy+titleH,W-mx,iy+titleH);
+  const split=mx+contentW*0.76;
+  pdf.line(split,iy+titleH,split,iy+22);
+  pdf.line(mx,iy+22,W-mx,iy+22);
+  const s2=mx+contentW*0.58, s3=mx+contentW*0.82;
+  pdf.line(s2,iy+22,s2,iy+ih); pdf.line(s3,iy+22,s3,iy+ih);
+  pdf.setTextColor(70,78,90); pdf.setFontSize(5.5);
+  pdf.text('AVALIAÇÃO',mx+2,iy+12); pdf.text('CÓDIGO DA AVALIAÇÃO',split+2,iy+12);
+  pdf.setTextColor(25,25,25); pdf.setFontSize(8); pdf.setFont('helvetica','bold');
+  pdf.text(tituloCard,mx+2,iy+18); pdf.text(codigo,split+2,iy+18);
+  pdf.setTextColor(70,78,90); pdf.setFontSize(5.5); pdf.setFont('helvetica','bold');
+  pdf.text('ESTUDANTE',mx+2,iy+27); pdf.text('ANO / TURMA',s2+2,iy+27); pdf.text('DATA',s3+2,iy+27);
+  pdf.setTextColor(25,25,25); pdf.setFontSize(7.5);
+  if(alunoCard) pdf.text(String(alunoCard).slice(0,45),mx+2,iy+32); else pdf.line(mx+2,iy+32,mx+contentW*0.57,iy+32);
+  if(turmaCard) pdf.text(String(turmaCard).slice(0,18),s2+2,iy+32); else pdf.line(s2+2,iy+32,s3-2,iy+32);
+  if(dataCard) pdf.text(fmtDate(dataCard),s3+2,iy+32); else pdf.line(s3+2,iy+32,W-mx-2,iy+32);
+
+  // Orientações.
+  const oy=73;
+  pdf.setDrawColor(170,170,170); pdf.rect(mx,oy,contentW,6);
+  pdf.setFontSize(4.8); pdf.setFont('helvetica','bold'); pdf.setTextColor(23,63,143); pdf.text('ORIENTAÇÕES:',mx+2,oy+4);
+  pdf.setFont('helvetica','normal'); pdf.setTextColor(55,55,55);
+  pdf.text('Preencha completamente apenas uma alternativa por questão. Use lápis ou caneta preta/azul. Não faça marcas fora dos círculos. Não dobre nem corte o cartão.',mx+22,oy+4);
+
+  const titleY=84;
+  pdf.setFont('helvetica','bold'); pdf.setFontSize(7.5); pdf.setTextColor(20,20,20);
+  pdf.text('MARQUE A ALTERNATIVA CORRESPONDENTE À SUA RESPOSTA',W/2,titleY,{align:'center'});
+  pdf.setFont('helvetica','normal'); pdf.setFontSize(4.7);
+  pdf.text('Preencha o círculo escolhido de forma completa. Os marcadores pretos dos quatro cantos são utilizados pelo sistema para localizar e corrigir o cartão.',W/2,titleY+5,{align:'center'});
+
+  // Duas colunas, dez questões por coluna. Altura total fixa e segura dentro do A4.
+  const gridY=92, gridH=166, gap=2, colGap=3, colW=(contentW-colGap)/2;
+  const rows=Math.ceil(Math.min(n,20)/2); // para o cartão padrão de 20 questões
+  const qH=(gridH-(rows-1)*gap)/rows;
+  const qFont=5.2, optR=2.6;
+  for(let i=0;i<Math.min(n,20);i++){
+    const col=i<10?0:1, row=i<10?i:i-10;
+    const x=mx+col*(colW+colGap), y=gridY+row*(qH+gap);
+    pdf.setDrawColor(70,70,70); pdf.setLineWidth(0.25); pdf.rect(x,y,colW,qH);
+    pdf.setFont('helvetica','bold'); pdf.setFontSize(qFont); pdf.setTextColor(25,25,25);
+    pdf.text(`QUESTÃO ${String(i+1).padStart(2,'0')}`,x+colW/2,y+5,{align:'center'});
+    const totalW=(ls.length-1)*8;
+    const start=x+colW/2-totalW/2;
+    ls.forEach((lab,j)=>{
+      const cx=start+j*8, cy=y+qH/2+2;
+      pdf.setDrawColor(35,35,35); pdf.setLineWidth(0.35); pdf.circle(cx,cy,optR);
+      pdf.setFont('helvetica','bold'); pdf.setFontSize(5.2); pdf.text(String(lab),cx,cy+1.7,{align:'center'});
     });
-    clone.querySelector('.omr-tl')?.style.setProperty('left','9mm','important');
-    clone.querySelector('.omr-tl')?.style.setProperty('top','8mm','important');
-    clone.querySelector('.omr-tr')?.style.setProperty('right','9mm','important');
-    clone.querySelector('.omr-tr')?.style.setProperty('top','8mm','important');
-    clone.querySelector('.omr-bl')?.style.setProperty('left','9mm','important');
-    clone.querySelector('.omr-bl')?.style.setProperty('bottom','9mm','important');
-    clone.querySelector('.omr-br')?.style.setProperty('right','9mm','important');
-    clone.querySelector('.omr-br')?.style.setProperty('bottom','9mm','important');
-
-  holder.appendChild(clone);
-  document.body.appendChild(holder);
-
-  await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
-
-  try{
-    // 300 DPI: A4 = aproximadamente 2480 x 3508 pixels.
-    // A captura já nasce nessa resolução; não há upscale depois.
-    return await html2canvas(clone,{
-      scale:dpi/96,
-      width:clone.offsetWidth,
-      height:clone.offsetHeight,
-      backgroundColor:'#ffffff',
-      useCORS:true,
-      logging:false,
-      scrollX:0,
-      scrollY:0,
-      windowWidth:Math.ceil(210*96/25.4),
-      windowHeight:Math.ceil(297*96/25.4),
-      imageTimeout:0,
-      removeContainer:true
-    });
-  }finally{
-    holder.remove();
   }
+
+  // Rodapé dentro da área segura.
+  const fy=285;
+  pdf.setDrawColor(170,170,170); pdf.setLineWidth(0.3); pdf.line(mx,fy,W-mx,fy);
+  pdf.setFont('helvetica','bold'); pdf.setFontSize(5.8); pdf.setTextColor(23,63,143);
+  pdf.text('NEW PROF. CORRETOR',W/2-18,292,{align:'right'});
+  pdf.setFont('helvetica','normal'); pdf.setTextColor(80,80,80); pdf.text(` · Cartão-resposta para correção automática por imagem · Código ${codigo}`,W/2-17,292);
 }
 
 async function exportCard(){
-  // O cartão-resposta é gerado exclusivamente em PDF A4 para impressão.
-  const fmt='pdf';
-  renderCard();
-
-  if(fmt==='print'){
-    window.print();
-    return;
-  }
-
   try{
-    if(typeof html2canvas==='undefined'){
-      alert('A exportação ainda está carregando. Aguarde alguns segundos e tente novamente.');
-      return;
-    }
-
-    // 300 DPI = aproximadamente 2480 × 3508 px para A4, em alta resolução.
-    // A proporção e o tamanho físico correspondem à folha A4.
-    const canvas=await cardToCanvas(300);
-    const safe=((document.getElementById('cardTitulo')?.value||'cartao-resposta')
-      .trim().replace(/[^\wÀ-ÿ\-]+/g,'_')).replace(/^_+|_+$/g,'')||'cartao-resposta';
-
-    if(fmt==='png' || fmt==='jpg'){
-      const mime=fmt==='png'?'image/png':'image/jpeg';
-      const ext=fmt==='png'?'png':'jpg';
-      const a=document.createElement('a');
-      a.href=canvas.toDataURL(mime,0.95);
-      a.download=`${safe}-cartao-A4.${ext}`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      return;
-    }
-
     if(!window.jspdf || !window.jspdf.jsPDF){
       alert('A exportação PDF ainda está carregando. Aguarde alguns segundos e tente novamente.');
       return;
     }
 
-    const pdf=new window.jspdf.jsPDF({
-      orientation:'portrait',
-      unit:'mm',
-      format:'a4',
-      compress:true
-    });
-    pdf.addImage(
-      canvas.toDataURL('image/png'),
-      'PNG',0,0,210,297,undefined,'NONE'
-    );
+    const turmaCard=document.getElementById('cardTurma')?.value||'';
+    const mode=document.getElementById('printMode')?.value||'blank';
+    const count=Math.max(1,Math.min(100,+document.getElementById('studentCount')?.value||1));
+    let names=mode==='named'?getStudentNames():Array(count).fill('');
+    if(mode==='named' && names.some((n)=>!n)){
+      const faltam=names.map((n,i)=>n?'':i+1).filter(Boolean);
+      if(!confirm(`Há ${faltam.length} nome(s) em branco. Deseja gerar mesmo assim?`)) return;
+    }
+
+    const pdf=new window.jspdf.jsPDF({orientation:'portrait',unit:'mm',format:'a4',compress:true});
+    for(let i=0;i<count;i++){
+      if(i>0) pdf.addPage('a4','portrait');
+      drawNativeCardPage(pdf,names[i]||'',turmaCard,i,count);
+    }
+
+    const safe=((document.getElementById('cardTitulo')?.value||titulo?.value||'cartao-resposta')
+      .trim().replace(/[^\wÀ-ÿ\-]+/g,'_')).replace(/^_+|_+$/g,'')||'cartao-resposta';
     pdf.save(`${safe}-cartao.pdf`);
   }catch(e){
     console.error(e);
-    alert('Não foi possível gerar o arquivo: '+e.message);
+    alert('Não foi possível gerar o PDF: '+e.message);
   }
 }
 
