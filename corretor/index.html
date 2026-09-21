@@ -21,7 +21,7 @@
 .access-panel h2{margin:0 0 8px;color:#17345d}.access-panel p{color:#52637b;line-height:1.45}
 .access-form{display:grid;gap:11px;margin-top:15px}.access-form label{display:block}
 .access-form input{width:100%;box-sizing:border-box;padding:12px;border:1px solid #cbd5e1;border-radius:9px;margin-top:5px;font-size:16px}
-.access-btn{border:0;border-radius:9px;padding:12px 16px;font-weight:900;color:#fff;cursor:pointer}
+.access-btn{border:0;border-radius:9px;padding:12px 16px;font-weight:900;color:#fff;cursor:pointer}.access-btn:disabled{opacity:.65;cursor:wait}
 .access-green{background:#16a34a}.access-blue{background:#1764e8}.access-red{background:#dc2626}
 .access-msg{display:none;padding:11px;border-radius:9px;margin-top:12px;font-weight:700}
 .access-msg.info{display:block;background:#e8f1ff;color:#174a96}
@@ -182,9 +182,9 @@ flex-wrap:nowrap;
     <div class="access-sub">Corretor Inteligente de Avaliações</div>
 
     <div class="access-tabs">
-      <button class="access-tab system" onclick="accessPanel('system')">🟢 Acesso ao Sistema</button>
-      <button class="access-tab request" onclick="accessPanel('request')">🔵 Solicitar acesso</button>
-      <button class="access-tab admin" onclick="accessPanel('admin')">🔴 Administrador</button>
+      <button type="button" class="access-tab system" onclick="accessPanel('system')">🟢 Acesso ao Sistema</button>
+      <button type="button" class="access-tab request" onclick="accessPanel('request')">🔵 Solicitar acesso</button>
+      <button type="button" class="access-tab admin" onclick="accessPanel('admin')">🔴 Administrador</button>
     </div>
 
     <section id="access-system" class="access-panel active">
@@ -207,7 +207,7 @@ flex-wrap:nowrap;
           <input id="requestName" required autocomplete="name" type="text" placeholder="Nome completo">
         </label>
         <label>E-mail
-          <input id="requestEmail" type="email" required autocomplete="email" type="email" autocomplete="email" placeholder="professor@escola.com">
+          <input id="requestEmail" type="email" required autocomplete="email" placeholder="professor@escola.com">
         </label>
         <label>Escola
           <input id="requestSchool" required autocomplete="organization" type="text" placeholder="Nome da escola">
@@ -1222,11 +1222,38 @@ const ACCESS_API="https://new-prof-corretor-api.parqueclube1bloco2d.workers.dev"
 const ADMIN_URL="https://new-prof-corretor-admin.parqueclube1bloco2d.workers.dev/";
 
 function accessPanel(name){
-  document.querySelectorAll(".access-panel").forEach(p=>p.classList.remove("active"));
-  const el=document.getElementById("access-"+name);
-  if(el)el.classList.add("active");
-  document.getElementById("loginMsg").style.display="none";
-  document.getElementById("requestMsg").style.display="none";
+  const panels={
+    system:document.getElementById("access-system"),
+    request:document.getElementById("access-request"),
+    admin:document.getElementById("access-admin")
+  };
+
+  Object.values(panels).forEach(p=>p&&p.classList.remove("active"));
+
+  if(panels[name]){
+    panels[name].classList.add("active");
+  }
+
+  const loginMsg=document.getElementById("loginMsg");
+  const requestMsg=document.getElementById("requestMsg");
+
+  if(loginMsg)loginMsg.style.display="none";
+  if(requestMsg)requestMsg.style.display="none";
+
+  // Ao entrar na área de acesso, deixa o e-mail pronto para digitação.
+  if(name==="system"){
+    setTimeout(()=>{
+      const el=document.getElementById("loginEmail");
+      if(el)el.focus();
+    },50);
+  }
+
+  if(name==="request"){
+    setTimeout(()=>{
+      const el=document.getElementById("requestName");
+      if(el)el.focus();
+    },50);
+  }
 }
 
 function accessMessage(id,msg,type){
@@ -1329,7 +1356,7 @@ async function requestAccess(){
     // Confirmação diretamente na página.
     accessMessage(
       "requestMsg",
-      "✅ Solicitação enviada com sucesso! Aguarde liberação.",
+      "✅ Solicitação enviada com sucesso! Aguarde Autorização de Acesso.",
       "ok"
     );
 
@@ -1351,33 +1378,78 @@ async function requestAccess(){
 }
 
 async function checkProfessorAccess(){
-  const email=document.getElementById("loginEmail").value.trim().toLowerCase();
-  if(!email){accessMessage("loginMsg","Informe o e-mail.","warn");return;}
+  const emailEl=document.getElementById("loginEmail");
   const btn=document.getElementById("loginBtn");
+  const email=emailEl.value.trim().toLowerCase();
+
+  emailEl.style.borderColor="";
+  emailEl.removeAttribute("aria-invalid");
+
+  if(!email){
+    emailEl.style.borderColor="#dc2626";
+    emailEl.setAttribute("aria-invalid","true");
+    accessMessage("loginMsg","⚠️ Informe o e-mail para acessar o sistema.","bad");
+    emailEl.focus();
+    return;
+  }
+
+  if(!validEmail(email)){
+    emailEl.style.borderColor="#dc2626";
+    emailEl.setAttribute("aria-invalid","true");
+    accessMessage("loginMsg","⚠️ Informe um e-mail válido.","bad");
+    emailEl.focus();
+    return;
+  }
+
   btn.disabled=true;
+  const originalText=btn.textContent;
+  btn.textContent="Verificando...";
+  accessMessage("loginMsg","Verificando seu acesso...","warn");
+
   try{
-    const d=await accessApi("/api/access/status?email="+encodeURIComponent(email));
+    const d=await accessApi(
+      "/api/access/status?email="+encodeURIComponent(email)
+    );
+
     const row=d.request||d;
     const status=String(row.status||d.status||"").toUpperCase();
+
     if(status==="LIBERADO"){
       localStorage.setItem("newProfCorretorAccessEmail",email);
-      document.getElementById("accessGate").style.display="none";
-      document.getElementById("appShell").style.display="block";
-      try{ if(typeof show==="function") show("inicio"); }catch{}
+      accessMessage("loginMsg","✅ Acesso autorizado. Abrindo o sistema...","ok");
+
+      setTimeout(()=>{
+        document.getElementById("accessGate").style.display="none";
+        document.getElementById("appShell").style.display="block";
+        try{
+          if(typeof show==="function")show("inicio");
+        }catch(err){
+          console.error(err);
+        }
+      },250);
+
     }else if(status==="PENDENTE"){
-      accessMessage("loginMsg","Sua solicitação está aguardando aprovação do administrador.","warn");
+      accessMessage("loginMsg","⏳ Sua solicitação está aguardando autorização de acesso.","warn");
     }else if(status==="BLOQUEADO"){
-      accessMessage("loginMsg","Seu acesso está bloqueado. Procure o administrador.","bad");
+      accessMessage("loginMsg","❌ Seu acesso está bloqueado. Procure o administrador.","bad");
     }else if(status==="EXPIRADO"){
-      accessMessage("loginMsg","Seu período de acesso terminou. Solicite uma renovação ao administrador.","warn");
+      accessMessage("loginMsg","⚠️ Seu período de acesso terminou. Solicite uma renovação ao administrador.","warn");
     }else if(status==="RECUSADO"){
-      accessMessage("loginMsg","Sua solicitação de acesso foi recusada.","bad");
+      accessMessage("loginMsg","❌ Sua solicitação de acesso foi recusada.","bad");
     }else{
-      accessMessage("loginMsg","E-mail não encontrado. Use “Solicitar acesso” para cadastrar-se.","warn");
+      accessMessage("loginMsg","⚠️ E-mail não encontrado. Use “Solicitar acesso” para cadastrar-se.","warn");
     }
   }catch(e){
-    accessMessage("loginMsg","Não foi possível verificar o acesso. Tente novamente.","bad");
-  }finally{btn.disabled=false;}
+    console.error("Erro ao verificar acesso:",e);
+    accessMessage(
+      "loginMsg",
+      "❌ Não foi possível verificar o acesso. Tente novamente.",
+      "bad"
+    );
+  }finally{
+    btn.disabled=false;
+    btn.textContent=originalText;
+  }
 }
 
 function openAdmin(){window.location.href=ADMIN_URL;}
