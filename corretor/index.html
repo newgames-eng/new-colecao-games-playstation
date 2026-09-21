@@ -7,6 +7,32 @@
 <script async src="https://docs.opencv.org/4.x/opencv.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+/* ===== CAMADA DE ACESSO ===== */
+#accessGate{position:fixed;inset:0;background:linear-gradient(135deg,#f2f6fc,#eaf1fb);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto}
+.access-box{width:min(560px,100%);background:#fff;border:1px solid #dbe4ef;border-radius:20px;box-shadow:0 12px 40px #17345d22;padding:26px}
+.access-brand{font-size:28px;font-weight:900;color:#173f8f}.access-brand span{color:#1764e8}
+.access-sub{color:#64748b;margin:5px 0 20px}
+.access-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px}
+.access-tab{border:0;border-radius:10px;padding:12px 8px;font-weight:900;color:#fff;cursor:pointer}
+.access-tab.system{background:#16a34a}.access-tab.request{background:#1764e8}.access-tab.admin{background:#dc2626}
+.access-panel{display:none}.access-panel.active{display:block}
+.access-panel h2{margin:0 0 8px;color:#17345d}.access-panel p{color:#52637b;line-height:1.45}
+.access-form{display:grid;gap:11px;margin-top:15px}.access-form label{display:block}
+.access-form input{width:100%;box-sizing:border-box;padding:12px;border:1px solid #cbd5e1;border-radius:9px;margin-top:5px;font-size:16px}
+.access-btn{border:0;border-radius:9px;padding:12px 16px;font-weight:900;color:#fff;cursor:pointer}
+.access-green{background:#16a34a}.access-blue{background:#1764e8}.access-red{background:#dc2626}
+.access-msg{display:none;padding:11px;border-radius:9px;margin-top:12px;font-weight:700}
+.access-msg.info{display:block;background:#e8f1ff;color:#174a96}
+.access-msg.ok{display:block;background:#dcfce7;color:#166534}
+.access-msg.warn{display:block;background:#fff4d6;color:#8a5a00}
+.access-msg.bad{display:block;background:#fee2e2;color:#991b1b}
+.access-loading{opacity:.65;pointer-events:none}
+#appShell{display:none}
+@media(max-width:560px){.access-tabs{grid-template-columns:1fr}.access-box{padding:19px}}
+</style>
+
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f2f5fa;color:#17243a}
 header{background:linear-gradient(135deg,#123b91,#1764e8);color:#fff;padding:22px 18px;position:sticky;top:0;z-index:20;box-shadow:0 3px 12px #0003}
@@ -149,6 +175,59 @@ flex-wrap:nowrap;
 </style>
 </head>
 <body>
+
+<div id="accessGate">
+  <div class="access-box">
+    <div class="access-brand">NEW <span>PROF. CORRETOR</span></div>
+    <div class="access-sub">Corretor Inteligente de Avaliações</div>
+
+    <div class="access-tabs">
+      <button class="access-tab system" onclick="accessPanel('system')">🟢 Acesso ao Sistema</button>
+      <button class="access-tab request" onclick="accessPanel('request')">🔵 Solicitar acesso</button>
+      <button class="access-tab admin" onclick="accessPanel('admin')">🔴 Administrador</button>
+    </div>
+
+    <section id="access-system" class="access-panel active">
+      <h2>🟢 Acesso ao Sistema</h2>
+      <p>Informe o e-mail utilizado na solicitação de acesso.</p>
+      <div class="access-form">
+        <label>E-mail
+          <input id="loginEmail" type="email" autocomplete="email" placeholder="professor@escola.com">
+        </label>
+        <button id="loginBtn" class="access-btn access-green" onclick="checkProfessorAccess()">Entrar</button>
+      </div>
+      <div id="loginMsg" class="access-msg"></div>
+    </section>
+
+    <section id="access-request" class="access-panel">
+      <h2>🔵 Solicitar acesso</h2>
+      <p>Preencha seus dados. A solicitação será enviada para análise do administrador.</p>
+      <div class="access-form">
+        <label>Nome
+          <input id="requestName" type="text" placeholder="Nome completo">
+        </label>
+        <label>E-mail
+          <input id="requestEmail" type="email" autocomplete="email" placeholder="professor@escola.com">
+        </label>
+        <label>Escola
+          <input id="requestSchool" type="text" placeholder="Nome da escola">
+        </label>
+        <button id="requestBtn" class="access-btn access-blue" onclick="requestAccess()">Enviar solicitação</button>
+      </div>
+      <div id="requestMsg" class="access-msg"></div>
+    </section>
+
+    <section id="access-admin" class="access-panel">
+      <h2>🔴 Administrador</h2>
+      <p>A área administrativa utiliza o login protegido pelo Cloudflare Access.</p>
+      <button class="access-btn access-red" onclick="openAdmin()">Acessar Administração</button>
+      <div class="access-msg info">O administrador será direcionado para a área protegida por e-mail e código OTP.</div>
+    </section>
+  </div>
+</div>
+
+<div id="appShell">
+
 <header><div class="brand">NEW <span>PROF. CORRETOR</span></div><div class="sub">Corretor Inteligente de Avaliações — OMR</div>
 <nav><button onclick="show('inicio')">🏠 Início</button><button onclick="show('avaliacao')">📝 Avaliação</button><button onclick="show('corrigir')">📷 Corrigir</button><button onclick="show('cartao')">📄 Cartão</button><button onclick="show('resultados')">📊 Resultados</button><button onclick="show('historico')">📚 Histórico</button></nav></header>
 <main>
@@ -677,7 +756,92 @@ function gerarRelatorioHistoricoPDF(){
   <div class="footer">Relatório gerado pelo NEW PROF. CORRETOR INTELIGENTE DE AVALIAÇÕES · ${esc(agora)}</div>
   <div class="no-print"><button onclick="window.print()">🖨️ Imprimir / Salvar como PDF</button></div>
   <script>setTimeout(()=>window.print(),350)<\/script>
-  </body></html>`);
+  </div>
+
+<script>
+/* ===== ACESSO PÚBLICO — AUTORIZAÇÃO VIA WORKER + D1 ===== */
+const ACCESS_API="https://new-prof-corretor-api.parqueclube1bloco2d.workers.dev";
+const ADMIN_URL="https://new-prof-corretor-admin.parqueclube1bloco2d.workers.dev/";
+
+function accessPanel(name){
+  document.querySelectorAll(".access-panel").forEach(p=>p.classList.remove("active"));
+  const el=document.getElementById("access-"+name);
+  if(el)el.classList.add("active");
+  document.getElementById("loginMsg").style.display="none";
+  document.getElementById("requestMsg").style.display="none";
+}
+
+function accessMessage(id,msg,type){
+  const el=document.getElementById(id);
+  el.textContent=msg;
+  el.className="access-msg "+type;
+}
+
+async function accessApi(path,options={}){
+  const r=await fetch(ACCESS_API+path,{
+    ...options,
+    headers:{"content-type":"application/json",...(options.headers||{})}
+  });
+  const txt=await r.text();
+  let d={}; try{d=txt?JSON.parse(txt):{};}catch{}
+  if(!r.ok || d.ok===false) throw new Error(d.message||d.error||("HTTP "+r.status));
+  return d;
+}
+
+async function requestAccess(){
+  const name=document.getElementById("requestName").value.trim();
+  const email=document.getElementById("requestEmail").value.trim().toLowerCase();
+  const school=document.getElementById("requestSchool").value.trim();
+  if(!name||!email||!school){accessMessage("requestMsg","Preencha nome, e-mail e escola.","warn");return;}
+  const btn=document.getElementById("requestBtn");
+  btn.disabled=true;
+  try{
+    const d=await accessApi("/api/access/request",{method:"POST",body:JSON.stringify({name,email,school})});
+    accessMessage("requestMsg",d.message||"Solicitação enviada. Aguarde a liberação do administrador.","ok");
+  }catch(e){
+    accessMessage("requestMsg",e.message||"Não foi possível enviar a solicitação.","bad");
+  }finally{btn.disabled=false;}
+}
+
+async function checkProfessorAccess(){
+  const email=document.getElementById("loginEmail").value.trim().toLowerCase();
+  if(!email){accessMessage("loginMsg","Informe o e-mail.","warn");return;}
+  const btn=document.getElementById("loginBtn");
+  btn.disabled=true;
+  try{
+    const d=await accessApi("/api/access/status?email="+encodeURIComponent(email));
+    const row=d.request||d;
+    const status=String(row.status||d.status||"").toUpperCase();
+    if(status==="LIBERADO"){
+      localStorage.setItem("newProfCorretorAccessEmail",email);
+      document.getElementById("accessGate").style.display="none";
+      document.getElementById("appShell").style.display="block";
+      try{ if(typeof show==="function") show("inicio"); }catch{}
+    }else if(status==="PENDENTE"){
+      accessMessage("loginMsg","Sua solicitação está aguardando aprovação do administrador.","warn");
+    }else if(status==="BLOQUEADO"){
+      accessMessage("loginMsg","Seu acesso está bloqueado. Procure o administrador.","bad");
+    }else if(status==="EXPIRADO"){
+      accessMessage("loginMsg","Seu período de acesso terminou. Solicite uma renovação ao administrador.","warn");
+    }else if(status==="RECUSADO"){
+      accessMessage("loginMsg","Sua solicitação de acesso foi recusada.","bad");
+    }else{
+      accessMessage("loginMsg","E-mail não encontrado. Use “Solicitar acesso” para cadastrar-se.","warn");
+    }
+  }catch(e){
+    accessMessage("loginMsg","Não foi possível verificar o acesso. Tente novamente.","bad");
+  }finally{btn.disabled=false;}
+}
+
+function openAdmin(){window.location.href=ADMIN_URL;}
+
+(function(){
+  document.getElementById("appShell").style.display="none";
+  document.getElementById("accessGate").style.display="flex";
+})();
+</script>
+
+</body></html>`);
   w.document.close();
 }
 function clearHistory(){
