@@ -344,19 +344,13 @@ Selecione uma alternativa em cada questão. A alternativa selecionada ficará ma
   <div id="studentFields" class="student-list"></div>
   <div id="studentPreviewNote" class="print-preview-note"></div>
 
-  <label style="display:block;max-width:320px;margin-top:12px">
-    Formato de saída
-    <select id="cardFormato">
-      <option value="pdf" selected>PDF</option>
-      <option value="png">Imagem PNG — A4</option>
-      <option value="jpg">Imagem JPG — A4</option>
-      <option value="print">Imprimir diretamente</option>
-    </select>
-  </label>
+  <div class="status info" style="margin-top:12px">
+    📄 <b>Formato de saída:</b> PDF A4 para impressão do cartão-resposta.
+  </div>
   <div class="actions">
     <button class="primary" onclick="renderCard()">🔄 Atualizar cartão</button>
     <button class="secondary" onclick="newCardCode()">🔐 Novo código</button>
-    <button class="primary" onclick="exportCard()">⬇️ Gerar arquivo</button>
+    <button class="primary" onclick="exportCard()">📄 Gerar cartão-resposta em PDF</button>
   </div>
   <div class="status warn">⚠️ Imprima em <b>100%</b>. Não recorte, dobre ou cubra os quatro marcadores pretos dos cantos.</div>
 </div>
@@ -856,7 +850,8 @@ async function cardToCanvas(dpi=150){
 }
 
 async function exportCard(){
-  const fmt=document.getElementById('cardFormato')?.value||'pdf';
+  // O cartão-resposta é gerado exclusivamente em PDF A4 para impressão.
+  const fmt='pdf';
   renderCard();
 
   if(fmt==='print'){
