@@ -38,6 +38,25 @@ iframe{width:100%;height:calc(100vh - 155px);min-height:700px;border:0;border-ra
 .notice{padding:11px;border-radius:10px;background:#e8f1ff;margin-top:10px}
 #loading{display:none;margin-top:10px;padding:10px;border-radius:8px;background:#fff7d6;font-weight:900}
 #errorBox{display:none;margin-top:10px;padding:10px;border-radius:8px;background:#ffdede;color:#991b1b;font-weight:900}
+
+.license-card{margin-top:14px;padding:16px;border:1px solid #cbd5e1;border-radius:14px;background:linear-gradient(135deg,#eff6ff,#ffffff)}
+.license-head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.license-title{font-size:18px;font-weight:900;color:#17345d}.license-count{font-size:24px;font-weight:900;color:#2563eb}
+.license-sub{color:#52637b;margin-top:3px}.license-bar{height:12px;background:#e2e8f0;border-radius:999px;overflow:hidden;margin-top:12px}
+.license-fill{height:100%;width:0;background:#2563eb;border-radius:999px;transition:.25s}
+.license-foot{display:flex;justify-content:space-between;gap:10px;margin-top:7px;font-size:13px;font-weight:800}
+.search-row{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:14px}
+.search-row input{flex:1;min-width:260px;padding:11px 13px;border:1px solid #cbd5e1;border-radius:9px;font-size:14px;color:#17345d}
+.search-row input:focus{outline:3px solid #dbeafe;border-color:#2563eb}
+.result-count{font-weight:900;color:#52637b}
+.details-overlay{display:none;position:fixed;inset:0;background:#17345d66;z-index:1000;align-items:center;justify-content:center;padding:18px}
+.details-modal{background:#fff;border-radius:16px;max-width:620px;width:100%;max-height:90vh;overflow:auto;box-shadow:0 20px 60px #17345d44}
+.details-head{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid #e2e8f0}
+.details-head h3{margin:0;color:#17345d}.details-body{padding:18px}
+.detail-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.detail-item{padding:11px;border:1px solid #e2e8f0;border-radius:10px;background:#f8fafc}.detail-item small{display:block;color:#64748b;font-weight:800;margin-bottom:3px}.detail-item b{color:#17345d;word-break:break-word}
+.activity{margin-top:16px}.activity h3{margin:0 0 8px}.activity-item{padding:9px 0;border-bottom:1px solid #e2e8f0;font-size:13px}
+@media(max-width:650px){.detail-grid{grid-template-columns:1fr}.license-count{font-size:21px}}
+
 @media(max-width:850px){.stats{grid-template-columns:repeat(2,1fr)}iframe{min-height:800px;height:calc(100vh - 180px)}}
 </style>
 </head>
@@ -61,6 +80,22 @@ iframe{width:100%;height:calc(100vh - 155px);min-height:700px;border:0;border-ra
 <button id="btnRefresh" class="btn blue" onclick="load()">↻ Atualizar</button>
 </div>
 <div class="notice">As alterações são gravadas diretamente no D1. O acesso administrativo é protegido por sessão segura.</div>
+
+<div class="license-card">
+  <div class="license-head">
+    <div>
+      <div class="license-title">🆓 Plano gratuito</div>
+      <div class="license-sub">Limite de 50 e-mails de professores cadastrados.</div>
+    </div>
+    <div id="licenseCount" class="license-count">0 / 50</div>
+  </div>
+  <div class="license-bar"><div id="licenseFill" class="license-fill"></div></div>
+  <div class="license-foot">
+    <span id="licenseUsed">0 professores cadastrados</span>
+    <span id="licenseAvailable">50 vagas disponíveis</span>
+  </div>
+</div>
+
 <div id="loading">⏳ Atualizando solicitações...</div>
 <div id="errorBox"></div>
 
@@ -70,6 +105,12 @@ iframe{width:100%;height:calc(100vh - 155px);min-height:700px;border:0;border-ra
 <button class="stat s-b" data-f="BLOQUEADO" onclick="filterRows('BLOQUEADO',this)"><b id="cB">0</b>Bloqueados</button>
 <button class="stat s-e" data-f="EXPIRADO" onclick="filterRows('EXPIRADO',this)"><b id="cE">0</b>Expirados</button>
 <button class="stat s-r" data-f="RECUSADO" onclick="filterRows('RECUSADO',this)"><b id="cR">0</b>Recusados</button>
+</div>
+
+
+<div class="search-row">
+  <input id="searchBox" type="search" placeholder="🔎 Buscar por nome, e-mail ou escola..." autocomplete="off" oninput="setSearch(this.value)">
+  <span id="resultCount" class="result-count">0 registros</span>
 </div>
 
 <div class="filters">
@@ -105,6 +146,8 @@ const CORRETOR_URL = ADMIN_API + "/sistema";
 
 let rows=[];
 let currentFilter="TODOS";
+let currentSearch="";
+const FREE_LIMIT=50;
 
 function normalizeStatus(v){return String(v??"").trim().toUpperCase();}
 function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
@@ -155,6 +198,52 @@ function renderStats(){
   const c={PENDENTE:0,LIBERADO:0,BLOQUEADO:0,EXPIRADO:0,RECUSADO:0};
   rows.forEach(r=>{const s=normalizeStatus(r.status);if(c[s]!==undefined)c[s]++;});
   cP.textContent=c.PENDENTE;cL.textContent=c.LIBERADO;cB.textContent=c.BLOQUEADO;cE.textContent=c.EXPIRADO;cR.textContent=c.RECUSADO;
+  renderLicense();
+}
+
+
+function registeredEmails(){
+  const set=new Set();
+  rows.forEach(r=>{
+    const st=normalizeStatus(r.status);
+    const email=String(r.email||"").trim().toLowerCase();
+    if(email && ["LIBERADO","BLOQUEADO","EXPIRADO"].includes(st)) set.add(email);
+  });
+  return set;
+}
+
+function renderLicense(){
+  const used=registeredEmails().size;
+  const available=Math.max(0,FREE_LIMIT-used);
+  const pct=Math.min(100,(used/FREE_LIMIT)*100);
+  const count=document.getElementById("licenseCount");
+  const usedEl=document.getElementById("licenseUsed");
+  const availEl=document.getElementById("licenseAvailable");
+  const fill=document.getElementById("licenseFill");
+  if(count)count.textContent=used+" / "+FREE_LIMIT;
+  if(usedEl)usedEl.textContent=used+" "+(used===1?"professor cadastrado":"professores cadastrados");
+  if(availEl)availEl.textContent=available+" "+(available===1?"vaga disponível":"vagas disponíveis");
+  if(fill)fill.style.width=pct+"%";
+  if(used>=FREE_LIMIT){
+    if(count)count.style.color="#dc2626";
+    if(fill)fill.style.background="#dc2626";
+  }else if(used>=40){
+    if(count)count.style.color="#b45309";
+    if(fill)fill.style.background="#f59e0b";
+  }else{
+    if(count)count.style.color="#2563eb";
+    if(fill)fill.style.background="#2563eb";
+  }
+}
+
+function setSearch(value){
+  currentSearch=String(value||"").trim().toLowerCase();
+  render();
+}
+
+function matchesSearch(r){
+  if(!currentSearch)return true;
+  return [r.name,r.email,r.school].some(v=>String(v||"").toLowerCase().includes(currentSearch));
 }
 
 function filterRows(f,el){
@@ -172,15 +261,49 @@ function badge(s){const st=normalizeStatus(s);return '<span class="badge '+st.to
 
 function render(){
   const body=document.getElementById("tbody");
-  const list=currentFilter==="TODOS"?rows:rows.filter(r=>normalizeStatus(r.status)===currentFilter);
+  const list=rows.filter(r=>{
+    const statusOk=currentFilter==="TODOS" || normalizeStatus(r.status)===currentFilter;
+    return statusOk && matchesSearch(r);
+  });
+  const resultCount=document.getElementById("resultCount");
+  if(resultCount)resultCount.textContent=list.length+" "+(list.length===1?"registro":"registros");
   body.innerHTML=list.length?list.map(r=>{
     const st=normalizeStatus(r.status);
     let actions="";
+    actions+='<button class="btn gray" onclick="showDetails('+r.id+')">Detalhes</button>';
     if(st==="PENDENTE")actions+='<button class="btn green" onclick="release('+r.id+')">Liberar</button><button class="btn red" onclick="reject('+r.id+')">Recusar</button>';
     if(st==="LIBERADO")actions+='<button class="btn yellow" onclick="renew('+r.id+')">Renovar</button><button class="btn red" onclick="block('+r.id+')">Bloquear</button>';
     if(["BLOQUEADO","EXPIRADO","RECUSADO"].includes(st))actions+='<button class="btn green" onclick="reopen('+r.id+')">Reabrir</button>';
     return '<tr><td><b>'+esc(r.name)+'</b></td><td>'+esc(r.email)+'</td><td>'+esc(r.school)+'</td><td>'+badge(st)+'</td><td>'+fmt(r.start_at)+'<br>até '+fmt(r.expires_at)+'</td><td>'+fmt(r.requested_at)+'</td><td id="actions-'+r.id+'"><div class="actions">'+actions+'</div></td></tr>';
   }).join(""):'<tr><td colspan="7">Nenhum registro nesta categoria.</td></tr>';
+}
+
+
+function showDetails(id){
+  const r=rows.find(x=>String(x.id)===String(id));
+  if(!r)return;
+  const st=normalizeStatus(r.status);
+  const body=document.getElementById("detailsBody");
+  body.innerHTML=`
+    <div class="detail-grid">
+      <div class="detail-item"><small>Professor</small><b>${esc(r.name)||"—"}</b></div>
+      <div class="detail-item"><small>E-mail</small><b>${esc(r.email)||"—"}</b></div>
+      <div class="detail-item"><small>Escola</small><b>${esc(r.school)||"—"}</b></div>
+      <div class="detail-item"><small>Status</small><b>${badge(st)}</b></div>
+      <div class="detail-item"><small>Início do acesso</small><b>${fmt(r.start_at)}</b></div>
+      <div class="detail-item"><small>Acesso até</small><b>${fmt(r.expires_at)}</b></div>
+      <div class="detail-item"><small>Solicitação</small><b>${fmt(r.requested_at)}</b></div>
+      <div class="detail-item"><small>ID do registro</small><b>${esc(r.id)}</b></div>
+    </div>
+    <div class="activity">
+      <h3>ℹ️ Situação</h3>
+      <div class="activity-item">${st==="LIBERADO"?"🟢 Este professor possui acesso ativo.":st==="PENDENTE"?"🟡 Esta solicitação aguarda análise do administrador.":st==="BLOQUEADO"?"🔴 Este acesso está bloqueado.":st==="EXPIRADO"?"⏰ Este acesso expirou.":"⚪ Esta solicitação foi recusada."}</div>
+    </div>`;
+  document.getElementById("detailsOverlay").style.display="flex";
+}
+function closeDetails(event){
+  if(event && event.target!==document.getElementById("detailsOverlay"))return;
+  document.getElementById("detailsOverlay").style.display="none";
 }
 
 function closeDurationPicker(id){
@@ -289,5 +412,16 @@ function logout(){window.location.href=ADMIN_API+"/logout";}
 
 load();
 </script>
+
+<div id="detailsOverlay" class="details-overlay" onclick="closeDetails(event)">
+  <div class="details-modal" onclick="event.stopPropagation()">
+    <div class="details-head">
+      <h3>👨‍🏫 Detalhes do professor</h3>
+      <button class="btn gray" onclick="closeDetails()">✕ Fechar</button>
+    </div>
+    <div id="detailsBody" class="details-body"></div>
+  </div>
+</div>
+
 </body>
 </html>
