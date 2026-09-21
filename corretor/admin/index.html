@@ -325,8 +325,11 @@ async function deleteUser(id){
     "Deseja realmente excluir?"
   );
   if(!ok)return;
+  const password=prompt("CONFIRMAÇÃO DE SEGURANÇA\n\nDigite a senha do administrador para confirmar a exclusão:");
+  if(password===null)return;
+  if(!password){alert("A senha é obrigatória para excluir o cadastro.");return;}
   try{
-    const res=await api("/api/admin/delete",{id:r.id});
+    const res=await api("/api/admin/delete",{id:r.id,password});
     if(!res.ok)throw new Error(res.error||res.message||"Não foi possível excluir o usuário.");
     alert("Usuário excluído com sucesso.");
     await load();
