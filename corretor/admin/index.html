@@ -92,6 +92,9 @@ iframe{width:100%;height:calc(100vh - 155px);min-height:700px;border:0;border-ra
 <h2 style="margin:0">Controle de acesso</h2>
 <button id="btnRefresh" class="btn blue" onclick="load()">↻ Atualizar</button>
 </div>
+<div class="security-note" style="margin:10px 0;padding:10px 12px;border:1px solid #f0c36d;background:#fff8e6;border-radius:9px;color:#6b4b00;font-weight:700;font-size:13px;">
+🔐 <strong>Exclusão em 2 etapas:</strong> primeiro você confirma o usuário que deseja excluir; depois será solicitada a <strong>senha do administrador</strong> para confirmar definitivamente a exclusão.
+</div>
 <div class="notice">As alterações são gravadas diretamente no D1. O acesso administrativo é protegido por sessão segura.</div>
 
 <div class="license-card">
@@ -195,18 +198,34 @@ async function load(){
   const loading=document.getElementById("loading");
   const error=document.getElementById("errorBox");
   const body=document.getElementById("tbody");
-  btn.disabled=true; loading.style.display="block"; error.style.display="none";
-  body.innerHTML='<tr><td colspan="7">⏳ Carregando solicitações...</td></tr>';
+
+  btn.disabled=true;
+  loading.style.display="block";
+  error.style.display="none";
+
+  // IMPORTANTE:
+  // Não apagamos a lista atual enquanto o servidor responde.
+  // Assim, se uma ação retornar erro, os usuários continuam visíveis.
+  if(!rows.length){
+    body.innerHTML='<tr><td colspan="7">⏳ Carregando solicitações...</td></tr>';
+  }
+
   try{
     const d=await api("/api/admin/list");
     rows=Array.isArray(d.requests)?d.requests:[];
-    renderStats(); render();
+
+    renderStats();
+    render();
   }catch(e){
-    body.innerHTML='<tr><td colspan="7">Não foi possível carregar as solicitações.</td></tr>';
-    error.textContent="Erro: "+e.message;
+    // Mantém os dados já exibidos na tela.
+    if(!rows.length){
+      body.innerHTML='<tr><td colspan="7">Não foi possível carregar as solicitações.</td></tr>';
+    }
+    error.textContent="Erro ao atualizar: "+e.message;
     error.style.display="block";
   }finally{
-    btn.disabled=false; loading.style.display="none";
+    btn.disabled=false;
+    loading.style.display="none";
   }
 }
 
