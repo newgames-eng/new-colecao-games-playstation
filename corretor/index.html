@@ -50,7 +50,7 @@ h1,h2,h3{margin-top:0}.grid{display:grid;grid-template-columns:repeat(auto-fit,m
 label{font-weight:700;font-size:14px}input,select{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;margin-top:5px;font-size:16px}
 button{cursor:pointer}.primary{background:#1764e8;color:#fff;border:0;border-radius:9px;padding:12px 17px;font-weight:800}.secondary{background:#e8eef7;color:#17345d;border:0;border-radius:9px;padding:12px 17px;font-weight:800}
 .actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.status{padding:13px;border-radius:11px;margin-top:12px;font-weight:700}.info{background:#e8f1ff;color:#174a96}.ok{background:#dcfce7;color:#166534}.warn{background:#fff4d6;color:#8a5a00}.bad{background:#fee2e2;color:#991b1b}
-.hidden{display:none}.preview{width:100%;max-height:650px;object-fit:contain;border:1px solid #d5dde8;border-radius:11px;margin-top:13px;background:#fafcff}
+.hidden{display:none}.preview{display:block;width:100%;height:auto;max-height:none;object-fit:contain;border:1px solid #d5dde8;border-radius:11px;margin-top:13px;background:#fafcff;box-sizing:border-box}
 table{width:100%;border-collapse:collapse;margin-top:13px;font-size:14px}th,td{border:1px solid #d9e1ea;padding:9px;text-align:center}th{background:#edf3fa}
 .correct{color:#16803d;font-weight:800}.wrong{color:#c62828;font-weight:800}.blank{color:#64748b;font-weight:800}.double{color:#a15c00;font-weight:800}
 .score{font-size:34px;color:#1764e8;font-weight:900}.keyline{font-family:monospace;background:#f1f5f9;padding:12px;border-radius:9px;font-size:18px;letter-spacing:3px;word-break:break-all}
@@ -1108,7 +1108,22 @@ function findMarkers(src){
   return q.every(Boolean)?orderPts(q):null;
 }
 function matPts(p){return cv.matFromArray(4,1,cv.CV_32FC2,p.flatMap(a=>[a.x,a.y]))}
-function warpCard(src,m){let M=cv.getPerspectiveTransform(matPts(m),matPts([{x:45,y:35},{x:1155,y:35},{x:1155,y:1662},{x:45,y:1662}])),d=new cv.Mat();cv.warpPerspective(src,d,M,new cv.Size(1200,1697),cv.INTER_LINEAR,cv.BORDER_CONSTANT,new cv.Scalar(255,255,255,255));M.delete();return d}
+function warpCard(src,m){
+  // Destino corresponde ao A4 nativo usado na impressão:
+  // 1200 x 1697 px ≈ 5.714 px/mm.
+  // Os marcadores ficam exatamente a 8 mm das bordas e têm 7 mm.
+  const sx=1200/210, sy=1697/297;
+  const mx=8*sx, my=8*sy, mr=7*sx;
+  const dest=[
+    {x:mx+mr/2,y:my+mr/2},
+    {x:1200-mx-mr/2,y:my+mr/2},
+    {x:1200-mx-mr/2,y:1697-my-mr/2},
+    {x:mx+mr/2,y:1697-my-mr/2}
+  ];
+  let M=cv.getPerspectiveTransform(matPts(m),matPts(dest)),d=new cv.Mat();
+  cv.warpPerspective(src,d,M,new cv.Size(1200,1697),cv.INTER_LINEAR,cv.BORDER_CONSTANT,new cv.Scalar(255,255,255,255));
+  M.delete();return d;
+}
 
 function findQuestionBoxes(warp){
   // Localiza as molduras das questões no cartão V4.1/V4.
@@ -1152,21 +1167,31 @@ function findQuestionBoxes(warp){
 }
 
 function fallbackQuestionBoxes(count){
-  const cols=Math.ceil(count/10), rows=Math.min(10,count);
-  const left=80, right=1120, top=600, totalH=700, gap=10;
-  const colW=(right-left-(cols-1)*gap)/cols;
-  const rowH=(totalH-(rows-1)*gap)/rows;
+  const S=1200/210; // px por mm no A4 de trabalho
+  const n=Math.min(20,Math.max(1,count));
+  const cols=n>10?2:2;
+  const rows=Math.ceil(n/2);
+
+  const mx=15*S;
+  const contentW=180*S;
+  const colGap=3*S;
+  const colW=((180-3)/2)*S;
+
+  const gridY=92*S;
+  const gridH=166*S;
+  const gap=2*S;
+  const qH=((166-(rows-1)*2)/rows)*S;
+
   const out=[];
-  for(let c=0;c<cols;c++){
-    const inCol=Math.min(10,Math.max(0,count-c*10));
-    for(let r=0;r<inCol;r++){
-      out.push({
-        x:Math.round(left+c*(colW+gap)),
-        y:Math.round(top+r*(rowH+gap)),
-        w:Math.round(colW),
-        h:Math.round(rowH)
-      });
-    }
+  for(let i=0;i<n;i++){
+    const col=i<10?0:1;
+    const row=i<10?i:i-10;
+    out.push({
+      x:Math.round(mx+col*(colW+colGap)),
+      y:Math.round(gridY+row*(qH+gap)),
+      w:Math.round(colW),
+      h:Math.round(qH)
+    });
   }
   return out;
 }
@@ -1255,13 +1280,12 @@ function detectAnswers(warp){
 function detectAnswersLegacy(warp){
  let gray=new cv.Mat();cv.cvtColor(warp,gray,cv.COLOR_RGBA2GRAY);
  const count=gabarito.length, ls=L.slice(0,+na.value||5);
- let boxes=findQuestionBoxes(warp);
+ let boxes=fallbackQuestionBoxes(count);
 
- // O cartão atual tem uma geometria conhecida após a perspectiva.
- // Se a foto não produzir contornos confiáveis, usamos a geometria do próprio cartão.
- if(boxes.length<count) boxes=fallbackQuestionBoxes(count);
-
- // Quando houver exatamente a quantidade esperada, preserva a ordem por coluna.
+ // A geometria abaixo é a mesma usada na geração do PDF A4 nativo:
+ // margem esquerda 15 mm, grade iniciando em 92 mm,
+ // altura da grade 166 mm, duas colunas e até 10 linhas por coluna.
+ // Assim a correção não depende dos contornos encontrados na fotografia.
  boxes=boxes.slice(0,count);
 
  let out=[],raw=[];
@@ -1278,7 +1302,7 @@ function detectAnswersLegacy(warp){
 
    // A caixa usa flex-column + justify-content:center.
    // O centro da fileira de bolhas fica aproximadamente em 60% da altura.
-   const y=b.y+b.h*0.60;
+   const y=b.y+b.h/2+2*(1200/210);
 
    for(let j=0;j<ls.length;j++){
      const x=start+j*(bubbleW+gap);
