@@ -669,7 +669,7 @@ function getStudentNames(){
 }
 function cardMarkup(alunoCard, turmaCard, pageClass=''){
  const n=Math.min(50,Math.max(1,+nq.value||10));
- const ls=L.slice(0,+na.value||5);
+ const ls=L.slice(0,+na.value||5).split('');
  const tituloCard=(titulo?.value||'AVALIAÇÃO').toUpperCase();
  const dataCard=getCardData();
  const codigo=getAssessmentCode();
