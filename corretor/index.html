@@ -58,8 +58,8 @@ table{width:100%;border-collapse:collapse;margin-top:13px;font-size:14px}th,td{b
 .card-config input,.card-config select{width:100%;margin-top:5px;padding:10px;border:1px solid #cbd5e1;border-radius:8px}
 .a4-wrap{width:210mm;margin:18px auto;overflow:visible}
 .a4-sheet{width:210mm;height:297mm;min-width:210mm;min-height:297mm;max-height:297mm;background:#fff!important;background-color:#fff!important;color:#111;position:relative;padding:13mm 12mm 12mm;border:0;box-shadow:none!important;font-family:Arial,Helvetica,sans-serif;color-scheme:light}
-.omr-marker{position:absolute;width:8mm;height:8mm;background:#000}
-.omr-tl{left:7mm;top:7mm}.omr-tr{right:7mm;top:7mm}.omr-bl{left:7mm;bottom:7mm}.omr-br{right:7mm;bottom:7mm}
+.omr-marker{display:block;position:absolute;width:10mm;height:10mm;background:#000!important;box-sizing:border-box;z-index:100;opacity:1!important;filter:none!important;border:0!important}
+.omr-tl{left:5mm;top:5mm}.omr-tr{right:5mm;top:5mm}.omr-bl{left:5mm;bottom:5mm}.omr-br{right:5mm;bottom:5mm}
 .card-head{border-bottom:2px solid #173f8f;padding:0 2mm 3mm;margin:0 2mm 3.5mm;display:flex;align-items:end;justify-content:space-between;gap:8mm}
 .card-head .main-title{font-size:21pt;font-weight:900;letter-spacing:.5px;color:#102a56}
 .card-head .brand{font-size:10pt;font-weight:800;color:#173f8f;text-align:right}
@@ -122,7 +122,7 @@ flex-wrap:nowrap;
   #cartao{display:block!important}
   #cartao>.card{border:0!important;box-shadow:none!important;padding:0!important;margin:0!important;background:#fff!important}
   .a4-wrap{margin:0!important;width:210mm!important;overflow:visible!important}
-  .a4-sheet{box-shadow:none!important;border:0!important;margin:0!important}
+  .a4-sheet{box-shadow:none!important;border:0!important;margin:0!important;overflow:visible!important}
   @page{size:A4 portrait;margin:0}
 }
 @media(max-width:700px){
@@ -352,6 +352,7 @@ Selecione uma alternativa em cada questão. A alternativa selecionada ficará ma
     <button class="secondary" onclick="newCardCode()">🔐 Novo código</button>
     <button class="primary" onclick="exportCard()">📄 Gerar cartão-resposta em PDF</button>
   </div>
+  <div class="status info" style="margin-bottom:8px">🎯 <b>Importante:</b> os quatro quadrados pretos nos cantos são marcadores OMR obrigatórios para o sistema localizar e corrigir o cartão.</div>
   <div class="status warn">⚠️ Imprima em <b>100%</b>. Não recorte, dobre ou cubra os quatro marcadores pretos dos cantos.</div>
 </div>
 
@@ -786,7 +787,7 @@ async function cardToCanvas(dpi=300){
   holder.style.top='0';
   holder.style.width='210mm';
   holder.style.height='297mm';
-  holder.style.overflow='hidden';
+  holder.style.overflow='visible';
   holder.style.background='#fff';
   holder.style.zIndex='-1';
 
@@ -801,7 +802,7 @@ async function cardToCanvas(dpi=300){
   clone.style.margin='0';
   clone.style.padding='13mm 12mm 12mm';
   clone.style.boxSizing='border-box';
-  clone.style.overflow='hidden';
+  clone.style.overflow='visible';
   clone.style.background='#fff';
   clone.style.backgroundColor='#fff';
   clone.style.boxShadow='none';
@@ -855,7 +856,7 @@ async function exportCard(){
 
     // 300 DPI = aproximadamente 2480 × 3508 px para A4, em alta resolução.
     // A proporção e o tamanho físico correspondem à folha A4.
-    const canvas=await cardToCanvas(150);
+    const canvas=await cardToCanvas(300);
     const safe=((document.getElementById('cardTitulo')?.value||'cartao-resposta')
       .trim().replace(/[^\wÀ-ÿ\-]+/g,'_')).replace(/^_+|_+$/g,'')||'cartao-resposta';
 
@@ -884,7 +885,7 @@ async function exportCard(){
     });
     pdf.addImage(
       canvas.toDataURL('image/png'),
-      'PNG',0,0,210,297,undefined,'FAST'
+      'PNG',0,0,210,297,undefined,'NONE'
     );
     pdf.save(`${safe}-cartao.pdf`);
   }catch(e){
