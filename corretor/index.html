@@ -219,9 +219,17 @@ flex-wrap:nowrap;
 
     <section id="access-admin" class="access-panel">
       <h2>🔴 Administrador</h2>
-      <p>A área administrativa utiliza o login protegido pelo Cloudflare Access.</p>
-      <button class="access-btn access-red" onclick="openAdmin()">Acessar Administração</button>
-      <div class="access-msg info">O administrador será direcionado para a área protegida por e-mail e código OTP.</div>
+      <p>Entre com o e-mail e a senha do administrador.</p>
+      <form class="access-form" method="POST" action="https://new-prof-corretor-admin.parqueclube1bloco2d.workers.dev/login" target="_self">
+        <label>E-mail
+          <input id="adminEmail" name="email" type="email" required autocomplete="username" placeholder="administrador@exemplo.com">
+        </label>
+        <label>Senha
+          <input id="adminPassword" name="password" type="password" required autocomplete="current-password" placeholder="Digite sua senha">
+        </label>
+        <button type="submit" class="access-btn access-red">Entrar na Administração</button>
+      </form>
+      <div class="access-msg info">A administração utiliza login e senha próprios. O acesso é separado do sistema dos professores.</div>
     </section>
   </div>
 </div>
@@ -1327,12 +1335,6 @@ async function checkProfessorAccess(){
   }catch(e){
     accessMessage("loginMsg","Não foi possível verificar o acesso. Tente novamente.","bad");
   }finally{btn.disabled=false;}
-}
-
-function openAdmin(){
-  // A área administrativa é independente do sistema do professor.
-  // Abre o Worker protegido pelo Cloudflare Access em uma nova aba.
-  window.open(ADMIN_URL, "_blank", "noopener,noreferrer");
 }
 
 (function(){
