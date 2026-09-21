@@ -125,6 +125,9 @@ iframe{width:100%;height:calc(100vh - 155px);min-height:700px;border:0;border-ra
 </div>
 
 <div class="panel table-wrap">
+<div class="delete-security-note" style="margin-top:10px;padding:10px 12px;background:#fff7ed;border:1px solid #fed7aa;border-radius:9px;color:#7c2d12;font-size:13px;">
+<b>🔐 Segurança na exclusão:</b> a exclusão de um usuário possui duas etapas: primeiro a confirmação da exclusão e depois a confirmação com a senha do administrador no campo de senha.
+</div>
 <table>
 <thead><tr><th>Professor</th><th>E-mail</th><th>Escola</th><th>Status</th><th>Período</th><th>Solicitação</th><th>Ações</th></tr></thead>
 <tbody id="tbody"><tr><td colspan="7">Carregando...</td></tr></tbody>
@@ -314,25 +317,122 @@ function closeDetails(event){
 
 async function deleteUser(id){
   const r=rows.find(x=>String(x.id)===String(id));
-  if(!r)return;
-  const name=String(r.name||"este professor");
-  const email=String(r.email||"");
-  const ok=confirm(
-    "EXCLUIR USUÁRIO\n\n"+
-    "Professor: "+name+"\n"+
-    "E-mail: "+email+"\n\n"+
-    "Esta ação excluirá o cadastro do banco de dados e não poderá ser desfeita.\n\n"+
-    "Deseja realmente excluir?"
-  );
-  if(!ok)return;
-  try{
-    const res=await api("/api/admin/delete",{id:r.id});
-    if(!res.ok)throw new Error(res.error||res.message||"Não foi possível excluir o usuário.");
-    alert("Usuário excluído com sucesso.");
-    await load();
-  }catch(e){
-    alert(e.message||"Erro ao excluir usuário.");
+  if(!r){
+    alert("Usuário não encontrado na lista.");
+    return;
   }
+
+  // ETAPA 1 — confirmação da exclusão.
+  const confirmDelete=confirm(
+    "EXCLUSÃO DE USUÁRIO\n\n"+
+    "Professor: "+(r.name||"")+"\n"+
+    "E-mail: "+(r.email||"")+"\n\n"+
+    "A exclusão possui DUAS ETAPAS:\n"+
+    "1. Confirmar a exclusão do cadastro;\n"+
+    "2. Confirmar com a senha do administrador.\n\n"+
+    "Deseja continuar?"
+  );
+  if(!confirmDelete)return;
+
+  // ETAPA 2 — modal real com campo de senha.
+  const overlay=document.createElement("div");
+  overlay.id="delete-password-overlay";
+  overlay.style.cssText=
+    "position:fixed;inset:0;background:rgba(0,0,0,.58);"+
+    "display:flex;align-items:center;justify-content:center;"+
+    "padding:20px;z-index:99999;";
+
+  overlay.innerHTML=`
+    <div style="width:min(440px,100%);background:#fff;border-radius:16px;
+      box-shadow:0 25px 80px rgba(0,0,0,.35);padding:24px;
+      border:1px solid #dbe3ef;">
+      <div style="font-size:20px;font-weight:900;color:#17345d;margin-bottom:8px">
+        🔐 Confirmar exclusão
+      </div>
+      <div style="font-size:14px;color:#475569;line-height:1.5;margin-bottom:16px">
+        Você está excluindo o cadastro de
+        <b>${String(r.name||"").replace(/</g,"&lt;")}</b>.<br>
+        Esta é a <b>segunda etapa</b> da exclusão.
+      </div>
+
+      <label for="deletePassword" style="display:block;font-weight:800;
+        font-size:13px;color:#17345d;margin-bottom:6px">
+        Senha do administrador
+      </label>
+
+      <input id="deletePassword" type="password" autocomplete="current-password"
+        placeholder="Digite a senha do administrador"
+        style="width:100%;box-sizing:border-box;padding:12px;border:1px solid #b8c5d6;
+        border-radius:9px;font-size:16px;outline:none;">
+
+      <div id="deletePasswordMsg" style="display:none;margin-top:10px;
+        padding:9px 11px;border-radius:8px;background:#fee2e2;color:#991b1b;
+        font-size:13px;font-weight:700"></div>
+
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:18px">
+        <button type="button" id="deleteCancelBtn" class="btn gray">Cancelar</button>
+        <button type="button" id="deleteConfirmBtn" class="btn red">
+          🗑️ Confirmar exclusão
+        </button>
+      </div>
+    </div>`;
+
+  document.body.appendChild(overlay);
+
+  const passwordEl=overlay.querySelector("#deletePassword");
+  const msgEl=overlay.querySelector("#deletePasswordMsg");
+  const confirmBtn=overlay.querySelector("#deleteConfirmBtn");
+  const cancelBtn=overlay.querySelector("#deleteCancelBtn");
+
+  const close=()=>{
+    if(overlay.parentNode)overlay.remove();
+  };
+
+  cancelBtn.onclick=close;
+  overlay.onclick=e=>{if(e.target===overlay)close();};
+
+  setTimeout(()=>passwordEl.focus(),50);
+
+  const submit=async()=>{
+    const password=passwordEl.value;
+    msgEl.style.display="none";
+
+    if(!password.trim()){
+      msgEl.textContent="Senha do administrador obrigatória.";
+      msgEl.style.display="block";
+      passwordEl.focus();
+      return;
+    }
+
+    confirmBtn.disabled=true;
+    cancelBtn.disabled=true;
+    confirmBtn.textContent="Excluindo...";
+
+    try{
+      const res=await api("/api/admin/delete",{
+        id:r.id,
+        password:password
+      });
+
+      close();
+      alert(res.message||"Usuário excluído com sucesso.");
+      await load();
+    }catch(e){
+      confirmBtn.disabled=false;
+      cancelBtn.disabled=false;
+      confirmBtn.textContent="🗑️ Confirmar exclusão";
+      msgEl.textContent=e.message||"Não foi possível excluir o usuário.";
+      msgEl.style.display="block";
+      passwordEl.focus();
+      passwordEl.select();
+    }
+  };
+
+  confirmBtn.onclick=submit;
+  passwordEl.addEventListener("keydown",e=>{
+    if(e.key==="Enter")submit();
+    if(e.key==="Escape")close();
+  });
 }
 
 function closeDurationPicker(id){
