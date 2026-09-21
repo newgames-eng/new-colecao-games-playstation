@@ -1012,34 +1012,175 @@ function drawNativeCardPage(pdf, alunoCard, turmaCard, pageIndex, totalPages){
   pdf.setFont('helvetica','normal'); pdf.setTextColor(80,80,80); pdf.text(` · Cartão-resposta para correção automática por imagem · Código ${codigo}`,W/2-17,292);
 }
 
-async function exportCard(){
+async function exportCardNative(){
   try{
-    if(!window.jspdf || !window.jspdf.jsPDF){
-      alert('A exportação PDF ainda está carregando. Aguarde alguns segundos e tente novamente.');
+    // jsPDF 2.5.x via UMD expõe a classe em window.jspdf.jsPDF.
+    const JsPDF =
+      (window.jspdf && window.jspdf.jsPDF) ||
+      window.jsPDF;
+
+    if(typeof JsPDF !== "function"){
+      alert("O gerador de PDF ainda está carregando. Aguarde alguns segundos e tente novamente.");
       return;
     }
 
-    const turmaCard=document.getElementById('cardTurma')?.value||'';
-    const mode=document.getElementById('printMode')?.value||'blank';
-    const count=Math.max(1,Math.min(100,+document.getElementById('studentCount')?.value||1));
-    let names=mode==='named'?getStudentNames():Array(count).fill('');
-    if(mode==='named' && names.some((n)=>!n)){
-      const faltam=names.map((n,i)=>n?'':i+1).filter(Boolean);
-      if(!confirm(`Há ${faltam.length} nome(s) em branco. Deseja gerar mesmo assim?`)) return;
+    renderCard();
+
+    const pdf = new JsPDF({
+      orientation:"portrait",
+      unit:"mm",
+      format:"a4",
+      compress:true
+    });
+
+    // A4 físico: 210 × 297 mm.
+    // O cartão é desenhado diretamente no PDF, sem html2canvas.
+    const W=210, H=297;
+    const M=12;
+
+    // Marcadores OMR — sempre dentro da folha.
+    const marker=7;
+    const mx=6;
+    const my=6;
+    pdf.setFillColor(0,0,0);
+    pdf.rect(mx,my,marker,marker,"F");
+    pdf.rect(W-mx-marker,my,marker,marker,"F");
+    pdf.rect(mx,H-my-marker,marker,marker,"F");
+    pdf.rect(W-mx-marker,H-my-marker,marker,marker,"F");
+
+    // Cabeçalho compacto.
+    pdf.setTextColor(23,63,143);
+    pdf.setFont("helvetica","bold");
+    pdf.setFontSize(18);
+    pdf.text("CARTÃO-RESPOSTA",M+5,22);
+
+    pdf.setFontSize(9);
+    pdf.text("NEW PROF. CORRETOR",W-M-5,20,{align:"right"});
+    pdf.setFontSize(7);
+    pdf.text("LEITOR OMR",W-M-5,24,{align:"right"});
+
+    pdf.setDrawColor(23,63,143);
+    pdf.setLineWidth(.5);
+    pdf.line(M,28,W-M,28);
+
+    const titulo = document.getElementById("cardTitulo")?.value || "AVALIAÇÃO";
+    pdf.setFontSize(9);
+    pdf.text(String(titulo).toUpperCase(),W/2,35,{align:"center"});
+
+    // Identificação.
+    let y=42;
+    const boxW=W-2*M;
+    pdf.setDrawColor(30,30,30);
+    pdf.setLineWidth(.35);
+    pdf.setFillColor(23,63,143);
+    pdf.rect(M,y,boxW,8,"F");
+    pdf.setTextColor(255,255,255);
+    pdf.setFontSize(8);
+    pdf.text("IDENTIFICAÇÃO",M+3,y+5.3);
+
+    y+=8;
+    pdf.setTextColor(20,20,20);
+    pdf.setFontSize(6.5);
+    pdf.setFont("helvetica","bold");
+
+    pdf.rect(M,y,boxW,14);
+    pdf.line(M+145,y,M+145,y+14);
+    pdf.text("AVALIAÇÃO",M+2,y+4);
+    pdf.text(String(titulo).toUpperCase(),M+2,y+9);
+
+    pdf.text("CÓDIGO DA AVALIAÇÃO",M+148,y+4);
+    pdf.setFont("helvetica","normal");
+    pdf.text(document.getElementById("cardCodigo")?.value || "AV-001",M+148,y+9);
+
+    y+=14;
+    pdf.rect(M,y,boxW,14);
+    pdf.line(M+100,y,M+100,y+14);
+    pdf.line(M+155,y,M+155,y+14);
+    pdf.setFont("helvetica","bold");
+    pdf.text("ESTUDANTE",M+2,y+4);
+    pdf.text("ANO / TURMA",M+102,y+4);
+    pdf.text("DATA",M+157,y+4);
+    pdf.line(M+2,y+11,M+95,y+11);
+    pdf.line(M+102,y+11,M+150,y+11);
+    pdf.line(M+157,y+11,W-M-2,y+11);
+
+    y+=19;
+
+    // Orientações.
+    pdf.setDrawColor(170,170,170);
+    pdf.rect(M,y,boxW,7);
+    pdf.setTextColor(23,63,143);
+    pdf.setFontSize(5.5);
+    pdf.setFont("helvetica","bold");
+    pdf.text("ORIENTAÇÕES:",M+2,y+4.4);
+    pdf.setTextColor(50,50,50);
+    pdf.setFont("helvetica","normal");
+    pdf.text("Preencha completamente apenas uma alternativa por questão. Use lápis ou caneta preta/azul. Não faça marcas fora dos círculos.",M+22,y+4.4);
+
+    y+=12;
+    pdf.setTextColor(20,20,20);
+    pdf.setFont("helvetica","bold");
+    pdf.setFontSize(8);
+    pdf.text("MARQUE A ALTERNATIVA CORRESPONDENTE À SUA RESPOSTA",W/2,y,{align:"center"});
+    y+=4;
+    pdf.setFont("helvetica","normal");
+    pdf.setFontSize(5);
+    pdf.text("Os marcadores pretos dos quatro cantos são utilizados pelo sistema para localizar e corrigir o cartão.",W/2,y,{align:"center"});
+
+    // Questões: 10 por coluna, compactas e dentro do A4.
+    y+=6;
+    const cols=[M,M+98];
+    const qW=92;
+    const qH=10.5;
+    const gap=1.4;
+    const opts=["A","B","C","D","E"];
+
+    pdf.setTextColor(15,15,15);
+    for(let i=0;i<20;i++){
+      const col=i<10?0:1;
+      const row=i%10;
+      const x=cols[col];
+      const yy=y+row*(qH+gap);
+
+      pdf.setDrawColor(30,30,30);
+      pdf.setLineWidth(.3);
+      pdf.rect(x,yy,qW,qH);
+
+      pdf.setFont("helvetica","bold");
+      pdf.setFontSize(5.2);
+      pdf.text(`QUESTÃO ${String(i+1).padStart(2,"0")}`,x+qW/2,yy+3.2,{align:"center"});
+
+      const startX=x+qW/2-14;
+      opts.forEach((op,j)=>{
+        const cx=startX+j*7;
+        const cy=yy+7;
+        pdf.setDrawColor(20,20,20);
+        pdf.circle(cx,cy,2.15,"S");
+        pdf.setFont("helvetica","normal");
+        pdf.setFontSize(5.2);
+        pdf.text(op,cx,cy+1.6,{align:"center"});
+      });
     }
 
-    const pdf=new window.jspdf.jsPDF({orientation:'portrait',unit:'mm',format:'a4',compress:true});
-    for(let i=0;i<count;i++){
-      if(i>0) pdf.addPage('a4','portrait');
-      drawNativeCardPage(pdf,names[i]||'',turmaCard,i,count);
-    }
+    // Rodapé.
+    const fy=H-12;
+    pdf.setDrawColor(160,160,160);
+    pdf.line(M,fy-3,W-M,fy-3);
+    pdf.setTextColor(23,63,143);
+    pdf.setFont("helvetica","bold");
+    pdf.setFontSize(6);
+    pdf.text("NEW PROF. CORRETOR",W/2-30,fy+2);
+    pdf.setTextColor(80,80,80);
+    pdf.setFont("helvetica","normal");
+    pdf.text(" - Cartão-resposta para correção automática por imagem - Código AV-001",W/2-5,fy+2);
 
-    const safe=((document.getElementById('cardTitulo')?.value||titulo?.value||'cartao-resposta')
-      .trim().replace(/[^\wÀ-ÿ\-]+/g,'_')).replace(/^_+|_+$/g,'')||'cartao-resposta';
+    const safe=((titulo||"cartao-resposta").trim()
+      .replace(/[^\wÀ-ÿ-]+/g,"_").replace(/^_+|_+$/g,""))||"cartao-resposta";
+
     pdf.save(`${safe}-cartao.pdf`);
   }catch(e){
-    console.error(e);
-    alert('Não foi possível gerar o PDF: '+e.message);
+    console.error("Erro ao gerar PDF:",e);
+    alert("Não foi possível gerar o PDF: "+(e?.message||e));
   }
 }
 
@@ -1471,3 +1612,4 @@ function openAdmin(){window.location.href=ADMIN_URL;}
 </script>
 
 </body></html>
+<script>window.exportCard = window.exportCardNative;</script>
