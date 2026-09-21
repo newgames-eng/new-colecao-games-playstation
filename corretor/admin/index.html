@@ -270,10 +270,11 @@ function render(){
   body.innerHTML=list.length?list.map(r=>{
     const st=normalizeStatus(r.status);
     let actions="";
-    actions+='<button class="btn gray" onclick="showDetails('+r.id+')">Detalhes</button><button class="btn red" onclick="deleteUser('+r.id+')">Excluir</button>';
+    actions+='<button class="btn gray" onclick="showDetails('+r.id+')">Detalhes</button>';
     if(st==="PENDENTE")actions+='<button class="btn green" onclick="release('+r.id+')">Liberar</button><button class="btn red" onclick="reject('+r.id+')">Recusar</button>';
     if(st==="LIBERADO")actions+='<button class="btn yellow" onclick="renew('+r.id+')">Renovar</button><button class="btn red" onclick="block('+r.id+')">Bloquear</button>';
     if(["BLOQUEADO","EXPIRADO","RECUSADO"].includes(st))actions+='<button class="btn green" onclick="reopen('+r.id+')">Reabrir</button>';
+    actions+='<button class="btn red" onclick="deleteUser('+r.id+')">Excluir</button>';
     return '<tr><td><b>'+esc(r.name)+'</b></td><td>'+esc(r.email)+'</td><td>'+esc(r.school)+'</td><td>'+badge(st)+'</td><td>'+fmt(r.start_at)+'<br>até '+fmt(r.expires_at)+'</td><td>'+fmt(r.requested_at)+'</td><td id="actions-'+r.id+'"><div class="actions">'+actions+'</div></td></tr>';
   }).join(""):'<tr><td colspan="7">Nenhum registro nesta categoria.</td></tr>';
 }
