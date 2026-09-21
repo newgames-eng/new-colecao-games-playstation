@@ -758,88 +758,6 @@ function gerarRelatorioHistoricoPDF(){
   <script>setTimeout(()=>window.print(),350)<\/script>
   </div>
 
-<script>
-/* ===== ACESSO PÚBLICO — AUTORIZAÇÃO VIA WORKER + D1 ===== */
-const ACCESS_API="https://new-prof-corretor-api.parqueclube1bloco2d.workers.dev";
-const ADMIN_URL="https://new-prof-corretor-admin.parqueclube1bloco2d.workers.dev/";
-
-function accessPanel(name){
-  document.querySelectorAll(".access-panel").forEach(p=>p.classList.remove("active"));
-  const el=document.getElementById("access-"+name);
-  if(el)el.classList.add("active");
-  document.getElementById("loginMsg").style.display="none";
-  document.getElementById("requestMsg").style.display="none";
-}
-
-function accessMessage(id,msg,type){
-  const el=document.getElementById(id);
-  el.textContent=msg;
-  el.className="access-msg "+type;
-}
-
-async function accessApi(path,options={}){
-  const r=await fetch(ACCESS_API+path,{
-    ...options,
-    headers:{"content-type":"application/json",...(options.headers||{})}
-  });
-  const txt=await r.text();
-  let d={}; try{d=txt?JSON.parse(txt):{};}catch{}
-  if(!r.ok || d.ok===false) throw new Error(d.message||d.error||("HTTP "+r.status));
-  return d;
-}
-
-async function requestAccess(){
-  const name=document.getElementById("requestName").value.trim();
-  const email=document.getElementById("requestEmail").value.trim().toLowerCase();
-  const school=document.getElementById("requestSchool").value.trim();
-  if(!name||!email||!school){accessMessage("requestMsg","Preencha nome, e-mail e escola.","warn");return;}
-  const btn=document.getElementById("requestBtn");
-  btn.disabled=true;
-  try{
-    const d=await accessApi("/api/access/request",{method:"POST",body:JSON.stringify({name,email,school})});
-    accessMessage("requestMsg",d.message||"Solicitação enviada. Aguarde a liberação do administrador.","ok");
-  }catch(e){
-    accessMessage("requestMsg",e.message||"Não foi possível enviar a solicitação.","bad");
-  }finally{btn.disabled=false;}
-}
-
-async function checkProfessorAccess(){
-  const email=document.getElementById("loginEmail").value.trim().toLowerCase();
-  if(!email){accessMessage("loginMsg","Informe o e-mail.","warn");return;}
-  const btn=document.getElementById("loginBtn");
-  btn.disabled=true;
-  try{
-    const d=await accessApi("/api/access/status?email="+encodeURIComponent(email));
-    const row=d.request||d;
-    const status=String(row.status||d.status||"").toUpperCase();
-    if(status==="LIBERADO"){
-      localStorage.setItem("newProfCorretorAccessEmail",email);
-      document.getElementById("accessGate").style.display="none";
-      document.getElementById("appShell").style.display="block";
-      try{ if(typeof show==="function") show("inicio"); }catch{}
-    }else if(status==="PENDENTE"){
-      accessMessage("loginMsg","Sua solicitação está aguardando aprovação do administrador.","warn");
-    }else if(status==="BLOQUEADO"){
-      accessMessage("loginMsg","Seu acesso está bloqueado. Procure o administrador.","bad");
-    }else if(status==="EXPIRADO"){
-      accessMessage("loginMsg","Seu período de acesso terminou. Solicite uma renovação ao administrador.","warn");
-    }else if(status==="RECUSADO"){
-      accessMessage("loginMsg","Sua solicitação de acesso foi recusada.","bad");
-    }else{
-      accessMessage("loginMsg","E-mail não encontrado. Use “Solicitar acesso” para cadastrar-se.","warn");
-    }
-  }catch(e){
-    accessMessage("loginMsg","Não foi possível verificar o acesso. Tente novamente.","bad");
-  }finally{btn.disabled=false;}
-}
-
-function openAdmin(){window.location.href=ADMIN_URL;}
-
-(function(){
-  document.getElementById("appShell").style.display="none";
-  document.getElementById("accessGate").style.display="flex";
-})();
-</script>
 
 </body></html>`);
   w.document.close();
@@ -1297,5 +1215,88 @@ buildKey();
 show('inicio');
 </script>
 
+
+<script>
+/* ===== ACESSO PÚBLICO — AUTORIZAÇÃO VIA WORKER + D1 ===== */
+const ACCESS_API="https://new-prof-corretor-api.parqueclube1bloco2d.workers.dev";
+const ADMIN_URL="https://new-prof-corretor-admin.parqueclube1bloco2d.workers.dev/";
+
+function accessPanel(name){
+  document.querySelectorAll(".access-panel").forEach(p=>p.classList.remove("active"));
+  const el=document.getElementById("access-"+name);
+  if(el)el.classList.add("active");
+  document.getElementById("loginMsg").style.display="none";
+  document.getElementById("requestMsg").style.display="none";
+}
+
+function accessMessage(id,msg,type){
+  const el=document.getElementById(id);
+  el.textContent=msg;
+  el.className="access-msg "+type;
+}
+
+async function accessApi(path,options={}){
+  const r=await fetch(ACCESS_API+path,{
+    ...options,
+    headers:{"content-type":"application/json",...(options.headers||{})}
+  });
+  const txt=await r.text();
+  let d={}; try{d=txt?JSON.parse(txt):{};}catch{}
+  if(!r.ok || d.ok===false) throw new Error(d.message||d.error||("HTTP "+r.status));
+  return d;
+}
+
+async function requestAccess(){
+  const name=document.getElementById("requestName").value.trim();
+  const email=document.getElementById("requestEmail").value.trim().toLowerCase();
+  const school=document.getElementById("requestSchool").value.trim();
+  if(!name||!email||!school){accessMessage("requestMsg","Preencha nome, e-mail e escola.","warn");return;}
+  const btn=document.getElementById("requestBtn");
+  btn.disabled=true;
+  try{
+    const d=await accessApi("/api/access/request",{method:"POST",body:JSON.stringify({name,email,school})});
+    accessMessage("requestMsg",d.message||"Solicitação enviada. Aguarde a liberação do administrador.","ok");
+  }catch(e){
+    accessMessage("requestMsg",e.message||"Não foi possível enviar a solicitação.","bad");
+  }finally{btn.disabled=false;}
+}
+
+async function checkProfessorAccess(){
+  const email=document.getElementById("loginEmail").value.trim().toLowerCase();
+  if(!email){accessMessage("loginMsg","Informe o e-mail.","warn");return;}
+  const btn=document.getElementById("loginBtn");
+  btn.disabled=true;
+  try{
+    const d=await accessApi("/api/access/status?email="+encodeURIComponent(email));
+    const row=d.request||d;
+    const status=String(row.status||d.status||"").toUpperCase();
+    if(status==="LIBERADO"){
+      localStorage.setItem("newProfCorretorAccessEmail",email);
+      document.getElementById("accessGate").style.display="none";
+      document.getElementById("appShell").style.display="block";
+      try{ if(typeof show==="function") show("inicio"); }catch{}
+    }else if(status==="PENDENTE"){
+      accessMessage("loginMsg","Sua solicitação está aguardando aprovação do administrador.","warn");
+    }else if(status==="BLOQUEADO"){
+      accessMessage("loginMsg","Seu acesso está bloqueado. Procure o administrador.","bad");
+    }else if(status==="EXPIRADO"){
+      accessMessage("loginMsg","Seu período de acesso terminou. Solicite uma renovação ao administrador.","warn");
+    }else if(status==="RECUSADO"){
+      accessMessage("loginMsg","Sua solicitação de acesso foi recusada.","bad");
+    }else{
+      accessMessage("loginMsg","E-mail não encontrado. Use “Solicitar acesso” para cadastrar-se.","warn");
+    }
+  }catch(e){
+    accessMessage("loginMsg","Não foi possível verificar o acesso. Tente novamente.","bad");
+  }finally{btn.disabled=false;}
+}
+
+function openAdmin(){window.location.href=ADMIN_URL;}
+
+(function(){
+  document.getElementById("appShell").style.display="none";
+  document.getElementById("accessGate").style.display="flex";
+})();
+</script>
 
 </body></html>
