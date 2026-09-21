@@ -32,7 +32,7 @@ table{width:100%;border-collapse:collapse;min-width:950px}
 th,td{padding:10px;border-bottom:1px solid #e2e8f0;text-align:left;vertical-align:top}th{background:#f8fafc}
 .badge{display:inline-block;border-radius:999px;padding:6px 9px;font-size:12px;font-weight:900}
 .pendente{background:#fff0bd;color:#8a5a00}.liberado{background:#d6f8e1;color:#166534}.bloqueado{background:#ffdede;color:#991b1b}.expirado{background:#fff0c7;color:#8a5a00}.recusado{background:#e5e7eb;color:#475569}
-.actions{display:flex;gap:6px;flex-wrap:wrap}.actions .btn{padding:7px 9px;font-size:12px}.duration-picker{margin-top:9px;padding:10px;background:#f1f5f9;border:1px solid #cbd5e1;border-radius:10px;min-width:250px}.duration-title{font-weight:900;margin-bottom:8px;color:#17345d}.duration-options{display:flex;gap:6px;flex-wrap:wrap}.duration-options .btn{padding:7px 9px;font-size:12px}.duration-custom{display:none;margin-top:8px}.duration-custom input{width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:7px;font-size:14px}.duration-footer{display:flex;gap:6px;margin-top:8px}.duration-footer .btn{padding:7px 9px;font-size:12px}
+.actions{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.actions .btn{padding:7px 9px;font-size:12px}.duration-picker{width:min(430px,calc(100vw - 36px));padding:16px;background:#fff;border:1px solid #cbd5e1;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.25)}.duration-title{font-weight:900;margin-bottom:10px;color:#17345d;font-size:15px}.duration-options{display:flex;gap:6px;flex-wrap:wrap}.duration-options .btn{padding:8px 10px;font-size:12px}.duration-custom{display:none;margin-top:10px}.duration-custom input{width:100%;padding:9px;border:1px solid #cbd5e1;border-radius:7px;font-size:14px}.duration-footer{display:flex;gap:6px;margin-top:12px}.duration-footer .btn{padding:8px 10px;font-size:12px}.duration-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:18px;z-index:99998}
 #corretorPanel{display:none;padding:0}
 .framebar{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;padding:12px 14px;background:#eff6ff;border-radius:12px 12px 0 0}
 iframe{width:100%;height:calc(100vh - 155px);min-height:700px;border:0;border-radius:0 0 12px 12px;background:#fff}
@@ -394,37 +394,44 @@ async function confirmDeleteWithPassword(){
 function deleteUser(id){openDeletePassword(id);}
 
 function closeDurationPicker(id){
-  const el=document.getElementById("duration-picker-"+id);
+  const el=document.getElementById("duration-overlay");
   if(el)el.remove();
 }
 
 function showDurationPicker(id, action){
   closeDurationPicker(id);
-  const cell=document.getElementById("actions-"+id);
-  if(!cell)return;
 
-  const box=document.createElement("div");
-  box.id="duration-picker-"+id;
-  box.className="duration-picker";
-  box.innerHTML=`
-    <div class="duration-title">${action==="release"?"Escolha o período de acesso":"Escolha o novo período de acesso"}</div>
-    <div class="duration-options">
-      <button class="btn blue" data-duration="1d">1 dia</button>
-      <button class="btn blue" data-duration="1w">1 semana</button>
-      <button class="btn blue" data-duration="1m">1 mês</button>
-      <button class="btn yellow" data-duration="custom">Período</button>
-    </div>
-    <div class="duration-custom">
-      <label style="font-weight:900;font-size:12px;display:block;margin-bottom:5px">Até que dia:</label>
-      <input type="date" class="custom-date">
-    </div>
-    <div class="duration-footer">
-      <button class="btn green duration-confirm" style="display:none">Confirmar</button>
-      <button class="btn gray duration-cancel">Cancelar</button>
+  const overlay=document.createElement("div");
+  overlay.id="duration-overlay";
+  overlay.className="duration-overlay";
+  overlay.innerHTML=`
+    <div class="duration-picker" role="dialog" aria-modal="true">
+      <div class="duration-title">${action==="release"?"🔓 Liberar acesso":"🔄 Renovar acesso"}</div>
+      <div style="font-size:13px;color:#52637b;margin-bottom:12px">
+        ${action==="release"
+          ?"Escolha por quanto tempo este professor terá acesso."
+          :"Escolha o novo período de acesso deste professor."}
+      </div>
+      <div class="duration-options">
+        <button type="button" class="btn blue" data-duration="1d">1 dia</button>
+        <button type="button" class="btn blue" data-duration="1w">1 semana</button>
+        <button type="button" class="btn blue" data-duration="1m">1 mês</button>
+        <button type="button" class="btn yellow" data-duration="custom">Período personalizado</button>
+      </div>
+      <div class="duration-custom">
+        <label style="font-weight:900;font-size:12px;display:block;margin-bottom:5px">Até que dia:</label>
+        <input type="date" class="custom-date">
+      </div>
+      <div class="duration-footer">
+        <button type="button" class="btn green duration-confirm" style="display:none">Confirmar</button>
+        <button type="button" class="btn gray duration-cancel">Cancelar</button>
+      </div>
     </div>`;
-  cell.appendChild(box);
+
+  document.body.appendChild(overlay);
 
   let selected=null;
+  const box=overlay.querySelector(".duration-picker");
   const custom=box.querySelector(".duration-custom");
   const date=box.querySelector(".custom-date");
   const confirmBtn=box.querySelector(".duration-confirm");
@@ -444,8 +451,9 @@ function showDurationPicker(id, action){
     };
   });
 
-  box.querySelector(".duration-confirm").onclick=async()=>{
+  confirmBtn.onclick=async()=>{
     if(!selected)return;
+
     let customEnd=null;
     if(selected==="custom"){
       customEnd=date.value;
@@ -455,7 +463,9 @@ function showDurationPicker(id, action){
         alert("Escolha uma data futura.");return;
       }
     }
+
     box.querySelectorAll("button").forEach(b=>b.disabled=true);
+
     try{
       await api("/api/admin/release",{id,duration:selected,customEnd});
       closeDurationPicker(id);
@@ -468,8 +478,11 @@ function showDurationPicker(id, action){
   };
 
   box.querySelector(".duration-cancel").onclick=()=>closeDurationPicker(id);
-}
 
+  overlay.onclick=(e)=>{
+    if(e.target===overlay)closeDurationPicker(id);
+  };
+}
 function release(id){
   if(!confirm("Deseja liberar o acesso deste professor?"))return;
   showDurationPicker(id,"release");
