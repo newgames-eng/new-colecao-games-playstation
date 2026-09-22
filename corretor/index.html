@@ -314,8 +314,45 @@ flex-wrap:nowrap;
 }
 </style>
 
+
+<style>
+html,body{width:100%;max-width:100%;overflow-x:hidden}
+*{box-sizing:border-box}
+img,canvas,video{max-width:100%}
+button,input,select,textarea{font:inherit;max-width:100%}
+@media(max-width:900px){
+  .nav,.tabs,.access-tabs{display:flex;flex-wrap:wrap;gap:8px}
+  .nav button,.tabs button,.access-tab{flex:1 1 140px;min-height:46px}
+  .grid,.form-grid,.fields,.row{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  table{display:block;width:100%;overflow-x:auto}
+}
+@media(max-width:600px){
+  body{font-size:14px}
+  .nav,.tabs,.access-tabs{flex-direction:column}
+  .nav button,.tabs button,.access-tab{width:100%}
+  .grid,.form-grid,.fields,.row{grid-template-columns:1fr!important}
+  input,select,textarea{width:100%!important;min-height:44px}
+  button{min-height:44px}
+  .actions{display:grid!important;grid-template-columns:1fr!important}
+  .actions button{width:100%!important}
+  .modal,.dialog{width:calc(100vw - 24px)!important;max-width:none!important}
+  .preview{width:100%!important;height:auto!important;max-height:none!important}
+  canvas{width:100%!important;height:auto!important}
+}
+#installAppBtn{display:none;position:fixed;right:16px;bottom:16px;z-index:99990;border:0;border-radius:999px;padding:13px 18px;background:#1769e8;color:#fff;font-weight:900;box-shadow:0 8px 25px rgba(0,0,0,.25);cursor:pointer}
+#installAppBtn.show{display:block}
+</style>
+
+<link rel="manifest" href="/new-colecao-games-playstation/corretor/manifest.webmanifest">
+<meta name="theme-color" content="#1769e8">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="NEW PROF. CORRETOR">
+
+<link rel="apple-touch-icon" sizes="192x192" href="/new-colecao-games-playstation/corretor/icon-192.png">
 </head>
-<body>
+<body><button id="installAppBtn" type="button">📲 Instalar aplicativo</button>
 
 <div id="accessGate">
   <div class="access-box">
@@ -900,6 +937,23 @@ function gerarRelatorioHistoricoPDF(){
   </div>
 
 
+
+<script>
+(function(){
+ let deferredPrompt=null;
+ const b=()=>document.getElementById("installAppBtn");
+ window.addEventListener("beforeinstallprompt",e=>{
+   e.preventDefault(); deferredPrompt=e; const x=b(); if(x)x.classList.add("show");
+ });
+ window.addEventListener("appinstalled",()=>{deferredPrompt=null;const x=b();if(x)x.classList.remove("show");});
+ document.addEventListener("click",async e=>{
+   const x=e.target.closest("#installAppBtn"); if(!x||!deferredPrompt)return;
+   deferredPrompt.prompt(); try{await deferredPrompt.userChoice}catch(_){}
+   deferredPrompt=null;x.classList.remove("show");
+ });
+ if("serviceWorker" in navigator) window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(console.warn));
+})();
+</script>
 </body></html>`);
   w.document.close();
 }

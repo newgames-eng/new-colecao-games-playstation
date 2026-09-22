@@ -1,8 +1,10 @@
 {
+  "id": "/new-colecao-games-playstation/corretor/",
   "name": "NEW PROF. CORRETOR — Corretor Inteligente de Avaliações",
   "short_name": "NEW PROF. CORRETOR",
-  "start_url": "./index.html",
-  "scope": "./",
+  "description": "Corretor inteligente de avaliações com leitura OMR.",
+  "start_url": "/new-colecao-games-playstation/corretor/",
+  "scope": "/new-colecao-games-playstation/corretor/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#f2f6fc",
@@ -10,16 +12,16 @@
   "lang": "pt-BR",
   "icons": [
     {
-      "src": "./icon-192.png",
+      "src": "/new-colecao-games-playstation/corretor/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "./icon-512.png",
+      "src": "/new-colecao-games-playstation/corretor/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ]
 }
