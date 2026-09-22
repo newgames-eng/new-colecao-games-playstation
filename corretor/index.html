@@ -45,6 +45,13 @@
 .a4-sheet .card-head .main-title{font-size:16pt!important}
 .a4-sheet .card-head .brand{font-size:7pt!important}
 .a4-sheet .card-head .brand strong{font-size:9pt!important}
+
+.logout-btn{background:#e53935!important;border-color:#e53935!important;color:#fff!important;font-weight:900!important}
+#loginSessionInfo{font-size:13px;font-weight:800;margin:6px 0 0;color:#516078}
+@media(max-width:700px){nav{gap:6px!important;overflow-x:auto!important;flex-wrap:nowrap!important;padding-bottom:5px}nav button{font-size:13px!important;padding:8px 10px!important;white-space:nowrap!important}.logout-btn{margin-left:2px!important}}
+
+  .history-delete{padding:7px 10px!important;font-size:13px!important;white-space:nowrap;border-radius:8px!important}
+  @media(max-width:700px){.history-delete{padding:6px 8px!important;font-size:12px!important}}
 </style>
 
 <style>
@@ -434,7 +441,7 @@ button,input,select,textarea{font:inherit;max-width:100%}
 <div id="appShell">
 
 <header><div class="brand">NEW <span>PROF. CORRETOR</span></div><div class="sub">Corretor Inteligente de Avaliações — OMR</div>
-<nav><button onclick="show('inicio')">🏠 Início</button><button onclick="show('avaliacao')">📝 Avaliação</button><button onclick="show('corrigir')">📷 Corrigir</button><button onclick="show('cartao')">📄 Cartão</button><button onclick="show('resultados')">📊 Resultados</button><button onclick="show('historico')">📚 Histórico</button></nav></header>
+<nav><button onclick="show('inicio')">🏠 Início</button><button onclick="show('avaliacao')">📝 Avaliação</button><button onclick="show('corrigir')">📷 Corrigir</button><button onclick="show('cartao')">📄 Cartão</button><button onclick="show('resultados')">📊 Resultados</button><button onclick="show('historico')">📚 Histórico</button><button class="logout-btn" onclick="logoutProfessor()">🚪 Sair</button></nav></header>
 <main>
 <section id="inicio" class="page"><div class="card"><h1>NEW PROF. CORRETOR INTELIGENTE</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V4.16:</b> Leitor OMR testado com fotografias reais. Histórico local e câmera integrados.<br><br><b>Base preservada:</b> o leitor calcula as posições das bolhas a partir dos próprios quadros das questões. A mesma leitura alimenta diagnóstico, sequência e tabela.</div>
 <div class="app-guide">
@@ -859,12 +866,25 @@ function renderHistory(){
   const box=document.getElementById('historyList'); if(!box)return;
   const busca=(document.getElementById('histBusca')?.value||'').toLowerCase().trim();
   const av=(document.getElementById('histAvaliacao')?.value||'').toLowerCase().trim();
-  const h=getHistory().filter(x=>(!busca||`${x.aluno} ${x.turma}`.toLowerCase().includes(busca))&&(!av||(x.avaliacao||'').toLowerCase().includes(av)));
+  const todos=getHistory();
+  const h=todos.map((x,i)=>({...x,__historyIndex:i})).filter(x=>(!busca||`${x.aluno} ${x.turma}`.toLowerCase().includes(busca))&&(!av||(x.avaliacao||'').toLowerCase().includes(av)));
   if(!h.length){box.innerHTML='<div class="status info">Nenhuma correção encontrada.</div>';return}
-  box.innerHTML='<div style="overflow:auto"><table><thead><tr><th>Data</th><th>Estudante</th><th>Turma</th><th>Avaliação</th><th>Acertos</th><th>Nota</th></tr></thead><tbody>'+
-    h.map(x=>`<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos}/${x.total}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td></tr>`).join('')+
+  box.innerHTML='<div style="overflow:auto"><table><thead><tr><th>Data</th><th>Estudante</th><th>Turma</th><th>Avaliação</th><th>Acertos</th><th>Nota</th><th>Ação</th></tr></thead><tbody>'+
+    h.map((x,i)=>`<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos}/${x.total}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td><td><button class="danger history-delete" type="button" onclick="deleteHistoryItem(${x.__historyIndex})">🗑️ Excluir</button></td></tr>`).join('')+
     '</tbody></table></div>';
 }
+function deleteHistoryItem(index){
+  const h=getHistory();
+  if(index<0 || index>=h.length){alert('Resultado não encontrado.');return}
+  const item=h[index];
+  const nome=item.aluno||'Não informado';
+  const avaliacao=item.avaliacao||'Avaliação';
+  if(!confirm(`Excluir este resultado?\n\nEstudante: ${nome}\nAvaliação: ${avaliacao}\nNota: ${Number(item.nota||0).toFixed(1)}`))return;
+  h.splice(index,1);
+  localStorage.setItem('newCorretorHistorico',JSON.stringify(h));
+  renderHistory();
+}
+
 function gerarRelatorioHistoricoPDF(){
   const h=getHistory();
   if(!h.length){alert('Não há correções salvas no histórico.');return}
@@ -1631,30 +1651,77 @@ async function requestAccess(){
   finally{btn.disabled=false;btn.textContent=old}
 }
 
-async function checkProfessorAccess(){
-  const emailEl=document.getElementById("loginEmail"), btn=document.getElementById("loginBtn"), email=emailEl.value.trim().toLowerCase();
-  if(!email){accessMessage("loginMsg","⚠️ Informe o e-mail para acessar o sistema.","bad");emailEl.focus();return}
-  if(!validEmail(email)){accessMessage("loginMsg","⚠️ Informe um e-mail válido.","bad");emailEl.focus();return}
+async function checkProfessorAccess(remember=true){
+  const emailEl=document.getElementById("loginEmail"), btn=document.getElementById("loginBtn"), email=(emailEl.value||"").trim().toLowerCase();
+  if(!email){accessMessage("loginMsg","⚠️ Informe o e-mail para acessar o sistema.","bad");emailEl.focus();return false}
+  if(!validEmail(email)){accessMessage("loginMsg","⚠️ Informe um e-mail válido.","bad");emailEl.focus();return false}
   btn.disabled=true; const old=btn.textContent; btn.textContent="Verificando..."; accessMessage("loginMsg","Verificando seu acesso...","warn");
   try{
     const d=await accessApi("/api/access/status?email="+encodeURIComponent(email)), row=d.request||d, status=String(row.status||d.status||"").toUpperCase();
     if(status==="LIBERADO"){
-      localStorage.setItem("newProfCorretorAccessEmail",email); accessMessage("loginMsg","✅ Acesso autorizado. Abrindo o sistema...","ok");
-      setTimeout(()=>{document.getElementById("accessGate").style.display="none";document.getElementById("appShell").style.display="block";try{if(typeof show==="function")show("inicio")}catch{}},250);
+      if(remember){localStorage.setItem("newProfCorretorAccessEmail",email);localStorage.setItem("newProfCorretorLoggedAt",String(Date.now()));}
+      accessMessage("loginMsg","✅ Acesso autorizado. Abrindo o sistema...","ok");
+      openProfessorApp(email);
+      return true;
     }else if(status==="PENDENTE") accessMessage("loginMsg","⏳ Sua solicitação está aguardando autorização de acesso.","warn");
     else if(status==="BLOQUEADO") accessMessage("loginMsg","❌ Seu acesso está bloqueado. Procure o administrador.","bad");
     else if(status==="EXPIRADO") accessMessage("loginMsg","⚠️ Seu período de acesso terminou. Solicite uma renovação ao administrador.","warn");
     else if(status==="RECUSADO") accessMessage("loginMsg","❌ Sua solicitação de acesso foi recusada.","bad");
     else accessMessage("loginMsg","⚠️ E-mail não encontrado. Use “Solicitar acesso” para cadastrar-se.","warn");
-  }catch(e){accessMessage("loginMsg","❌ Não foi possível verificar o acesso. Tente novamente.","bad")}
+    return false;
+  }catch(e){accessMessage("loginMsg","❌ Não foi possível verificar o acesso. Tente novamente.","bad");return false}
   finally{btn.disabled=false;btn.textContent=old}
+}
+
+function openProfessorApp(email){
+  const gate=document.getElementById("accessGate"), app=document.getElementById("appShell");
+  if(gate)gate.style.display="none";
+  if(app)app.style.display="block";
+  let info=document.getElementById("loginSessionInfo");
+  if(!info){info=document.createElement("div");info.id="loginSessionInfo";const header=app?.querySelector("header"); if(header) header.appendChild(info);}
+  if(info)info.textContent="👤 Acesso ativo: "+email;
+  try{if(typeof show==="function")show("inicio")}catch{}
+}
+
+async function restoreProfessorSession(){
+  const email=(localStorage.getItem("newProfCorretorAccessEmail")||"").trim().toLowerCase();
+  if(!email || !validEmail(email))return false;
+  try{
+    const d=await accessApi("/api/access/status?email="+encodeURIComponent(email)), row=d.request||d, status=String(row.status||d.status||"").toUpperCase();
+    if(status==="LIBERADO"){
+      localStorage.setItem("newProfCorretorLoggedAt",String(Date.now()));
+      openProfessorApp(email); return true;
+    }
+    if(status==="BLOQUEADO"||status==="EXPIRADO"||status==="RECUSADO"){
+      localStorage.removeItem("newProfCorretorAccessEmail");localStorage.removeItem("newProfCorretorLoggedAt");
+      accessMessage("loginMsg",status==="BLOQUEADO"?"❌ Seu acesso está bloqueado. Procure o administrador.":"⚠️ Seu acesso não está mais liberado. Faça uma nova solicitação ao administrador.",status==="BLOQUEADO"?"bad":"warn");
+    }
+  }catch(e){
+    // Se a API estiver temporariamente indisponível, mantém a tela de acesso por segurança.
+  }
+  return false;
+}
+
+function logoutProfessor(){
+  localStorage.removeItem("newProfCorretorAccessEmail");
+  localStorage.removeItem("newProfCorretorLoggedAt");
+  const app=document.getElementById("appShell"), gate=document.getElementById("accessGate"), info=document.getElementById("loginSessionInfo");
+  if(app)app.style.display="none";
+  if(info)info.remove();
+  if(gate)gate.style.display="flex";
+  accessPanel("system");
+  const email=document.getElementById("loginEmail"); if(email)email.value="";
+  accessMessage("loginMsg","Você saiu do sistema. Informe seu e-mail para entrar novamente.","info");
 }
 
 function openAdmin(){window.location.href=ADMIN_URL;}
 
-(function(){
-  document.getElementById("appShell").style.display="none";
-  document.getElementById("accessGate").style.display="flex";
+(async function(){
+  const app=document.getElementById("appShell"), gate=document.getElementById("accessGate");
+  if(app)app.style.display="none";
+  if(gate)gate.style.display="flex";
+  const restored=await restoreProfessorSession();
+  if(!restored && gate)gate.style.display="flex";
 })();
 </script>
 
