@@ -362,7 +362,6 @@ button,input,select,textarea{font:inherit;max-width:100%}
 }
 #installAppBtn{display:none;position:fixed;right:16px;bottom:16px;z-index:99990;border:0;border-radius:999px;padding:13px 18px;background:#1769e8;color:#fff;font-weight:900;box-shadow:0 8px 25px rgba(0,0,0,.25);cursor:pointer}
 #installAppBtn.show{display:block}
-#installAppBtn{display:block!important}
 #installAppBtn.ready{box-shadow:0 8px 30px rgba(23,105,232,.45)}
 #installAppBtn.installed{background:#18864b}
 #installHelp{display:none;position:fixed;right:16px;bottom:78px;z-index:99991;width:min(420px,calc(100vw - 32px));background:#fff;color:#172033;border:1px solid #d6dce8;border-radius:16px;padding:18px;box-shadow:0 15px 45px rgba(0,0,0,.25);line-height:1.5}
@@ -985,36 +984,65 @@ function gerarRelatorioHistoricoPDF(){
   };
   const close = () => { const h=help(); if(h) h.classList.remove("show"); };
 
+  function isStandalone(){
+    return !!(
+      (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) ||
+      window.navigator.standalone === true ||
+      document.referrer.startsWith("android-app://")
+    );
+  }
+
+  function hideInstallButton(){
+    const b = btn();
+    if(!b) return;
+    b.style.display = "none";
+    b.setAttribute("aria-hidden", "true");
+  }
+
+  function showInstallButton(){
+    const b = btn();
+    if(!b || isStandalone()) return;
+    b.style.display = "block";
+    b.removeAttribute("aria-hidden");
+  }
+
+  // Se o sistema já estiver aberto como aplicativo instalado, não mostramos o botão.
+  if(isStandalone()) hideInstallButton();
+
   window.addEventListener("beforeinstallprompt", (event) => {
     event.preventDefault();
     deferredPrompt = event;
+    showInstallButton();
     const b = btn();
     if(b){ b.classList.add("ready"); b.textContent = "📲 Instalar aplicativo"; }
   });
 
+  // Chrome/Edge/Android: dispara depois que a instalação foi concluída.
   window.addEventListener("appinstalled", () => {
     deferredPrompt = null;
-    const b = btn();
-    if(b){ b.textContent = "✅ Aplicativo instalado"; b.classList.add("installed"); }
+    hideInstallButton();
     close();
+    console.log("NEW PROF. CORRETOR — aplicativo instalado.");
   });
 
   document.addEventListener("click", async (event) => {
     const b = event.target.closest("#installAppBtn");
     if(!b) return;
+
+    if(isStandalone()){
+      hideInstallButton();
+      return;
+    }
+
     if(deferredPrompt){
       try {
         deferredPrompt.prompt();
         const choice = await deferredPrompt.userChoice;
-        if(choice && choice.outcome === "accepted") b.textContent = "⏳ Instalando...";
+        if(choice && choice.outcome === "accepted"){
+          b.textContent = "⏳ Instalando...";
+        }
       } catch(e) { console.warn("Instalação:", e); }
       deferredPrompt = null;
-      return;
-    }
-
-    const standalone = window.matchMedia && window.matchMedia("(display-mode: standalone)").matches;
-    if(standalone){
-      show("<b>O NEW PROF. CORRETOR já está instalado.</b><br><button type='button' id='closeInstallHelp'>Fechar</button>");
       return;
     }
 
@@ -1027,16 +1055,26 @@ function gerarRelatorioHistoricoPDF(){
     show(`<b>O navegador ainda não liberou a instalação automática.</b><br><br>
       <b>Chrome no computador:</b> abra o menu <b>⋮</b> e procure <b>Instalar NEW PROF. CORRETOR</b> ou <b>Instalar página como aplicativo</b>.<br><br>
       <b>Chrome no Android:</b> abra o menu <b>⋮</b> e toque em <b>Instalar aplicativo</b> ou <b>Adicionar à tela inicial</b>.<br><br>
-      <small>Se essas opções não aparecerem, veja F12 → Application → Manifest e Service Workers para identificar o bloqueio.</small><br><button type='button' id='closeInstallHelp'>Fechar</button>`);
+      <small>Depois de instalado, ao abrir o aplicativo o botão não será exibido.</small><br><button type='button' id='closeInstallHelp'>Fechar</button>`);
   });
 
-  document.addEventListener("click", event => { if(event.target.id === "closeInstallHelp") close(); });
+  document.addEventListener("click", event => {
+    if(event.target.id === "closeInstallHelp") close();
+  });
+
+  // Se o usuário mudar entre navegador e modo aplicativo enquanto a página estiver aberta.
+  if(window.matchMedia){
+    const media = window.matchMedia("(display-mode: standalone)");
+    const updateMode = () => isStandalone() ? hideInstallButton() : showInstallButton();
+    if(media.addEventListener) media.addEventListener("change", updateMode);
+  }
 
   if("serviceWorker" in navigator){
     window.addEventListener("load", async () => {
       try {
         const registration = await navigator.serviceWorker.register("/new-colecao-games-playstation/corretor/sw.js", {scope:"/new-colecao-games-playstation/corretor/"});
         console.log("NEW PROF. CORRETOR — Service Worker ativo:", registration.scope);
+        if(isStandalone()) hideInstallButton();
       } catch(error) {
         console.error("NEW PROF. CORRETOR — erro no Service Worker:", error);
       }
