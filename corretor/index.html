@@ -934,31 +934,35 @@ function renderHistory(){
   const av=(document.getElementById('histAvaliacao')?.value||'').toLowerCase().trim();
   const h=getHistory().filter(x=>(!busca||`${x.aluno} ${x.turma}`.toLowerCase().includes(busca))&&(!av||(x.avaliacao||'').toLowerCase().includes(av)));
   if(!h.length){box.innerHTML='<div class="status info">Nenhuma correção encontrada.</div>';return}
-  box.innerHTML='<div style="overflow:auto"><table><thead><tr><th>Data</th><th>Estudante</th><th>Turma</th><th>Avaliação</th><th>Acertos</th><th>Nota</th><th>Ação</th></tr></thead><tbody>'+
+  const all=getHistory();
+  box.innerHTML='<div class="history-table-wrap"><table><thead><tr><th>Data</th><th>Estudante</th><th>Turma</th><th>Avaliação</th><th>Acertos</th><th>Nota</th><th>Ação</th></tr></thead><tbody>'+
     h.map(x=>{
-      const idx=getHistory().indexOf(x);
-      return `<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos}/${x.total}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td><td><button type="button" class="history-delete-btn" data-history-delete="${idx}">🗑️ Excluir</button></td></tr>`;
+      const idx=all.findIndex(item=>item===x);
+      return `<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos}/${x.total}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td><td><button type="button" class="history-delete-btn" data-history-delete="${idx}" onclick="deleteHistoryItem(Number(this.dataset.historyDelete))">🗑️ Excluir</button></td></tr>`;
     }).join('')+
     '</tbody></table></div>';
 }
 function deleteHistoryItem(index){
   const h=getHistory();
-  if(index<0 || index>=h.length){alert('Não foi possível localizar este resultado.');return}
+  index=Number(index);
+  if(!Number.isInteger(index) || index<0 || index>=h.length){alert('Não foi possível localizar este resultado.');return false}
   const item=h[index];
   const aluno=item.aluno||'Não informado';
+  const turma=item.turma||'—';
   const avaliacao=item.avaliacao||'Avaliação';
   const nota=Number(item.nota||0).toFixed(1);
-  if(!confirm(`Excluir este resultado do histórico?\n\nEstudante: ${aluno}\nAvaliação: ${avaliacao}\nNota: ${nota}`))return;
+  const ok=window.confirm(`Excluir esta correção?\n\nEstudante: ${aluno}\nTurma: ${turma}\nAvaliação: ${avaliacao}\nNota: ${nota}`);
+  if(!ok)return false;
   h.splice(index,1);
-  localStorage.setItem('newCorretorHistorico',JSON.stringify(h));
-  renderHistory();
+  try{
+    localStorage.setItem('newCorretorHistorico',JSON.stringify(h));
+    renderHistory();
+    return true;
+  }catch(err){
+    alert('Não foi possível excluir o registro neste aparelho.');
+    return false;
+  }
 }
-document.addEventListener('click',e=>{
-  const b=e.target.closest?.('[data-history-delete]');
-  if(!b)return;
-  const idx=Number(b.getAttribute('data-history-delete'));
-  deleteHistoryItem(idx);
-});
 
 function gerarRelatorioHistoricoPDF(){
   const h=getHistory();
@@ -1181,8 +1185,15 @@ function gerarRelatorioHistoricoPDF(){
 <script>
 
 function clearHistory(){
-  if(confirm('Apagar todo o histórico salvo neste aparelho?')){
-    localStorage.removeItem('newCorretorHistorico');renderHistory();
+  const h=getHistory();
+  if(!h.length){alert('Não há correções salvas no histórico.');return}
+  if(!window.confirm(`Apagar TODAS as ${h.length} correções salvas neste aparelho?`))return;
+  try{
+    localStorage.removeItem('newCorretorHistorico');
+    renderHistory();
+    alert('Histórico de correções excluído com sucesso.');
+  }catch(err){
+    alert('Não foi possível excluir o histórico neste aparelho.');
   }
 }
 function exportHistoryCSV(){
