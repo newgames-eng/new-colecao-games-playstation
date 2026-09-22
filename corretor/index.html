@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>New Prof. Corretor Inteligente de Avaliações</title>
-<!-- V15: OMR determinístico com geometria sincronizada ao PDF A4 por coordenadas fixas + recorte + histórico com exclusão individual -->
+<!-- V16: OMR determinístico com geometria sincronizada ao PDF A4 por coordenadas fixas + recorte + histórico com exclusão individual -->
 <script async src="https://docs.opencv.org/4.x/opencv.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -50,10 +50,11 @@
 .logout-btn{background:#e53935!important;border-color:#e53935!important;color:#fff!important;font-weight:900!important}
 #loginSessionInfo{font-size:13px;font-weight:800;margin:6px 0 0;color:#516078}
 @media(max-width:700px){nav{gap:6px!important;overflow-x:auto!important;flex-wrap:nowrap!important;padding-bottom:5px}nav button{font-size:13px!important;padding:8px 10px!important;white-space:nowrap!important}.logout-btn{margin-left:2px!important}}
+@media(max-width:700px){nav{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));overflow:visible!important;gap:6px!important;padding:6px!important}nav button{width:100%!important;min-height:42px!important;font-size:12px!important;padding:7px 5px!important;white-space:normal!important}.history-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}.history-delete-btn{min-height:42px;padding:8px 12px;font-size:13px}}
 .history-delete-btn{border:0;border-radius:7px;padding:6px 9px;background:#dc2626;color:#fff;font-weight:800;cursor:pointer;white-space:nowrap}.history-delete-btn:hover{filter:brightness(.92)}
 
-/* ===== V10 — editor de recorte antes da leitura ===== */
-.crop-editor{margin-top:14px;border:1px solid #cbd5e1;border-radius:16px;padding:12px;background:#f8fafc}
+/* ===== V16 — editor de recorte antes da leitura ===== */
+.crop-editor{display:none!important;margin-top:14px;border:1px solid #cbd5e1;border-radius:16px;padding:12px;background:#f8fafc}
 .crop-head{display:flex;flex-direction:column;gap:3px;color:#12345b;margin-bottom:10px}
 .crop-head span{font-size:.88rem;color:#64748b}
 .crop-stage{position:relative;width:100%;max-width:760px;margin:auto;overflow:hidden;border-radius:12px;background:#111;touch-action:none;user-select:none}
@@ -401,7 +402,7 @@ button,input,select,textarea{font:inherit;max-width:100%}
 
 <link rel="apple-touch-icon" sizes="192x192" href="/new-colecao-games-playstation/corretor/icon-192.png">
 <style>
-/* ===== V11 — USO NO CELULAR ===== */
+/* ===== V16 — USO NO CELULAR ===== */
 @media(max-width:700px){
   header{padding:10px 10px 9px;position:sticky;top:0}
   .brand{font-size:21px;line-height:1.05}
@@ -977,9 +978,6 @@ function bindHistoryButtons(){
       ev.stopPropagation();
       deleteHistoryItem(this.getAttribute('data-history-delete'));
     },{passive:false});
-    btn.addEventListener('pointerup',function(ev){
-      ev.preventDefault();
-    },{passive:false});
   });
   const clear=document.getElementById('btnClearHistory');
   if(clear && !clear.dataset.bound){
@@ -1366,66 +1364,78 @@ function resetRead(){photo.value='';photoName.textContent='Ao selecionar a foto,
 function loadImage(f){return new Promise((ok,no)=>{let im=new Image();im.onload=()=>ok(im);im.onerror=no;im.src=URL.createObjectURL(f)})}
 function orderPts(p){let s=p.map(a=>a.x+a.y),d=p.map(a=>a.x-a.y);return[p[s.indexOf(Math.min(...s))],p[d.indexOf(Math.max(...d))],p[s.indexOf(Math.max(...s))],p[d.indexOf(Math.min(...d))]]}
 function findMarkers(src){
-  // V3.4: detecção dos quatro marcadores mais tolerante a fotos pequenas,
-  // screenshots, compressão e iluminação. Procura quadrados pretos em toda
-  // a imagem e escolhe o melhor candidato em cada quadrante.
-  let g=new cv.Mat(), bw=new cv.Mat();
-  cv.cvtColor(src,g,cv.COLOR_RGBA2GRAY);
-  // Threshold um pouco mais permissivo para não perder marcadores por compressão.
-  cv.threshold(g,bw,125,255,cv.THRESH_BINARY_INV);
-  let cs=new cv.MatVector(), hi=new cv.Mat();
-  cv.findContours(bw,cs,hi,cv.RETR_EXTERNAL,cv.CHAIN_APPROX_SIMPLE);
-  let cand=[];
+  // V16: localização robusta dos quatro marcadores por quadriláteros.
+  // Primeiro tentamos detectar o contorno real do quadrado (mais preciso que
+  // usar apenas o centro do bounding-box). Depois fazemos fallback para a
+  // detecção anterior, mantendo compatibilidade com cartões já impressos.
+  let gray=new cv.Mat(), bw=new cv.Mat(), cs=new cv.MatVector(), hier=new cv.Mat();
+  cv.cvtColor(src,gray,cv.COLOR_RGBA2GRAY);
+  cv.GaussianBlur(gray,gray,new cv.Size(5,5),0,0,cv.BORDER_DEFAULT);
+  cv.adaptiveThreshold(gray,bw,255,cv.ADAPTIVE_THRESH_GAUSSIAN_C,cv.THRESH_BINARY_INV,31,12);
+  cv.findContours(bw,cs,hier,cv.RETR_EXTERNAL,cv.CHAIN_APPROX_SIMPLE);
   const imgArea=src.cols*src.rows;
-  const minArea=Math.max(120,imgArea*0.00008);
-  const maxArea=imgArea*0.035;
+  const minArea=Math.max(150,imgArea*0.00006), maxArea=imgArea*0.045;
+  const cand=[];
   for(let i=0;i<cs.size();i++){
-    let c=cs.get(i), r=cv.boundingRect(c);
-    let ar=r.width*r.height, ratio=r.width/Math.max(1,r.height);
-    // Marcador: aproximadamente quadrado, compacto e suficientemente grande.
-    if(ar>=minArea && ar<=maxArea && r.width>=10 && r.height>=10 &&
-       ratio>=0.65 && ratio<=1.45){
-      // Mede a ocupação preta dentro do retângulo para eliminar texto/linhas.
-      let roi=g.roi(r), mean=cv.mean(roi)[0]; roi.delete();
-      if(mean<125) cand.push({x:r.x+r.width/2,y:r.y+r.height/2,area:ar,w:r.width,h:r.height});
+    const c=cs.get(i), peri=cv.arcLength(c,true), approx=new cv.Mat();
+    cv.approxPolyDP(c,approx,Math.max(2,0.035*peri),true);
+    const r=cv.boundingRect(c), area=cv.contourArea(c);
+    const ar=r.width/Math.max(1,r.height);
+    if(approx.rows===4 && area>=minArea && area<=maxArea && ar>0.60 && ar<1.60 && cv.isContourConvex(approx)){
+      const pts=[];
+      for(let k=0;k<4;k++){
+        const d=approx.intPtr(k,0); pts.push({x:d[0],y:d[1]});
+      }
+      // Perímetro e área relativa ajudam a eliminar texto, letras e linhas.
+      const fill=area/Math.max(1,r.width*r.height);
+      if(fill>0.45 && fill<1.25) cand.push({pts,area,cx:r.x+r.width/2,cy:r.y+r.height/2,w:r.width,h:r.height});
+    }
+    approx.delete(); c.delete();
+  }
+  cs.delete();hier.delete();bw.delete();gray.delete();
+
+  function centerScore(x,corner){
+    const dx=x.cx-corner.x,dy=x.cy-corner.y;
+    const d=Math.hypot(dx,dy), edge=Math.min(x.cx,x.cy,src.cols-x.cx,src.rows-x.cy);
+    return d - Math.min(220,edge)*0.35;
+  }
+  const corners=[{x:0,y:0},{x:src.cols,y:0},{x:src.cols,y:src.rows},{x:0,y:src.rows}];
+  const chosen=[];
+  for(const co of corners){
+    let best=null,bs=Infinity;
+    for(const x of cand){
+      if(chosen.includes(x))continue;
+      const sc=centerScore(x,co);
+      if(sc<bs){bs=sc;best=x}
+    }
+    if(best)chosen.push(best);
+  }
+  if(chosen.length===4){
+    const centers=chosen.map(x=>({x:x.cx,y:x.cy}));
+    return orderPts(centers);
+  }
+
+  // Fallback compatível com os cartões antigos de marcador sólido.
+  let g=new cv.Mat(),inv=new cv.Mat();
+  cv.cvtColor(src,g,cv.COLOR_RGBA2GRAY);cv.threshold(g,inv,135,255,cv.THRESH_BINARY_INV);
+  let c2=new cv.MatVector(),h2=new cv.Mat();cv.findContours(inv,c2,h2,cv.RETR_EXTERNAL,cv.CHAIN_APPROX_SIMPLE);
+  let old=[];
+  for(let i=0;i<c2.size();i++){
+    let c=c2.get(i),r=cv.boundingRect(c),ar=r.width*r.height,ratio=r.width/Math.max(1,r.height);
+    if(ar>=minArea&&ar<=maxArea&&r.width>=10&&r.height>=10&&ratio>=.65&&ratio<=1.45){
+      old.push({x:r.x+r.width/2,y:r.y+r.height/2,area:ar});
     }
     c.delete();
   }
-  cs.delete();hi.delete();g.delete();bw.delete();
-
-  // Escolhe um marcador por quadrante, priorizando tamanho e proximidade
-  // das bordas. Isso também funciona quando a foto mostra margens ao redor do cartão.
-  let q=[null,null,null,null];
-  const cx=src.cols/2, cy=src.rows/2;
-  for(let x of cand){
-    let k=(x.y<cy?0:2)+(x.x<cx?0:1);
-    let edge=Math.min(x.x,x.y,src.cols-x.x,src.rows-x.y);
-    let score=x.area + Math.max(0,300-edge)*1.5;
-    if(!q[k] || score>q[k].score) q[k]={...x,score};
-  }
-
-  // Se um marcador caiu exatamente numa divisão de quadrante, tenta uma
-  // segunda seleção por distância aos quatro cantos.
-  if(!q.every(Boolean)){
-    const corners=[{x:0,y:0},{x:src.cols,y:0},{x:src.cols,y:src.rows},{x:0,y:src.rows}];
-    let chosen=[];
-    for(let co of corners){
-      let best=null,bestScore=Infinity;
-      for(let x of cand){
-        if(chosen.includes(x)) continue;
-        let d=Math.hypot(x.x-co.x,x.y-co.y);
-        if(d<bestScore){bestScore=d;best=x;}
-      }
-      if(best){chosen.push(best)}
-    }
-    if(chosen.length===4) q=chosen;
-  }
-
+  c2.delete();h2.delete();g.delete();inv.delete();
+  if(old.length<4)return null;
+  const q=[null,null,null,null],cx=src.cols/2,cy=src.rows/2;
+  for(const x of old){const k=(x.y<cy?0:2)+(x.x<cx?0:1);if(!q[k]||x.area>q[k].area)q[k]=x}
   return q.every(Boolean)?orderPts(q):null;
 }
 function matPts(p){return cv.matFromArray(4,1,cv.CV_32FC2,p.flatMap(a=>[a.x,a.y]))}
 
-/* ===== OMR V11 — LEITURA DETERMINÍSTICA PELO MODELO DO PRÓPRIO CARTÃO =====
+/* ===== OMR V16 — LEITURA DETERMINÍSTICA PELO MODELO DO PRÓPRIO CARTÃO =====
    O cartão é gerado pelo sistema, portanto as posições das questões e alternativas
    são conhecidas. Depois da homografia dos 4 marcadores, não procuramos círculos
    nem usamos OCR: lemos somente a área interna de cada bolha.
@@ -1482,23 +1492,33 @@ function fixedQuestionGeometry(count,alts){
 }
 
 function bubbleInkScore(gray,x,y){
-  // Mede um anel interno da bolha. O anel externo evita a borda impressa;
-  // o anel interno evita que a letra A/B/C/D/E cause falso positivo.
-  const outer=Math.max(5,Math.round(1.35*OMR_MM));
-  const inner=Math.max(2,Math.round(.55*OMR_MM));
-  let n=0,dark=0,mid=0;
+  // V16 OMR: leitura local e adaptativa. Comparamos a escuridão da região
+  // interna com o fundo imediatamente ao redor da bolha, reduzindo o efeito
+  // de sombras e iluminação irregular da fotografia.
+  const R=7, core=3.2, ringIn=4.2, ringOut=7.0;
   const cx=Math.round(x),cy=Math.round(y);
-  for(let yy=cy-outer;yy<=cy+outer;yy++){
-    for(let xx=cx-outer;xx<=cx+outer;xx++){
-      const dx=xx-cx,dy=yy-cy,dist=Math.hypot(dx,dy);
-      if(dist<inner||dist>outer||xx<0||yy<0||xx>=gray.cols||yy>=gray.rows)continue;
-      const g=gray.ucharPtr(yy,xx)[0];
-      n++;
-      if(g<135)dark++;
-      if(g<175)mid++;
+  let bgSum=0,bgN=0,coreDark=0,coreN=0,midDark=0,midN=0;
+  for(let yy=cy-R;yy<=cy+R;yy++){
+    for(let xx=cx-R;xx<=cx+R;xx++){
+      if(xx<0||yy<0||xx>=gray.cols||yy>=gray.rows)continue;
+      const d=Math.hypot(xx-cx,yy-cy),g=gray.ucharPtr(yy,xx)[0];
+      if(d>=ringIn&&d<=ringOut){bgSum+=g;bgN++}
     }
   }
-  return {score:.78*(dark/Math.max(1,n))+.22*(mid/Math.max(1,n)),dark:dark/Math.max(1,n),mid:mid/Math.max(1,n)};
+  const bg=bgN?bgSum/bgN:200;
+  const threshold=Math.max(70,bg-38);
+  for(let yy=cy-Math.ceil(core);yy<=cy+Math.ceil(core);yy++){
+    for(let xx=cx-Math.ceil(core);xx<=cx+Math.ceil(core);xx++){
+      if(xx<0||yy<0||xx>=gray.cols||yy>=gray.rows)continue;
+      const d=Math.hypot(xx-cx,yy-cy),g=gray.ucharPtr(yy,xx)[0];
+      if(d<=core){coreN++;if(g<threshold)coreDark++}
+      else if(d>core&&d<ringIn){midN++;if(g<threshold)midDark++}
+    }
+  }
+  const coreFrac=coreDark/Math.max(1,coreN),midFrac=midDark/Math.max(1,midN);
+  // A marca preenchida ocupa uma área grande dentro da bolha; a letra impressa
+  // sozinha ocupa apenas uma pequena fração do núcleo.
+  return .58*coreFrac+.42*midFrac;
 }
 
 function detectAnswersFixed(warp){
@@ -1508,17 +1528,18 @@ function detectAnswersFixed(warp){
   const geo=fixedQuestionGeometry(gabarito.length,alts);
   const out=[],raw=[];
   for(const q of geo){
-    const vals=q.pts.map(p=>bubbleInkScore(gray,p.x,p.y).score);
+    const vals=q.pts.map(p=>bubbleInkScore(gray,p.x,p.y));
     const ranked=vals.map((v,i)=>({v,i})).sort((a,b)=>b.v-a.v);
     const max=ranked[0]?.v||0,second=ranked[1]?.v||0;
     let ans='—',status='Em branco';
-    // Como o anel não contém a borda nem a letra impressa, a diferença
-    // entre bolha marcada e vazia fica muito maior. A margem protege contra
-    // sombras/reflexos e pequenas variações de iluminação.
-    if(max>=0.13 && (max-second)>=0.055){
+    // Limiares adaptativos: exige preenchimento absoluto e vantagem clara
+    // sobre a segunda alternativa. Caso contrário, o resultado vai para revisão.
+    if(max>=0.28 && (max-second)>=0.08){
       ans=ls[ranked[0].i]||'—';status='Marcada';
-    }else if(max>=0.13 && second>=0.13 && second/max>=0.78){
+    }else if(max>=0.20 && second>=0.20 && second/max>=0.72){
       status='Dupla marcação / revisar';
+    }else if(max>=0.20){
+      status='Leitura duvidosa / revisar';
     }
     out.push({q:q.q,ans,status,vals,pts:q.pts});
     raw.push(`Q${String(q.q).padStart(2,'0')}  ${ls.map((x,j)=>x+':'+Math.round((vals[j]||0)*100)+'%').join('  ')}  → ${ans}`);
@@ -1532,9 +1553,10 @@ function detectAnswers(warp){return detectAnswersFixed(warp)}
 function drawDiagnostic(warp,a){
  let out=new cv.Mat();warp.copyTo(out);
  a.forEach(z=>z.pts.forEach((p,j)=>{
-   const chosen=z.ans===L.slice(0,+na.value||5)[j];
+   const labels=Array.from(L.slice(0,+na.value||5));
+   const chosen=z.ans===labels[j] && z.status==='Marcada';
    cv.circle(out,new cv.Point(Math.round(p.x),Math.round(p.y)),12,
-     chosen?new cv.Scalar(60,190,90,255):new cv.Scalar(60,100,235,255),2)
+     chosen?new cv.Scalar(40,180,80,255):new cv.Scalar(50,100,235,255),2)
  }));
  cv.imshow(diag,out);out.delete();
 }
