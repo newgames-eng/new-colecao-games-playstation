@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>New Prof. Corretor Inteligente de Avaliações</title>
-<!-- V11: OMR determinístico por coordenadas fixas + recorte + histórico com exclusão individual -->
+<!-- V15: OMR determinístico com geometria sincronizada ao PDF A4 por coordenadas fixas + recorte + histórico com exclusão individual -->
 <script async src="https://docs.opencv.org/4.x/opencv.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -934,7 +934,7 @@ function renderHistory(){
   const busca=(document.getElementById('histBusca')?.value||'').toLowerCase().trim();
   const av=(document.getElementById('histAvaliacao')?.value||'').toLowerCase().trim();
   const h=getHistory().filter(x=>(!busca||`${x.aluno} ${x.turma}`.toLowerCase().includes(busca))&&(!av||(x.avaliacao||'').toLowerCase().includes(av)));
-  if(!h.length){box.innerHTML='<div class="status info">Nenhuma correção encontrada.</div>';return}
+  if(!h.length){box.innerHTML='<div class="status info">Nenhuma correção encontrada.</div>'; bindHistoryButtons(); return}
   const all=getHistory();
   box.innerHTML='<div class="history-table-wrap"><table><thead><tr><th>Data</th><th>Estudante</th><th>Turma</th><th>Avaliação</th><th>Acertos</th><th>Nota</th><th>Ação</th></tr></thead><tbody>'+
     h.map(x=>{
@@ -942,6 +942,7 @@ function renderHistory(){
       return `<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos}/${x.total}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td><td><button type="button" class="history-delete-btn" data-history-delete="${idx}" aria-label="Excluir esta correção">🗑️ Excluir</button></td></tr>`;
     }).join('')+
     '</tbody></table></div>';
+  bindHistoryButtons();
 }
 function deleteHistoryItem(index){
   const h=getHistory();
@@ -965,20 +966,31 @@ function deleteHistoryItem(index){
   }
 }
 
-// Histórico: eventos delegados, mais confiáveis em celular/iOS e após filtros.
-document.addEventListener('click',function(ev){
-  const del=ev.target.closest?.('[data-history-delete]');
-  if(del){
-    ev.preventDefault(); ev.stopPropagation();
-    const idx=Number(del.getAttribute('data-history-delete'));
-    deleteHistoryItem(idx);
-    return;
+// Histórico: ligação direta dos botões. Evita problemas de eventos delegados
+// em navegadores móveis/iOS depois que a tabela é reconstruída.
+function bindHistoryButtons(){
+  const box=document.getElementById('historyList');
+  if(!box)return;
+  box.querySelectorAll('[data-history-delete]').forEach(btn=>{
+    btn.addEventListener('click',function(ev){
+      ev.preventDefault();
+      ev.stopPropagation();
+      deleteHistoryItem(this.getAttribute('data-history-delete'));
+    },{passive:false});
+    btn.addEventListener('pointerup',function(ev){
+      ev.preventDefault();
+    },{passive:false});
+  });
+  const clear=document.getElementById('btnClearHistory');
+  if(clear && !clear.dataset.bound){
+    clear.dataset.bound='1';
+    clear.addEventListener('click',function(ev){
+      ev.preventDefault();
+      ev.stopPropagation();
+      clearHistory();
+    },{passive:false});
   }
-  if(ev.target.closest?.('#btnClearHistory')){
-    ev.preventDefault(); ev.stopPropagation();
-    clearHistory();
-  }
-});
+}
 
 function gerarRelatorioHistoricoPDF(){
   const h=getHistory();
@@ -1439,29 +1451,31 @@ function warpCard(src,m){
 
 function fixedQuestionGeometry(count,alts){
   const n=Math.max(1,Math.min(50,count));
-  const cols=Math.ceil(n/10);
-  const rows=Math.min(10,n);
-  // Geometria final do cartão V10 (medidas em mm).
-  const gridX=11;          // padding 10 + margem 1
-  const gridW=188;         // folha 210 - padding lateral 20 - margens 2
-  const colGap=1.1;
-  const colW=(gridW-(cols-1)*colGap)/cols;
-  const gridY=48.9;        // início da área de questões após cabeçalho/identificação
-  const qH=10.8;
-  const qGap=1.1;
-  const bubbleW=3.5;
-  const bubbleGap=1.15;
-  const totalBubble=alts*bubbleW+(alts-1)*bubbleGap;
+  // IMPORTANTE: estas medidas são exatamente as usadas em drawNativeCardPage().
+  // O leitor não procura círculos; ele lê as posições que o próprio gerador do
+  // cartão desenhou. Isso mantém a geometria sincronizada com o PDF A4.
+  const mx=15, contentW=180;
+  const gridY=92, gridH=166, gap=2, colGap=3;
+  const colW=(contentW-colGap)/2;
+  const rows=Math.ceil(Math.min(n,20)/2);
+  const qH=(gridH-(rows-1)*gap)/rows;
+  const bubbleStep=8;       // drawNativeCardPage(): cx=start+j*8
   const out=[];
   for(let i=0;i<n;i++){
-    const col=Math.floor(i/10), row=i%10;
-    const qx=gridX+col*(colW+colGap);
-    const qy=gridY+row*(qH+qGap);
-    const firstX=qx+(colW-totalBubble)/2+bubbleW/2;
-    // A linha de alternativas é centralizada verticalmente no .omr-q.
-    const bubbleY=qy+qH/2;
+    const col=i<10?0:1;
+    const row=i<10?i:i-10;
+    const x=mx+col*(colW+colGap);
+    const y=gridY+row*(qH+gap);
+    const totalW=(alts-1)*bubbleStep;
+    const start=x+colW/2-totalW/2;
     const pts=[];
-    for(let j=0;j<alts;j++)pts.push({x:(firstX+j*(bubbleW+bubbleGap))*OMR_MM,y:bubbleY*OMR_MM});
+    for(let j=0;j<alts;j++){
+      // drawNativeCardPage(): cy=y+qH/2+2
+      pts.push({
+        x:(start+j*bubbleStep)*OMR_MM,
+        y:(y+qH/2+2)*(OMR_A4_H/297)
+      });
+    }
     out.push({q:i+1,pts});
   }
   return out;
@@ -1549,6 +1563,8 @@ async function readPhoto(){
 function finish(){busy=false;btnRead.disabled=false}
 
 loadEvaluation();
+renderHistory();
+bindHistoryButtons();
 if(document.getElementById('dataAvaliacao')&&!document.getElementById('dataAvaliacao').value)document.getElementById('dataAvaliacao').value=new Date().toISOString().slice(0,10);
 if(document.getElementById('codigoAvaliacao'))document.getElementById('codigoAvaliacao').value=getAssessmentCode();
 buildKey();
