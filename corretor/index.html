@@ -341,6 +341,12 @@ button,input,select,textarea{font:inherit;max-width:100%}
 }
 #installAppBtn{display:none;position:fixed;right:16px;bottom:16px;z-index:99990;border:0;border-radius:999px;padding:13px 18px;background:#1769e8;color:#fff;font-weight:900;box-shadow:0 8px 25px rgba(0,0,0,.25);cursor:pointer}
 #installAppBtn.show{display:block}
+#installAppBtn{display:block!important}
+#installAppBtn.ready{box-shadow:0 8px 30px rgba(23,105,232,.45)}
+#installAppBtn.installed{background:#18864b}
+#installHelp{display:none;position:fixed;right:16px;bottom:78px;z-index:99991;width:min(420px,calc(100vw - 32px));background:#fff;color:#172033;border:1px solid #d6dce8;border-radius:16px;padding:18px;box-shadow:0 15px 45px rgba(0,0,0,.25);line-height:1.5}
+#installHelp.show{display:block}
+#installHelp button{margin-top:12px;padding:9px 14px;border:0;border-radius:8px;background:#1769e8;color:#fff;font-weight:800}
 </style>
 
 <link rel="manifest" href="/new-colecao-games-playstation/corretor/manifest.webmanifest">
@@ -352,7 +358,8 @@ button,input,select,textarea{font:inherit;max-width:100%}
 
 <link rel="apple-touch-icon" sizes="192x192" href="/new-colecao-games-playstation/corretor/icon-192.png">
 </head>
-<body><button id="installAppBtn" type="button">📲 Instalar aplicativo</button>
+<body><button id="installAppBtn" type="button" aria-label="Instalar aplicativo">📲 Instalar aplicativo</button>
+<div id="installHelp" role="dialog" aria-live="polite" aria-label="Instalação do aplicativo"></div>
 
 <div id="accessGate">
   <div class="access-box">
@@ -940,18 +947,74 @@ function gerarRelatorioHistoricoPDF(){
 
 <script>
 (function(){
- let deferredPrompt=null;
- const b=()=>document.getElementById("installAppBtn");
- window.addEventListener("beforeinstallprompt",e=>{
-   e.preventDefault(); deferredPrompt=e; const x=b(); if(x)x.classList.add("show");
- });
- window.addEventListener("appinstalled",()=>{deferredPrompt=null;const x=b();if(x)x.classList.remove("show");});
- document.addEventListener("click",async e=>{
-   const x=e.target.closest("#installAppBtn"); if(!x||!deferredPrompt)return;
-   deferredPrompt.prompt(); try{await deferredPrompt.userChoice}catch(_){}
-   deferredPrompt=null;x.classList.remove("show");
- });
- if("serviceWorker" in navigator) window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(console.warn));
+  let deferredPrompt = null;
+  const btn = () => document.getElementById("installAppBtn");
+  const help = () => document.getElementById("installHelp");
+  const show = (msg) => {
+    const h = help();
+    if(!h) return;
+    h.innerHTML = msg;
+    h.classList.add("show");
+  };
+  const close = () => { const h=help(); if(h) h.classList.remove("show"); };
+
+  window.addEventListener("beforeinstallprompt", (event) => {
+    event.preventDefault();
+    deferredPrompt = event;
+    const b = btn();
+    if(b){ b.classList.add("ready"); b.textContent = "📲 Instalar aplicativo"; }
+  });
+
+  window.addEventListener("appinstalled", () => {
+    deferredPrompt = null;
+    const b = btn();
+    if(b){ b.textContent = "✅ Aplicativo instalado"; b.classList.add("installed"); }
+    close();
+  });
+
+  document.addEventListener("click", async (event) => {
+    const b = event.target.closest("#installAppBtn");
+    if(!b) return;
+    if(deferredPrompt){
+      try {
+        deferredPrompt.prompt();
+        const choice = await deferredPrompt.userChoice;
+        if(choice && choice.outcome === "accepted") b.textContent = "⏳ Instalando...";
+      } catch(e) { console.warn("Instalação:", e); }
+      deferredPrompt = null;
+      return;
+    }
+
+    const standalone = window.matchMedia && window.matchMedia("(display-mode: standalone)").matches;
+    if(standalone){
+      show("<b>O NEW PROF. CORRETOR já está instalado.</b><br><button type='button' id='closeInstallHelp'>Fechar</button>");
+      return;
+    }
+
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    if(isIOS){
+      show("<b>Para instalar no iPhone/iPad:</b><br>Toque em <b>Compartilhar</b> → <b>Adicionar à Tela de Início</b>.<br><button type='button' id='closeInstallHelp'>Fechar</button>");
+      return;
+    }
+
+    show("<b>O navegador ainda não liberou a instalação automática.</b><br><br>
+      <b>Chrome no computador:</b> abra o menu <b>⋮</b> e procure <b>Instalar NEW PROF. CORRETOR</b> ou <b>Instalar página como aplicativo</b>.<br><br>
+      <b>Chrome no Android:</b> abra o menu <b>⋮</b> e toque em <b>Instalar aplicativo</b> ou <b>Adicionar à tela inicial</b>.<br><br>
+      <small>Se essas opções não aparecerem, veja F12 → Application → Manifest e Service Workers para identificar o bloqueio.</small><br><button type='button' id='closeInstallHelp'>Fechar</button>");
+  });
+
+  document.addEventListener("click", event => { if(event.target.id === "closeInstallHelp") close(); });
+
+  if("serviceWorker" in navigator){
+    window.addEventListener("load", async () => {
+      try {
+        const registration = await navigator.serviceWorker.register("/new-colecao-games-playstation/corretor/sw.js", {scope:"/new-colecao-games-playstation/corretor/"});
+        console.log("NEW PROF. CORRETOR — Service Worker ativo:", registration.scope);
+      } catch(error) {
+        console.error("NEW PROF. CORRETOR — erro no Service Worker:", error);
+      }
+    });
+  }
 })();
 </script>
 </body></html>`);
