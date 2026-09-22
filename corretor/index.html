@@ -65,6 +65,9 @@
 .crop-box i[data-h="nw"]{left:-11px;top:-11px;cursor:nwse-resize}.crop-box i[data-h="ne"]{right:-11px;top:-11px;cursor:nesw-resize}.crop-box i[data-h="sw"]{left:-11px;bottom:-11px;cursor:nesw-resize}.crop-box i[data-h="se"]{right:-11px;bottom:-11px;cursor:nwse-resize}
 .crop-actions{margin-top:10px}
 @media(max-width:700px){.photo-picker{gap:7px}.photo-picker button,.photo-picker .picker-button{width:auto;flex:1;min-width:0;padding:10px 9px;font-size:.9rem}.crop-editor{padding:9px}.crop-box i{width:26px;height:26px}.crop-box i[data-h="nw"]{left:-13px;top:-13px}.crop-box i[data-h="ne"]{right:-13px;top:-13px}.crop-box i[data-h="sw"]{left:-13px;bottom:-13px}.crop-box i[data-h="se"]{right:-13px;bottom:-13px}}
+
+/* V14 — correção direta e controles de histórico robustos no celular */
+.direct-photo-picker{display:block!important}.direct-photo-picker .picker-button{display:block!important;width:100%!important;text-align:center}.direct-photo-picker .file-name{margin-top:8px}.history-delete-btn{min-height:42px;padding:9px 14px!important;touch-action:manipulation;-webkit-tap-highlight-color:transparent}.history-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}@media(max-width:700px){.history-table-wrap table{min-width:760px}.history-delete-btn{font-size:14px!important}.actions{gap:8px!important}.actions button{min-height:44px!important}}
 </style>
 
 <style>
@@ -626,29 +629,15 @@ Selecione uma alternativa em cada questão. A alternativa selecionada ficará ma
 <p>Informe o estudante e abra a <b>galeria, câmera ou arquivos</b> do aparelho para escolher a foto do cartão inteiro.</p>
 <div class="grid"><label>Nome do estudante<input id="aluno" placeholder="Nome completo"></label><label>Turma<input id="turma" placeholder="Ex.: 5º A"></label></div>
 
-<div class="photo-picker">
-  <label for="photo" class="primary picker-button">📷 Abrir galeria / câmera / arquivos</label>
+<div class="photo-picker direct-photo-picker">
+  <label for="photo" class="primary picker-button">📷 Tirar foto / escolher imagem</label>
   <input id="photo" type="file" accept="image/*" class="file-hidden">
-  <button id="btnCrop" type="button" class="secondary" onclick="openCropEditor()" disabled>✂️ Recortar imagem</button>
-  <div id="photoName" class="file-name">Nenhuma foto selecionada</div>
-</div>
-<div id="cropEditor" class="crop-editor hidden" aria-hidden="true">
-  <div class="crop-head"><b>✂️ Ajustar foto antes da leitura</b><span>Arraste a área para enquadrar o cartão.</span></div>
-  <div id="cropStage" class="crop-stage">
-    <canvas id="cropCanvas"></canvas>
-    <div id="cropBox" class="crop-box"><i data-h="nw"></i><i data-h="ne"></i><i data-h="sw"></i><i data-h="se"></i></div>
-  </div>
-  <div class="actions crop-actions">
-    <button type="button" class="secondary" onclick="closeCropEditor()">Cancelar</button>
-    <button type="button" class="secondary" onclick="autoCropToCard()">🎯 Enquadrar cartão</button>
-    <button type="button" class="primary" onclick="applyCrop()">✓ Usar recorte</button>
-  </div>
-  <div id="cropMsg" class="small">O alinhamento de perspectiva dos 4 marcadores continua sendo feito automaticamente durante a correção.</div>
+  <div id="photoName" class="file-name">Ao selecionar a foto, a correção será iniciada automaticamente.</div>
 </div>
 
 <div class="small">No celular, o seletor do próprio aparelho poderá oferecer <b>Câmera</b>, <b>Fotos/Galeria</b> e <b>Arquivos</b>, inclusive serviços de nuvem disponíveis no aparelho. No computador, será aberto o seletor de arquivos.</div>
 
-<div class="actions"><button id="btnRead" type="button" class="primary" onclick="readPhoto()">🔎 Ler cartão</button><button type="button" class="secondary" onclick="resetRead()">Limpar</button></div>
+<div class="actions"><button id="btnRead" type="button" class="primary" onclick="readPhoto()">🔎 Corrigir cartão</button><button type="button" class="secondary" onclick="resetRead()">Limpar</button></div>
 <div id="readStatus" class="status info">Aguardando fotografia.</div><canvas id="diag" class="preview"></canvas><div id="results"></div>
 </div></section>
 
@@ -665,7 +654,7 @@ Selecione uma alternativa em cada questão. A alternativa selecionada ficará ma
     <div class="actions">
       <button class="primary" onclick="exportHistoryCSV()">⬇️ Exportar CSV</button>
       <button type="button" class="pdf-all-btn" onclick="gerarRelatorioHistoricoPDF()">📄 Exportar PDF</button>
-      <button class="secondary" onclick="clearHistory()">🗑️ Limpar histórico</button>
+      <button id="btnClearHistory" type="button" class="secondary">🗑️ Limpar histórico</button>
     </div>
     <div id="historyList"></div>
   </div>
@@ -675,13 +664,25 @@ Selecione uma alternativa em cada questão. A alternativa selecionada ficará ma
 <script>
 let gabarito=[],ultimaLeitura=null,busy=false;
 
-let cropSourceImage=null,cropPointer=null,cropApplied=false;
+let photoReadTimer=null;
+async function waitForCvAndRead(){
+  if(photoReadTimer)clearTimeout(photoReadTimer);
+  const started=Date.now();
+  while(typeof cv==='undefined'||!cv.Mat){
+    if(Date.now()-started>12000){setStatus('O leitor de imagem ainda está carregando. Toque em “Corrigir cartão” para tentar novamente.','warn');return}
+    await new Promise(r=>setTimeout(r,150));
+  }
+  await readPhoto();
+}
 photo.addEventListener('change',async()=>{
   const f=photo.files?.[0];
-  photoName.textContent=f?`✓ ${f.name}`:'Nenhuma foto selecionada';
-  btnCrop.disabled=!f;
-  cropApplied=false;
-  if(f){ setStatus('Foto selecionada. Você pode recortar antes de ler.','info'); await openCropEditor(); }
+  photoName.textContent=f?`✓ ${f.name} — preparando correção automática...`:'Ao selecionar a foto, a correção será iniciada automaticamente.';
+  ultimaLeitura=null;
+  results.innerHTML='';
+  if(f){
+    setStatus('✓ Imagem recebida. Alinhando o cartão pelos 4 marcadores e iniciando a leitura...','info');
+    await waitForCvAndRead();
+  }
 });
 
 const L='ABCDE';
@@ -938,7 +939,7 @@ function renderHistory(){
   box.innerHTML='<div class="history-table-wrap"><table><thead><tr><th>Data</th><th>Estudante</th><th>Turma</th><th>Avaliação</th><th>Acertos</th><th>Nota</th><th>Ação</th></tr></thead><tbody>'+
     h.map(x=>{
       const idx=all.findIndex(item=>item===x);
-      return `<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos}/${x.total}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td><td><button type="button" class="history-delete-btn" data-history-delete="${idx}" onclick="deleteHistoryItem(Number(this.dataset.historyDelete))">🗑️ Excluir</button></td></tr>`;
+      return `<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos}/${x.total}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td><td><button type="button" class="history-delete-btn" data-history-delete="${idx}" aria-label="Excluir esta correção">🗑️ Excluir</button></td></tr>`;
     }).join('')+
     '</tbody></table></div>';
 }
@@ -963,6 +964,21 @@ function deleteHistoryItem(index){
     return false;
   }
 }
+
+// Histórico: eventos delegados, mais confiáveis em celular/iOS e após filtros.
+document.addEventListener('click',function(ev){
+  const del=ev.target.closest?.('[data-history-delete]');
+  if(del){
+    ev.preventDefault(); ev.stopPropagation();
+    const idx=Number(del.getAttribute('data-history-delete'));
+    deleteHistoryItem(idx);
+    return;
+  }
+  if(ev.target.closest?.('#btnClearHistory')){
+    ev.preventDefault(); ev.stopPropagation();
+    clearHistory();
+  }
+});
 
 function gerarRelatorioHistoricoPDF(){
   const h=getHistory();
@@ -1333,7 +1349,7 @@ async function exportCard(){
 }
 
 function setStatus(t,c){readStatus.textContent=t;readStatus.className='status '+c}
-function resetRead(){photo.value='';photoName.textContent='Nenhuma foto selecionada';btnCrop.disabled=true;cropSourceImage=null;cropApplied=false;closeCropEditor();results.innerHTML='';diag.getContext('2d').clearRect(0,0,diag.width,diag.height);ultimaLeitura=null;summary.className='status info';summary.textContent='Nenhuma correção realizada nesta sessão.';setStatus('Aguardando fotografia.','info')}
+function resetRead(){photo.value='';photoName.textContent='Ao selecionar a foto, a correção será iniciada automaticamente.';results.innerHTML='';diag.getContext('2d').clearRect(0,0,diag.width,diag.height);ultimaLeitura=null;summary.className='status info';summary.textContent='Nenhuma correção realizada nesta sessão.';setStatus('Aguardando fotografia.','info')}
 
 function loadImage(f){return new Promise((ok,no)=>{let im=new Image();im.onload=()=>ok(im);im.onerror=no;im.src=URL.createObjectURL(f)})}
 function orderPts(p){let s=p.map(a=>a.x+a.y),d=p.map(a=>a.x-a.y);return[p[s.indexOf(Math.min(...s))],p[d.indexOf(Math.max(...d))],p[s.indexOf(Math.max(...s))],p[d.indexOf(Math.min(...d))]]}
@@ -1532,79 +1548,6 @@ async function readPhoto(){
 }
 function finish(){busy=false;btnRead.disabled=false}
 
-/* ===== V10 — recorte manual + enquadramento automático ===== */
-function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
-function cropBoxPx(){
-  const c=cropCanvas,box=cropBox,rect=c.getBoundingClientRect(),cr=c.getBoundingClientRect();
-  const sx=c.width/cr.width, sy=c.height/cr.height;
-  return {x:Math.round((box.offsetLeft)*sx),y:Math.round((box.offsetTop)*sy),w:Math.round(box.offsetWidth*sx),h:Math.round(box.offsetHeight*sy)};
-}
-async function openCropEditor(){
-  if(!photo.files?.[0]) return;
-  const f=photo.files[0];
-  try{
-    if(!cropSourceImage) cropSourceImage=await loadImage(f);
-    const im=cropSourceImage,c=cropCanvas,stage=cropStage;
-    const maxW=1200,maxH=1600,sc=Math.min(1,maxW/im.naturalWidth,maxH/im.naturalHeight);
-    c.width=Math.round(im.naturalWidth*sc); c.height=Math.round(im.naturalHeight*sc);
-    c.getContext('2d').drawImage(im,0,0,c.width,c.height);
-    const sr=stage.getBoundingClientRect();
-    requestAnimationFrame(()=>{
-      cropBox.style.left='8%';cropBox.style.top='8%';cropBox.style.width='84%';cropBox.style.height='84%';
-      cropEditor.classList.remove('hidden');cropEditor.setAttribute('aria-hidden','false');
-    });
-  }catch(e){console.error(e);setStatus('Não foi possível abrir o recorte.','bad')}
-}
-function closeCropEditor(){cropEditor.classList.add('hidden');cropEditor.setAttribute('aria-hidden','true')}
-function autoCropToCard(){
-  if(!cropSourceImage)return;
-  try{
-    const im=cropSourceImage,c=document.createElement('canvas');
-    const sc=Math.min(1,1800/Math.max(im.naturalWidth,im.naturalHeight));c.width=Math.round(im.naturalWidth*sc);c.height=Math.round(im.naturalHeight*sc);
-    c.getContext('2d').drawImage(im,0,0,c.width,c.height);
-    const src=cv.imread(c),m=findMarkers(src);
-    if(!m){src.delete();cropMsg.textContent='Não encontrei os 4 marcadores nesta etapa. Ajuste manualmente a área do cartão.';return}
-    const xs=m.map(p=>p.x),ys=m.map(p=>p.y),pad=Math.max(12,Math.round(Math.max(c.width,c.height)*.025));
-    const x=Math.max(0,Math.min(...xs)-pad),y=Math.max(0,Math.min(...ys)-pad),r=Math.min(c.width,Math.max(...xs)+pad)-x,b=Math.min(c.height,Math.max(...ys)+pad)-y;
-    cropBox.style.left=(x/c.width*100)+'%';cropBox.style.top=(y/c.height*100)+'%';cropBox.style.width=(r/c.width*100)+'%';cropBox.style.height=(b/c.height*100)+'%';
-    cropMsg.textContent='✓ Cartão enquadrado pelos 4 marcadores. Você ainda pode ajustar o recorte.';src.delete();
-  }catch(e){console.error(e);cropMsg.textContent='Ajuste manualmente a área do cartão.'}
-}
-function applyCrop(){
-  if(!cropSourceImage)return;
-  try{
-    const im=cropSourceImage,c=cropCanvas,cr=c.getBoundingClientRect(),box=cropBox.getBoundingClientRect();
-    const sx=im.naturalWidth/c.width,sy=im.naturalHeight/c.height;
-    const x=Math.max(0,Math.round((box.left-cr.left)*sx)),y=Math.max(0,Math.round((box.top-cr.top)*sy));
-    const w=Math.min(im.naturalWidth-x,Math.round(box.width*sx)),h=Math.min(im.naturalHeight-y,Math.round(box.height*sy));
-    const out=document.createElement('canvas');out.width=w;out.height=h;out.getContext('2d').drawImage(im,x,y,w,h,0,0,w,h);
-    out.toBlob(blob=>{
-      if(!blob)return;
-      const name=(photo.files[0]?.name||'cartao').replace(/\.[^.]+$/,'')+'-recortado.jpg';
-      const file=new File([blob],name,{type:'image/jpeg',lastModified:Date.now()});
-      try{const dt=new DataTransfer();dt.items.add(file);photo.files=dt.files}catch(_){cropMsg.textContent='Recorte aplicado visualmente; selecione a foto novamente se o aparelho não permitir substituir o arquivo.'}
-      photoName.textContent='✓ '+name;cropApplied=true;closeCropEditor();setStatus('✓ Recorte aplicado. O alinhamento dos 4 marcadores será feito automaticamente ao ler.','info');
-    },'image/jpeg',.94);
-  }catch(e){console.error(e);setStatus('Não foi possível aplicar o recorte.','bad')}
-}
-function initCropPointer(){
-  const stage=cropStage,box=cropBox;
-  const min=0.12;
-  function point(e){const r=stage.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top,w:r.width,h:r.height}}
-  function down(e){if(e.pointerType==='mouse'&&e.button!==0)return;const p=point(e),r=box.getBoundingClientRect(),sr=stage.getBoundingClientRect();let h=e.target?.dataset?.h||null;cropPointer={id:e.pointerId,start:p,left:r.left-sr.left,top:r.top-sr.top,w:r.width,h:r.height,handle:h};e.target.setPointerCapture?.(e.pointerId);e.preventDefault()}
-  function move(e){if(!cropPointer||e.pointerId!==cropPointer.id)return;const p=point(e),st=cropPointer,dx=p.x-st.start.x,dy=p.y-st.start.y;let l=st.left,t=st.top,w=st.w,h=st.h;
-    if(st.handle==='nw'){l+=dx;t+=dy;w-=dx;h-=dy}else if(st.handle==='ne'){t+=dy;w+=dx;h-=dy}else if(st.handle==='sw'){l+=dx;w-=dx;h+=dy}else if(st.handle==='se'){w+=dx;h+=dy}else{l+=dx;t+=dy}
-    w=Math.max(srVal(stage, min, 'w'),w);h=Math.max(srVal(stage,min,'h'),h);
-    l=clamp(l,0,stage.clientWidth-w);t=clamp(t,0,stage.clientHeight-h);
-    if(st.handle==='nw'||st.handle==='sw')l=clamp(l,0,stage.clientWidth-w);
-    if(st.handle==='nw'||st.handle==='ne')t=clamp(t,0,stage.clientHeight-h);
-    box.style.left=l+'px';box.style.top=t+'px';box.style.width=w+'px';box.style.height=h+'px';
-    e.preventDefault()}
-  function up(e){if(cropPointer&&e.pointerId===cropPointer.id)cropPointer=null}
-  stage.addEventListener('pointerdown',down);stage.addEventListener('pointermove',move);stage.addEventListener('pointerup',up);stage.addEventListener('pointercancel',up);
-}
-function srVal(stage,f,what){return (what==='w'?stage.clientWidth:stage.clientHeight)*f}
-initCropPointer();
 loadEvaluation();
 if(document.getElementById('dataAvaliacao')&&!document.getElementById('dataAvaliacao').value)document.getElementById('dataAvaliacao').value=new Date().toISOString().slice(0,10);
 if(document.getElementById('codigoAvaliacao'))document.getElementById('codigoAvaliacao').value=getAssessmentCode();
