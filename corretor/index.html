@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>New Prof. Corretor Inteligente de Avaliações</title>
+<!-- V9: exclusão individual do histórico; base OMR preservada da V7 -->
 <script async src="https://docs.opencv.org/4.x/opencv.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -49,9 +50,7 @@
 .logout-btn{background:#e53935!important;border-color:#e53935!important;color:#fff!important;font-weight:900!important}
 #loginSessionInfo{font-size:13px;font-weight:800;margin:6px 0 0;color:#516078}
 @media(max-width:700px){nav{gap:6px!important;overflow-x:auto!important;flex-wrap:nowrap!important;padding-bottom:5px}nav button{font-size:13px!important;padding:8px 10px!important;white-space:nowrap!important}.logout-btn{margin-left:2px!important}}
-
-  .history-delete{padding:7px 10px!important;font-size:13px!important;white-space:nowrap;border-radius:8px!important}
-  @media(max-width:700px){.history-delete{padding:6px 8px!important;font-size:12px!important}}
+.history-delete-btn{border:0;border-radius:7px;padding:6px 9px;background:#dc2626;color:#fff;font-weight:800;cursor:pointer;white-space:nowrap}.history-delete-btn:hover{filter:brightness(.92)}
 </style>
 
 <style>
@@ -866,25 +865,27 @@ function renderHistory(){
   const box=document.getElementById('historyList'); if(!box)return;
   const busca=(document.getElementById('histBusca')?.value||'').toLowerCase().trim();
   const av=(document.getElementById('histAvaliacao')?.value||'').toLowerCase().trim();
-  const todos=getHistory();
-  const h=todos.map((x,i)=>({...x,__historyIndex:i})).filter(x=>(!busca||`${x.aluno} ${x.turma}`.toLowerCase().includes(busca))&&(!av||(x.avaliacao||'').toLowerCase().includes(av)));
+  const h=getHistory().filter(x=>(!busca||`${x.aluno} ${x.turma}`.toLowerCase().includes(busca))&&(!av||(x.avaliacao||'').toLowerCase().includes(av)));
   if(!h.length){box.innerHTML='<div class="status info">Nenhuma correção encontrada.</div>';return}
   box.innerHTML='<div style="overflow:auto"><table><thead><tr><th>Data</th><th>Estudante</th><th>Turma</th><th>Avaliação</th><th>Acertos</th><th>Nota</th><th>Ação</th></tr></thead><tbody>'+
-    h.map((x,i)=>`<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos}/${x.total}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td><td><button class="danger history-delete" type="button" onclick="deleteHistoryItem(${x.__historyIndex})">🗑️ Excluir</button></td></tr>`).join('')+
+    h.map(x=>{
+      const idx=getHistory().indexOf(x);
+      return `<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos}/${x.total}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td><td><button type="button" class="history-delete-btn" onclick="deleteHistoryItem(${idx})">🗑️ Excluir</button></td></tr>`;
+    }).join('')+
     '</tbody></table></div>';
 }
 function deleteHistoryItem(index){
   const h=getHistory();
-  if(index<0 || index>=h.length){alert('Resultado não encontrado.');return}
+  if(index<0 || index>=h.length){alert('Não foi possível localizar este resultado.');return}
   const item=h[index];
-  const nome=item.aluno||'Não informado';
+  const aluno=item.aluno||'Não informado';
   const avaliacao=item.avaliacao||'Avaliação';
-  if(!confirm(`Excluir este resultado?\n\nEstudante: ${nome}\nAvaliação: ${avaliacao}\nNota: ${Number(item.nota||0).toFixed(1)}`))return;
+  const nota=Number(item.nota||0).toFixed(1);
+  if(!confirm(`Excluir este resultado do histórico?\n\nEstudante: ${aluno}\nAvaliação: ${avaliacao}\nNota: ${nota}`))return;
   h.splice(index,1);
   localStorage.setItem('newCorretorHistorico',JSON.stringify(h));
   renderHistory();
 }
-
 function gerarRelatorioHistoricoPDF(){
   const h=getHistory();
   if(!h.length){alert('Não há correções salvas no histórico.');return}
