@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>New Prof. Corretor Inteligente de Avaliações</title>
-<!-- V9: exclusão individual do histórico; base OMR preservada da V7 -->
+<!-- V11: OMR determinístico por coordenadas fixas + recorte + histórico com exclusão individual -->
 <script async src="https://docs.opencv.org/4.x/opencv.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -397,6 +397,42 @@ button,input,select,textarea{font:inherit;max-width:100%}
 <meta name="apple-mobile-web-app-title" content="NEW PROF. CORRETOR">
 
 <link rel="apple-touch-icon" sizes="192x192" href="/new-colecao-games-playstation/corretor/icon-192.png">
+<style>
+/* ===== V11 — USO NO CELULAR ===== */
+@media(max-width:700px){
+  header{padding:10px 10px 9px;position:sticky;top:0}
+  .brand{font-size:21px;line-height:1.05}
+  .sub{font-size:12px;margin-top:3px}
+  nav{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px!important;margin-top:8px!important;overflow:visible!important;flex-wrap:initial!important;padding:0!important}
+  nav button{min-width:0!important;width:100%!important;font-size:11px!important;line-height:1.1;padding:8px 3px!important;border-radius:8px!important;white-space:normal!important}
+  main{padding:12px 9px 45px}
+  .card{padding:13px;border-radius:13px;margin-bottom:12px}
+  h1{font-size:22px}h2{font-size:20px}h3{font-size:17px}
+  .actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+  .actions button{width:100%;padding:10px 8px;font-size:13px}
+  .photo-picker{display:grid!important;grid-template-columns:1fr 1fr;gap:7px!important}
+  .photo-picker .picker-button,.photo-picker button{width:100%!important;min-width:0!important;padding:10px 7px!important;font-size:12px!important}
+  .photo-picker .file-name{grid-column:1/-1;padding:5px 2px;font-size:12px}
+  .crop-actions{display:grid!important;grid-template-columns:1fr 1fr 1fr!important}
+  .crop-actions button{font-size:11px!important;padding:9px 4px!important}
+  #diag{max-height:none!important;height:auto!important}
+  .history-table-wrap{overflow-x:visible!important}
+  #historyList table{font-size:13px;margin-top:9px}
+  #historyList table thead{display:none}
+  #historyList table,#historyList tbody,#historyList tr,#historyList td{display:block;width:100%;box-sizing:border-box}
+  #historyList tr{background:#f8fbff;border:1px solid #d7e1ee;border-radius:11px;margin:9px 0;padding:8px}
+  #historyList td{border:0!important;border-bottom:1px solid #e5ebf3!important;text-align:left;padding:7px 4px!important;min-height:28px}
+  #historyList td:last-child{border-bottom:0!important;padding-top:9px!important}
+  #historyList td:nth-child(1):before{content:'Data: ';font-weight:800}
+  #historyList td:nth-child(2):before{content:'Estudante: ';font-weight:800}
+  #historyList td:nth-child(3):before{content:'Turma: ';font-weight:800}
+  #historyList td:nth-child(4):before{content:'Avaliação: ';font-weight:800}
+  #historyList td:nth-child(5):before{content:'Acertos: ';font-weight:800}
+  #historyList td:nth-child(6):before{content:'Nota: ';font-weight:800}
+  #historyList td:nth-child(7){text-align:center}
+  .history-delete-btn{width:100%!important;padding:10px!important;font-size:13px!important}
+}
+</style>
 </head>
 <body><button id="installAppBtn" type="button" aria-label="Instalar aplicativo">📲 Instalar aplicativo</button>
 <div id="installHelp" role="dialog" aria-live="polite" aria-label="Instalação do aplicativo"></div>
@@ -901,7 +937,7 @@ function renderHistory(){
   box.innerHTML='<div style="overflow:auto"><table><thead><tr><th>Data</th><th>Estudante</th><th>Turma</th><th>Avaliação</th><th>Acertos</th><th>Nota</th><th>Ação</th></tr></thead><tbody>'+
     h.map(x=>{
       const idx=getHistory().indexOf(x);
-      return `<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos}/${x.total}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td><td><button type="button" class="history-delete-btn" onclick="deleteHistoryItem(${idx})">🗑️ Excluir</button></td></tr>`;
+      return `<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos}/${x.total}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td><td><button type="button" class="history-delete-btn" data-history-delete="${idx}">🗑️ Excluir</button></td></tr>`;
     }).join('')+
     '</tbody></table></div>';
 }
@@ -917,6 +953,13 @@ function deleteHistoryItem(index){
   localStorage.setItem('newCorretorHistorico',JSON.stringify(h));
   renderHistory();
 }
+document.addEventListener('click',e=>{
+  const b=e.target.closest?.('[data-history-delete]');
+  if(!b)return;
+  const idx=Number(b.getAttribute('data-history-delete'));
+  deleteHistoryItem(idx);
+});
+
 function gerarRelatorioHistoricoPDF(){
   const h=getHistory();
   if(!h.length){alert('Não há correções salvas no histórico.');return}
@@ -1342,232 +1385,109 @@ function findMarkers(src){
   return q.every(Boolean)?orderPts(q):null;
 }
 function matPts(p){return cv.matFromArray(4,1,cv.CV_32FC2,p.flatMap(a=>[a.x,a.y]))}
+
+/* ===== OMR V11 — LEITURA DETERMINÍSTICA PELO MODELO DO PRÓPRIO CARTÃO =====
+   O cartão é gerado pelo sistema, portanto as posições das questões e alternativas
+   são conhecidas. Depois da homografia dos 4 marcadores, não procuramos círculos
+   nem usamos OCR: lemos somente a área interna de cada bolha.
+*/
+const OMR_A4_W=1200, OMR_A4_H=1697, OMR_MM=OMR_A4_W/210;
+const OMR_MARKER_OFFSET_MM=8, OMR_MARKER_SIZE_MM=7;
+
 function warpCard(src,m){
-  // Destino corresponde ao A4 nativo usado na impressão:
-  // 1200 x 1697 px ≈ 5.714 px/mm.
-  // Os marcadores ficam exatamente a 8 mm das bordas e têm 7 mm.
-  const sx=1200/210, sy=1697/297;
-  const mx=8*sx, my=8*sy, mr=7*sx;
+  // O cartão V10 usa marcadores a 8 mm das bordas, com 7 mm de lado.
+  // O centro real de cada marcador é 11,5 mm a partir da borda.
+  const c=OMR_MARKER_OFFSET_MM + OMR_MARKER_SIZE_MM/2;
   const dest=[
-    {x:mx+mr/2,y:my+mr/2},
-    {x:1200-mx-mr/2,y:my+mr/2},
-    {x:1200-mx-mr/2,y:1697-my-mr/2},
-    {x:mx+mr/2,y:1697-my-mr/2}
+    {x:c*OMR_MM,y:c*(OMR_A4_H/297)},
+    {x:OMR_A4_W-c*OMR_MM,y:c*(OMR_A4_H/297)},
+    {x:OMR_A4_W-c*OMR_MM,y:OMR_A4_H-c*(OMR_A4_H/297)},
+    {x:c*OMR_MM,y:OMR_A4_H-c*(OMR_A4_H/297)}
   ];
-  let M=cv.getPerspectiveTransform(matPts(m),matPts(dest)),d=new cv.Mat();
-  cv.warpPerspective(src,d,M,new cv.Size(1200,1697),cv.INTER_LINEAR,cv.BORDER_CONSTANT,new cv.Scalar(255,255,255,255));
-  M.delete();return d;
+  const M=cv.getPerspectiveTransform(matPts(m),matPts(dest)),d=new cv.Mat();
+  cv.warpPerspective(src,d,M,new cv.Size(OMR_A4_W,OMR_A4_H),cv.INTER_LINEAR,cv.BORDER_CONSTANT,new cv.Scalar(255,255,255,255));
+  M.delete();
+  return d;
 }
 
-function findQuestionBoxes(warp){
-  // Localiza as molduras das questões no cartão V4.1/V4.
-  // O cartão pode ter 1 a 5 colunas, sempre com no máximo 10 questões por coluna.
-  let gray=new cv.Mat(),bw=new cv.Mat();
-  cv.cvtColor(warp,gray,cv.COLOR_RGBA2GRAY);
-  cv.threshold(gray,bw,205,255,cv.THRESH_BINARY_INV);
-
-  let cs=new cv.MatVector(),hi=new cv.Mat();
-  cv.findContours(bw,cs,hi,cv.RETR_LIST,cv.CHAIN_APPROX_SIMPLE);
-  let cand=[];
-  for(let i=0;i<cs.size();i++){
-    let c=cs.get(i),r=cv.boundingRect(c);
-    let ratio=r.width/Math.max(1,r.height), area=r.width*r.height;
-    // A área das questões fica abaixo da identificação e acima do rodapé.
-    // Aceita caixas estreitas (muitas colunas) e largas (1 coluna).
-    if(r.y>=520 && r.y<=1400 &&
-       r.width>=140 && r.width<=1130 &&
-       r.height>=25 && r.height<=95 &&
-       ratio>=2.4 && ratio<=18 && area>=5000){
-      cand.push({x:r.x,y:r.y,w:r.width,h:r.height,area});
-    }
-    c.delete();
-  }
-  cs.delete();hi.delete();gray.delete();bw.delete();
-
-  // Remove duplicatas/nested contours.
-  cand.sort((a,b)=>a.y-b.y||a.x-b.x);
-  let unique=[];
-  for(const b of cand){
-    const dup=unique.some(o =>
-      Math.abs(o.x-b.x)<10 && Math.abs(o.y-b.y)<10 &&
-      Math.abs(o.w-b.w)<18 && Math.abs(o.h-b.h)<18);
-    if(!dup) unique.push(b);
-  }
-
-  // O DOM usa grid-auto-flow: column: Q1..Q10 na primeira coluna,
-  // depois Q11..Q20 na segunda etc. Ordenamos por coluna e depois por Y.
-  unique.sort((a,b)=>a.x-b.x||a.y-b.y);
-  return unique.slice(0,50);
-}
-
-function fallbackQuestionBoxes(count){
-  const S=1200/210; // px por mm no A4 de trabalho
-  const n=Math.min(20,Math.max(1,count));
-  const cols=n>10?2:2;
-  const rows=Math.ceil(n/2);
-
-  const mx=15*S;
-  const contentW=180*S;
-  const colGap=3*S;
-  const colW=((180-3)/2)*S;
-
-  const gridY=92*S;
-  const gridH=166*S;
-  const gap=2*S;
-  const qH=((166-(rows-1)*2)/rows)*S;
-
+function fixedQuestionGeometry(count,alts){
+  const n=Math.max(1,Math.min(50,count));
+  const cols=Math.ceil(n/10);
+  const rows=Math.min(10,n);
+  // Geometria final do cartão V10 (medidas em mm).
+  const gridX=11;          // padding 10 + margem 1
+  const gridW=188;         // folha 210 - padding lateral 20 - margens 2
+  const colGap=1.1;
+  const colW=(gridW-(cols-1)*colGap)/cols;
+  const gridY=48.9;        // início da área de questões após cabeçalho/identificação
+  const qH=10.8;
+  const qGap=1.1;
+  const bubbleW=3.5;
+  const bubbleGap=1.15;
+  const totalBubble=alts*bubbleW+(alts-1)*bubbleGap;
   const out=[];
   for(let i=0;i<n;i++){
-    const col=i<10?0:1;
-    const row=i<10?i:i-10;
-    out.push({
-      x:Math.round(mx+col*(colW+colGap)),
-      y:Math.round(gridY+row*(qH+gap)),
-      w:Math.round(colW),
-      h:Math.round(qH)
-    });
+    const col=Math.floor(i/10), row=i%10;
+    const qx=gridX+col*(colW+colGap);
+    const qy=gridY+row*(qH+qGap);
+    const firstX=qx+(colW-totalBubble)/2+bubbleW/2;
+    // A linha de alternativas é centralizada verticalmente no .omr-q.
+    const bubbleY=qy+qH/2;
+    const pts=[];
+    for(let j=0;j<alts;j++)pts.push({x:(firstX+j*(bubbleW+bubbleGap))*OMR_MM,y:bubbleY*OMR_MM});
+    out.push({q:i+1,pts});
   }
   return out;
 }
 
-function localInk(gray,x,y,r){
- // V3.4: lê o centro da bolha, evitando bordas, linhas e textos próximos.
- // A busca de deslocamento é pequena para não "pular" para a bolha vizinha.
- let best=-1,bx=Math.round(x),by=Math.round(y);
- const rr=Math.max(5,Math.min(8,Math.round(r*.38)));
- for(let dy=-3;dy<=3;dy++)for(let dx=-3;dx<=3;dx++){
-  const cx=Math.round(x+dx),cy=Math.round(y+dy);
-  let dark=0,ink=0,n=0;
-  for(let yy=cy-rr;yy<=cy+rr;yy++)for(let xx=cx-rr;xx<=cx+rr;xx++){
-   if(xx<0||yy<0||xx>=gray.cols||yy>=gray.rows)continue;
-   const dd=(xx-cx)**2+(yy-cy)**2;
-   if(dd<=rr*rr){
-     const g=gray.ucharPtr(yy,xx)[0]; n++;
-     if(g<90) ink++;
-     dark += (255-g)/255;
-   }
-  }
-  // Combina tinta realmente escura com escuridão média do centro.
-  const score=(ink/Math.max(1,n))*0.75+(dark/Math.max(1,n))*0.25;
-  if(score>best){best=score;bx=cx;by=cy}
- }
- return {score:Math.max(0,best),x:bx,y:by}
-}
-
-
-// ===== OMR V4.4 — leitor calibrado para o cartão NEW CORRETOR de 10 questões =====
-// Esta geometria é a mesma do protótipo sem Python que passou nos testes com fotos reais.
-const OMR10_LETTERS=['A','B','C','D','E'];
-const OMR10_X=[547,584,621,658,694];
-const OMR10_Y=[677,750,822,894,964,1035,1107,1179,1253,1325];
-const OMR10_DEST=[{x:80,y:67},{x:1165,y:67},{x:1165,y:1698},{x:80,y:1698}];
-
-function warpCardOMR10(src,m){
-  const a=cv.matFromArray(4,1,cv.CV_32FC2,m.flatMap(p=>[p.x,p.y]));
-  const b=cv.matFromArray(4,1,cv.CV_32FC2,OMR10_DEST.flatMap(p=>[p.x,p.y]));
-  const M=cv.getPerspectiveTransform(a,b),d=new cv.Mat();
-  cv.warpPerspective(src,d,M,new cv.Size(1245,1754),cv.INTER_LINEAR,cv.BORDER_CONSTANT,new cv.Scalar(255,255,255,255));
-  a.delete();b.delete();M.delete();
-  return d;
-}
-
-function omr10Sample(gray,x,y){
-  const r=9; let n=0,dark=0,sum=0;
-  for(let yy=y-r;yy<=y+r;yy++) for(let xx=x-r;xx<=x+r;xx++){
-    if(xx<0||yy<0||xx>=gray.cols||yy>=gray.rows) continue;
-    if((xx-x)*(xx-x)+(yy-y)*(yy-y)<=r*r){
-      const v=gray.ucharPtr(yy,xx)[0]; n++; sum+=(255-v)/255; if(v<100) dark++;
+function bubbleInkScore(gray,x,y){
+  // Mede um anel interno da bolha. O anel externo evita a borda impressa;
+  // o anel interno evita que a letra A/B/C/D/E cause falso positivo.
+  const outer=Math.max(5,Math.round(1.35*OMR_MM));
+  const inner=Math.max(2,Math.round(.55*OMR_MM));
+  let n=0,dark=0,mid=0;
+  const cx=Math.round(x),cy=Math.round(y);
+  for(let yy=cy-outer;yy<=cy+outer;yy++){
+    for(let xx=cx-outer;xx<=cx+outer;xx++){
+      const dx=xx-cx,dy=yy-cy,dist=Math.hypot(dx,dy);
+      if(dist<inner||dist>outer||xx<0||yy<0||xx>=gray.cols||yy>=gray.rows)continue;
+      const g=gray.ucharPtr(yy,xx)[0];
+      n++;
+      if(g<135)dark++;
+      if(g<175)mid++;
     }
   }
-  return .70*(dark/Math.max(1,n))+.30*(sum/Math.max(1,n));
+  return {score:.78*(dark/Math.max(1,n))+.22*(mid/Math.max(1,n)),dark:dark/Math.max(1,n),mid:mid/Math.max(1,n)};
 }
 
-function detectAnswersOMR10(warp){
-  const gray=new cv.Mat(); cv.cvtColor(warp,gray,cv.COLOR_RGBA2GRAY);
-  const ls=L.slice(0,+na.value||5).slice(0,5);
-  const count=Math.min(10,gabarito.length);
+function detectAnswersFixed(warp){
+  const gray=new cv.Mat();cv.cvtColor(warp,gray,cv.COLOR_RGBA2GRAY);
+  const alts=Math.max(3,Math.min(5,+na.value||5));
+  const ls=L.slice(0,alts);
+  const geo=fixedQuestionGeometry(gabarito.length,alts);
   const out=[],raw=[];
-  for(let q=0;q<count;q++){
-    const vals=OMR10_X.slice(0,ls.length).map(x=>omr10Sample(gray,x,OMR10_Y[q]));
-    const sorted=[...vals].sort((a,b)=>b-a), max=sorted[0]||0, second=sorted[1]||0;
-    const idx=vals.indexOf(max); let ans='—', status='Em branco';
-    const margin=max-second;
-    // Regra aprovada no protótipo V3: aceita marca mais fraca quando há predominância clara.
-    if(max>=0.32 && margin>=0.10){
-      if(second/max>0.78) status='Dupla marcação / revisar';
-      else {ans=ls[idx]||'—'; status='Marcada';}
+  for(const q of geo){
+    const vals=q.pts.map(p=>bubbleInkScore(gray,p.x,p.y).score);
+    const ranked=vals.map((v,i)=>({v,i})).sort((a,b)=>b.v-a.v);
+    const max=ranked[0]?.v||0,second=ranked[1]?.v||0;
+    let ans='—',status='Em branco';
+    // Como o anel não contém a borda nem a letra impressa, a diferença
+    // entre bolha marcada e vazia fica muito maior. A margem protege contra
+    // sombras/reflexos e pequenas variações de iluminação.
+    if(max>=0.13 && (max-second)>=0.055){
+      ans=ls[ranked[0].i]||'—';status='Marcada';
+    }else if(max>=0.13 && second>=0.13 && second/max>=0.78){
+      status='Dupla marcação / revisar';
     }
-    const pts=OMR10_X.slice(0,ls.length).map((x,j)=>({x,y:OMR10_Y[q]}));
-    out.push({q:q+1,ans,status,vals,pts});
-    raw.push(`Q${String(q+1).padStart(2,'0')}  ${[...ls].map((x,j)=>x+':'+Math.round((vals[j]||0)*100)+'%').join('  ')}  → ${ans}`);
+    out.push({q:q.q,ans,status,vals,pts:q.pts});
+    raw.push(`Q${String(q.q).padStart(2,'0')}  ${ls.map((x,j)=>x+':'+Math.round((vals[j]||0)*100)+'%').join('  ')}  → ${ans}`);
   }
-  // Se houver menos de 10 questões, o restante não participa da leitura.
   gray.delete();
   return {answers:out,raw:raw.join('\n')};
 }
 
-function detectAnswers(warp){
-  if(gabarito.length===10) return detectAnswersOMR10(warp);
-  return detectAnswersLegacy(warp);
-}
+function detectAnswers(warp){return detectAnswersFixed(warp)}
 
-function detectAnswersLegacy(warp){
- let gray=new cv.Mat();cv.cvtColor(warp,gray,cv.COLOR_RGBA2GRAY);
- const count=gabarito.length, ls=L.slice(0,+na.value||5);
- let boxes=fallbackQuestionBoxes(count);
-
- // A geometria abaixo é a mesma usada na geração do PDF A4 nativo:
- // margem esquerda 15 mm, grade iniciando em 92 mm,
- // altura da grade 166 mm, duas colunas e até 10 linhas por coluna.
- // Assim a correção não depende dos contornos encontrados na fotografia.
- boxes=boxes.slice(0,count);
-
- let out=[],raw=[];
- for(let i=0;i<count;i++){
-   const b=boxes[i];
-   const vals=[],pts=[];
-
-   // As bolhas ficam centralizadas horizontalmente dentro da moldura.
-   // Tamanho real do círculo: 5,2 mm; espaçamento: 1,9 mm.
-   const mm=1200/210;
-   const bubbleW=5.2*mm, gap=1.9*mm;
-   const total=ls.length*bubbleW+(ls.length-1)*gap;
-   const start=b.x+(b.w-total)/2+bubbleW/2;
-
-   // A caixa usa flex-column + justify-content:center.
-   // O centro da fileira de bolhas fica aproximadamente em 60% da altura.
-   const y=b.y+b.h/2+2*(1200/210);
-
-   for(let j=0;j<ls.length;j++){
-     const x=start+j*(bubbleW+gap);
-     const p=localInk(gray,x,y,bubbleW*.42);
-     vals.push(p.score);pts.push({x:p.x,y:p.y});
-   }
-
-   const sorted=[...vals].sort((a,b)=>b-a);
-   const max=sorted[0]||0, second=sorted[1]||0;
-   let ans='—',status='Em branco';
-
-   // Centro de bolha vazia contém apenas a letra impressa.
-   // Uma bolha preenchida tem área escura muito maior.
-   if(max>=0.34){
-     const idx=vals.indexOf(max);
-     // Só considera dupla marcação quando duas bolhas têm níveis altos
-     // e próximos; isso reduz falsos positivos causados pelas letras A-E.
-     if(second>=0.86*max && second>=0.34){
-       status='Dupla marcação / revisar';
-     }else{
-       ans=ls[idx];
-       status='Marcada';
-     }
-   }
-
-   out.push({q:i+1,ans,status,vals,pts});
-   raw.push(`Q${String(i+1).padStart(2,'0')}  ${[...ls].map((x,j)=>x+':'+Math.round(vals[j]*100)+'%').join('  ')}  → ${ans}`);
- }
- gray.delete();
- return {answers:out,raw:raw.join('\n')};
-}
 function drawDiagnostic(warp,a){
  let out=new cv.Mat();warp.copyTo(out);
  a.forEach(z=>z.pts.forEach((p,j)=>{
@@ -1596,7 +1516,7 @@ async function readPhoto(){
   c.width=Math.round(im.naturalWidth*scale);c.height=Math.round(im.naturalHeight*scale);c.getContext('2d').drawImage(im,0,0,c.width,c.height);
   let src=cv.imread(c),m=findMarkers(src);if(!m){src.delete();setStatus('Não encontrei os 4 marcadores. Fotografe o cartão inteiro, sem cortar os cantos.','bad');finish();return}
   setStatus('✓ 4 marcadores encontrados. Corrigindo perspectiva e localizando cada quadro...','info');
-  let warp=(gabarito.length===10?warpCardOMR10(src,m):warpCard(src,m)),r=detectAnswers(warp);ultimaLeitura=r.answers;drawDiagnostic(warp,r.answers);renderResults(r.answers,r.raw);setStatus('✓ Leitura concluída. Confira a sequência e a leitura bruta antes de usar.','ok');src.delete();warp.delete();
+  let warp=warpCard(src,m),r=detectAnswers(warp);ultimaLeitura=r.answers;drawDiagnostic(warp,r.answers);renderResults(r.answers,r.raw);setStatus('✓ Leitura concluída. Confira a sequência e a leitura bruta antes de usar.','ok');src.delete();warp.delete();
  }catch(e){console.error(e);setStatus('Erro na leitura: '+e.message,'bad')}finally{finish()}
 }
 function finish(){busy=false;btnRead.disabled=false}
