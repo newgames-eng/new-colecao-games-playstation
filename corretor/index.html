@@ -496,7 +496,7 @@ button,input,select,textarea{font:inherit;max-width:100%}
 <header><div class="brand">NEW <span>PROF. CORRETOR</span></div><div class="sub">Corretor Inteligente de Avaliações — OMR</div>
 <nav><button onclick="show('inicio')">🏠 Início</button><button onclick="show('avaliacao')">📝 Avaliação</button><button onclick="show('corrigir')">📷 Corrigir</button><button onclick="show('cartao')">📄 Cartão</button><button onclick="show('resultados')">📊 Resultados</button><button onclick="show('historico')">📚 Histórico</button><button class="logout-btn" onclick="logoutProfessor()">🚪 Sair</button></nav></header>
 <main>
-<section id="inicio" class="page"><div class="card"><h1>NEW PROF. CORRETOR INTELIGENTE</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V4.16:</b> Leitor OMR testado com fotografias reais. Histórico local e câmera integrados.<br><br><b>Base preservada:</b> o leitor calcula as posições das bolhas a partir dos próprios quadros das questões. A mesma leitura alimenta diagnóstico, sequência e tabela.</div>
+<section id="inicio" class="page"><div class="card"><h1>NEW PROF. CORRETOR INTELIGENTE</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V4.17:</b> Leitor OMR testado com fotografias reais. Histórico local e câmera integrados.<br><br><b>Base preservada:</b> o leitor calcula as posições das bolhas a partir dos próprios quadros das questões. A mesma leitura alimenta diagnóstico, sequência e tabela.</div>
 <div class="app-guide">
   <h2>📘 Como funciona o NEW PROF. CORRETOR?</h2>
   <p>
@@ -1257,8 +1257,6 @@ function drawNativeCardPage(pdf, alunoCard, turmaCard, pageIndex, totalPages){
   pdf.setTextColor(18,45,86);
   pdf.setFont('helvetica','bold'); pdf.setFontSize(17);
   pdf.text('CARTÃO-RESPOSTA',mx,19);
-  pdf.setFontSize(8.5); pdf.text('NEW PROF. CORRETOR',W-mx,16,{align:'right'});
-  pdf.setFontSize(7); pdf.text('LEITOR OMR',W-mx,21,{align:'right'});
   pdf.setDrawColor(23,63,143); pdf.setLineWidth(0.45); pdf.line(mx,24,W-mx,24);
   pdf.setFontSize(8); pdf.text(tituloCard,mx+contentW/2,30,{align:'center'});
 
@@ -1302,19 +1300,23 @@ function drawNativeCardPage(pdf, alunoCard, turmaCard, pageIndex, totalPages){
   const gridY=92, gridH=166, gap=2, colGap=3, colW=(contentW-colGap)/2;
   const rows=Math.ceil(Math.min(n,20)/2); // para o cartão padrão de 20 questões
   const qH=(gridH-(rows-1)*gap)/rows;
-  const qFont=5.2, optR=2.6;
+  const qFont=5.2, optR=3.5;
+  const bubbleStep=9;
+  const bubbleYExtra=1.8;
   for(let i=0;i<Math.min(n,20);i++){
     const col=i<10?0:1, row=i<10?i:i-10;
     const x=mx+col*(colW+colGap), y=gridY+row*(qH+gap);
     pdf.setDrawColor(70,70,70); pdf.setLineWidth(0.25); pdf.rect(x,y,colW,qH);
     pdf.setFont('helvetica','bold'); pdf.setFontSize(qFont); pdf.setTextColor(25,25,25);
     pdf.text(`QUESTÃO ${String(i+1).padStart(2,'0')}`,x+colW/2,y+5,{align:'center'});
-    const totalW=(ls.length-1)*8;
+    const totalW=(ls.length-1)*bubbleStep;
     const start=x+colW/2-totalW/2;
     ls.forEach((lab,j)=>{
-      const cx=start+j*8, cy=y+qH/2+2;
-      pdf.setDrawColor(35,35,35); pdf.setLineWidth(0.35); pdf.circle(cx,cy,optR);
-      pdf.setFont('helvetica','bold'); pdf.setFontSize(5.2); pdf.text(String(lab),cx,cy+1.7,{align:'center'});
+      const cx=start+j*bubbleStep, cy=y+qH/2+bubbleYExtra;
+      // Bolhas maiores e com a letra fora do círculo para reduzir falsos positivos em fotos.
+      pdf.setDrawColor(20,20,20); pdf.setLineWidth(0.4); pdf.circle(cx,cy,optR);
+      pdf.setFont('helvetica','bold'); pdf.setFontSize(4.6); pdf.setTextColor(35,35,35);
+      pdf.text(String(lab),cx,cy+5.1,{align:'center'});
     });
   }
 
@@ -1435,7 +1437,7 @@ function findMarkers(src){
 }
 function matPts(p){return cv.matFromArray(4,1,cv.CV_32FC2,p.flatMap(a=>[a.x,a.y]))}
 
-/* ===== OMR V16 — LEITURA DETERMINÍSTICA PELO MODELO DO PRÓPRIO CARTÃO =====
+/* ===== OMR V17 — LEITURA DETERMINÍSTICA PELO MODELO DO PRÓPRIO CARTÃO =====
    O cartão é gerado pelo sistema, portanto as posições das questões e alternativas
    são conhecidas. Depois da homografia dos 4 marcadores, não procuramos círculos
    nem usamos OCR: lemos somente a área interna de cada bolha.
@@ -1469,7 +1471,7 @@ function fixedQuestionGeometry(count,alts){
   const colW=(contentW-colGap)/2;
   const rows=Math.ceil(Math.min(n,20)/2);
   const qH=(gridH-(rows-1)*gap)/rows;
-  const bubbleStep=8;       // drawNativeCardPage(): cx=start+j*8
+  const bubbleStep=9;       // V17: mesma geometria do cartão, 9 mm entre centros
   const out=[];
   for(let i=0;i<n;i++){
     const col=i<10?0:1;
@@ -1480,10 +1482,10 @@ function fixedQuestionGeometry(count,alts){
     const start=x+colW/2-totalW/2;
     const pts=[];
     for(let j=0;j<alts;j++){
-      // drawNativeCardPage(): cy=y+qH/2+2
+      // V17: drawNativeCardPage(): cy=y+qH/2+1.8
       pts.push({
         x:(start+j*bubbleStep)*OMR_MM,
-        y:(y+qH/2+2)*(OMR_A4_H/297)
+        y:(y+qH/2+1.8)*(OMR_A4_H/297)
       });
     }
     out.push({q:i+1,pts});
@@ -1492,10 +1494,10 @@ function fixedQuestionGeometry(count,alts){
 }
 
 function bubbleInkScore(gray,x,y){
-  // V16 OMR: leitura local e adaptativa. Comparamos a escuridão da região
+  // V17 OMR: leitura local e adaptativa. Comparamos a escuridão da região
   // interna com o fundo imediatamente ao redor da bolha, reduzindo o efeito
   // de sombras e iluminação irregular da fotografia.
-  const R=7, core=3.2, ringIn=4.2, ringOut=7.0;
+  const R=9, core=2.9, ringIn=4.6, ringOut=8.2;
   const cx=Math.round(x),cy=Math.round(y);
   let bgSum=0,bgN=0,coreDark=0,coreN=0,midDark=0,midN=0;
   for(let yy=cy-R;yy<=cy+R;yy++){
