@@ -1036,9 +1036,8 @@ function renderHistory(){
   const all=getHistory();
   box.innerHTML='<div class="history-table-wrap"><table><thead><tr><th>Data</th><th>Estudante</th><th>Turma</th><th>Avaliação</th><th>Acertos</th><th>Nota</th><th>Ação</th></tr></thead><tbody>'+
     h.map(x=>{
-      const idx=all.indexOf(x);
-      const safeIdx=idx>=0?idx:-1;
-      return `<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos}/${x.total}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td><td><button type="button" class="history-delete-btn" data-history-delete="${safeIdx}" aria-label="Excluir esta correção">🗑️ Excluir</button></td></tr>`;
+      const idx=all.findIndex(item=>item===x);
+      return `<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos}/${x.total}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td><td><button type="button" class="history-delete-btn" data-history-delete="${idx}" aria-label="Excluir esta correção">🗑️ Excluir</button></td></tr>`;
     }).join('')+
     '</tbody></table></div>';
   bindHistoryButtons();
@@ -1046,10 +1045,14 @@ function renderHistory(){
 function deleteHistoryItem(index){
   const h=getHistory();
   index=Number(index);
-  if(!Number.isInteger(index) || index<0 || index>=h.length){
-    renderHistory();
-    return false;
-  }
+  if(!Number.isInteger(index) || index<0 || index>=h.length){alert('Não foi possível localizar este resultado.');return false}
+  const item=h[index];
+  const aluno=item.aluno||'Não informado';
+  const turma=item.turma||'—';
+  const avaliacao=item.avaliacao||'Avaliação';
+  const nota=Number(item.nota||0).toFixed(1);
+  const ok=window.confirm(`Excluir esta correção?\n\nEstudante: ${aluno}\nTurma: ${turma}\nAvaliação: ${avaliacao}\nNota: ${nota}`);
+  if(!ok)return false;
   h.splice(index,1);
   try{
     localStorage.setItem('newCorretorHistorico',JSON.stringify(h));
@@ -1306,10 +1309,12 @@ function gerarRelatorioHistoricoPDF(){
 
 function clearHistory(){
   const h=getHistory();
-  if(!h.length){renderHistory();return}
+  if(!h.length){alert('Não há correções salvas no histórico.');return}
+  if(!window.confirm(`Apagar TODAS as ${h.length} correções salvas neste aparelho?`))return;
   try{
     localStorage.removeItem('newCorretorHistorico');
     renderHistory();
+    alert('Histórico de correções excluído com sucesso.');
   }catch(err){
     alert('Não foi possível excluir o histórico neste aparelho.');
   }
