@@ -1,1205 +1,1840 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#020817">
-<title>NEW COLEÇÃO GAMES PLAYSTATION</title>
+<title>New Prof. Corretor Inteligente de Avaliações</title>
+<!-- V18: duas modalidades de correção — por imagem e por marcação manual; base OMR V17 preservada -->
+<script async src="https://docs.opencv.org/4.x/opencv.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <style>
-:root{
-  --bg:#020817;--panel:#071426;--panel2:#061225;--line:#1b3c67;
-  --blue:#0877ff;--blue2:#075bd8;--text:#f5f8ff;--muted:#8da3c5;
-  --green:#00e676;--yellow:#ffc107;--red:#ff3158;
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;font-family:Arial,Helvetica,sans-serif;background:radial-gradient(circle at 70% -15%,rgba(0,110,255,.20),transparent 28%),linear-gradient(180deg,#020817,#030a15);color:var(--text)}
-button,input,select,textarea{font:inherit}
-button{cursor:pointer}
-.site-header{position:sticky;top:0;z-index:50;width:100%;background:rgba(2,8,23,.96);backdrop-filter:blur(14px);border-bottom:1px solid rgba(31,91,160,.55)}
-.header-inner{max-width:1500px;margin:auto;min-height:70px;padding:0 24px;display:flex;align-items:center;gap:22px}
-.brand-mini{display:flex;align-items:center;gap:9px;min-width:215px}
-.ps-mini{font-size:30px;font-weight:900;letter-spacing:-2px}
-.brand-mini strong{display:block;font-size:13px}.brand-mini small{display:block;color:#1687ff;font-size:9px;font-weight:bold;margin-top:2px}
-.top-nav{display:flex;align-items:center;gap:3px;flex:1;min-width:0;overflow:hidden}
-.top-nav button{white-space:nowrap;border:0;background:transparent;color:#aebfda;padding:10px 11px;border-radius:7px;font-size:12px;font-weight:bold}
-.top-nav button:hover,.top-nav button.active{background:var(--blue2);color:#fff}
-.account{white-space:nowrap;border:1px solid #146ed4!important;background:#071f40!important;color:#fff!important;padding:10px 15px!important;border-radius:8px!important;font-weight:bold!important}
-.account:hover{background:var(--blue2)!important}
-.top-nav button{transition:background .18s,color .18s,transform .18s}.top-nav button:active{transform:scale(.98)}
-.main{width:100%;max-width:1500px;margin:auto;padding:28px 24px 60px}
-.top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
-.title{font-size:28px;font-weight:800;letter-spacing:-.5px}.sub{color:var(--muted);font-size:12px;margin-top:6px}
-.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px}
-.stat{background:linear-gradient(145deg,#071426,#061225);border:1px solid var(--line);border-radius:9px;padding:15px;transition:.2s}
-.stat:hover{border-color:#236db5;transform:translateY(-1px)}
-.stat strong{display:block;font-size:24px}.stat span{font-size:11px;color:var(--muted)}
-.tools{display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:10px;margin-bottom:12px}
-.search-box input,.tools select,.search input{width:100%;height:46px;background:#061226;color:#fff;border:1px solid #2a4f7d;border-radius:9px;padding:0 14px;outline:none}
-.search-box input::placeholder,.search input::placeholder{color:#8da3c5}
-.search-box input:focus,.tools select:focus,.search input:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(8,119,255,.15)}
-.filters{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px}
-.filters button{white-space:nowrap;background:#061226;color:#b9c9e6;border:1px solid #23466f;padding:9px 12px;border-radius:7px}
-.filters button:hover,.filters button.active{border-color:var(--blue);color:#fff}.filters button.active{background:var(--blue2)}
-.filter-more{position:relative}.filter-more select{height:38px;background:#061226;color:#b9c9e6;border:1px solid #23466f;border-radius:7px;padding:0 10px}
-.section-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:8px 0 12px}
-.section-head h2{font-size:18px;margin:0}.result{font-size:11px;color:var(--muted)}
-.grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px}
-.card{background:#071426;border:1px solid #17365e;border-radius:8px;overflow:hidden;transition:.2s;cursor:pointer}
-.card:hover{transform:translateY(-4px);border-color:#1976d2;box-shadow:0 12px 28px rgba(0,0,0,.28)}
-.cover{height:265px;background:#0b254b;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.cover img{width:100%;height:100%;object-fit:cover}.platform{display:inline-flex;align-items:center;width:max-content;max-width:100%;margin:0 0 7px;padding:4px 8px;border-radius:999px;background:rgba(7,24,48,.9);border:1px solid rgba(20,125,255,.45);color:#dcecff;font-size:10px;font-weight:800;line-height:1.2;box-shadow:0 0 8px rgba(0,119,255,.10)}
-.placeholder{text-align:center;color:#6d8bb7}.placeholder .big{font-size:46px;display:block;margin-bottom:5px}
-.card-body{padding:10px}.category{font-size:9px;color:#2f9aff;text-transform:uppercase;font-weight:bold}
-.card h3{font-size:13px;margin:5px 0;min-height:32px}.meta{font-size:10px;color:#7187a8}
-.stars{margin-top:7px}.star{color:#4a6387}.star.on{color:var(--blue)}
-.status{font-size:8px;padding:5px 0;border-radius:4px}.played{color:var(--green)}.notplayed{color:var(--yellow)}.borrowed{color:#ff8a3d}.borrowed-badge{color:#ff9b62!important;border-color:#74401f!important;background:#24160d!important}.overdue-alert{display:none;margin:0 0 18px;padding:14px 16px;border:1px solid #8f2c2c;border-radius:9px;background:linear-gradient(135deg,#2a0e14,#180b12);box-shadow:0 6px 18px rgba(0,0,0,.18)}.overdue-alert.show{display:flex;align-items:center;justify-content:space-between;gap:14px}.overdue-alert-main{display:flex;align-items:center;gap:12px}.overdue-alert-icon{font-size:27px}.overdue-alert strong{display:block;color:#ff8d8d;font-size:14px}.overdue-alert span{display:block;color:#c8aeb2;font-size:11px;margin-top:3px}.overdue-list{margin-top:8px;color:#fff;font-size:11px}.overdue-list b{color:#ffb0b0}.overdue-alert .btn{white-space:nowrap}
-.locker-nav{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px}
-.locker-nav .btn.active{background:var(--blue)}
-.rental-panel{display:none}
-.rental-panel.open{display:block}
-.rental-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
-.rental-card{background:linear-gradient(145deg,#071426,#061225);border:1px solid var(--line);border-radius:9px;padding:14px}
-.rental-card strong{display:block;font-size:24px}.rental-card span{font-size:11px;color:var(--muted)}
-.rental-toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
-.rental-toolbar input,.rental-toolbar select{flex:1;min-width:180px}
-.rental-table{width:100%;border-collapse:collapse}.rental-table th,.rental-table td{padding:10px;border-bottom:1px solid #163354;text-align:left;font-size:11px;vertical-align:middle}.rental-table th{color:#75b7ff;text-transform:uppercase;font-size:9px}
-.status-pill{display:inline-block;padding:4px 7px;border-radius:5px;font-size:9px;font-weight:bold;border:1px solid #23466f}
-.status-active{color:#63a9ff}.status-returned{color:#55e6a0}.status-late{color:#ff8d8d}.status-pending{color:#ffd05a}
-.rental-empty{padding:28px;text-align:center;color:var(--muted);border:1px dashed #23466f;border-radius:9px}
-@media(max-width:900px){.rental-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:600px){.rental-grid{grid-template-columns:1fr}}
-.rental-status{display:inline-flex;align-items:center;gap:5px;font-size:9px;padding:4px 7px;border-radius:5px;border:1px solid #23466f;background:#061a33}.rental-available{color:#52e69a}.rental-loaned{color:#63a9ff}.rental-reserved{color:#ffd05a}.rental-maintenance{color:#c0a0ff}.rental-overdue{color:#ff8d8d}
-.fav{float:right;color:#8094b4}.fav.on{color:var(--red)}
-.empty{padding:45px;text-align:center;color:var(--muted);grid-column:1/-1;border:1px dashed #23466f;border-radius:10px}
-.admin{display:none}.admin.open{display:block}.public.hidden{display:none}
-.admin-head{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:18px}
-.admin-title{font-size:26px;font-weight:800}.buttons{display:flex;gap:7px;flex-wrap:wrap}
-.btn{border:0;border-radius:7px;padding:9px 12px;background:#153154;color:#fff;font-weight:bold}.btn:hover{filter:brightness(1.12)}
-.primary{background:var(--blue)}.danger{background:#a81635}.green{background:#087f4d}
-.admin-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px}
-.admin-card{display:flex;align-items:center;gap:13px;background:linear-gradient(145deg,#071426,#061225);border:1px solid var(--line);border-radius:9px;padding:15px;cursor:pointer;transition:.2s}
-.admin-card:hover,.admin-card.active{border-color:var(--blue);transform:translateY(-1px)}
-.admin-card-icon{font-size:28px}.admin-card strong{display:block;font-size:25px}.admin-card span{font-size:11px;color:var(--muted)}
-.admin-toolbar-head{display:flex;justify-content:space-between;align-items:center;gap:15px;margin:4px 0 12px}
-.admin-section-title{font-size:18px;font-weight:bold}.admin-section-sub{font-size:11px;color:var(--muted);margin-top:4px}
-.table-wrap{background:#071426;border:1px solid var(--line);border-radius:9px;padding:18px;overflow:auto}
-.table{width:100%;border-collapse:collapse;font-size:12px}.table th,.table td{padding:10px;border-bottom:1px solid #153050;text-align:left;white-space:nowrap}.table th{font-size:10px;color:#72b8ff;text-transform:uppercase}
-.thumb{width:38px;height:50px;object-fit:cover;border-radius:4px}.actions{display:flex;gap:5px}
-.admin-pagination{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:14px}
-.detail-box{width:min(900px,100%)}.detail-grid{display:grid;grid-template-columns:270px 1fr;gap:24px}
-.detail-cover{height:380px;background:#0b254b;border-radius:9px;overflow:hidden;display:flex;align-items:center;justify-content:center}.detail-cover img{width:100%;height:100%;object-fit:cover}
-.detail-info h2{font-size:27px;margin:0 0 7px}.detail-cat{color:#2f9aff;text-transform:uppercase;font-size:10px;font-weight:bold}.detail-meta{color:var(--muted);font-size:12px;margin:10px 0}.detail-desc{line-height:1.6;max-height:220px;overflow:auto;color:#b7c7df;font-size:13px;line-height:1.6;white-space:pre-line}.detail-badges{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.detail-badge{background:#061a33;border:1px solid #21436d;border-radius:7px;padding:7px 9px;font-size:11px}
-.collection-info{margin-top:16px;padding:14px;background:#061226;border:1px solid #19385f;border-radius:9px}.collection-info h3{margin:0 0 10px;font-size:13px}.collection-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.collection-item{font-size:11px;color:var(--muted)}.collection-item b{display:block;color:#fff;font-size:11px;margin-top:2px}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.82);display:none;align-items:center;justify-content:center;padding:18px;z-index:100}.modal.open{display:flex}
-.box{width:min(650px,100%);max-height:92vh;overflow:auto;background:#071426;border:1px solid #1c65b8;border-radius:11px;padding:22px;box-shadow:0 20px 70px #000}
-.login-box{max-width:410px;text-align:left}.login-icon{text-align:center;font-size:32px}.login-box h2{text-align:center;margin:7px 0}.login-restricted{text-align:center;font-weight:bold;margin:0 0 7px}.login-label{display:block;font-size:10px;color:var(--muted);margin:15px 0 5px}
-.password-wrap{display:flex;gap:7px}.password-wrap input{flex:1}.password-toggle{width:45px;background:#102a4b;color:#fff;border:1px solid #2a4f7d;border-radius:7px}
-.login-error{min-height:18px;color:#ff6b86;font-size:11px;margin-top:8px}.login-submit{width:100%;margin-top:4px;height:42px}
-.form{display:grid;grid-template-columns:1fr 1fr;gap:12px}.full{grid-column:1/-1}
-.form label{display:block;font-size:10px;color:var(--muted);margin-bottom:5px}.form input,.form select,.form textarea{width:100%;background:#020b1b;color:#fff;border:1px solid #21436d;border-radius:7px;padding:10px;outline:none}.form textarea{min-height:90px;resize:vertical}
-.multi-cat{display:flex;flex-wrap:wrap;gap:7px;padding:10px;background:#020b1b;border:1px solid #21436d;border-radius:7px;max-height:180px;overflow:auto}
-.multi-cat label{display:inline-flex;align-items:center;gap:5px!important;margin:0!important;padding:6px 8px;background:#071a31;border:1px solid #1c3d65;border-radius:6px;color:#b9c9e6!important;font-size:10px!important;cursor:pointer}
-.multi-cat label:has(input:checked){border-color:#0877ff;background:#0b2b55;color:#fff!important}
-.multi-cat input{accent-color:#0877ff}
-.category-list{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
-.category-chip{font-size:8px!important;color:#2f9aff;background:#061a33;border:1px solid #173d67;border-radius:4px;padding:3px 5px}
-.rating-buttons{display:flex;gap:2px}.rating-buttons button{background:none;border:0;color:#4a6387;font-size:29px;padding:0}.rating-buttons button.on{color:var(--blue)}
-.cover-preview{display:block;width:180px;height:240px;object-fit:cover;margin:15px auto;border-radius:8px}.hint{font-size:11px;color:#7890b2;line-height:1.5}
-.toast{position:fixed;right:20px;bottom:20px;background:#09264a;border:1px solid #167cff;padding:12px 16px;border-radius:7px;display:none;z-index:300;box-shadow:0 10px 30px #000}
-.stats-panel{margin-top:22px;background:#071426;border:1px solid var(--line);border-radius:10px;padding:18px}.stats-panel h2{font-size:17px;margin:0 0 15px}
-.stat-columns{display:grid;grid-template-columns:1fr 1fr;gap:20px}.bar-row{display:grid;grid-template-columns:150px 1fr 35px;gap:8px;align-items:center;margin:8px 0;font-size:10px}.bar{height:9px;background:#0b2341;border-radius:10px;overflow:hidden}.bar i{display:block;height:100%;background:var(--blue);border-radius:10px}
-@media(max-width:1250px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}.header-inner{gap:12px}.brand-mini{min-width:190px}}
-@media(max-width:1000px){.top-nav{overflow-x:auto;scrollbar-width:none}.top-nav::-webkit-scrollbar{display:none}.stats{grid-template-columns:repeat(3,1fr)}.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.detail-grid{grid-template-columns:220px 1fr}}
-@media(max-width:760px){
-  .header-inner{padding:9px 12px;flex-wrap:wrap}.brand-mini{flex:1;min-width:0}.ps-mini{font-size:25px}.brand-mini strong{font-size:11px}.brand-mini small{font-size:8px}.account{padding:8px 10px!important;font-size:11px!important}
-  .top-nav{order:3;flex-basis:100%;padding-bottom:2px}.top-nav button{font-size:11px;padding:8px 9px}
-  .main{padding:20px 12px 40px}.title{font-size:23px}.stats{grid-template-columns:repeat(2,1fr)}.tools{grid-template-columns:1fr}.filters{gap:6px}.filters button{font-size:11px;padding:8px 10px}
-  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.cover{height:220px}.card h3{font-size:11px}.admin-cards{grid-template-columns:repeat(2,1fr)}.admin-head,.admin-toolbar-head{align-items:flex-start;flex-wrap:wrap}.form,.collection-grid{grid-template-columns:1fr}.detail-grid{grid-template-columns:1fr}.detail-cover{height:330px}.detail-info h2{font-size:22px}.stat-columns{grid-template-columns:1fr}
+/* ===== CAMADA DE ACESSO ===== */
+#accessGate{position:fixed;inset:0;background:linear-gradient(135deg,#f2f6fc,#eaf1fb);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto}
+.access-box{width:min(560px,100%);background:#fff;border:1px solid #dbe4ef;border-radius:20px;box-shadow:0 12px 40px #17345d22;padding:26px}
+.access-brand{font-size:28px;font-weight:900;color:#173f8f}.access-brand span{color:#1764e8}
+.access-sub{color:#64748b;margin:5px 0 20px}
+.access-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px}
+.access-tab{border:0;border-radius:10px;padding:12px 8px;font-weight:900;color:#fff;cursor:pointer}
+.access-tab.system{background:#16a34a}.access-tab.request{background:#1764e8}.access-tab.admin{background:#dc2626}
+.access-panel{display:none}.access-panel.active{display:block}
+.access-panel h2{margin:0 0 8px;color:#17345d}.access-panel p{color:#52637b;line-height:1.45}
+.access-form{display:grid;gap:11px;margin-top:15px}.access-form label{display:block}
+.access-form input{width:100%;box-sizing:border-box;padding:12px;border:1px solid #cbd5e1;border-radius:9px;margin-top:5px;font-size:16px}
+.access-btn{border:0;border-radius:9px;padding:12px 16px;font-weight:900;color:#fff;cursor:pointer}
+.access-green{background:#16a34a}.access-blue{background:#1764e8}.access-red{background:#dc2626}
+.access-msg{display:none;padding:11px;border-radius:9px;margin-top:12px;font-weight:700}
+.access-msg.info{display:block;background:#e8f1ff;color:#174a96}
+.access-msg.ok{display:block;background:#dcfce7;color:#166534}
+.access-msg.warn{display:block;background:#fff4d6;color:#8a5a00}
+.access-msg.bad{display:block;background:#fee2e2;color:#991b1b}
+.access-loading{opacity:.65;pointer-events:none}
+#appShell{display:none}
+@media(max-width:560px){
+  .access-box{padding:16px;border-radius:16px}
+  .access-tabs{grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:14px}
+  .access-tab{padding:9px 5px;font-size:12px;line-height:1.15;min-height:52px}
+  .access-brand{font-size:22px}
+  .access-sub{font-size:14px;margin-bottom:14px}
+  .access-panel h2{font-size:21px}
 }
 
-/* ==========================================================
-   NEW GAMES — V12.1
-   Layout fluido + navegação superior
-   Mantém todas as funções da V12
-   ========================================================== */
-:root{
-  --ng-bg:#020817;
-  --ng-panel:#061426;
-  --ng-panel2:#081a31;
-  --ng-line:#173a61;
-  --ng-blue:#0877ff;
-  --ng-blue2:#075bd8;
-  --ng-text:#f5f8ff;
-  --ng-muted:#8ea7c8;
-}
-html,body{min-height:100%;overflow-x:hidden}
-body{
-  background:
-    radial-gradient(850px 420px at 72% -10%,rgba(8,119,255,.12),transparent 65%),
-    linear-gradient(180deg,#020817 0%,#030b18 100%);
+/* FINAL A4 SAFE AREA */
+.a4-sheet .ident-label{font-size:6pt!important;margin-bottom:.7mm!important}
+.a4-sheet .ident-value{font-size:7.2pt!important;min-height:3mm!important}
+.a4-sheet .card-head .main-title{font-size:16pt!important}
+.a4-sheet .card-head .brand{font-size:7pt!important}
+.a4-sheet .card-head .brand strong{font-size:9pt!important}
+
+.logout-btn{background:#e53935!important;border-color:#e53935!important;color:#fff!important;font-weight:900!important}
+#loginSessionInfo{font-size:13px;font-weight:800;margin:6px 0 0;color:#516078}
+@media(max-width:700px){nav{gap:6px!important;overflow-x:auto!important;flex-wrap:nowrap!important;padding-bottom:5px}nav button{font-size:13px!important;padding:8px 10px!important;white-space:nowrap!important}.logout-btn{margin-left:2px!important}}
+@media(max-width:700px){nav{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));overflow:visible!important;gap:6px!important;padding:6px!important}nav button{width:100%!important;min-height:42px!important;font-size:12px!important;padding:7px 5px!important;white-space:normal!important}.history-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}.history-delete-btn{min-height:42px;padding:8px 12px;font-size:13px}}
+.history-delete-btn{border:0;border-radius:7px;padding:6px 9px;background:#dc2626;color:#fff;font-weight:800;cursor:pointer;white-space:nowrap}.history-delete-btn:hover{filter:brightness(.92)}
+
+/* ===== V16 — editor de recorte antes da leitura ===== */
+.crop-editor{display:none!important;margin-top:14px;border:1px solid #cbd5e1;border-radius:16px;padding:12px;background:#f8fafc}
+.crop-head{display:flex;flex-direction:column;gap:3px;color:#12345b;margin-bottom:10px}
+.crop-head span{font-size:.88rem;color:#64748b}
+.crop-stage{position:relative;width:100%;max-width:760px;margin:auto;overflow:hidden;border-radius:12px;background:#111;touch-action:none;user-select:none}
+#cropCanvas{display:block;width:100%;height:auto;max-height:70vh;object-fit:contain}
+.crop-box{position:absolute;left:8%;top:8%;width:84%;height:84%;border:3px solid #1d70f7;box-shadow:0 0 0 9999px rgba(0,0,0,.38);touch-action:none;cursor:move}
+.crop-box:after{content:"";position:absolute;inset:33.333% 0;border-top:1px dashed rgba(255,255,255,.75);border-bottom:1px dashed rgba(255,255,255,.75);pointer-events:none}
+.crop-box:before{content:"";position:absolute;inset:0 33.333%;border-left:1px dashed rgba(255,255,255,.75);border-right:1px dashed rgba(255,255,255,.75);pointer-events:none}
+.crop-box i{position:absolute;width:22px;height:22px;border:3px solid #fff;border-radius:50%;background:#1d70f7;z-index:2}
+.crop-box i[data-h="nw"]{left:-11px;top:-11px;cursor:nwse-resize}.crop-box i[data-h="ne"]{right:-11px;top:-11px;cursor:nesw-resize}.crop-box i[data-h="sw"]{left:-11px;bottom:-11px;cursor:nesw-resize}.crop-box i[data-h="se"]{right:-11px;bottom:-11px;cursor:nwse-resize}
+.crop-actions{margin-top:10px}
+@media(max-width:700px){.photo-picker{gap:7px}.photo-picker button,.photo-picker .picker-button{width:auto;flex:1;min-width:0;padding:10px 9px;font-size:.9rem}.crop-editor{padding:9px}.crop-box i{width:26px;height:26px}.crop-box i[data-h="nw"]{left:-13px;top:-13px}.crop-box i[data-h="ne"]{right:-13px;top:-13px}.crop-box i[data-h="sw"]{left:-13px;bottom:-13px}.crop-box i[data-h="se"]{right:-13px;bottom:-13px}}
+
+/* V14 — correção direta e controles de histórico robustos no celular */
+.direct-photo-picker{display:block!important}.direct-photo-picker .picker-button{display:block!important;width:100%!important;text-align:center}.direct-photo-picker .file-name{margin-top:8px}.history-delete-btn{min-height:42px;padding:9px 14px!important;touch-action:manipulation;-webkit-tap-highlight-color:transparent}.history-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}@media(max-width:700px){.history-table-wrap table{min-width:760px}.history-delete-btn{font-size:14px!important}.actions{gap:8px!important}.actions button{min-height:44px!important}}
+</style>
+
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f2f5fa;color:#17243a}
+header{background:linear-gradient(135deg,#123b91,#1764e8);color:#fff;padding:22px 18px;position:sticky;top:0;z-index:20;box-shadow:0 3px 12px #0003}
+.brand{font-size:31px;font-weight:900}.brand span{color:#9dccff}.sub{margin-top:5px;color:#e4efff}
+nav{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}nav button{border:1px solid #ffffff55;background:#ffffff22;color:#fff;border-radius:12px;padding:12px 17px;font-size:16px;font-weight:800;cursor:pointer}
+main{max-width:1050px;margin:auto;padding:22px 15px 60px}.card{background:#fff;border:1px solid #e1e7ef;border-radius:17px;padding:19px;margin-bottom:18px;box-shadow:0 2px 12px #173b7112}
+h1,h2,h3{margin-top:0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+label{font-weight:700;font-size:14px}input,select{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;margin-top:5px;font-size:16px}
+button{cursor:pointer}.primary{background:#1764e8;color:#fff;border:0;border-radius:9px;padding:12px 17px;font-weight:800}.secondary{background:#e8eef7;color:#17345d;border:0;border-radius:9px;padding:12px 17px;font-weight:800}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.status{padding:13px;border-radius:11px;margin-top:12px;font-weight:700}.info{background:#e8f1ff;color:#174a96}.ok{background:#dcfce7;color:#166534}.warn{background:#fff4d6;color:#8a5a00}.bad{background:#fee2e2;color:#991b1b}
+.hidden{display:none}.preview{display:block;width:100%;height:auto;max-height:none;object-fit:contain;border:1px solid #d5dde8;border-radius:11px;margin-top:13px;background:#fafcff;box-sizing:border-box}
+table{width:100%;border-collapse:collapse;margin-top:13px;font-size:14px}th,td{border:1px solid #d9e1ea;padding:9px;text-align:center}th{background:#edf3fa}
+.correct{color:#16803d;font-weight:800}.wrong{color:#c62828;font-weight:800}.blank{color:#64748b;font-weight:800}.double{color:#a15c00;font-weight:800}
+.score{font-size:34px;color:#1764e8;font-weight:900}.keyline{font-family:monospace;background:#f1f5f9;padding:12px;border-radius:9px;font-size:18px;letter-spacing:3px;word-break:break-all}
+.qgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.qbox{border:1px solid #cbd5e1;border-radius:8px;padding:8px}.qopts{display:flex;gap:5px;margin-top:6px}.qopts button{width:30px;height:30px;border-radius:50%;border:1px solid #64748b;background:#fff}.qopts button.sel{background:#16a34a;color:#fff;border-color:#15803d;color:#fff}.gabarito-help{margin:0 0 12px;padding:10px 12px;border-radius:8px;background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;font-size:13px;line-height:1.45}.green-dot{color:#16a34a;font-weight:800}
+.raw{font:12px/1.5 monospace;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px;overflow:auto;white-space:pre}
+@media(max-width:600px){
+  .brand{font-size:24px}
+  .qgrid{grid-template-columns:repeat(2,1fr)}
+  nav{gap:6px;margin-top:12px}
+  nav button{font-size:13px;padding:9px 10px;border-radius:9px}
+  .actions{gap:7px}
+  .actions button{padding:10px 12px;font-size:14px}
 }
 
-/* Topo */
-.site-header{
-  position:sticky!important;
-  top:0!important;
-  left:0!important;
-  width:100%!important;
-  height:auto!important;
-  min-height:72px!important;
-  z-index:1000;
-  background:rgba(2,8,20,.97)!important;
-  border:0!important;
-  border-bottom:1px solid rgba(39,86,132,.55)!important;
-  box-shadow:0 7px 25px rgba(0,0,0,.22)!important;
-  backdrop-filter:blur(12px);
+/* ===== CARTÃO-RESPOSTA A4 V4.1 ===== */
+.card-config{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}
+.card-config label{font-weight:800;font-size:13px}
+.card-config label:first-child{grid-column:span 2}
+.card-config input,.card-config select{width:100%;margin-top:5px;padding:10px;border:1px solid #cbd5e1;border-radius:8px}
+.a4-wrap{width:210mm;height:297mm;margin:10px auto;overflow:visible;box-sizing:border-box}
+.a4-sheet{width:210mm;height:297mm;min-width:210mm;min-height:297mm;max-width:210mm;max-height:297mm;box-sizing:border-box;background:#fff!important;background-color:#fff!important;color:#111;position:relative;padding:10mm 15mm 10mm;border:0;box-shadow:none!important;font-family:Arial,Helvetica,sans-serif;color-scheme:light;overflow:visible}
+.omr-marker{display:block;position:absolute;width:7mm;height:7mm;background:#000!important;box-sizing:border-box;z-index:100;opacity:1!important;filter:none!important;border:0!important}
+.omr-tl{left:5mm;top:5mm}.omr-tr{right:5mm;top:5mm}.omr-bl{left:5mm;bottom:5mm}.omr-br{right:5mm;bottom:5mm}
+.card-head{border-bottom:1.2px solid #173f8f;padding:0 1.5mm 1.8mm;margin:0 1.5mm 2mm;display:flex;align-items:end;justify-content:space-between;gap:5mm}
+.card-head .main-title{font-size:16pt;font-weight:900;letter-spacing:.2px;color:#102a56;line-height:1}
+.card-head .brand{font-size:7pt;font-weight:800;color:#173f8f;text-align:right;line-height:1}
+.card-head .brand strong{display:block;font-size:9pt}
+.card-subtitle{text-align:center;font-size:7.5pt;font-weight:800;letter-spacing:1.1px;margin:0 0 2mm;color:#26364d}
+.ident-box{border:1.2px solid #111;margin:0 1.5mm 2.5mm}
+.ident-title{background:#173f8f;color:#fff;font-size:7pt;font-weight:900;padding:1.4mm 2mm;letter-spacing:.4px}
+.ident-grid{display:block;min-width:0}
+.ident-row{display:grid;gap:0}
+.ident-row-top{grid-template-columns:2.2fr 1fr}
+.ident-row-student{grid-template-columns:1.75fr .72fr .72fr}
+.ident-cell{padding:1.2mm 1.8mm;border-right:1px solid #aaa;border-top:1px solid #aaa;min-height:8.5mm;min-width:0;overflow:hidden;background:#fff}
+.ident-row .ident-cell:last-child{border-right:0}
+.ident-label{font-size:7.5pt;font-weight:900;text-transform:uppercase;color:#173f8f;margin-bottom:2mm;letter-spacing:.2px}
+.ident-value{font-size:10.5pt;font-weight:700;min-height:5mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ident-label{font-size:6pt;font-weight:800;text-transform:uppercase;color:#4b5563;margin-bottom:.7mm}
+.ident-value{font-size:7.2pt;font-weight:700;min-height:3mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.reg-code{font-family:"Courier New",monospace;letter-spacing:1.3px;font-size:10pt}
+.instructions{font-size:4.6pt;margin:0 1.5mm .8mm;border:1px solid #bbb;padding:.9mm 1.3mm;line-height:1.1}
+.instructions b{color:#173f8f}
+.answer-title{text-align:center;font-size:7pt;font-weight:900;margin:1.2mm 1.5mm .5mm;letter-spacing:.3px}
+.answer-help{text-align:center;font-size:4pt;margin:0 1.5mm .6mm;color:#444}
+.omr-grid-fixed{display:flex;gap:1.8mm;margin:0 1.5mm;height:165mm;align-items:stretch;overflow:visible}
+.omr-column{flex:1 1 0;min-width:0;height:160mm;display:flex;flex-direction:column;gap:1.2mm;overflow:visible}
+.omr-q{border:1px solid #111;height:15.6mm;min-height:15.6mm;max-height:15.6mm;flex:0 0 15.6mm;padding:.35mm .6mm;text-align:center;break-inside:avoid;display:flex;flex-direction:column;justify-content:center;align-items:center;box-sizing:border-box;background:#fff;overflow:hidden}
+.omr-qnum{font-size:4.6pt;font-weight:900;margin-bottom:.25mm;line-height:1}
+.omr-options{
+display:flex;
+justify-content:center;
+align-items:center;
+gap:1.7mm;
+flex-wrap:nowrap;
 }
-.header-inner{
-  width:100%!important;
-  max-width:1500px!important;
-  height:72px!important;
-  min-height:72px!important;
+.omr-opt{width:3.8mm;height:3.8mm;border:1px solid #111;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:4.8pt;font-weight:700;box-sizing:border-box}
+.card-footer{position:absolute;left:10mm;right:10mm;bottom:7mm;text-align:center;border-top:1px solid #aaa;padding-top:1.2mm;font-size:5pt;color:#555}
+.card-footer strong{font-size:6pt;color:#173f8f}
+@media print{
+  body{background:#fff!important}
+  header,main>.card:not(#cartao .card),#cartao>.card>h2,#cartao>.card>p,#cartao>.card>.status,#cartao>.card>.actions,.no-print{display:none!important}
+  #cartao{display:block!important}
+  #cartao>.card{border:0!important;box-shadow:none!important;padding:0!important;margin:0!important;background:#fff!important}
+  .a4-wrap{margin:0!important;width:210mm!important;height:297mm!important;overflow:visible!important}
+  .a4-sheet{box-shadow:none!important;border:0!important;margin:0!important;width:210mm!important;height:297mm!important;overflow:visible!important}
+  @page{size:A4 portrait;margin:0}
+}
+@media(max-width:700px){
+ .card-config{grid-template-columns:1fr 1fr}
+ .card-config label:first-child{grid-column:span 2}
+ .a4-wrap{width:100%;overflow-x:auto;margin-left:0;margin-right:0}
+}
+
+
+.correction-modes{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:14px 0 16px}
+.correction-mode{border:1px solid #cbd5e1;border-radius:11px;padding:13px 12px;background:#e8eef7;color:#17345d;font-weight:900;font-size:15px;cursor:pointer}
+.correction-mode.active{background:#1764e8;color:#fff;border-color:#1764e8}
+.manual-correction-grid{margin-top:12px;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.manual-correction-grid .qbox{padding:10px}
+.manual-correction-grid .qopts{justify-content:center;gap:7px}
+.manual-correction-grid .qopts button{width:38px;height:38px;font-size:15px;font-weight:900}
+.manual-correction-grid .qopts button.sel{background:#16a34a;color:#fff;border-color:#15803d}
+.manual-correction-grid .qbox.manual-empty{border-color:#f59e0b}
+@media(max-width:600px){
+ .correction-modes{grid-template-columns:1fr 1fr;gap:7px}
+ .correction-mode{padding:10px 7px;font-size:12px;min-height:48px}
+ .manual-correction-grid{grid-template-columns:1fr;gap:7px}
+ .manual-correction-grid .qbox{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px}
+ .manual-correction-grid .qopts{margin-top:0;gap:5px;flex-shrink:0}
+ .manual-correction-grid .qopts button{width:36px;height:36px}
+}
+.photo-picker{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}
+.picker-button{display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:12px 16px;border-radius:10px}
+.file-hidden{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.file-name{font-size:.95rem;color:#334155;overflow-wrap:anywhere}
+@media(max-width:600px){
+  .photo-picker{display:block}
+  .picker-button{width:100%;box-sizing:border-box}
+  .file-name{padding:8px 2px}
+}
+.smallbtn{padding:6px 9px;font-size:12px}.pdf-all-btn{background:#c62828;color:#fff;border:0;border-radius:8px;padding:9px 14px;font-weight:700;cursor:pointer}.pdf-all-btn:hover{background:#a91f1f}
+
+.student-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px;margin-top:10px}
+.student-list label{font-size:12px}.student-list input{font-size:14px}
+.print-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-top:12px}
+.radio-card{border:1px solid #cbd5e1;border-radius:10px;padding:10px;background:#f8fafc}
+.radio-card input{width:auto;margin-right:6px}
+.print-preview-note{font-size:12px;color:#64748b;margin-top:8px}
+@media print{
+ .a4-sheet.print-page{page-break-after:always;break-after:page}
+ .a4-sheet.print-page:last-child{page-break-after:auto;break-after:auto}
+}
+
+
+.blank-line{display:block;width:100%;height:6mm;border-bottom:1.2px solid #111}
+.blank-line.short{width:100%}
+.student-value{white-space:nowrap;overflow:hidden;text-overflow:clip}
+
+
+.app-guide{margin-top:18px;background:#fff;border:1px solid #d9e1ef;border-radius:14px;padding:22px;box-shadow:0 4px 14px rgba(20,45,90,.07)}
+.app-guide h2{margin:0 0 8px;color:#164da5;font-size:21px}
+.app-guide h3{margin:18px 0 10px;color:#163d78;font-size:16px}
+.app-guide>p{margin:0;color:#334155;line-height:1.55;font-size:14px}
+.guide-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.guide-item{border:1px solid #dbe4f0;border-radius:10px;padding:13px;background:#f8fbff}
+.guide-title{font-weight:800;color:#1557b5;font-size:14px;margin-bottom:5px}
+.guide-item p{margin:0;color:#40516a;font-size:12.5px;line-height:1.5}
+.guide-flow{margin-top:14px;padding:12px;border-radius:9px;background:#eef5ff;color:#163f80;font-size:12.5px;line-height:1.6}
+.guide-flow span{font-weight:800}
+.guide-tip{margin-top:10px;padding:12px;border-radius:9px;background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;font-size:12.5px;line-height:1.5}
+@media(max-width:700px){.guide-grid{grid-template-columns:1fr}.app-guide{padding:15px}}
+
+</style>
+
+<style id="final-a4-omr-fix">
+/* ===== CARTÃO A4 — DIMENSÕES FÍSICAS FIXAS ===== */
+.a4-wrap{
+  width:210mm!important;
+  height:297mm!important;
   margin:0 auto!important;
-  padding:8px 24px!important;
-  display:flex!important;
-  flex-direction:row!important;
-  align-items:center!important;
-  gap:18px!important;
-}
-.brand-mini{
-  width:190px!important;
-  min-width:190px!important;
-  height:54px!important;
-  margin:0!important;
-  padding:0!important;
-  border:0!important;
-  display:flex!important;
-  align-items:center!important;
-  justify-content:flex-start!important;
-}
-.newgames-logo-image{
-  width:180px!important;
-  height:52px!important;
-  object-fit:contain!important;
-  object-position:left center!important;
-  display:block!important;
-}
-.top-nav{
-  flex:1!important;
-  min-width:0!important;
-  display:flex!important;
-  flex-direction:row!important;
-  align-items:center!important;
-  justify-content:center!important;
-  gap:5px!important;
   overflow:visible!important;
 }
-.top-nav button{
-  width:auto!important;
-  min-width:max-content;
-  padding:10px 12px!important;
-  border:1px solid transparent!important;
-  border-radius:8px!important;
-  background:transparent!important;
-  color:#aebfda!important;
-  font-size:12px!important;
-  font-weight:800!important;
-  white-space:nowrap!important;
-  transition:background .16s,border-color .16s,color .16s,transform .16s!important;
-}
-.top-nav button:hover{
-  background:#0a2442!important;
-  border-color:#20527f!important;
-  color:#fff!important;
-  transform:translateY(-1px);
-}
-.top-nav button.active{
-  background:linear-gradient(90deg,#0877ff,#075bd8)!important;
-  border-color:#1687ff!important;
-  color:#fff!important;
-  box-shadow:0 6px 16px rgba(0,102,255,.18)!important;
-}
-.account{
-  width:auto!important;
-  min-width:126px!important;
+.a4-sheet{
+  width:210mm!important;
+  height:297mm!important;
+  min-width:210mm!important;
+  min-height:297mm!important;
+  max-width:210mm!important;
+  max-height:297mm!important;
+  box-sizing:border-box!important;
+  padding:7mm 10mm 8mm!important;
   margin:0!important;
-  padding:11px 15px!important;
-  border-radius:9px!important;
-  border:1px solid #1c70ba!important;
-  background:#071b35!important;
-  color:#fff!important;
-  font-weight:800!important;
-  white-space:nowrap;
-}
-.account:before{display:none!important}
-.account:hover{
-  background:#0b294b!important;
-  border-color:#1687ff!important;
+  overflow:visible!important;
+  position:relative!important;
+  background:#fff!important;
 }
 
-/* Conteúdo */
-.main{
-  width:100%!important;
-  max-width:none!important;
-  margin:0!important;
-  padding:30px clamp(16px,3vw,42px) 70px!important;
-}
-.public,.admin{
-  width:100%;
-  max-width:1500px;
-  margin:0 auto;
-}
-.title,.admin-title{letter-spacing:-.6px}
-.stats{
-  gap:12px!important;
-}
-.stat,.admin-card,.rental-card{
-  background:linear-gradient(145deg,rgba(7,22,42,.96),rgba(5,17,33,.96))!important;
-  border-color:#173e68!important;
-}
-.tools{
-  grid-template-columns:minmax(0,1fr) minmax(210px,260px)!important;
-  gap:10px!important;
-}
-.search-box input,.tools select{
-  width:100%;
-  box-sizing:border-box;
-}
-.grid{
-  width:100%;
-  grid-template-columns:repeat(5,minmax(0,1fr))!important;
-  gap:15px!important;
-}
-.card{min-width:0}
-.card:hover{
-  transform:translateY(-3px);
-  border-color:#1878d4;
-}
-.table-wrap{max-width:100%;overflow-x:auto}
-.rental-table{min-width:760px}
-
-/* Área administrativa: aproveita melhor a largura */
-.admin-toolbar-head{
-  display:flex;
-  align-items:flex-end;
-  justify-content:space-between;
-  gap:15px;
-  flex-wrap:wrap;
-}
-.admin-toolbar-head .buttons{display:flex;gap:8px;flex-wrap:wrap}
-
-/* Aba da locadora */
-.locker-nav{
-  display:inline-flex!important;
-  align-items:center;
-  gap:4px!important;
-  padding:4px!important;
-  margin-bottom:18px!important;
-  background:#06162a!important;
-  border:1px solid #173b64!important;
-  border-radius:10px!important;
-}
-.locker-nav .btn{
-  border:0!important;
-  background:transparent!important;
-}
-.locker-nav .btn.active{
-  background:linear-gradient(90deg,#0877ff,#075bd8)!important;
-}
-
-/* Modais */
-.modal .box{
-  max-width:min(820px,calc(100vw - 28px));
-  max-height:calc(100vh - 30px);
-  overflow:auto;
-}
-
-/* Desktop grande */
-@media(min-width:1501px){
-  .header-inner{padding-left:30px!important;padding-right:30px!important}
-  .grid{grid-template-columns:repeat(6,minmax(0,1fr))!important}
-}
-
-/* Notebook / telas médias */
-@media(max-width:1200px){
-  .header-inner{padding-left:16px!important;padding-right:16px!important;gap:10px!important}
-  .brand-mini{width:165px!important;min-width:165px!important}
-  .newgames-logo-image{width:158px!important}
-  .top-nav button{padding:9px 9px!important;font-size:11px!important}
-  .account{min-width:112px!important;padding:10px 11px!important}
-  .grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
-}
-
-/* Tablet */
-@media(max-width:900px){
-  .site-header{position:sticky!important}
-  .header-inner{
-    height:auto!important;
-    min-height:64px!important;
-    padding:7px 12px!important;
-    flex-wrap:wrap!important;
-    gap:6px!important;
-  }
-  .brand-mini{
-    width:175px!important;
-    min-width:175px!important;
-    height:48px!important;
-  }
-  .newgames-logo-image{width:165px!important;height:48px!important}
-  .account{margin-left:auto!important}
-  .top-nav{
-    order:3!important;
-    flex-basis:100%!important;
-    width:100%!important;
-    justify-content:flex-start!important;
-    overflow-x:auto!important;
-    scrollbar-width:none;
-    padding:1px 0 3px!important;
-  }
-  .top-nav::-webkit-scrollbar{display:none}
-  .main{padding:22px 16px 55px!important}
-  .grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
-  .tools{grid-template-columns:1fr!important}
-}
-
-/* Celular */
-@media(max-width:600px){
-  .brand-mini{width:145px!important;min-width:145px!important}
-  .newgames-logo-image{width:140px!important}
-  .account{min-width:auto!important;padding:9px 11px!important;font-size:11px!important}
-  .top-nav button{font-size:10px!important;padding:8px 9px!important}
-  .grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
-  .stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}
-  .filters{overflow-x:auto;flex-wrap:nowrap!important;padding-bottom:4px}
-  .filters button{white-space:nowrap}
-}
-
-/* Celular pequeno */
-@media(max-width:400px){
-  .header-inner{padding-left:8px!important;padding-right:8px!important}
-  .brand-mini{width:125px!important;min-width:125px!important}
-  .newgames-logo-image{width:120px!important}
-  .account{font-size:10px!important;padding:8px 9px!important}
-  .stats{grid-template-columns:1fr!important}
-}
-
-
-/* ==========================================================
-   NEW GAMES — V12.2
-   Estante de jogos + capas em proporção de caixa PS4/PS5
-   ========================================================== */
-
-/* Área da coleção vira uma estante visual */
-#gamesGrid,
-.games-grid,
-.grid{
-  position:relative;
-  padding:30px 18px 34px!important;
-  border:1px solid rgba(117,76,35,.55)!important;
-  border-radius:12px!important;
-  background:
-    linear-gradient(to bottom,rgba(0,0,0,.16),rgba(0,0,0,.08)),
-    repeating-linear-gradient(
-      90deg,
-      rgba(105,64,28,.14) 0,
-      rgba(105,64,28,.14) 2px,
-      transparent 2px,
-      transparent 96px
-    ),
-    linear-gradient(180deg,#4a2b14 0%,#633b1c 44%,#3a210f 100%)!important;
-  box-shadow:
-    inset 0 0 0 1px rgba(255,190,90,.08),
-    inset 0 18px 35px rgba(0,0,0,.22),
-    0 18px 40px rgba(0,0,0,.25)!important;
-}
-
-/* Prateleiras horizontais */
-#gamesGrid:before,
-.games-grid:before,
-.grid:before{
-  content:"";
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  z-index:0;
-  background:
-    linear-gradient(to bottom,
-      transparent 0,
-      transparent 31.5%,
-      rgba(20,10,4,.75) 31.5%,
-      rgba(124,75,32,.95) 32.8%,
-      rgba(211,142,65,.75) 33.6%,
-      rgba(42,21,8,.95) 35.1%,
-      transparent 35.8%,
-      transparent 65.2%,
-      rgba(20,10,4,.75) 65.2%,
-      rgba(124,75,32,.95) 66.5%,
-      rgba(211,142,65,.72) 67.2%,
-      rgba(42,21,8,.95) 68.7%,
-      transparent 69.4%
-    );
-}
-
-/* Pequenos focos de luz sobre cada prateleira */
-#gamesGrid:after,
-.games-grid:after,
-.grid:after{
-  content:"";
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  z-index:0;
-  background:
-    radial-gradient(90px 55px at 9% 3%,rgba(255,218,150,.18),transparent 72%),
-    radial-gradient(90px 55px at 27% 3%,rgba(255,218,150,.15),transparent 72%),
-    radial-gradient(90px 55px at 45% 3%,rgba(255,218,150,.15),transparent 72%),
-    radial-gradient(90px 55px at 63% 3%,rgba(255,218,150,.15),transparent 72%),
-    radial-gradient(90px 55px at 81% 3%,rgba(255,218,150,.15),transparent 72%);
-}
-
-/* Cards ficam sobre a madeira */
-#gamesGrid > *,
-.games-grid > *,
-.grid > *{
-  position:relative;
-  z-index:1;
-}
-
-/* Caixa física do jogo */
-.card{
-  overflow:hidden!important;
-  background:linear-gradient(180deg,#07182e,#041022)!important;
-  border:1px solid rgba(12,19,28,.55)!important;
-  border-radius:5px!important;
-  box-shadow:
-    0 7px 13px rgba(0,0,0,.55),
-    0 0 0 1px rgba(255,255,255,.08),
-    inset 0 0 0 1px rgba(24,112,210,.08)!important;
-  transform-origin:center bottom;
-}
-
-/* Capa com proporção vertical de caixa física */
-.card .cover{
-  position:relative;
-  aspect-ratio:2 / 3!important;
-  height:auto!important;
-  min-height:0!important;
-  background:#071a33!important;
-  overflow:hidden!important;
-}
-
-/* Não distorcer as capas */
-.card .cover img{
-  width:100%!important;
-  height:100%!important;
-  object-fit:cover!important;
-  object-position:center!important;
+/* ===== 4 MARCADORES OMR — DENTRO DA FOLHA ===== */
+.a4-sheet .omr-marker{
+  width:7mm!important;
+  height:7mm!important;
+  background:#000!important;
   display:block!important;
+  position:absolute!important;
+  z-index:9999!important;
+  opacity:1!important;
+  filter:none!important;
+}
+.a4-sheet .omr-tl{left:8mm!important;top:8mm!important}
+.a4-sheet .omr-tr{right:8mm!important;top:8mm!important}
+.a4-sheet .omr-bl{left:8mm!important;bottom:8mm!important}
+.a4-sheet .omr-br{right:8mm!important;bottom:8mm!important}
+
+/* ===== CABEÇALHO COMPACTO ===== */
+.a4-sheet .card-head{
+  margin:0 5mm 1.2mm!important;
+  padding:0 1mm 1.2mm!important;
+  gap:3mm!important;
+}
+.a4-sheet .card-head .main-title{
+  font-size:13pt!important;
+  line-height:1!important;
+}
+.a4-sheet .card-head .brand{
+  font-size:6pt!important;
+  line-height:1!important;
+}
+.a4-sheet .card-head .brand strong{
+  font-size:8pt!important;
+}
+.a4-sheet .card-subtitle{
+  font-size:6pt!important;
+  margin:0 0 1.5mm!important;
 }
 
-/* Brilho neon somente no contorno da capa */
-.card .cover{
-  border-radius:5px!important;
-  box-shadow:
-    0 0 0 1px rgba(22,133,255,.72),
-    0 0 9px rgba(0,119,255,.32),
-    0 0 20px rgba(0,119,255,.14)!important;
+/* ===== IDENTIFICAÇÃO COMPACTA ===== */
+.a4-sheet .ident-box{
+  margin:0 1mm 1.8mm!important;
 }
-.card:hover .cover{
-  box-shadow:
-    0 0 0 1px rgba(45,160,255,.95),
-    0 0 13px rgba(0,136,255,.52),
-    0 0 28px rgba(0,119,255,.24)!important;
+.a4-sheet .ident-title{
+  font-size:6.5pt!important;
+  padding:1.1mm 1.6mm!important;
 }
-
-/* A capa fica limpa: sem tarja sobre a arte. */
-.card .cover:after{display:none!important}
-
-/* Base do card */
-.card .card-body{
-  min-height:76px;
-  background:linear-gradient(180deg,#061427,#030b18)!important;
-  padding:9px 10px!important;
+.a4-sheet .ident-cell{
+  padding:1mm 1.4mm!important;
+  min-height:7mm!important;
+}
+.a4-sheet .ident-label{
+  font-size:5.5pt!important;
+  margin-bottom:.6mm!important;
+}
+.a4-sheet .ident-value{
+  font-size:6.8pt!important;
+  min-height:2.7mm!important;
 }
 
-/* Nome do jogo mais parecido com etiqueta de prateleira */
-.card .game-title{
-  font-size:12px!important;
-  line-height:1.25!important;
-  font-weight:800!important;
-  color:#f4f7ff!important;
+/* ===== ÁREA DE QUESTÕES ===== */
+.a4-sheet .instructions{
+  font-size:4.4pt!important;
+  margin:0 1mm .8mm!important;
+  padding:.8mm 1.1mm!important;
+  line-height:1.05!important;
+}
+.a4-sheet .answer-title{
+  font-size:6.5pt!important;
+  margin:1.1mm 1mm .5mm!important;
+}
+.a4-sheet .answer-help{
+  font-size:4pt!important;
+  margin:0 1mm .8mm!important;
+}
+.a4-sheet .omr-grid-fixed{
+  margin:0 1mm!important;
+  height:116mm!important;
+  gap:1.1mm!important;
+}
+.a4-sheet .omr-column{
+  height:116mm!important;
+  gap:1.1mm!important;
+}
+.a4-sheet .omr-q{
+  height:10.8mm!important;
+  min-height:10.8mm!important;
+  max-height:10.8mm!important;
+  flex:0 0 10.8mm!important;
+  padding:.25mm .45mm!important;
+}
+.a4-sheet .omr-qnum{
+  font-size:4.4pt!important;
+  margin-bottom:.25mm!important;
+}
+.a4-sheet .omr-options{
+  gap:1.15mm!important;
+}
+.a4-sheet .omr-opt{
+  width:3.5mm!important;
+  height:3.5mm!important;
+  font-size:4.8pt!important;
 }
 
-/* Sombra de contato com a prateleira */
-.card:after{
-  content:"";
-  position:absolute;
-  left:7%;right:7%;bottom:-9px;
-  height:12px;
-  background:rgba(0,0,0,.55);
-  filter:blur(5px);
-  z-index:-1;
+/* ===== RODAPÉ DENTRO DA ÁREA SEGURA ===== */
+.a4-sheet .card-footer{
+  left:10mm!important;
+  right:10mm!important;
+  bottom:5mm!important;
+  padding-top:1mm!important;
+  font-size:4.8pt!important;
 }
+.a4-sheet .card-footer strong{font-size:5.5pt!important}
 
-/* Hover: jogo sai levemente da prateleira */
-.card:hover{
-  transform:translateY(-7px) scale(1.015)!important;
-  border-color:rgba(12,19,28,.55)!important;
-  box-shadow:0 15px 25px rgba(0,0,0,.62)!important;
-}
-
-/* Em telas menores, mantém a proporção das capas */
-@media(max-width:1200px){
-  #gamesGrid,.games-grid,.grid{padding:25px 13px 30px!important}
-}
-@media(max-width:900px){
-  #gamesGrid,.games-grid,.grid{padding:22px 10px 27px!important}
-}
-@media(max-width:600px){
-  #gamesGrid,.games-grid,.grid{padding:18px 7px 23px!important}
-  .card .card-body{min-height:68px!important;padding:8px!important}.card .platform{font-size:9px;padding:3px 7px;margin-bottom:6px}
-  .card .game-title{font-size:10px!important}
-}
-
-
-/* ==========================================================
-   NEW GAMES — V12.3
-   Base estrutural entre as prateleiras
-   ========================================================== */
-
-/* Transformamos cada separação em uma verdadeira base de madeira,
-   com espessura, frente, sombra e profundidade. */
-#gamesGrid,
-.games-grid,
-.grid{
-  background:
-    linear-gradient(to bottom,
-      transparent 0,
-      transparent 30.8%,
-      rgba(24,11,4,.96) 30.8%,
-      rgba(91,52,20,.98) 31.2%,
-      rgba(174,105,43,.98) 31.65%,
-      rgba(218,145,62,.92) 32.05%,
-      rgba(73,38,13,.99) 32.65%,
-      rgba(17,9,4,.98) 33.05%,
-      transparent 33.35%,
-      transparent 64.1%,
-      rgba(24,11,4,.96) 64.1%,
-      rgba(91,52,20,.98) 64.5%,
-      rgba(174,105,43,.98) 64.95%,
-      rgba(218,145,62,.92) 65.35%,
-      rgba(73,38,13,.99) 65.95%,
-      rgba(17,9,4,.98) 66.35%,
-      transparent 66.65%
-    ),
-    repeating-linear-gradient(
-      90deg,
-      rgba(105,64,28,.14) 0,
-      rgba(105,64,28,.14) 2px,
-      transparent 2px,
-      transparent 96px
-    ),
-    linear-gradient(180deg,#4a2b14 0%,#633b1c 44%,#3a210f 100%)!important;
-}
-
-/* A frente da madeira dá a impressão de uma prateleira espessa. */
-#gamesGrid:before,
-.games-grid:before,
-.grid:before{
-  background:
-    linear-gradient(to bottom,
-      transparent 0,
-      transparent 30.55%,
-      rgba(8,4,2,.72) 30.55%,
-      rgba(44,23,9,.96) 31.05%,
-      rgba(132,76,29,.98) 31.38%,
-      rgba(221,148,63,.95) 31.75%,
-      rgba(116,64,23,.98) 32.05%,
-      rgba(39,19,7,.99) 32.72%,
-      rgba(7,4,2,.9) 33.12%,
-      transparent 33.35%,
-      transparent 63.85%,
-      rgba(8,4,2,.72) 63.85%,
-      rgba(44,23,9,.96) 64.35%,
-      rgba(132,76,29,.98) 64.68%,
-      rgba(221,148,63,.95) 65.05%,
-      rgba(116,64,23,.98) 65.35%,
-      rgba(39,19,7,.99) 66.02%,
-      rgba(7,4,2,.9) 66.42%,
-      transparent 66.65%
-    );
-}
-
-/* Pequena sombra logo abaixo da base: os jogos parecem realmente apoiados. */
-#gamesGrid > *,
-.games-grid > *,
-.grid > *{
-  filter:drop-shadow(0 5px 3px rgba(0,0,0,.34));
-}
-
-/* A base fica visualmente à frente do fundo, sem cobrir os cards. */
-.card{
-  margin-bottom:4px;
-}
-
-/* Se houver somente uma fileira, não mostrar bases artificiais no meio. */
-.grid:has(> :nth-child(-n+5):last-child):before,
-.games-grid:has(> :nth-child(-n+5):last-child):before,
-#gamesGrid:has(> :nth-child(-n+5):last-child):before{
-  background:transparent;
-}
-
-/* Em telas menores, aumentamos a presença da madeira sem exagerar. */
-@media(max-width:900px){
-  #gamesGrid,.games-grid,.grid{
-    padding-top:24px!important;
-    padding-bottom:28px!important;
+@media print{
+  .a4-wrap{
+    width:210mm!important;
+    height:297mm!important;
+    margin:0!important;
+  }
+  .a4-sheet{
+    width:210mm!important;
+    height:297mm!important;
+    margin:0!important;
+    padding:7mm 10mm 8mm!important;
+    box-sizing:border-box!important;
+    overflow:visible!important;
   }
 }
 
-/* ==========================================================
-   NEW GAMES — V12.4
-   Plataforma abaixo da capa + brilho somente no contorno
-   ========================================================== */
-.card .platform{letter-spacing:.1px}
-.card .cover{isolation:isolate}
+@media(max-width:600px){
+  #accessGate{padding:10px}
+  .access-box{width:100%;padding:14px;border-radius:14px}
+  .access-tabs{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important}
+  .access-tab{width:auto!important;min-height:52px!important;padding:7px 3px!important;font-size:11px!important;line-height:1.1!important}
+}
+</style>
 
-/* NEW GAMES V12.9.1 — Locadora: status clicável + exclusões
-/* V12.5 — favorito, zerado e plataformas */ */
-.fav{float:right;color:#8094b4;font-size:22px;line-height:1;margin-left:8px;text-shadow:0 0 7px rgba(255,255,255,.08)}
-.fav.on{color:#ff3158;font-size:25px;text-shadow:0 0 11px rgba(255,49,88,.45)}
-.platform.ps5{background:#fff!important;color:#111!important;border-color:#fff!important;box-shadow:0 0 8px rgba(255,255,255,.18)!important}
-.platform.ps4{background:#050505!important;color:#fff!important;border-color:#6d6d6d!important;box-shadow:0 0 8px rgba(0,0,0,.4)!important}
-.platform.other{background:rgba(7,24,48,.9)!important;color:#dcecff!important}
-.completed{color:#ffd54a!important;font-weight:800}
-.completed .trophy{display:inline-block;font-size:13px;margin-left:4px;filter:drop-shadow(0 0 4px rgba(255,213,74,.4))}
-.completed-badge{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:8px;padding:6px 8px;border:1px solid rgba(255,213,74,.55);border-radius:7px;background:linear-gradient(135deg,rgba(255,213,74,.12),rgba(255,170,0,.05));color:#ffd54a;font-size:10px;font-weight:900;letter-spacing:.2px;box-shadow:0 0 12px rgba(255,213,74,.12),inset 0 0 10px rgba(255,213,74,.04)}
-.completed-badge .trophy-icon{font-size:17px;line-height:1;filter:drop-shadow(0 0 5px rgba(255,213,74,.65))}
-.completed-badge .trophy-text{font-size:10px}
 
-.detail-favorite{font-size:23px;font-weight:900;vertical-align:-2px;margin-right:5px}
-.detail-favorite.on{color:#ff3158;text-shadow:0 0 10px rgba(255,49,88,.42)}
-.detail-completed{border-color:#6d5720!important;background:rgba(55,42,7,.55)!important;color:#ffd54a!important;font-weight:800}
+<style>
+html,body{width:100%;max-width:100%;overflow-x:hidden}
+*{box-sizing:border-box}
+img,canvas,video{max-width:100%}
+button,input,select,textarea{font:inherit;max-width:100%}
+@media(max-width:900px){
+  .nav,.tabs,.access-tabs{display:flex;flex-wrap:wrap;gap:8px}
+  .nav button,.tabs button,.access-tab{flex:1 1 140px;min-height:46px}
+  .grid,.form-grid,.fields,.row{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  table{display:block;width:100%;overflow-x:auto}
+}
+@media(max-width:600px){
+  body{font-size:14px}
+  .nav,.tabs{flex-direction:column}
+  .nav button,.tabs button{width:100%}
+  .grid,.form-grid,.fields,.row{grid-template-columns:1fr!important}
+  input,select,textarea{width:100%!important;min-height:44px}
+  button{min-height:44px}
+  .actions{display:grid!important;grid-template-columns:1fr!important}
+  .actions button{width:100%!important}
+  .modal,.dialog{width:calc(100vw - 24px)!important;max-width:none!important}
+  .preview{width:100%!important;height:auto!important;max-height:none!important}
+  canvas{width:100%!important;height:auto!important}
+}
+#installAppBtn{display:none;position:fixed;right:16px;bottom:16px;z-index:99990;border:0;border-radius:999px;padding:13px 18px;background:#1769e8;color:#fff;font-weight:900;box-shadow:0 8px 25px rgba(0,0,0,.25);cursor:pointer}
+#installAppBtn.show{display:block}
+#installAppBtn.ready{box-shadow:0 8px 30px rgba(23,105,232,.45)}
+#installAppBtn.installed{background:#18864b}
+#installHelp{display:none;position:fixed;right:16px;bottom:78px;z-index:99991;width:min(420px,calc(100vw - 32px));background:#fff;color:#172033;border:1px solid #d6dce8;border-radius:16px;padding:18px;box-shadow:0 15px 45px rgba(0,0,0,.25);line-height:1.5}
+#installHelp.show{display:block}
+#installHelp button{margin-top:12px;padding:9px 14px;border:0;border-radius:8px;background:#1769e8;color:#fff;font-weight:800}
+</style>
 
-.rental-pro-head{display:flex;justify-content:space-between;align-items:center;gap:18px;margin:0 0 14px;padding:18px 20px;border:1px solid #1a4775;border-radius:14px;background:linear-gradient(145deg,#071b33,#04101f);box-shadow:0 12px 30px rgba(0,0,0,.28)}.rental-pro-kicker{font-size:9px;letter-spacing:1.8px;color:#4ea1ff;font-weight:900}.rental-pro-head h2{margin:3px 0;font-size:22px;color:#fff}.rental-pro-head p{margin:5px 0 0;color:#8ea7c8;font-size:11px}.rental-pro-actions{display:flex;gap:8px;flex-wrap:wrap}.rental-alert-center{margin:14px 0;padding:15px;border:1px solid #183b61;border-radius:13px;background:#061629}.alert-center-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:11px}.alert-center-head strong{display:block;color:#fff;font-size:13px}.alert-center-head span{display:block;color:#7890b2;font-size:9px;margin-top:3px}.alert-center-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.alert-box{appearance:none;text-align:left;cursor:pointer;border-radius:11px;padding:13px;color:#fff;border:1px solid #21496f;background:#07192c;display:flex;flex-direction:column;gap:3px}.alert-box b{font-size:24px}.alert-box span{font-size:10px;font-weight:800}.alert-box small{font-size:8px;color:#89a6c9}.alert-danger{border-color:#743240;background:#281019}.alert-danger b{color:#ff697c}.alert-warning{border-color:#6d5624;background:#261e0b}.alert-warning b{color:#ffd05a}.alert-info{border-color:#24547d;background:#081d35}.alert-info b{color:#55a9ff}@media(max-width:700px){.rental-pro-head{flex-direction:column;align-items:flex-start}.alert-center-grid{grid-template-columns:1fr}}</style>
+<link rel="manifest" href="/new-colecao-games-playstation/corretor/manifest.webmanifest">
+<meta name="theme-color" content="#1769e8">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="NEW PROF. CORRETOR">
 
-<style id="v1291-rental-style">
-/* NEW GAMES V12.9.1 — Locadora: status clicável + exclusões */
-.rental-status-btn{appearance:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:5px;min-width:94px;padding:6px 9px;border-radius:7px;border:1px solid;font:inherit;font-size:9px;font-weight:900;letter-spacing:.15px;white-space:nowrap;transition:transform .15s ease,filter .15s ease,background .15s ease}
-.rental-status-btn:hover{transform:translateY(-1px);filter:brightness(1.12)}
-.rental-status-btn:active{transform:translateY(0)}
-.rental-status-btn.status-returned{color:#55ef9b;background:#06251a;border-color:#168c5b}
-.rental-status-btn.status-loaned{color:#ffd35a;background:#2a2108;border-color:#8b6a18}
-.rental-status-btn.status-loaned.late{background:#34200a;border-color:#b56b16}
-.rental-action-delete,.client-delete-btn{color:#ff8290!important;border-color:#6d2634!important;background:#2b0e15!important}
-.rental-action-delete:hover,.client-delete-btn:hover{background:#3a111b!important}
-@media(max-width:700px){.rental-status-btn{min-width:86px;padding:6px 7px}.rental-table{min-width:820px}}
+<link rel="apple-touch-icon" sizes="192x192" href="/new-colecao-games-playstation/corretor/icon-192.png">
+<style>
+/* ===== V16 — USO NO CELULAR ===== */
+@media(max-width:700px){
+  header{padding:10px 10px 9px;position:sticky;top:0}
+  .brand{font-size:21px;line-height:1.05}
+  .sub{font-size:12px;margin-top:3px}
+  nav{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px!important;margin-top:8px!important;overflow:visible!important;flex-wrap:initial!important;padding:0!important}
+  nav button{min-width:0!important;width:100%!important;font-size:11px!important;line-height:1.1;padding:8px 3px!important;border-radius:8px!important;white-space:normal!important}
+  main{padding:12px 9px 45px}
+  .card{padding:13px;border-radius:13px;margin-bottom:12px}
+  h1{font-size:22px}h2{font-size:20px}h3{font-size:17px}
+  .actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+  .actions button{width:100%;padding:10px 8px;font-size:13px}
+  .photo-picker{display:grid!important;grid-template-columns:1fr 1fr;gap:7px!important}
+  .photo-picker .picker-button,.photo-picker button{width:100%!important;min-width:0!important;padding:10px 7px!important;font-size:12px!important}
+  .photo-picker .file-name{grid-column:1/-1;padding:5px 2px;font-size:12px}
+  .crop-actions{display:grid!important;grid-template-columns:1fr 1fr 1fr!important}
+  .crop-actions button{font-size:11px!important;padding:9px 4px!important}
+  #diag{max-height:none!important;height:auto!important}
+  .history-table-wrap{overflow-x:visible!important}
+  #historyList table{font-size:13px;margin-top:9px}
+  #historyList table thead{display:none}
+  #historyList table,#historyList tbody,#historyList tr,#historyList td{display:block;width:100%;box-sizing:border-box}
+  #historyList tr{background:#f8fbff;border:1px solid #d7e1ee;border-radius:11px;margin:9px 0;padding:8px}
+  #historyList td{border:0!important;border-bottom:1px solid #e5ebf3!important;text-align:left;padding:7px 4px!important;min-height:28px}
+  #historyList td:last-child{border-bottom:0!important;padding-top:9px!important}
+  #historyList td:nth-child(1):before{content:'Data: ';font-weight:800}
+  #historyList td:nth-child(2):before{content:'Estudante: ';font-weight:800}
+  #historyList td:nth-child(3):before{content:'Turma: ';font-weight:800}
+  #historyList td:nth-child(4):before{content:'Avaliação: ';font-weight:800}
+  #historyList td:nth-child(5):before{content:'Acertos: ';font-weight:800}
+  #historyList td:nth-child(6):before{content:'Nota: ';font-weight:800}
+  #historyList td:nth-child(7){text-align:center}
+  .history-delete-btn{width:100%!important;padding:10px!important;font-size:13px!important}
+}
 </style>
 </head>
-<body>
-<header class="site-header">
-  <div class="header-inner">
-    <div class="brand-mini"><div class="ps-mini">PS</div><div><strong>NEW COLEÇÃO</strong><small>GAMES PLAYSTATION</small></div></div>
-    <nav class="top-nav" id="nav"></nav>
-    <button class="account" onclick="openAdminLogin()">Minha Conta</button>
-  </div>
-</header>
+<body><button id="installAppBtn" type="button" aria-label="Instalar aplicativo">📲 Instalar aplicativo</button>
+<div id="installHelp" role="dialog" aria-live="polite" aria-label="Instalação do aplicativo"></div>
 
-<main class="main">
-<section id="public" class="public">
-  <div class="top"><div><div class="title">Olá, jogador! 🎮</div><div class="sub">Bem-vindo à sua coleção PlayStation</div></div></div>
-  <div class="stats">
-    <div class="stat"><strong id="stTotal">0</strong><span>Total de Jogos</span></div>
-    <div class="stat"><strong id="stPlayed">0</strong><span>Jogados</span></div>
-    <div class="stat"><strong id="stNot">0</strong><span>Não Jogados</span></div>
-    <div class="stat"><strong id="stAvg">0.0</strong><span>Média de Avaliações</span></div>
-    <div class="stat"><strong id="stFav">0</strong><span>Favoritos</span></div>
-  </div>
-  <div class="tools">
-    <div class="search-box"><input id="search" placeholder="🔎 Pesquisar jogo..." type="search"></div>
-    <select id="sort"><option value="recent">Mais Recentes</option><option value="name">Nome A-Z</option><option value="rating">Melhor Avaliados</option><option value="category">Categoria</option></select>
-  </div>
-  <div class="filters" id="filters"></div>
-  <div class="section-head"><h2>🎮 Minha Coleção</h2><div class="result" id="result"></div></div>
-  <div class="grid" id="grid"></div>
+<div id="accessGate">
+  <div class="access-box">
+    <div class="access-brand">NEW <span>PROF. CORRETOR</span></div>
+    <div class="access-sub">Corretor Inteligente de Avaliações</div>
 
-  <section class="stats-panel">
-    <h2>📊 Resumo da coleção</h2>
-    <div class="stat-columns">
-      <div><div class="sub">Por plataforma</div><div id="platformBars"></div></div>
-      <div><div class="sub">Principais categorias</div><div id="categoryBars"></div></div>
+    <div class="access-tabs">
+      <button class="access-tab system" onclick="accessPanel('system')">🟢 Acesso ao Sistema</button>
+      <button class="access-tab request" onclick="accessPanel('request')">🔵 Solicitar acesso</button>
+      <button class="access-tab admin" onclick="accessPanel('admin')">🔴 Administrador</button>
     </div>
-  </section>
+
+    <section id="access-system" class="access-panel active">
+      <h2>🟢 Acesso ao Sistema</h2>
+      <p>Informe o e-mail utilizado na solicitação de acesso.</p>
+      <div class="access-form">
+        <label>E-mail
+          <input id="loginEmail" type="email" autocomplete="email" placeholder="professor@escola.com">
+        </label>
+        <button id="loginBtn" class="access-btn access-green" onclick="checkProfessorAccess()">Entrar</button>
+      </div>
+      <div id="loginMsg" class="access-msg"></div>
+    </section>
+
+    <section id="access-request" class="access-panel">
+      <h2>🔵 Solicitar acesso</h2>
+      <p>Preencha seus dados. A solicitação será enviada para análise do administrador.</p>
+      <div class="access-form">
+        <label>Nome
+          <input id="requestName" required autocomplete="name" type="text" placeholder="Nome completo">
+        </label>
+        <label>E-mail
+          <input id="requestEmail" type="email" required autocomplete="email" type="email" autocomplete="email" placeholder="professor@escola.com">
+        </label>
+        <label>Escola
+          <input id="requestSchool" required autocomplete="organization" type="text" placeholder="Nome da escola">
+        </label>
+        <button id="requestBtn" class="access-btn access-blue" onclick="requestAccess()">Enviar solicitação</button>
+      </div>
+      <div id="requestMsg" class="access-msg"></div>
+    </section>
+
+    <section id="access-admin" class="access-panel">
+      <h2>🔴 Administrador</h2>
+      <p>A área administrativa utiliza o login protegido pelo Cloudflare Access.</p>
+      <button class="access-btn access-red" onclick="openAdmin()">Acessar Administração</button>
+      <div class="access-msg info">O administrador será direcionado para a área protegida por e-mail e código OTP.</div>
+    </section>
+  </div>
+</div>
+
+<div id="appShell">
+
+<header><div class="brand">NEW <span>PROF. CORRETOR</span></div><div class="sub">Corretor Inteligente de Avaliações — OMR</div>
+<nav><button onclick="show('inicio')">🏠 Início</button><button onclick="show('avaliacao')">📝 Avaliação</button><button onclick="show('corrigir')">📷 Corrigir</button><button onclick="show('cartao')">📄 Cartão</button><button onclick="show('resultados')">📊 Resultados</button><button onclick="show('historico')">📚 Histórico</button><button class="logout-btn" onclick="logoutProfessor()">🚪 Sair</button></nav></header>
+<main>
+<section id="inicio" class="page"><div class="card"><h1>NEW PROF. CORRETOR INTELIGENTE</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V4.17:</b> Leitor OMR testado com fotografias reais. Histórico local e câmera integrados.<br><br><b>Base preservada:</b> o leitor calcula as posições das bolhas a partir dos próprios quadros das questões. A mesma leitura alimenta diagnóstico, sequência e tabela.</div>
+<div class="app-guide">
+  <h2>📘 Como funciona o NEW PROF. CORRETOR?</h2>
+  <p>
+    O <b>NEW PROF. CORRETOR INTELIGENTE DE AVALIAÇÕES</b> foi desenvolvido para facilitar a
+    correção de avaliações por meio da leitura automática de <b>cartões-resposta fotografados</b>.
+    O professor configura a avaliação, informa o gabarito, gera os cartões e, depois da aplicação,
+    fotografa o cartão preenchido. O sistema identifica as marcações, compara as respostas com o
+    gabarito e apresenta os resultados.
+  </p>
+
+  <h3>📚 Conheça cada aba</h3>
+
+  <div class="guide-grid">
+    <div class="guide-item">
+      <div class="guide-title">📝 Avaliação</div>
+      <p>Configure a avaliação uma única vez. Informe o título, a quantidade de questões e o número de alternativas e marque o <b>gabarito</b> de cada questão. Essas informações serão utilizadas automaticamente nas demais etapas.</p>
+    </div>
+
+    <div class="guide-item">
+      <div class="guide-title">📄 Cartão</div>
+      <p>Configure e gere os cartões-resposta em formato A4. As informações da avaliação são carregadas automaticamente. Informe a turma, escolha a quantidade de estudantes, insira os nomes e defina se a data será preenchida ou deixada em branco.</p>
+    </div>
+
+    <div class="guide-item">
+      <div class="guide-title">📷 Corrigir</div>
+      <p>Escolha <b>Correção por imagem</b> para ler o cartão fotografado ou <b>Correção por marcação</b> para selecionar manualmente as respostas do estudante.</p>
+    </div>
+
+    <div class="guide-item">
+      <div class="guide-title">📊 Resultados</div>
+      <p>Apresenta o resultado da correção: acertos, erros, questões em branco, questões para revisão e nota. Também permite conferir as respostas identificadas pelo leitor.</p>
+    </div>
+
+    <div class="guide-item">
+      <div class="guide-title">📚 Histórico</div>
+      <p>Armazena as correções realizadas neste aparelho para consulta posterior. Permite pesquisar estudantes ou turmas, consultar avaliações, exportar CSV e gerar um relatório geral em PDF.</p>
+    </div>
+  </div>
+
+  <div class="guide-flow">
+    <b>🔄 Fluxo recomendado:</b>
+    <span>1. Avaliação</span> → <span>2. Cartão</span> → <span>3. Aplicação da prova</span> →
+    <span>4. Corrigir</span> → <span>5. Resultados</span> → <span>6. Histórico</span>
+  </div>
+
+  <div class="guide-tip">
+    💡 <b>Dica:</b> configure a avaliação primeiro. Depois, acesse <b>Cartão</b> para gerar os cartões.
+    Após a aplicação, utilize <b>Corrigir</b> para fotografar os cartões e obter os resultados.
+  </div>
+</div>
+<div class="actions"><button class="primary" onclick="show('avaliacao')">Configurar avaliação</button><button class="secondary" onclick="show('corrigir')">Corrigir cartão</button></div></div></section>
+
+<section id="avaliacao" class="page hidden">
+<div class="card">
+<h2>📝 Avaliação</h2>
+<p>Configure a avaliação uma única vez. Essas informações serão carregadas automaticamente no menu <b>Cartão</b>.</p>
+<div class="grid">
+<label>Título da avaliação<input id="titulo" value="AVALIAÇÃO DE MATEMÁTICA"></label>
+<label>Questões<input id="nq" type="number" min="1" max="50" value="10" onchange="buildKey()"></label>
+<label>Alternativas<select id="na" onchange="buildKey()"><option value="3">A até C</option><option value="4">A até D</option><option value="5" selected>A até E</option></select></label>
+<label>Valor por questão<input id="valor" type="number" step=".01" value="1"></label>
+<label>Código da avaliação<input id="codigoAvaliacao" class="reg-code" readonly></label>
+</div>
+<h3 style="margin-top:18px;text-transform:uppercase">GABARITO</h3>
+<p class="gabarito-help"><b>Professor(a), marque as questões corretas abaixo e, ao finalizar, salve a avaliação.</b><br>
+Selecione uma alternativa em cada questão. A alternativa selecionada ficará marcada em <span class="green-dot">verde</span>.</p>
+<div id="key" class="qgrid"></div>
+<div class="actions">
+<button class="primary" type="button" onclick="saveEvaluation()">💾 Salvar avaliação</button>
+<button class="secondary" type="button" onclick="newAssessmentCode()">🔢 Novo código</button>
+</div>
+<div id="keymsg" class="status info">Configure o gabarito e salve a avaliação.</div>
+</div></section>
+
+<section id="cartao" class="page hidden">
+<div class="card no-print">
+  <h2>📄 Cartão-resposta</h2>
+  <p>As informações da avaliação são carregadas automaticamente. Aqui você define a turma e os estudantes para impressão.</p>
+  <div class="grid">
+    <label>Ano / Turma
+      <input id="cardTurma" placeholder="Ex.: 5º A">
+    </label>
+    <label>Modo de impressão
+      <select id="printMode" onchange="updateStudentFields()">
+        <option value="blank">Cartões em branco</option>
+        <option value="named">Cartões com nomes dos estudantes</option>
+      </select>
+    </label>
+    <label>Quantidade de estudantes
+      <input id="studentCount" type="number" min="1" max="100" value="1" onchange="updateStudentFields()">
+    </label>
+    <label>Data do cartão
+      <select id="cardDateMode" onchange="toggleCardDate()">
+        <option value="blank" selected>Deixar em branco</option>
+        <option value="choose">Escolher data</option>
+      </select>
+      <input id="cardDate" type="date" style="display:none;margin-top:6px" onchange="renderCard()">
+      <small id="card-date-help" style="display:block;color:#64748b;margin-top:3px">Escolha se a data será preenchida ou deixada em branco no cartão.</small>
+    </label>
+    <label>Código da avaliação
+      <input id="cardCodigo" class="reg-code" readonly>
+    </label>
+  </div>
+
+  <div class="status info">
+    <b id="cardInfoTitulo">Avaliação</b><br>
+    <span id="cardInfoDetalhes">10 questões · A até E</span>
+  </div>
+
+  <div id="studentFields" class="student-list"></div>
+  <div id="studentPreviewNote" class="print-preview-note"></div>
+
+  <div class="status info" style="margin-top:12px">
+    📄 <b>Formato de saída:</b> PDF A4 para impressão do cartão-resposta.
+  </div>
+  <div class="actions">
+    <button class="primary" onclick="renderCard()">🔄 Atualizar cartão</button>
+    <button class="secondary" onclick="newCardCode()">🔐 Novo código</button>
+    <button class="primary" onclick="exportCard()">📄 Gerar cartão-resposta em PDF</button>
+  </div>
+  <div class="status warn">⚠️ Imprima em <b>100%</b>. Não recorte, dobre ou cubra os quatro marcadores pretos dos cantos.</div>
+</div>
+
+<div class="a4-wrap">
+  <div id="printCard" class="a4-sheet"></div>
+</div>
 </section>
 
-<section id="admin" class="admin">
-  <div class="admin-head">
-    <div><div class="admin-title">🔐 Área Administrativa</div><div class="sub">Controle completo da sua coleção PlayStation</div></div>
-    <div class="buttons"><button class="btn" onclick="closeAdmin()">🌐 Área pública</button><button class="btn danger" onclick="logout()">Sair</button></div>
-  </div>
-  <div class="admin-cards">
-    <div class="admin-card active" id="afAll" onclick="setAF('all')"><div class="admin-card-icon">🎮</div><div><strong id="aTotal">0</strong><span>Todos os jogos</span></div></div>
-    <div class="admin-card" id="afWith" onclick="setAF('with')"><div class="admin-card-icon">🖼️</div><div><strong id="aWith">0</strong><span>Jogos com capa</span></div></div>
-    <div class="admin-card" id="afWithout" onclick="setAF('without')"><div class="admin-card-icon">⚪</div><div><strong id="aWithout">0</strong><span>Jogos sem capa</span></div></div>
-    <div class="admin-card" id="afLoaned" onclick="setAF('loaned')"><div class="admin-card-icon">📤</div><div><strong id="aLoaned">0</strong><span>Emprestados</span></div></div>
-    <div class="admin-card" id="afOverdue" onclick="setAF('overdue')"><div class="admin-card-icon">⚠️</div><div><strong id="aOverdue">0</strong><span>Atrasados</span></div></div>
-  </div>
-  <div class="overdue-alert" id="overdueAlert" aria-label="Alertas administrativos de empréstimo">
-    <div class="overdue-alert-main"><div class="overdue-alert-icon">⚠️</div><div><strong id="overdueTitle">Há empréstimos atrasados</strong><span id="overdueText"></span><div class="overdue-list" id="overdueList"></div></div></div>
-    <button class="btn danger" onclick="setAF('overdue')">Ver atrasados</button>
-  </div>
-  <div class="locker-nav">
-    <button class="btn active" id="adminTabGames" onclick="adminTab('games')">🎮 Coleção</button>
-    <button class="btn" id="adminTabRental" onclick="adminTab('rental')">🏪 Locadora</button>
-  </div>
-  <div id="gamesAdminPanel">
-  <div class="admin-toolbar-head">
-    <div><div class="admin-section-title">Gerenciamento da coleção</div><div class="admin-section-sub">Pesquise, edite, adicione capas, veja detalhes ou remova jogos. Estrutura preparada para futuras locações.</div></div>
-    <button class="btn primary" onclick="gameModal()">＋ Cadastrar jogo</button>
-  </div>
-  <div class="table-wrap">
-    <div class="tools"><div class="search"><input id="adminSearch" placeholder="🔎 Pesquisar jogo..."></div><select id="adminCat"></select></div>
-    <div class="section-head"><h2>Jogos cadastrados</h2><div class="result" id="adminResult"></div></div>
-    <table class="table"><thead><tr><th>Capa</th><th>Jogo</th><th>Categoria</th><th>Ano</th><th>Nota</th><th>Status</th><th>Ações</th></tr></thead><tbody id="adminBody"></tbody></table>
-  </div>
-  </div>
+<section id="corrigir" class="page hidden"><div class="card">
+<h2>✏️ Correção</h2>
+<p>Escolha como deseja corrigir o cartão-resposta: <b>por imagem</b> ou <b>por marcação manual</b>.</p>
 
-  <section class="rental-panel" id="rentalPanel">
-    <div class="admin-toolbar-head">
-      <div><div class="admin-section-title">🏪 Gestão de locações</div><div class="admin-section-sub">Clientes, locações, devoluções e pendências. Os registros desta primeira etapa ficam vinculados a este navegador.</div></div>
-      <div class="buttons"><button class="btn primary" onclick="clientModal()">＋ Cliente</button><button class="btn primary" onclick="rentalModal()">＋ Nova locação</button></div>
+<div class="correction-modes" role="tablist" aria-label="Modo de correção">
+  <button id="modeImageBtn" type="button" class="correction-mode active" onclick="setCorrectionMode('imagem')">📷 Correção por imagem</button>
+  <button id="modeManualBtn" type="button" class="correction-mode" onclick="setCorrectionMode('marcacao')">✏️ Correção por marcação</button>
+</div>
+
+<div class="grid"><label>Nome do estudante<input id="aluno" placeholder="Nome completo"></label><label>Turma<input id="turma" placeholder="Ex.: 5º A"></label></div>
+
+<div id="correcaoImagemPanel">
+  <h3>📷 Correção por imagem</h3>
+  <p>Fotografe ou selecione o cartão-resposta preenchido. O sistema fará o alinhamento e a leitura automática.</p>
+  <div class="photo-picker direct-photo-picker">
+    <label for="photo" class="primary picker-button">📷 Tirar foto / escolher imagem</label>
+    <input id="photo" type="file" accept="image/*" class="file-hidden">
+    <div id="photoName" class="file-name">Ao selecionar a foto, a correção será iniciada automaticamente.</div>
+  </div>
+  <div class="small">No celular, o seletor poderá oferecer <b>Câmera</b>, <b>Fotos/Galeria</b> e <b>Arquivos</b>. No computador, será aberto o seletor de arquivos.</div>
+  <div class="actions"><button id="btnRead" type="button" class="primary" onclick="readPhoto()">🔎 Corrigir por imagem</button><button type="button" class="secondary" onclick="resetRead()">Limpar</button></div>
+  <div id="readStatus" class="status info">Aguardando fotografia.</div><canvas id="diag" class="preview"></canvas>
+</div>
+
+<div id="correcaoMarcacaoPanel" class="hidden">
+  <h3>✏️ Correção por marcação</h3>
+  <p>Marque manualmente as respostas do estudante. O funcionamento é igual ao gabarito da configuração da avaliação.</p>
+  <div id="manualCorrectionKey" class="qgrid manual-correction-grid"></div>
+  <div class="actions"><button type="button" class="primary" onclick="finishManualCorrection()">✅ Corrigir marcações</button><button type="button" class="secondary" onclick="resetManualCorrection()">Limpar marcações</button></div>
+  <div id="manualStatus" class="status info">Marque uma alternativa em cada questão. Questões sem marcação serão consideradas em branco.</div>
+</div>
+
+<div id="results"></div>
+</div></section>
+
+<section id="resultados" class="page hidden"><div class="card"><h2>📊 Resultado</h2><div id="summary" class="status info">Nenhuma correção realizada nesta sessão.</div></div></section>
+
+<section id="historico" class="page hidden">
+  <div class="card">
+    <h2>📚 Histórico de correções</h2>
+    <p>Correções ficam salvas <b>neste aparelho</b> para consulta rápida.</p>
+    <div class="grid">
+      <label>Pesquisar estudante ou turma<input id="histBusca" oninput="renderHistory()" placeholder="Digite para filtrar"></label>
+      <label>Avaliação<input id="histAvaliacao" oninput="renderHistory()" placeholder="Título da avaliação"></label>
     </div>
-    <div class="rental-grid">
-      <div class="rental-card"><strong id="rClients">0</strong><span>Clientes cadastrados</span></div>
-      <div class="rental-card"><strong id="rActive">0</strong><span>Locações ativas</span></div>
-      <div class="rental-card"><strong id="rLate">0</strong><span>Locações atrasadas</span></div>
-      <div class="rental-card"><strong id="rRevenue">R$ 0,00</strong><span>Valores registrados</span></div>
+    <div class="actions">
+      <button class="primary" onclick="exportHistoryCSV()">⬇️ Exportar CSV</button>
+      <button type="button" class="pdf-all-btn" onclick="gerarRelatorioHistoricoPDF()">📄 Exportar PDF</button>
+      <button id="btnClearHistory" type="button" class="secondary">🗑️ Limpar histórico</button>
     </div>
-    <div class="table-wrap">
-      <div class="rental-pro-head"><div><div class="rental-pro-kicker">🎮 NEW GAMES • GESTÃO</div><h2>🏪 Locadora PRO</h2><p>Controle clientes, cópias, locações, devoluções e atrasos em um só lugar.</p></div><div class="rental-pro-actions"><button class="btn" onclick="clientModal()">➕ Novo cliente</button><button class="btn green" onclick="rentalModal()">📤 Nova locação</button></div></div><div class="rental-toolbar">
-        <input id="rentalSearch" placeholder="🔎 Pesquisar cliente ou jogo...">
-        <select id="rentalFilter"><option value="">Todas as locações</option><option value="active">Ativas</option><option value="late">Atrasadas</option><option value="today">Devoluções hoje</option><option value="returned">Devolvidas</option></select>
-        <button class="btn" onclick="clientListModal()">👤 Clientes</button>
-      </div>
-      <div class="rental-alert-center" id="rentalAlertCenter"><div class="alert-center-head"><div><strong>🚨 Central de Alertas</strong><span>Acompanhamento administrativo das locações</span></div><button class="btn" onclick="$('"'"'rentalFilter'"'"').value='"'"''"'"';renderRentals()">Limpar filtro</button></div><div class="alert-center-grid"><button class="alert-box alert-danger" onclick="$('"'"'rentalFilter'"'"').value='"'"'late'"'"';renderRentals()"><b id="rcLate">0</b><span>Locações atrasadas</span><small>Ver atrasadas →</small></button><button class="alert-box alert-warning" onclick="$('"'"'rentalFilter'"'"').value='"'"'today'"'"';renderRentals()"><b id="rcToday">0</b><span>Devoluções hoje</span><small>Ver hoje →</small></button><button class="alert-box alert-info" onclick="$('"'"'rentalFilter'"'"').value='"'"'active'"'"';renderRentals()"><b id="rcActive">0</b><span>Locações ativas</span><small>Ver ativas →</small></button></div></div><div id="rentalTableWrap"></div>
-    </div>
-  </section>
+    <div id="historyList"></div>
+  </div>
 </section>
 </main>
 
+<script>
+let gabarito=[],ultimaLeitura=null,busy=false;
 
-<div class="modal" id="clientModal">
-  <div class="box">
-    <div class="section-head"><h2 id="clientTitle">Cadastrar cliente</h2><button class="btn" onclick="closeModal('clientModal')">×</button></div>
-    <form class="form" id="clientForm">
-      <input type="hidden" id="clientId">
-      <div class="full"><label>Nome completo</label><input id="clientName" required></div>
-      <div><label>Telefone</label><input id="clientPhone" placeholder="(00) 00000-0000"></div>
-      <div><label>E-mail</label><input id="clientEmail" type="email"></div>
-      <div><label>Observações</label><input id="clientNotes"></div>
-      <div class="full buttons"><button type="button" class="btn" onclick="closeModal('clientModal')">Cancelar</button><button class="btn primary">Salvar cliente</button></div>
-    </form>
-  </div>
-</div>
-<div class="modal" id="rentalModal">
-  <div class="box">
-    <div class="section-head"><h2 id="rentalTitle">Nova locação</h2><button class="btn" onclick="closeModal('rentalModal')">×</button></div>
-    <form class="form" id="rentalForm">
-      <input type="hidden" id="rentalId">
-      <div class="full"><label>Cliente</label><select id="rentalClient" required></select></div>
-      <div class="full"><label>Jogo</label><select id="rentalGame" required></select></div>
-      <div><label>Data da retirada</label><input id="rentalStart" type="date" required></div>
-      <div><label>Devolução prevista</label><input id="rentalDue" type="date" required></div>
-      <div><label>Valor da locação</label><input id="rentalPrice" type="number" min="0" step="0.01" value="0"></div>
-      <div><label>Desconto</label><input id="rentalDiscount" type="number" min="0" step="0.01" value="0"></div>
-      <div class="full"><label>Observações</label><textarea id="rentalNotes"></textarea></div>
-      <div class="full buttons"><button type="button" class="btn" onclick="closeModal('rentalModal')">Cancelar</button><button class="btn primary">Salvar locação</button></div>
-    </form>
-  </div>
-</div>
-<div class="modal" id="clientListModal">
-  <div class="box">
-    <div class="section-head"><h2>👤 Clientes</h2><button class="btn" onclick="closeModal('clientListModal')">×</button></div>
-    <div id="clientListBody"></div>
-  </div>
-</div>
-<div class="modal" id="loginModal">
-  <div class="box login-box" role="dialog" aria-modal="true">
-    <div class="login-icon">🔐</div><h2>Minha Conta</h2><p class="login-restricted">Acesso restrito.</p><p class="hint" style="text-align:center">Digite sua senha para continuar.</p>
-    <label class="login-label" for="token">Senha administrativa</label>
-    <div class="password-wrap"><input id="token" type="password" placeholder="Digite sua senha" autocomplete="current-password"><button type="button" class="password-toggle" onclick="togglePassword()">◉</button></div>
-    <div id="loginError" class="login-error"></div>
-    <button class="btn primary login-submit" onclick="login()">Entrar</button>
-  </div>
-</div>
+let photoReadTimer=null;
+async function waitForCvAndRead(){
+  if(photoReadTimer)clearTimeout(photoReadTimer);
+  const started=Date.now();
+  while(typeof cv==='undefined'||!cv.Mat){
+    if(Date.now()-started>12000){setStatus('O leitor de imagem ainda está carregando. Toque em “Corrigir cartão” para tentar novamente.','warn');return}
+    await new Promise(r=>setTimeout(r,150));
+  }
+  await readPhoto();
+}
+photo.addEventListener('change',async()=>{
+  const f=photo.files?.[0];
+  photoName.textContent=f?`✓ ${f.name} — preparando correção automática...`:'Ao selecionar a foto, a correção será iniciada automaticamente.';
+  ultimaLeitura=null;
+  results.innerHTML='';
+  if(f){
+    setStatus('✓ Imagem recebida. Alinhando o cartão pelos 4 marcadores e iniciando a leitura...','info');
+    await waitForCvAndRead();
+  }
+});
 
-<div class="modal" id="detailModal">
-  <div class="box detail-box">
-    <div class="section-head"><h2>Detalhes do jogo</h2><button class="btn" onclick="closeDetail()">×</button></div>
-    <div class="detail-grid">
-      <div id="detailCover" class="detail-cover"></div>
-      <div class="detail-info">
-        <div id="detailCat" class="detail-cat"></div><h2 id="detailName"></h2><div id="detailMeta" class="detail-meta"></div>
-        <div id="detailBadges" class="detail-badges"></div><div id="detailStars" class="stars"></div>
-        <div class="detail-desc"><strong style="display:block;color:#fff;margin-bottom:7px">Descrição</strong><p id="detailDesc" style="margin:0"></p></div>
-        <div class="collection-info"><h3>🏪 Disponibilidade</h3><div class="collection-grid">
-          <div class="collection-item">Status<b id="infoRentalStatus">Disponível</b></div>
-          <div class="collection-item">Cópias<b id="infoCopies">1</b></div>
-        </div></div>
-        <div class="collection-info"><h3>📁 Dados da coleção</h3><div class="collection-grid">
-          <div class="collection-item">Status de empréstimo<b id="infoBorrowed">Não emprestado</b></div>
-          <div class="collection-item">Emprestado para<b id="infoBorrowedTo">Não informado</b></div>
-          <div class="collection-item">Data do empréstimo<b id="infoBorrowedDate">Não informado</b></div>
-          <div class="collection-item">Previsão de devolução<b id="infoReturnDate">Não informado</b></div>
-          <div class="collection-item">Edição / mídia<b id="infoEdition">Não informado</b></div>
-          <div class="collection-item">Data de aquisição<b id="infoDate">Não informado</b></div>
-          <div class="collection-item">Localização<b id="infoLocation">Não informado</b></div>
-          <div class="collection-item">Observações<b id="infoNotes">Não informado</b></div>
-        </div></div>
-        <div class="buttons" style="margin-top:16px"><button class="btn primary" id="detailAdminBtn" style="display:none">✏️ Editar na administração</button><button class="btn" onclick="closeDetail()">Fechar</button></div>
-      </div>
+let correctionMode='imagem';
+let manualAnswers=[];
+
+function setCorrectionMode(mode){
+  correctionMode=mode==='marcacao'?'marcacao':'imagem';
+  const imgPanel=document.getElementById('correcaoImagemPanel');
+  const manualPanel=document.getElementById('correcaoMarcacaoPanel');
+  const ib=document.getElementById('modeImageBtn');
+  const mb=document.getElementById('modeManualBtn');
+  if(imgPanel)imgPanel.classList.toggle('hidden',correctionMode!=='imagem');
+  if(manualPanel)manualPanel.classList.toggle('hidden',correctionMode!=='marcacao');
+  if(ib)ib.classList.toggle('active',correctionMode==='imagem');
+  if(mb)mb.classList.toggle('active',correctionMode==='marcacao');
+  if(correctionMode==='marcacao')buildManualCorrection();
+}
+
+function buildManualCorrection(){
+  const box=document.getElementById('manualCorrectionKey');
+  if(!box)return;
+  const n=Math.max(1,Math.min(50,+document.getElementById('nq')?.value||gabarito.length||10));
+  const alts=Math.max(3,Math.min(5,+document.getElementById('na')?.value||5));
+  const ls=Array.from(L.slice(0,alts));
+  if(!Array.isArray(manualAnswers)||manualAnswers.length!==n){
+    const old=Array.isArray(manualAnswers)?manualAnswers:[];
+    manualAnswers=Array.from({length:n},(_,i)=>old[i]&&ls.includes(old[i])?old[i]:'');
+  }
+  box.innerHTML=manualAnswers.map((v,i)=>`<div class="qbox ${v?'':'manual-empty'}"><b style="font-size:12px">QUESTÃO ${String(i+1).padStart(2,'0')}</b><div class="qopts">${ls.map(x=>`<button type="button" class="${v===x?'sel':''}" data-manual-q="${i}" data-manual-a="${x}" aria-label="Questão ${i+1}, alternativa ${x}">${x}</button>`).join('')}</div></div>`).join('');
+  box.querySelectorAll('[data-manual-q]').forEach(btn=>btn.addEventListener('click',()=>{
+    const i=Number(btn.dataset.manualQ),x=btn.dataset.manualA;
+    manualAnswers[i]=x;
+    buildManualCorrection();
+  }));
+}
+
+function resetManualCorrection(){
+  const n=Math.max(1,Math.min(50,+document.getElementById('nq')?.value||gabarito.length||10));
+  manualAnswers=Array(n).fill('');
+  buildManualCorrection();
+  const st=document.getElementById('manualStatus');
+  if(st){st.className='status info';st.textContent='Marque uma alternativa em cada questão. Questões sem marcação serão consideradas em branco.'}
+}
+
+function finishManualCorrection(){
+  if(!Array.isArray(gabarito)||!gabarito.length){
+    const st=document.getElementById('manualStatus');
+    if(st){st.className='status warn';st.textContent='Configure e salve a avaliação com o gabarito antes de corrigir.'}
+    return;
+  }
+  const n=gabarito.length;
+  if(!Array.isArray(manualAnswers)||manualAnswers.length!==n)buildManualCorrection();
+  const answers=Array.from({length:n},(_,i)=>manualAnswers[i]||'—');
+  const alts=Math.max(3,Math.min(5,+document.getElementById('na')?.value||5));
+  const labels=Array.from(L.slice(0,alts));
+  const a=answers.map((ans,i)=>({q:i+1,ans,status:ans==='—'?'Em branco':'Marcada',vals:labels.map(x=>ans===x?1:0),pts:[]}));
+  renderResults(a,'Correção por marcação manual.\n'+a.map(x=>`Q${String(x.q).padStart(2,'0')} → ${x.ans}`).join('  '));
+  const st=document.getElementById('manualStatus');
+  if(st){st.className='status ok';st.textContent='✓ Correção por marcação concluída e salva no histórico.'}
+}
+
+const L='ABCDE';
+
+function show(id){
+  document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  if(id==='avaliacao'){buildKey()}
+  if(id==='corrigir'){buildManualCorrection();setCorrectionMode(correctionMode)}
+  if(id==='cartao'){syncCardFromAssessment();updateStudentFields();renderCard()}
+  if(id==='historico'){renderHistory()}
+}
+
+function getAssessmentCode(){
+  let c=localStorage.getItem('newCorretorAssessmentCode');
+  if(!c){
+    let seq=Number(localStorage.getItem('newCorretorAssessmentSeq')||0)+1;
+    localStorage.setItem('newCorretorAssessmentSeq',String(seq));
+    c='AV-'+String(seq).padStart(3,'0');
+    localStorage.setItem('newCorretorAssessmentCode',c);
+  }
+  return c;
+}
+function newAssessmentCode(){
+  let seq=Number(localStorage.getItem('newCorretorAssessmentSeq')||0)+1;
+  const c='AV-'+String(seq).padStart(3,'0');
+  localStorage.setItem('newCorretorAssessmentSeq',String(seq));
+  localStorage.setItem('newCorretorAssessmentCode',c);
+  if(document.getElementById('codigoAvaliacao'))document.getElementById('codigoAvaliacao').value=c;
+  if(document.getElementById('cardCodigo'))document.getElementById('cardCodigo').value=c;
+  renderCard();
+}
+function buildKey(){
+  const n=Math.max(1,Math.min(50,+nq.value||10)),ls=L.slice(0,+na.value||5),old=[...gabarito];
+  gabarito=Array.from({length:n},(_,i)=>ls.includes(old[i])?old[i]:'A');
+  key.innerHTML='';
+  gabarito.forEach((v,i)=>{
+    let d=document.createElement('div');d.className='qbox';
+    d.innerHTML='<b style="font-size:12px">QUESTÃO '+String(i+1).padStart(2,'0')+'</b><div class="qopts">'+
+      [...ls].map(x=>`<button type="button" class="${v===x?'sel':''}" onclick="setKey(${i},'${x}')">${x}</button>`).join('')+
+      '</div>';
+    key.appendChild(d);
+  });
+  syncCardFromAssessment();
+  if(document.getElementById('manualCorrectionKey')) buildManualCorrection();
+}
+function setKey(i,x){gabarito[i]=x;buildKey()}
+function saveEvaluation(){
+  const data={
+    titulo:titulo.value||'AVALIAÇÃO',
+    data:document.getElementById('dataAvaliacao')?.value||'',
+    questoes:Math.max(1,Math.min(50,+nq.value||10)),
+    alternativas:+na.value||5,
+    valor:+valor.value||1,
+    codigo:getAssessmentCode(),
+    gabarito:[...gabarito]
+  };
+  localStorage.setItem('newCorretorAvaliacao',JSON.stringify(data));
+  localStorage.setItem('newCorretorGabarito',JSON.stringify(gabarito));
+  if(document.getElementById('codigoAvaliacao'))document.getElementById('codigoAvaliacao').value=data.codigo;
+  keymsg.textContent='✓ Avaliação salva. As informações serão carregadas no Cartão.';
+  keymsg.className='status ok';
+  syncCardFromAssessment();
+}
+function loadEvaluation(){
+  try{
+    const a=JSON.parse(localStorage.getItem('newCorretorAvaliacao')||'null');
+    if(a){
+      if(a.titulo)titulo.value=a.titulo;
+      if(a.data)document.getElementById('dataAvaliacao').value=a.data;
+      if(a.questoes)nq.value=a.questoes;
+      if(a.alternativas)na.value=String(a.alternativas);
+      if(a.valor!=null)valor.value=a.valor;
+      if(a.codigo)localStorage.setItem('newCorretorAssessmentCode',a.codigo);
+      if(Array.isArray(a.gabarito))gabarito=a.gabarito;
+    }else{
+      const old=JSON.parse(localStorage.getItem('newCorretorGabarito')||'null');
+      if(Array.isArray(old)&&old.length){gabarito=old;nq.value=old.length}
+    }
+  }catch(e){}
+  if(document.getElementById('codigoAvaliacao'))document.getElementById('codigoAvaliacao').value=getAssessmentCode();
+}
+function syncCardFromAssessment(){
+  const n=Math.max(1,Math.min(50,+nq.value||10));
+  const a=Math.max(3,Math.min(5,+na.value||5));
+  const tituloEl=document.getElementById('cardInfoTitulo');
+  const det=document.getElementById('cardInfoDetalhes');
+  const code=document.getElementById('cardCodigo');
+  if(tituloEl)tituloEl.textContent=(titulo.value||'AVALIAÇÃO').toUpperCase();
+  if(det)det.textContent=`${n} questões · A até ${L[a-1]}`;
+  if(code)code.value=getAssessmentCode();
+}
+function fmtDate(v){
+ if(!v)return '____/____/________';
+ const p=v.split('-'); return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:v;
+}
+function getCardData(){
+  const mode=document.getElementById('cardDateMode')?.value||'blank';
+  return mode==='choose' ? (document.getElementById('cardDate')?.value||'') : '';
+}
+
+function updateStudentFields(){
+  const mode=document.getElementById('printMode')?.value||'blank';
+  const count=Math.max(1,Math.min(100,+document.getElementById('studentCount')?.value||1));
+  const box=document.getElementById('studentFields');
+  const note=document.getElementById('studentPreviewNote');
+  if(!box)return;
+  if(mode==='blank'){
+    box.innerHTML='';
+    note.textContent=`Serão gerados ${count} cartão(ões) em branco para preenchimento manual.`;
+    return;
+  }
+  const old=[...box.querySelectorAll('input')].map(x=>x.value);
+  box.innerHTML='';
+  for(let i=0;i<count;i++){
+    const lab=document.createElement('label');
+    lab.innerHTML=`${String(i+1).padStart(2,'0')}. Nome do estudante<input class="student-name" data-index="${i}" value="${esc(old[i]||'')}" placeholder="Nome completo">`;
+    box.appendChild(lab);
+  }
+  note.textContent=`Serão gerados ${count} cartão(ões), um por página, com os nomes preenchidos.`;
+}
+function getStudentNames(){
+  return [...document.querySelectorAll('.student-name')].map(x=>x.value.trim());
+}
+function cardMarkup(alunoCard, turmaCard, pageClass=''){
+ const n=Math.min(50,Math.max(1,+nq.value||10));
+ const ls=Array.from(L.slice(0,+na.value||5));
+ const tituloCard=(titulo?.value||'AVALIAÇÃO').toUpperCase();
+ const dataCard=getCardData();
+ const codigo=getAssessmentCode();
+ const perCol=10;
+ const cols=Math.ceil(n/perCol);
+ let columns='';
+ for(let c=0;c<cols;c++){
+   let items='';
+   const ini=c*perCol;
+   const fim=Math.min(ini+perCol,n);
+   for(let i=ini;i<fim;i++){
+     items+=`<div class="omr-q"><div class="omr-qnum">QUESTÃO ${String(i+1).padStart(2,'0')}</div><div class="omr-options">${[...ls].map(x=>`<span class="omr-opt">${x}</span>`).join('')}</div></div>`;
+   }
+   columns+=`<div class="omr-column">${items}</div>`;
+ }
+ return `<div class="a4-sheet ${pageClass}">
+   <i class="omr-marker omr-tl"></i><i class="omr-marker omr-tr"></i>
+   <i class="omr-marker omr-bl"></i><i class="omr-marker omr-br"></i>
+   <div class="card-head">
+     <div class="main-title">CARTÃO-RESPOSTA</div>
+     <div class="brand"><strong>NEW PROF. CORRETOR</strong>LEITOR OMR</div>
+   </div>
+   <div class="card-subtitle">${esc(tituloCard)}</div>
+   <div class="ident-box">
+     <div class="ident-title">IDENTIFICAÇÃO</div>
+     <div class="ident-grid">
+       <div class="ident-row ident-row-top">
+         <div class="ident-cell"><div class="ident-label">Avaliação</div><div class="ident-value">${esc(tituloCard)}</div></div>
+         <div class="ident-cell"><div class="ident-label">Código da avaliação</div><div class="ident-value reg-code">${esc(codigo)}</div></div>
+       </div>
+       <div class="ident-row ident-row-student">
+         <div class="ident-cell"><div class="ident-label">Estudante</div><div class="ident-value student-value">${alunoCard ? esc(alunoCard) : '<span class="blank-line"></span>'}</div></div>
+         <div class="ident-cell"><div class="ident-label">Ano / Turma</div><div class="ident-value student-value">${turmaCard ? esc(turmaCard) : '<span class="blank-line short"></span>'}</div></div>
+         <div class="ident-cell"><div class="ident-label">Data</div><div class="ident-value student-value">${dataCard ? fmtDate(dataCard) : '<span class="blank-line short"></span>'}</div></div>
+       </div>
+     </div>
+   </div>
+   <div class="instructions"><b>ORIENTAÇÕES:</b> Preencha completamente apenas uma alternativa por questão. Use lápis ou caneta preta/azul. Não faça marcas fora dos círculos. Não dobre nem corte o cartão.</div>
+   <div class="answer-title">MARQUE A ALTERNATIVA CORRESPONDENTE À SUA RESPOSTA</div>
+   <div class="answer-help">Preencha o círculo escolhido de forma completa. Os marcadores pretos dos quatro cantos são utilizados pelo sistema para localizar e corrigir o cartão.</div>
+   <div class="omr-grid-fixed">${columns}</div>
+   <div class="card-footer"><strong>NEW PROF. CORRETOR</strong> · Cartão-resposta para correção automática por imagem · Código ${esc(codigo)}</div>
+ </div>`;
+}
+function getCardDate(){
+  const mode=document.getElementById('cardDateMode')?.value||'blank';
+  return mode==='choose' ? (document.getElementById('cardDate')?.value||'') : '';
+}
+function formatDateBR(v){
+  if(!v)return '';
+  const p=v.split('-');
+  return p.length===3 ? `${p[2]}/${p[1]}/${p[0]}` : v;
+}
+function toggleCardDate(){
+  const mode=document.getElementById('cardDateMode');
+  const input=document.getElementById('cardDate');
+  if(!mode||!input)return;
+  if(mode.value==='choose'){
+    input.style.display='block';
+    if(!input.value){
+      const d=new Date();
+      const local=new Date(d.getTime()-d.getTimezoneOffset()*60000);
+      input.value=local.toISOString().slice(0,10);
+    }
+  }else{
+    input.style.display='none';
+    input.value='';
+  }
+  renderCard();
+}
+function initCardDate(){
+  const mode=document.getElementById('cardDateMode');
+  const input=document.getElementById('cardDate');
+  if(!mode||!input)return;
+  toggleCardDateUIOnly();
+}
+function toggleCardDateUIOnly(){
+  const mode=document.getElementById('cardDateMode');
+  const input=document.getElementById('cardDate');
+  if(!mode||!input)return;
+  input.style.display=mode.value==='choose'?'block':'none';
+}
+function renderCard(){
+  initCardDate();
+ const printCardEl=document.getElementById('printCard'); if(!printCardEl)return;
+ const turmaCard=document.getElementById('cardTurma')?.value||'';
+ const mode=document.getElementById('printMode')?.value||'blank';
+ const names=getStudentNames();
+ const aluno=mode==='named'?(names[0]||''):'';
+ printCardEl.innerHTML=cardMarkup(aluno,turmaCard);
+ syncCardFromAssessment();
+}
+function printCards(){
+ const printCardEl=document.getElementById('printCard');
+ if(!printCardEl)return;
+ const turmaCard=document.getElementById('cardTurma')?.value||'';
+ const mode=document.getElementById('printMode')?.value||'blank';
+ const count=Math.max(1,Math.min(100,+document.getElementById('studentCount')?.value||1));
+ let names=mode==='named'?getStudentNames():Array(count).fill('');
+ if(mode==='named' && names.some((n)=>!n)){
+   const faltam=names.map((n,i)=>n?'':i+1).filter(Boolean);
+   if(!confirm(`Há ${faltam.length} nome(s) em branco. Deseja imprimir mesmo assim?`))return;
+ }
+ const old=printCardEl.innerHTML;
+ printCardEl.innerHTML=names.slice(0,count).map((n)=>cardMarkup(n,turmaCard,'print-page')).join('');
+ let restored=false;
+ const restore=()=>{if(restored)return;restored=true;printCardEl.innerHTML=old;window.removeEventListener('afterprint',restore)};
+ window.addEventListener('afterprint',restore);
+ setTimeout(()=>window.print(),120);
+}
+
+function getHistory(){
+  try{const x=JSON.parse(localStorage.getItem('newCorretorHistorico')||'[]');return Array.isArray(x)?x:[]}
+  catch(e){return []}
+}
+function saveHistory(item){
+  const h=getHistory();
+  h.unshift(item);
+  localStorage.setItem('newCorretorHistorico',JSON.stringify(h.slice(0,500)));
+  renderHistory();
+}
+function renderHistory(){
+  const box=document.getElementById('historyList'); if(!box)return;
+  const busca=(document.getElementById('histBusca')?.value||'').toLowerCase().trim();
+  const av=(document.getElementById('histAvaliacao')?.value||'').toLowerCase().trim();
+  const h=getHistory().filter(x=>(!busca||`${x.aluno} ${x.turma}`.toLowerCase().includes(busca))&&(!av||(x.avaliacao||'').toLowerCase().includes(av)));
+  if(!h.length){box.innerHTML='<div class="status info">Nenhuma correção encontrada.</div>'; bindHistoryButtons(); return}
+  const all=getHistory();
+  box.innerHTML='<div class="history-table-wrap"><table><thead><tr><th>Data</th><th>Estudante</th><th>Turma</th><th>Avaliação</th><th>Acertos</th><th>Nota</th><th>Ação</th></tr></thead><tbody>'+
+    h.map(x=>{
+      const idx=all.indexOf(x);
+      const safeIdx=idx>=0?idx:-1;
+      return `<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos}/${x.total}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td><td><button type="button" class="history-delete-btn" data-history-delete="${safeIdx}" aria-label="Excluir esta correção">🗑️ Excluir</button></td></tr>`;
+    }).join('')+
+    '</tbody></table></div>';
+  bindHistoryButtons();
+}
+function deleteHistoryItem(index){
+  const h=getHistory();
+  index=Number(index);
+  if(!Number.isInteger(index) || index<0 || index>=h.length){
+    renderHistory();
+    return false;
+  }
+  h.splice(index,1);
+  try{
+    localStorage.setItem('newCorretorHistorico',JSON.stringify(h));
+    renderHistory();
+    return true;
+  }catch(err){
+    alert('Não foi possível excluir o registro neste aparelho.');
+    return false;
+  }
+}
+
+// Histórico: ligação direta dos botões. Evita problemas de eventos delegados
+// em navegadores móveis/iOS depois que a tabela é reconstruída.
+function bindHistoryButtons(){
+  const box=document.getElementById('historyList');
+  if(!box)return;
+  box.querySelectorAll('[data-history-delete]').forEach(btn=>{
+    btn.addEventListener('click',function(ev){
+      ev.preventDefault();
+      ev.stopPropagation();
+      deleteHistoryItem(this.getAttribute('data-history-delete'));
+    },{passive:false});
+  });
+  const clear=document.getElementById('btnClearHistory');
+  if(clear && !clear.dataset.bound){
+    clear.dataset.bound='1';
+    clear.addEventListener('click',function(ev){
+      ev.preventDefault();
+      ev.stopPropagation();
+      clearHistory();
+    },{passive:false});
+  }
+}
+
+function gerarRelatorioHistoricoPDF(){
+  const h=getHistory();
+  if(!h.length){alert('Não há correções salvas no histórico.');return}
+
+  const busca=(document.getElementById('histBusca')?.value||'').toLowerCase().trim();
+  const av=(document.getElementById('histAvaliacao')?.value||'').toLowerCase().trim();
+  const registros=h.filter(x=>
+    (!busca||`${x.aluno} ${x.turma}`.toLowerCase().includes(busca)) &&
+    (!av||(x.avaliacao||'').toLowerCase().includes(av))
+  );
+  if(!registros.length){alert('Nenhuma correção corresponde aos filtros atuais.');return}
+
+  const totalQuestoes=registros.reduce((s,x)=>s+Number(x.total||0),0);
+  const totalAcertos=registros.reduce((s,x)=>s+Number(x.acertos||0),0);
+  const totalErros=registros.reduce((s,x)=>s+Number(x.erros||0),0);
+  const totalBrancas=registros.reduce((s,x)=>s+Number(x.brancas||0),0);
+  const totalRevisar=registros.reduce((s,x)=>s+Number(x.revisar||0),0);
+  const media=registros.length ? registros.reduce((s,x)=>s+Number(x.nota||0),0)/registros.length : 0;
+  const agora=new Date().toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'});
+
+  const rows=registros.map((x,idx)=>{
+    const respostas=Array.isArray(x.respostas)?x.respostas:[];
+    const marcadas=respostas.map((r,i)=>`${String(i+1).padStart(2,'0')}: ${r||'—'}`).join(' · ');
+    const situacao=`${x.acertos||0} acertos / ${x.erros||0} erros / ${x.brancas||0} brancas / ${x.revisar||0} revisar`;
+    return `<tr>
+      <td>${idx+1}</td><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td>
+      <td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td>
+      <td>${x.acertos||0}/${x.total||0}</td><td>${Number(x.nota||0).toFixed(1)}</td>
+      <td>${esc(situacao)}</td><td class="answers">${esc(marcadas)}</td>
+    </tr>`;
+  }).join('');
+
+  const w=window.open('','_blank');
+  if(!w){alert('O navegador bloqueou o relatório. Permita pop-ups para o NEW PROF. CORRETOR.');return}
+
+  w.document.write(`<!doctype html><html><head><meta charset="utf-8">
+  <title>Relatório - NEW PROF. CORRETOR</title>
+  <style>
+    @page{size:A4 portrait;margin:7mm 7mm 8mm}
+    *{box-sizing:border-box}
+    body{font-family:Arial,sans-serif;color:#172033;margin:0;font-size:9px;background:#fff}
+    .top{display:flex;align-items:center;gap:10px;border-bottom:2px solid #1857c7;padding:0 0 7px;margin-bottom:9px}
+    .logo{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#1857c7,#38a4ff);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:21px;box-shadow:0 2px 5px rgba(0,0,0,.15)}
+    h1{font-size:18px;line-height:1.05;margin:0;color:#1857c7}
+    .sub{font-size:9px;color:#596579;margin-top:3px}
+    .gen{font-size:8px;color:#687386;margin-left:auto;text-align:right}
+    .summary{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin:7px 0 9px}
+    .box{border:1px solid #cfd7e3;border-radius:5px;padding:6px;background:#fff}
+    .label{font-size:7px;color:#687386;text-transform:uppercase}
+    .value{font-size:13px;font-weight:800;margin-top:2px}
+    .filters{margin-bottom:7px;color:#555;font-size:8px}
+    table{width:100%;border-collapse:collapse;table-layout:fixed}
+    th,td{border:1px solid #cfd7e3;padding:4px 3px;text-align:center;vertical-align:top}
+    th{background:#eaf0f8;font-size:7.5px}
+    td{font-size:7.5px;line-height:1.2}
+    .answers{text-align:left;word-break:break-word}
+    .footer{margin-top:8px;border-top:1px solid #ddd;padding-top:5px;font-size:7px;color:#687386}
+    .no-print{margin-top:12px}
+    .no-print button{padding:8px 12px;border:0;border-radius:6px;background:#1857c7;color:#fff;font-weight:700}
+    @media print{.no-print{display:none}}
+  </style></head><body>
+  <div class="top">
+    <div class="logo">NP</div>
+    <div>
+      <h1>NEW PROF. CORRETOR</h1>
+      <div class="sub">Inteligente de Avaliações · Relatório Geral de Correções</div>
     </div>
+    <div class="gen"><b>Gerado em</b><br>${esc(agora)}</div>
   </div>
-</div>
 
-<div class="modal" id="gameModal">
-  <div class="box">
-    <div class="section-head"><h2 id="gmTitle">Cadastrar jogo</h2><button class="btn" onclick="closeGameModal()">×</button></div>
-    <form class="form" id="gameForm">
-      <input type="hidden" id="gid">
-      <div class="full"><label>Nome do jogo</label><input id="gname" required></div>
-      <div class="full"><label>Categorias <span style="color:#7187a8">(selecione uma ou mais)</span></label><div id="gcat" class="multi-cat"></div></div>
-      <div><label>Plataforma</label><select id="gplatform"><option>PS5</option><option selected>PS4</option><option>PS3</option><option>PS2</option><option>PS1</option></select></div>
-      <div><label>Ano</label><input id="gyear" type="number" min="1980" max="2100"></div>
-      <div><label>URL da capa</label><input id="gcover" placeholder="https://..."></div>
-      <div class="full"><label>Descrição</label><textarea id="gdesc"></textarea></div>
-      <div class="full"><label>Classificação</label><div id="grating" class="rating-buttons"></div></div>
-      <label><input type="checkbox" id="gplayed"> ✓ Jogado</label><label><input type="checkbox" id="gfav"> ♥ Favorito</label><label><input type="checkbox" id="gzerado"> 🏆 Jogo zerado</label>
-      <div class="full collection-info">
-        <h3>📤 Controle de empréstimo</h3>
-        <div class="collection-grid">
-          <div><label><input type="checkbox" id="gborrowed"> 📤 Jogo emprestado</label></div>
-          <div><label>Para quem foi emprestado</label><input id="gborrowedTo" placeholder="Nome da pessoa"></div>
-          <div><label>Data do empréstimo</label><input id="gborrowedDate" type="date"></div>
-          <div><label>Previsão de devolução</label><input id="greturnDate" type="date"></div>
-        </div>
-      </div>
-      <div class="full collection-info">
-        <h3>🏪 Status de disponibilidade</h3>
-        <div class="collection-grid">
-          <div><label>Status</label><select id="grentalStatus"><option value="available">🟢 Disponível</option><option value="loaned">🔵 Emprestado</option><option value="reserved">🟠 Reservado</option><option value="maintenance">⚫ Manutenção</option></select></div>
-          <div><label>Quantidade de cópias</label><input id="gcopies" type="number" min="1" value="1"></div>
-        </div>
-        <p class="hint">Estrutura preparada para uma futura versão de locadora, sem alterar o funcionamento atual da coleção.</p>
-      </div>
-      <div class="full collection-info">
-        <h3>📁 Dados pessoais da coleção</h3>
-        <div class="collection-grid">
-          <div><label>Edição / mídia</label><input id="gedition" placeholder="Física, digital, edição especial..."></div>
-          <div><label>Data de aquisição</label><input id="gdate" type="date"></div>
-          <div><label>Localização</label><input id="glocation" placeholder="Estante, prateleira..."></div>
-          <div><label>Observações</label><input id="gnotes" placeholder="Suas observações"></div>
-        </div>
-      </div>
-      <div class="full buttons"><button type="button" class="btn" onclick="closeGameModal()">Cancelar</button><button class="btn primary">Salvar</button></div>
-    </form>
+  <div class="summary">
+    <div class="box"><div class="label">Correções</div><div class="value">${registros.length}</div></div>
+    <div class="box"><div class="label">Questões corrigidas</div><div class="value">${totalQuestoes}</div></div>
+    <div class="box"><div class="label">Acertos</div><div class="value">${totalAcertos}</div></div>
+    <div class="box"><div class="label">Erros</div><div class="value">${totalErros}</div></div>
+    <div class="box"><div class="label">Brancas / Revisar</div><div class="value">${totalBrancas} / ${totalRevisar}</div></div>
+    <div class="box"><div class="label">Média das notas</div><div class="value">${media.toFixed(1)}</div></div>
   </div>
-</div>
 
-<div class="modal" id="coverModal">
-  <div class="box" style="max-width:430px;text-align:center">
-    <div class="section-head"><h2>🖼️ Gerenciar capa</h2><button class="btn" onclick="closeCover()">×</button></div><b id="coverName"></b>
-    <img id="coverPreview" class="cover-preview" style="display:none"><div id="coverEmpty" class="hint" style="padding:35px;border:1px dashed #21436d;margin:15px 0">🎮<br>Este jogo ainda não possui capa.</div>
-    <input id="coverFile" type="file" accept="image/jpeg,image/png,image/webp" style="width:100%"><p id="coverStatus" class="hint"></p>
-    <div class="buttons" style="justify-content:flex-end"><button class="btn" onclick="closeCover()">Cancelar</button><button class="btn primary" id="coverBtn" onclick="uploadCover()">🖼️ Salvar capa</button></div>
+  <div class="filters"><b>Filtros utilizados:</b>
+    ${busca?`Estudante/Turma: ${esc(busca)} · `:''}${av?`Avaliação: ${esc(av)}`:'Todas as avaliações'}
   </div>
-</div>
-<div class="toast" id="toast"></div>
+
+  <table>
+    <thead><tr>
+      <th style="width:3%">#</th><th style="width:10%">Data</th><th style="width:12%">Estudante</th>
+      <th style="width:7%">Turma</th><th style="width:13%">Avaliação</th>
+      <th style="width:6%">Acertos</th><th style="width:5%">Nota</th>
+      <th style="width:15%">Resultado</th><th style="width:29%">Alternativas marcadas</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>
+
+  <div class="footer">Relatório gerado pelo NEW PROF. CORRETOR INTELIGENTE DE AVALIAÇÕES · ${esc(agora)}</div>
+  <div class="no-print"><button onclick="window.print()">🖨️ Imprimir / Salvar como PDF</button></div>
+  <script>setTimeout(()=>window.print(),350)<\/script>
+  </div>
+
+
+
+
+</body></html>`);
+  w.document.close();
+}
+</script>
 
 <script>
-const API="https://new-colecao-games-api.parqueclube1bloco2d.workers.dev";
-const ICONS={"Horror / Survival Horror":"🧟","Ação / Aventura":"⚔️","Tiro / FPS":"🔫","Luta":"🥊","Esportes":"⚽","Corrida / Velocidade":"🏎️","RPG":"🗺️","Anime / Mangá":"🥷","LEGO / Família":"🧱","Plataforma / Arcade":"🎮","Narrativa / História":"📖","Stealth / Tático":"🕵️","Ficção Científica":"🚀","Cooperativo":"🤝","Estratégia / Casual":"🧩","Simulação":"🎯"};
-let games=[],categories=[],filter="",special="",adminFilter="all",adminToken=sessionStorage.getItem("ng_admin_token")||"",editingId=null,rating=0,coverId=null,detailId=null;
-const $=id=>document.getElementById(id);
-const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
-const metaKey=id=>"ng_game_meta_"+id;
-function getMeta(id){try{return JSON.parse(localStorage.getItem(metaKey(id))||"{}")}catch{return{}}}
-function isZerado(g){return Number(g?.zerado)===1 || !!getMeta(g?.id).zerado}
-function getGameCategories(g){
- return String(g?.categoria||"").split(/\\s*,\\s*|\\s*\\|\\s*/).map(x=>x.trim()).filter(Boolean);
-}
-function setGameCategoriesSelected(list){
- const selected=new Set(list);
- document.querySelectorAll('#gcat input[type="checkbox"]').forEach(i=>i.checked=selected.has(i.value));
-}
-function selectedGameCategories(){
- return [...document.querySelectorAll('#gcat input[type="checkbox"]:checked')].map(i=>i.value);
-}
-function saveMeta(id){localStorage.setItem(metaKey(id),JSON.stringify({
- edition:$("gedition").value.trim(),date:$("gdate").value,location:$("glocation").value.trim(),notes:$("gnotes").value.trim(),
- borrowed:$("gborrowed").checked,borrowedTo:$("gborrowedTo").value.trim(),borrowedDate:$("gborrowedDate").value,returnDate:$("greturnDate").value,
- rentalStatus:$("grentalStatus").value,copies:Math.max(1,Number($("gcopies").value||1)),zerado:$("gzerado").checked
-}))}
-async function api(path,opt={}){const r=await fetch(API+path,opt),d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error||"Falha na API.");return d}
-async function load(){
- try{
-  const[g,c,d]=await Promise.all([api("/api/jogos"),api("/api/categorias"),api("/api/dashboard")]);
-  games=g.jogos||[];categories=c.categorias||[];
-  $("stTotal").textContent=d.jogos??games.length;$("stPlayed").textContent=d.jogados??0;$("stNot").textContent=Math.max(0,(d.jogos??games.length)-(d.jogados??0));
-  $("stAvg").textContent=games.length?(games.reduce((s,x)=>s+Number(x.nota||0),0)/games.length).toFixed(1):"0.0";$("stFav").textContent=d.favoritos??0;
-  fillCats();renderNav();renderCategoryFilters();render();updateAdmin();renderAdmin();renderStatsPanel();
- }catch(e){$("grid").innerHTML=`<div class="empty">${esc(e.message)}</div>`}
-}
-function fillCats(){
- $("adminCat").innerHTML='<option value="">Todas as categorias</option>'+categories.map(c=>`<option value="${esc(c.nome)}">${esc(c.nome)}</option>`).join("");
- $("gcat").innerHTML=categories.map((c,i)=>`<label><input type="checkbox" value="${esc(c.nome)}"> ${ICONS[c.nome]||"🎮"} ${esc(c.nome)}</label>`).join("")
-}
-function renderNav(){
- const n=$("nav");n.innerHTML="";
- [["🏠","Início",""],["🎮","Minha Coleção",""],["♡","Favoritos","fav"],["✓","Jogados","played"],["◷","Não Jogados","not"],["☆","Avaliados","rated"]].forEach(x=>{
-  const b=document.createElement("button");b.className=(!filter&&!special&&x[1]=="Início")||special===x[2]?"active":"";
-  b.innerHTML=x[0]+" "+x[1];b.onclick=()=>{
-  if(x[1]==="Minha Coleção" || x[1]==="Início"){
-    closeAdmin();
-    if(x[1]==="Minha Coleção"){filter="";special="";}
-    else {filter="";special="";}
-    renderNav();renderCategoryFilters();render();
-  }else{
-    closeAdmin();
-    if(x[2]) setSpecial(x[2]); else setFilter("");
-  }
-};n.appendChild(b);
- });
-}
-function renderCategoryFilters(){
- const f=$("filters");f.innerHTML="";
- const all=document.createElement("button");all.textContent="Todas";all.className=!filter&&!special?"active":"";all.onclick=()=>{filter="";special="";renderNav();renderCategoryFilters();render()};f.appendChild(all);
- const visible=categories.slice(0,8);
- visible.forEach(c=>{const b=document.createElement("button");b.textContent=(ICONS[c.nome]||"🎮")+" "+c.nome;b.className=filter===c.nome?"active":"";b.onclick=()=>setFilter(c.nome);f.appendChild(b)});
- if(categories.length>8){
-  const wrap=document.createElement("div");wrap.className="filter-more";
-  const s=document.createElement("select");s.innerHTML='<option value="">Mais categorias...</option>'+categories.slice(8).map(c=>`<option value="${esc(c.nome)}">${esc(c.nome)}</option>`).join("");
-  s.value=categories.slice(8).some(c=>c.nome===filter)?filter:"";s.onchange=()=>{if(s.value)setFilter(s.value)};wrap.appendChild(s);f.appendChild(wrap);
- }
-}
-function filteredGames(){
- const q=$("search").value.toLowerCase().trim();
- return games.filter(g=>(!q||(g.nome+" "+g.categoria).toLowerCase().includes(q))&&(!filter||getGameCategories(g).includes(filter))&&(!special||(special==="fav"?Number(g.favorito)===1:special==="played"?Number(g.jogado)===1:special==="not"?Number(g.jogado)===0:Number(g.nota)>0)));
-}
-function render(){
- let list=filteredGames();const s=$("sort").value;
- if(s==="name")list.sort((a,b)=>a.nome.localeCompare(b.nome));if(s==="category")list.sort((a,b)=>(a.categoria||"").localeCompare(b.categoria||"")||a.nome.localeCompare(b.nome));if(s==="rating")list.sort((a,b)=>Number(b.nota)-Number(a.nota));if(s==="recent")list.sort((a,b)=>Number(b.id)-Number(a.id));
- $("result").textContent=list.length+" jogo(s)";
- $("grid").innerHTML=list.map(g=>`<div class="card" onclick="event.stopPropagation();openDetail(${g.id})"><div class="cover">${g.capa_url?`<img src="${esc(g.capa_url)}" alt="${esc(g.nome)}">`:`<div class="placeholder"><span class="big">${ICONS[g.categoria]||"🎮"}</span>CAPA DO JOGO</div>`}</div><div class="card-body"><div class="platform ${String(g.plataforma||"PS4").toUpperCase()==="PS5"?"ps5":String(g.plataforma||"PS4").toUpperCase()==="PS4"?"ps4":"other"}">🎮 ${esc(g.plataforma||"PS4")}</div><div class="category-list">${getGameCategories(g).map(c=>`<span class="category-chip">${ICONS[c]||"🎮"} ${esc(c)}</span>`).join("")}</div><h3>${esc(g.nome)}</h3><div class="meta">${g.ano||"Ano não informado"}</div><div class="stars">${"★★★★★".split("").map((x,i)=>`<span class="star ${i<Number(g.nota||0)?"on":""}">${x}</span>`).join("")}</div><div class="status ${getMeta(g.id).borrowed?"borrowed":(Number(g.jogado)?"played":"notplayed")}">${getMeta(g.id).borrowed?"📤 EMPRESTADO":(Number(g.jogado)?"✓ JOGADO":"◷ NÃO JOGADO")}<span class="fav ${Number(g.favorito)?"on":""}">${Number(g.favorito)?"♥":"♡"}</span></div>${isZerado(g)?'<div class="completed-badge"><span class="trophy-icon">🏆</span><span class="trophy-text">JOGO ZERADO</span></div>':''}</div></div>`).join("")||`<div class="empty">Nenhum jogo encontrado.</div>`;
-}
-function setFilter(x){filter=x;special="";renderNav();renderCategoryFilters();render()}
-function setSpecial(x){special=x;filter="";renderNav();renderCategoryFilters();render()}
-async function validateAdminToken(t){
- if(!t)return false;
- try{const r=await fetch(API+"/api/admin/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:t}),cache:"no-store"});const d=await r.json().catch(()=>({}));return r.ok&&d.ok===true}catch{return false}
-}
-async function openAdminLogin(){
- if(adminToken){if(await validateAdminToken(adminToken)){openAdmin();return}adminToken="";sessionStorage.removeItem("ng_admin_token")}
- $("loginError").textContent="";$("token").value="";$("loginModal").classList.add("open");setTimeout(()=>$("token").focus(),50)
-}
-async function login(){
- const t=$("token").value.trim();$("loginError").textContent="";if(!t){$("loginError").textContent="Digite sua senha administrativa.";return}
- const btn=document.querySelector(".login-submit");btn.disabled=true;btn.textContent="Verificando...";
- try{if(!await validateAdminToken(t))throw Error("Senha incorreta. Acesso não autorizado.");adminToken=t;sessionStorage.setItem("ng_admin_token",t);$("loginModal").classList.remove("open");$("token").value="";openAdmin();toast("Acesso liberado.")}catch(e){$("loginError").textContent=e.message;$("token").focus();$("token").select()}finally{btn.disabled=false;btn.textContent="Entrar"}
-}
-function togglePassword(){const i=$("token");i.type=i.type==="password"?"text":"password"}
+(function(){
+  let deferredPrompt = null;
+  const btn = () => document.getElementById("installAppBtn");
+  const help = () => document.getElementById("installHelp");
+  const show = (msg) => {
+    const h = help();
+    if(!h) return;
+    h.innerHTML = msg;
+    h.classList.add("show");
+  };
+  const close = () => { const h=help(); if(h) h.classList.remove("show"); };
 
-const CLIENTS_KEY="ng_rental_clients_v1", RENTALS_KEY="ng_rentals_v1";
-function readStore(k){try{return JSON.parse(localStorage.getItem(k)||"[]")}catch{return[]}}
-function writeStore(k,v){localStorage.setItem(k,JSON.stringify(v))}
-function clients(){return readStore(CLIENTS_KEY)}
-function rentals(){return readStore(RENTALS_KEY)}
-function saveClients(v){writeStore(CLIENTS_KEY,v)}
-function saveRentals(v){writeStore(RENTALS_KEY,v)}
-function closeModal(id){$(id).classList.remove("open")}
-function adminTab(tab){
-  $("gamesAdminPanel").style.display=tab==="games"?"block":"none";
-  $("rentalPanel").classList.toggle("open",tab==="rental");
-  $("adminTabGames").classList.toggle("active",tab==="games");
-  $("adminTabRental").classList.toggle("active",tab==="rental");
-  if(tab==="rental")renderRentals();
-}
-function dateBR(s){if(!s)return"—";const [y,m,d]=s.split("-");return d+"/"+m+"/"+y}
-function rentalLate(r){return !r.returnedAt&&r.due&&r.due<todayISO()}
-function clientName(id){return clients().find(c=>String(c.id)===String(id))?.name||"Cliente removido"}
-function gameName(id){return games.find(g=>String(g.id)===String(id))?.nome||"Jogo removido"}
-function rentalModal(id=null){
-  const rs=rentals(),r=id?rs.find(x=>String(x.id)===String(id)):null;
-  const cs=clients();$("rentalClient").innerHTML=cs.length?cs.map(c=>`<option value="${c.id}">${esc(c.name)}${c.phone?" — "+esc(c.phone):""}</option>`).join(""):`<option value="">Cadastre um cliente primeiro</option>`;
-  $("rentalGame").innerHTML=games.map(g=>`<option value="${g.id}">${esc(g.nome)} — ${esc(g.plataforma||"PS4")}</option>`).join("");
-  const now=todayISO();
-  $("rentalId").value=r?.id||"";$("rentalTitle").textContent=r?"Editar locação":"Nova locação";
-  $("rentalClient").value=r?.clientId||cs[0]?.id||"";
-  $("rentalGame").value=r?.gameId||games[0]?.id||"";
-  $("rentalStart").value=r?.start||now;$("rentalDue").value=r?.due||"";
-  $("rentalPrice").value=r?.price??0;$("rentalDiscount").value=r?.discount??0;$("rentalNotes").value=r?.notes||"";
-  $("rentalModal").classList.add("open");
-}
-function clientModal(id=null){
-  const c=clients().find(x=>String(x.id)===String(id));
-  $("clientId").value=c?.id||"";$("clientTitle").textContent=c?"Editar cliente":"Cadastrar cliente";
-  $("clientName").value=c?.name||"";$("clientPhone").value=c?.phone||"";$("clientEmail").value=c?.email||"";$("clientNotes").value=c?.notes||"";
-  $("clientModal").classList.add("open");
-}
-function clientListModal(){
-  const cs=clients(),rs=rentals();
-  $("clientListBody").innerHTML=cs.length?`<div class="table-wrap"><table class="rental-table"><thead><tr><th>Nome</th><th>Telefone</th><th>E-mail</th><th>Ações</th></tr></thead><tbody>${cs.map(c=>{const linked=rs.some(r=>String(r.clientId)===String(c.id));return`<tr><td><b>${esc(c.name)}</b></td><td>${esc(c.phone||"—")}</td><td>${esc(c.email||"—")}</td><td><div class="buttons"><button class="btn" onclick="clientModal(${c.id});closeModal('clientListModal')">Editar</button><button class="btn client-delete-btn" onclick="deleteClient(${c.id})" title="Excluir cliente">🗑️ Excluir</button></div>${linked?`<small class="muted">Possui locações registradas</small>`:""}</td></tr>`}).join("")}</tbody></table></div>`:`<div class="rental-empty">Nenhum cliente cadastrado.</div>`;
-  $("clientListModal").classList.add("open");
-}
-function renderRentals(){
-  const rs=rentals(),cs=clients(),active=rs.filter(r=>!r.returnedAt),late=rs.filter(rentalLate),today=rs.filter(r=>!r.returnedAt&&r.due===todayISO());
-  $("rClients").textContent=cs.length;$("rActive").textContent=active.length;$("rLate").textContent=late.length;
-  if($("rcLate"))$("rcLate").textContent=late.length;if($("rcToday"))$("rcToday").textContent=today.length;if($("rcActive"))$("rcActive").textContent=active.length;
-  const total=rs.reduce((s,r)=>s+Math.max(0,Number(r.price||0)-Number(r.discount||0)),0);
-  $("rRevenue").textContent=total.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
-  const q=($("rentalSearch").value||"").toLowerCase().trim(),f=$("rentalFilter").value;
-  const list=rs.filter(r=>{
-    const txt=(clientName(r.clientId)+" "+gameName(r.gameId)).toLowerCase();
-    return(!q||txt.includes(q))&&(!f||(f==="active"&&!r.returnedAt)||(f==="late"&&rentalLate(r))||(f==="returned"&&r.returnedAt)||(f==="today"&&!r.returnedAt&&r.due===todayISO()));
-  }).sort((a,b)=>String(b.start).localeCompare(String(a.start)));
-  $("rentalTableWrap").innerHTML=list.length?`<table class="rental-table"><thead><tr><th>Cliente</th><th>Jogo</th><th>Retirada</th><th>Devolução</th><th>Valor</th><th>Status</th><th>Ações</th></tr></thead><tbody>${list.map(r=>{
-    const late=rentalLate(r),status=r.returnedAt?`<button type="button" class="rental-status-btn status-returned" onclick="toggleRentalStatus(${r.id})" title="Clique para marcar como empréstimo">✓ Devolvido</button>`:`<button type="button" class="rental-status-btn status-loaned${late?" late":""}" onclick="toggleRentalStatus(${r.id})" title="Clique para marcar como devolvido">📤 Empréstimo</button>`;
-    const val=Math.max(0,Number(r.price||0)-Number(r.discount||0)).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
-    return `<tr><td><b>${esc(clientName(r.clientId))}</b></td><td>${esc(gameName(r.gameId))}</td><td>${dateBR(r.start)}</td><td>${dateBR(r.due)}${late?`<br><small class="status-late">${overdueDays(r.due)} dia(s) de atraso</small>`:""}</td><td>${val}</td><td>${status}</td><td><div class="buttons"><button class="btn" onclick="rentalModal(${r.id})">Editar</button><button class="btn rental-action-delete" onclick="deleteRental(${r.id})" title="Excluir locação">🗑️ Excluir</button></div></td></tr>`;
-  }).join("")}</tbody></table>`:`<div class="rental-empty">Nenhuma locação encontrada.</div>`;
-}
-function toggleRentalStatus(id){
-  const rs=rentals(),r=rs.find(x=>String(x.id)===String(id));if(!r)return;
-  if(r.returnedAt){
-    r.returnedAt=null;
-    saveRentals(rs);renderRentals();toast("Status alterado para Empréstimo.");
-  }else{
-    r.returnedAt=todayISO();
-    saveRentals(rs);renderRentals();toast("Status alterado para Devolvido.");
+  function isStandalone(){
+    return !!(
+      (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) ||
+      window.navigator.standalone === true ||
+      document.referrer.startsWith("android-app://")
+    );
   }
-}
-function deleteRental(id){
-  const rs=rentals(),r=rs.find(x=>String(x.id)===String(id));if(!r)return;
-  if(!confirm(`Excluir a locação de "${clientName(r.clientId)}" — "${gameName(r.gameId)}"?\n\nEsta ação não poderá ser desfeita.`))return;
-  saveRentals(rs.filter(x=>String(x.id)!==String(id)));renderRentals();toast("Locação excluída.");
-}
-function deleteClient(id){
-  const rs=rentals(),c=clients().find(x=>String(x.id)===String(id));if(!c)return;
-  if(rs.some(r=>String(r.clientId)===String(id))){toast("Não é possível excluir: este cliente possui locações registradas. Exclua as locações primeiro.");return}
-  if(!confirm(`Excluir o cliente "${c.name}"?\n\nEsta ação não poderá ser desfeita.`))return;
-  saveClients(clients().filter(x=>String(x.id)!==String(id)));
-  closeModal("clientListModal");renderRentals();toast("Cliente excluído.");
-}
 
-$("clientForm").addEventListener("submit",e=>{
-  e.preventDefault();const cs=clients(),id=$("clientId").value||Date.now();
-  const item={id:Number(id),name:$("clientName").value.trim(),phone:$("clientPhone").value.trim(),email:$("clientEmail").value.trim(),notes:$("clientNotes").value.trim()};
-  if(!item.name){toast("Informe o nome do cliente.");return}
-  const i=cs.findIndex(c=>String(c.id)===String(id));if(i>=0)cs[i]=item;else cs.push(item);saveClients(cs);closeModal("clientModal");renderRentals();toast("Cliente salvo.");
-});
-$("rentalForm").addEventListener("submit",e=>{
-  e.preventDefault();const rs=rentals(),id=$("rentalId").value||Date.now();
-  const gameId=$("rentalGame").value,clientId=$("rentalClient").value;
-  if(!clientId){toast("Cadastre um cliente antes de criar uma locação.");return}
-  const item={id:Number(id),clientId:Number(clientId),gameId:Number(gameId),start:$("rentalStart").value,due:$("rentalDue").value,price:Number($("rentalPrice").value||0),discount:Number($("rentalDiscount").value||0),notes:$("rentalNotes").value.trim()};
-  const i=rs.findIndex(r=>String(r.id)===String(id));if(i>=0){item.returnedAt=rs[i].returnedAt||null;rs[i]=item}else rs.push({...item,returnedAt:null});
-  saveRentals(rs);closeModal("rentalModal");renderRentals();toast("Locação salva.");
-});
-function openAdmin(){$("public").classList.add("hidden");$("admin").classList.add("open");adminTab("games");updateAdmin();renderAdmin();renderRentals()}
-function closeAdmin(){$("admin").classList.remove("open");$("public").classList.remove("hidden")}
-function logout(){adminToken="";sessionStorage.removeItem("ng_admin_token");closeAdmin();toast("Sessão encerrada.")}
-function todayISO(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
-function isOverdue(g){const m=getMeta(g.id);return !!(m.borrowed&&m.returnDate&&m.returnDate<todayISO())}
-function overdueDays(date){const a=new Date(date+"T00:00:00"),b=new Date(todayISO()+"T00:00:00");return Math.max(1,Math.floor((b-a)/86400000))}
-function setAF(x){adminFilter=x;["afAll","afWith","afWithout","afLoaned","afOverdue"].forEach(i=>$(i).classList.remove("active"));const id=x==="all"?"afAll":x==="with"?"afWith":x==="without"?"afWithout":x==="loaned"?"afLoaned":x==="overdue"?"afOverdue":null;if(id)$(id).classList.add("active");renderAdmin()}
-function updateAdmin(){const w=games.filter(g=>String(g.capa_url||"").trim()).length;$("aTotal").textContent=games.length;$("aWith").textContent=w;$("aWithout").textContent=games.length-w;$("aLoaned").textContent=games.filter(g=>getMeta(g.id).borrowed).length;$("aOverdue").textContent=games.filter(isOverdue).length;const overdue=games.filter(isOverdue),box=$("overdueAlert");if(overdue.length){box.classList.add("show");$("overdueTitle").textContent=overdue.length===1?"⚠️ Há 1 empréstimo atrasado":"⚠️ Há "+overdue.length+" empréstimos atrasados";$("overdueText").textContent="A data prevista de devolução já passou.";$("overdueList").innerHTML=overdue.slice(0,5).map(g=>{const m=getMeta(g.id);return`<div>• <b>${esc(g.nome)}</b> — ${esc(m.borrowedTo||"pessoa não informada")} — ${overdueDays(m.returnDate)} dia(s) de atraso</div>`}).join("")+(overdue.length>5?`<div>• +${overdue.length-5} outro(s)</div>`:"")}else{box.classList.remove("show");$("overdueText").textContent="";$("overdueList").innerHTML=""}}
-function renderAdmin(){
- const q=$("adminSearch").value.toLowerCase().trim(),c=$("adminCat").value;
- const list=games.filter(g=>{const has=!!String(g.capa_url||"").trim();return(!q||g.nome.toLowerCase().includes(q))&&(!c||getGameCategories(g).includes(c))&&(adminFilter==="all"||(adminFilter==="with"&&has)||(adminFilter==="without"&&!has)||(adminFilter==="loaned"&&getMeta(g.id).borrowed)||(adminFilter==="overdue"&&isOverdue(g)))});
- $("adminResult").textContent=list.length+" jogo(s)";
- $("adminBody").innerHTML=list.map(g=>{const has=!!String(g.capa_url||"").trim(),m=getMeta(g.id);return`<tr><td>${has?`<img class="thumb" src="${esc(g.capa_url)}">`:"🎮"}</td><td><b>${esc(g.nome)}</b><br><small class="muted">${esc(g.plataforma||"PS4")}</small></td><td><div class="category-list">${getGameCategories(g).map(c=>`<span class="category-chip">${ICONS[c]||"🎮"} ${esc(c)}</span>`).join("")}</div></td><td>${g.ano||"-"}</td><td class="stars">${"★★★★★".split("").map((x,i)=>`<span class="star ${i<Number(g.nota||0)?"on":""}">${x}</span>`).join("")}</td><td>${m.borrowed?(isOverdue(g)?'<span class="borrowed">⚠️ Em atraso</span>':'<span class="borrowed">📤 Emprestado</span>'):(Number(g.jogado)?"✓ Jogado":"◷ Não jogado")}</td><td><div class="actions"><button class="btn" onclick="event.stopPropagation();openDetail(${g.id})">Ver</button><button class="btn" onclick="event.stopPropagation();openCover(${g.id})">${has?"🔄 Capa":"🖼️ Capa"}</button><button class="btn" onclick="event.stopPropagation();gameModal(${g.id})">Editar</button><button class="btn danger" onclick="event.stopPropagation();delGame(${g.id})">Excluir</button></div></td></tr>`}).join("")||`<tr><td colspan="7" class="muted">Nenhum jogo encontrado.</td></tr>`
-}
-function renderStatsPanel(){
- const platforms={};const cats={};
- games.forEach(g=>{const p=g.plataforma||"PS4";platforms[p]=(platforms[p]||0)+1;getGameCategories(g).forEach(c=>{cats[c]=(cats[c]||0)+1})});
- const bars=(obj)=>{const arr=Object.entries(obj).sort((a,b)=>b[1]-a[1]).slice(0,8),max=Math.max(1,...arr.map(x=>x[1]));return arr.map(([n,v])=>`<div class="bar-row"><span>${esc(n)}</span><div class="bar"><i style="width:${v/max*100}%"></i></div><b>${v}</b></div>`).join("")||'<div class="hint">Sem dados.</div>'};
- $("platformBars").innerHTML=bars(platforms);$("categoryBars").innerHTML=bars(cats);
-}
-function openDetail(id){
- const g=games.find(x=>Number(x.id)===Number(id));if(!g)return;detailId=id;
- $("detailName").textContent=g.nome;$("detailCat").innerHTML=getGameCategories(g).map(c=>`${ICONS[c]||"🎮"} ${esc(c)}`).join(" &nbsp;•&nbsp; ");
- $("detailMeta").textContent=(g.plataforma||"PS4")+" • "+(g.ano||"Ano não informado");
- $("detailCover").innerHTML=g.capa_url?`<img src="${esc(g.capa_url)}" alt="${esc(g.nome)}">`:`<div class="placeholder"><span class="big">${ICONS[g.categoria]||"🎮"}</span>CAPA DO JOGO</div>`;
- $("detailStars").innerHTML="★★★★★".split("").map((x,i)=>`<span class="star ${i<Number(g.nota||0)?"on":""}">${x}</span>`).join("");
- $("detailDesc").textContent=g.descricao||"Este jogo ainda não possui uma descrição cadastrada.";
- const m=getMeta(id);
- $("detailBadges").innerHTML=`<span class="detail-badge">${Number(g.jogado)?"✓ Jogado":"◷ Não jogado"}</span><span class="detail-badge"><span class="detail-favorite ${Number(g.favorito)?"on":""}">${Number(g.favorito)?"♥":"♡"}</span>${Number(g.favorito)?"Favorito":"Não favorito"}</span>${isZerado(g)?'<span class="detail-badge detail-completed">🏆 Jogo zerado</span>':""}${m.borrowed?'<span class="detail-badge borrowed-badge">📤 Emprestado</span>':""}`;
-const rentalLabels={available:"🟢 Disponível",loaned:"🔵 Emprestado",reserved:"🟠 Reservado",maintenance:"⚫ Manutenção"};
- const rentalStatus=m.rentalStatus||(m.borrowed?"loaned":"available");
- $("infoRentalStatus").textContent=isOverdue(g)?"⚠️ Em atraso":(rentalLabels[rentalStatus]||"🟢 Disponível");
- $("infoCopies").textContent=m.copies||1;
- $("infoBorrowed").textContent=m.borrowed?"📤 Emprestado":"Não emprestado";
- $("infoBorrowed").className=m.borrowed?"borrowed":"";
- $("infoBorrowedTo").textContent=m.borrowed?(m.borrowedTo||"Pessoa não informada"):"—";
-$("infoBorrowedDate").textContent=m.borrowed&&m.borrowedDate?new Date(m.borrowedDate+"T00:00:00").toLocaleDateString("pt-BR"):"—";
-$("infoReturnDate").textContent=m.borrowed&&m.returnDate?new Date(m.returnDate+"T00:00:00").toLocaleDateString("pt-BR"):"—";
-$("infoEdition").textContent=m.edition||"Não informado";$("infoDate").textContent=m.date?new Date(m.date+"T00:00:00").toLocaleDateString("pt-BR"):"Não informado";$("infoLocation").textContent=m.location||"Não informado";$("infoNotes").textContent=m.notes||"Não informado";
- const ab=$("detailAdminBtn");if(adminToken){ab.style.display="inline-block";ab.onclick=()=>{closeDetail();gameModal(id)}}else ab.style.display="none";
- $("detailModal").classList.add("open");
-}
-function closeDetail(){$("detailModal").classList.remove("open");detailId=null}
-function drawRating(){$("grating").innerHTML=[1,2,3,4,5].map(n=>`<button type="button" class="${n<=rating?"on":""}" onclick="rating=${n};drawRating()">★</button>`).join("")}
-function gameModal(id=null){
- editingId=id;const g=id?games.find(x=>Number(x.id)===Number(id)):null;const m=id?getMeta(id):{};
- $("gmTitle").textContent=g?"Editar jogo":"Cadastrar jogo";$("gid").value=g?.id||"";$("gname").value=g?.nome||"";setGameCategoriesSelected(g?getGameCategories(g):[]);$("gplatform").value=g?.plataforma||"PS4";$("gyear").value=g?.ano||"";$("gcover").value=g?.capa_url||"";$("gdesc").value=g?.descricao||"";$("gplayed").checked=Number(g?.jogado)===1;$("gfav").checked=Number(g?.favorito)===1;$("gzerado").checked=Number(g?.zerado)===1 || !!m.zerado;
- $("gedition").value=m.edition||"";$("gdate").value=m.date||"";$("glocation").value=m.location||"";$("gnotes").value=m.notes||"";
- $("gborrowed").checked=!!m.borrowed;$("gborrowedTo").value=m.borrowedTo||"";$("gborrowedDate").value=m.borrowedDate||"";$("greturnDate").value=m.returnDate||"";
- $("grentalStatus").value=m.rentalStatus||(m.borrowed?"loaned":"available");$("gcopies").value=m.copies||1;
- rating=Number(g?.nota||0);drawRating();$("gameModal").classList.add("open")
-}
-function closeGameModal(){$("gameModal").classList.remove("open")}
-$("gameForm").addEventListener("submit",async e=>{
- e.preventDefault();
- try{
-  const selectedCats=selectedGameCategories();if(!selectedCats.length)throw Error("Selecione pelo menos uma categoria.");
- if($("gborrowed").checked)$("grentalStatus").value="loaned";
- const d={nome:$("gname").value.trim(),categoria:selectedCats.join(", "),plataforma:$("gplatform").value,ano:$("gyear").value,capa_url:$("gcover").value.trim(),descricao:$("gdesc").value.trim(),zerado:$("gzerado").checked};
-  let id=editingId;if(id)await write("/api/jogos/"+id,"PUT",d);else id=(await write("/api/jogos","POST",d)).id;
-  await write("/api/jogos/"+id+"/avaliacao","PUT",{nota:rating,jogado:$("gplayed").checked,favorito:$("gfav").checked});
-  saveMeta(id);closeGameModal();await load();openAdmin();toast("Jogo salvo com sucesso.")
- }catch(e){toast(e.message)}
-})
-async function write(path,method,data){if(!adminToken)throw Error("Sessão expirada.");const r=await fetch(API+path,{method,headers:{"Content-Type":"application/json",Authorization:"Bearer "+adminToken},body:JSON.stringify(data)});const d=await r.json().catch(()=>({}));if(r.status===401){logout();throw Error("Sessão administrativa expirada.")}if(!r.ok)throw Error(d.error||"Operação não autorizada.");return d}
-async function delGame(id){const g=games.find(x=>Number(x.id)===Number(id));if(!g||!confirm(`Excluir "${g.nome}"? Essa ação não pode ser desfeita.`))return;try{await write("/api/jogos/"+id,"DELETE");localStorage.removeItem(metaKey(id));await load();openAdmin();toast("Jogo excluído.")}catch(e){toast(e.message)}}
-function openCover(id){
- const g=games.find(x=>Number(x.id)===Number(id));if(!g)return;coverId=id;$("coverName").textContent=g.nome;$("coverFile").value="";$("coverStatus").textContent="";
- if(g.capa_url){$("coverPreview").src=g.capa_url;$("coverPreview").style.display="block";$("coverEmpty").style.display="none"}else{$("coverPreview").style.display="none";$("coverEmpty").style.display="block"}$("coverModal").classList.add("open")
-}
-function closeCover(){$("coverModal").classList.remove("open");coverId=null}
-$("coverFile").addEventListener("change",()=>{const f=$("coverFile").files[0];if(!f)return;const u=URL.createObjectURL(f);$("coverPreview").src=u;$("coverPreview").style.display="block";$("coverEmpty").style.display="none";$("coverStatus").textContent=f.name})
-async function uploadCover(){
- const f=$("coverFile").files[0];if(!coverId||!f)return toast("Selecione uma imagem.");
- try{
-  $("coverBtn").disabled=true;$("coverBtn").textContent="Enviando...";const form=new FormData();form.append("jogo_id",String(coverId));form.append("file",f);
-  const r=await fetch(API+"/api/capas",{method:"POST",headers:{Authorization:"Bearer "+adminToken},body:form}),d=await r.json().catch(()=>({}));
-  if(!r.ok)throw Error(d.error||"Falha no upload.");
-  const url=d.url||d.capa_url||d.capa;if(!url)throw Error("URL da capa não retornada.");
-  const g=games.find(x=>Number(x.id)===Number(coverId));await write("/api/jogos/"+coverId,"PUT",{nome:g.nome,categoria:g.categoria,plataforma:g.plataforma||"PS4",ano:g.ano||null,capa_url:url,descricao:g.descricao||""});
-  closeCover();await load();openAdmin();toast("Capa atualizada.")
- }catch(e){toast(e.message)}finally{$("coverBtn").disabled=false;$("coverBtn").textContent="🖼️ Salvar capa"}
-}
-function toast(m){$("toast").textContent=m;$("toast").style.display="block";setTimeout(()=>$("toast").style.display="none",2800)}
-$("adminSearch").addEventListener("input",renderAdmin);$("adminCat").addEventListener("change",renderAdmin);$("rentalSearch").addEventListener("input",renderRentals);$("rentalFilter").addEventListener("change",renderRentals);$("search").addEventListener("input",render);$("sort").addEventListener("change",render);
-document.addEventListener("keydown",e=>{
- if(e.key==="Escape")document.querySelectorAll(".modal").forEach(m=>m.classList.remove("open"));
- if(e.key==="Enter"&&$("loginModal").classList.contains("open")&&document.activeElement===$("token"))login();
-});
-$("loginModal").addEventListener("click",e=>{if(e.target===$("loginModal"))$("loginModal").classList.remove("open")});
-$("detailModal").addEventListener("click",e=>{if(e.target===$("detailModal"))closeDetail()});
-$("gameModal").addEventListener("click",e=>{if(e.target===$("gameModal"))closeGameModal()});
-$("coverModal").addEventListener("click",e=>{if(e.target===$("coverModal"))closeCover()});
-load();
+  function hideInstallButton(){
+    const b = btn();
+    if(!b) return;
+    b.style.display = "none";
+    b.setAttribute("aria-hidden", "true");
+  }
+
+  function showInstallButton(){
+    const b = btn();
+    if(!b || isStandalone()) return;
+    b.style.display = "block";
+    b.removeAttribute("aria-hidden");
+  }
+
+  // Se o sistema já estiver aberto como aplicativo instalado, não mostramos o botão.
+  if(isStandalone()) hideInstallButton();
+
+  window.addEventListener("beforeinstallprompt", (event) => {
+    event.preventDefault();
+    deferredPrompt = event;
+    showInstallButton();
+    const b = btn();
+    if(b){ b.classList.add("ready"); b.textContent = "📲 Instalar aplicativo"; }
+  });
+
+  // Chrome/Edge/Android: dispara depois que a instalação foi concluída.
+  window.addEventListener("appinstalled", () => {
+    deferredPrompt = null;
+    hideInstallButton();
+    close();
+    console.log("NEW PROF. CORRETOR — aplicativo instalado.");
+  });
+
+  document.addEventListener("click", async (event) => {
+    const b = event.target.closest("#installAppBtn");
+    if(!b) return;
+
+    if(isStandalone()){
+      hideInstallButton();
+      return;
+    }
+
+    if(deferredPrompt){
+      try {
+        deferredPrompt.prompt();
+        const choice = await deferredPrompt.userChoice;
+        if(choice && choice.outcome === "accepted"){
+          b.textContent = "⏳ Instalando...";
+        }
+      } catch(e) { console.warn("Instalação:", e); }
+      deferredPrompt = null;
+      return;
+    }
+
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    if(isIOS){
+      show("<b>Para instalar no iPhone/iPad:</b><br>Toque em <b>Compartilhar</b> → <b>Adicionar à Tela de Início</b>.<br><button type='button' id='closeInstallHelp'>Fechar</button>");
+      return;
+    }
+
+    show(`<b>O navegador ainda não liberou a instalação automática.</b><br><br>
+      <b>Chrome no computador:</b> abra o menu <b>⋮</b> e procure <b>Instalar NEW PROF. CORRETOR</b> ou <b>Instalar página como aplicativo</b>.<br><br>
+      <b>Chrome no Android:</b> abra o menu <b>⋮</b> e toque em <b>Instalar aplicativo</b> ou <b>Adicionar à tela inicial</b>.<br><br>
+      <small>Depois de instalado, ao abrir o aplicativo o botão não será exibido.</small><br><button type='button' id='closeInstallHelp'>Fechar</button>`);
+  });
+
+  document.addEventListener("click", event => {
+    if(event.target.id === "closeInstallHelp") close();
+  });
+
+  // Se o usuário mudar entre navegador e modo aplicativo enquanto a página estiver aberta.
+  if(window.matchMedia){
+    const media = window.matchMedia("(display-mode: standalone)");
+    const updateMode = () => isStandalone() ? hideInstallButton() : showInstallButton();
+    if(media.addEventListener) media.addEventListener("change", updateMode);
+  }
+
+  if("serviceWorker" in navigator){
+    window.addEventListener("load", async () => {
+      try {
+        const registration = await navigator.serviceWorker.register("/new-colecao-games-playstation/corretor/sw.js", {scope:"/new-colecao-games-playstation/corretor/"});
+        console.log("NEW PROF. CORRETOR — Service Worker ativo:", registration.scope);
+        if(isStandalone()) hideInstallButton();
+      } catch(error) {
+        console.error("NEW PROF. CORRETOR — erro no Service Worker:", error);
+      }
+    });
+  }
+})();
 </script>
-</body>
-</html>
+
+<script>
+
+function clearHistory(){
+  const h=getHistory();
+  if(!h.length){renderHistory();return}
+  try{
+    localStorage.removeItem('newCorretorHistorico');
+    renderHistory();
+  }catch(err){
+    alert('Não foi possível excluir o histórico neste aparelho.');
+  }
+}
+function exportHistoryCSV(){
+  const h=getHistory();
+  if(!h.length){alert('Não há correções no histórico.');return}
+  const head=['Data','Estudante','Turma','Avaliação','Acertos','Erros','Brancas','Revisar','Nota','Respostas'];
+  const rows=h.map(x=>[x.data,x.aluno,x.turma,x.avaliacao,x.acertos,x.erros,x.brancas,x.revisar,x.nota,(x.respostas||[]).join(' | ')]);
+  const csv=[head,...rows].map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(';')).join('\n');
+  const blob=new Blob(['\\ufeff'+csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='new-prof-corretor-historico.csv';a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+
+
+function drawNativeCardPage(pdf, alunoCard, turmaCard, pageIndex, totalPages){
+  const n=Math.min(50,Math.max(1,+nq.value||10));
+  const ls=Array.from(L.slice(0,+na.value||5));
+  const tituloCard=(titulo?.value||'AVALIAÇÃO').toUpperCase();
+  const dataCard=getCardData();
+  const codigo=getAssessmentCode();
+
+  const W=210, H=297;
+  const mx=15, contentW=180;
+  const marker=7, markerX=8, markerY=8;
+
+  // Fundo branco e quatro marcadores OMR em coordenadas físicas A4.
+  pdf.setFillColor(255,255,255); pdf.rect(0,0,W,H,'F');
+  pdf.setFillColor(0,0,0);
+  pdf.rect(markerX,markerY,marker,marker,'F');
+  pdf.rect(W-markerX-marker,markerY,marker,marker,'F');
+  pdf.rect(markerX,H-markerY-marker,marker,marker,'F');
+  pdf.rect(W-markerX-marker,H-markerY-marker,marker,marker,'F');
+
+  // Cabeçalho compacto.
+  pdf.setTextColor(18,45,86);
+  pdf.setFont('helvetica','bold'); pdf.setFontSize(17);
+  pdf.text('CARTÃO-RESPOSTA',mx,19);
+  pdf.setDrawColor(23,63,143); pdf.setLineWidth(0.45); pdf.line(mx,24,W-mx,24);
+  pdf.setFontSize(8); pdf.text(tituloCard,mx+contentW/2,30,{align:'center'});
+
+  // Identificação.
+  const iy=35, ih=34, titleH=7;
+  pdf.setDrawColor(40,40,40); pdf.setLineWidth(0.3);
+  pdf.setFillColor(23,63,143); pdf.rect(mx,iy,contentW,titleH,'F');
+  pdf.setTextColor(255,255,255); pdf.setFontSize(8); pdf.setFont('helvetica','bold'); pdf.text('IDENTIFICAÇÃO',mx+3,iy+5);
+  pdf.setDrawColor(80,80,80); pdf.rect(mx,iy,contentW,ih);
+  pdf.line(mx,iy+titleH,W-mx,iy+titleH);
+  const split=mx+contentW*0.76;
+  pdf.line(split,iy+titleH,split,iy+22);
+  pdf.line(mx,iy+22,W-mx,iy+22);
+  const s2=mx+contentW*0.58, s3=mx+contentW*0.82;
+  pdf.line(s2,iy+22,s2,iy+ih); pdf.line(s3,iy+22,s3,iy+ih);
+  pdf.setTextColor(70,78,90); pdf.setFontSize(5.5);
+  pdf.text('AVALIAÇÃO',mx+2,iy+12); pdf.text('CÓDIGO DA AVALIAÇÃO',split+2,iy+12);
+  pdf.setTextColor(25,25,25); pdf.setFontSize(8); pdf.setFont('helvetica','bold');
+  pdf.text(tituloCard,mx+2,iy+18); pdf.text(codigo,split+2,iy+18);
+  pdf.setTextColor(70,78,90); pdf.setFontSize(5.5); pdf.setFont('helvetica','bold');
+  pdf.text('ESTUDANTE',mx+2,iy+27); pdf.text('ANO / TURMA',s2+2,iy+27); pdf.text('DATA',s3+2,iy+27);
+  pdf.setTextColor(25,25,25); pdf.setFontSize(7.5);
+  if(alunoCard) pdf.text(String(alunoCard).slice(0,45),mx+2,iy+32); else pdf.line(mx+2,iy+32,mx+contentW*0.57,iy+32);
+  if(turmaCard) pdf.text(String(turmaCard).slice(0,18),s2+2,iy+32); else pdf.line(s2+2,iy+32,s3-2,iy+32);
+  if(dataCard) pdf.text(fmtDate(dataCard),s3+2,iy+32); else pdf.line(s3+2,iy+32,W-mx-2,iy+32);
+
+  // Orientações.
+  const oy=73;
+  pdf.setDrawColor(170,170,170); pdf.rect(mx,oy,contentW,6);
+  pdf.setFontSize(4.8); pdf.setFont('helvetica','bold'); pdf.setTextColor(23,63,143); pdf.text('ORIENTAÇÕES:',mx+2,oy+4);
+  pdf.setFont('helvetica','normal'); pdf.setTextColor(55,55,55);
+  pdf.text('Preencha completamente apenas uma alternativa por questão. Use lápis ou caneta preta/azul. Não faça marcas fora dos círculos. Não dobre nem corte o cartão.',mx+22,oy+4);
+
+  const titleY=84;
+  pdf.setFont('helvetica','bold'); pdf.setFontSize(7.5); pdf.setTextColor(20,20,20);
+  pdf.text('MARQUE A ALTERNATIVA CORRESPONDENTE À SUA RESPOSTA',W/2,titleY,{align:'center'});
+  pdf.setFont('helvetica','normal'); pdf.setFontSize(4.7);
+  pdf.text('Preencha o círculo escolhido de forma completa. Os marcadores pretos dos quatro cantos são utilizados pelo sistema para localizar e corrigir o cartão.',W/2,titleY+5,{align:'center'});
+
+  // Duas colunas, dez questões por coluna. Altura total fixa e segura dentro do A4.
+  const gridY=92, gridH=166, gap=2, colGap=3, colW=(contentW-colGap)/2;
+  const rows=Math.ceil(Math.min(n,20)/2); // para o cartão padrão de 20 questões
+  const qH=(gridH-(rows-1)*gap)/rows;
+  const qFont=5.2, optR=3.5;
+  const bubbleStep=9;
+  const bubbleYExtra=1.8;
+  for(let i=0;i<Math.min(n,20);i++){
+    const col=i<10?0:1, row=i<10?i:i-10;
+    const x=mx+col*(colW+colGap), y=gridY+row*(qH+gap);
+    pdf.setDrawColor(70,70,70); pdf.setLineWidth(0.25); pdf.rect(x,y,colW,qH);
+    pdf.setFont('helvetica','bold'); pdf.setFontSize(qFont); pdf.setTextColor(25,25,25);
+    pdf.text(`QUESTÃO ${String(i+1).padStart(2,'0')}`,x+colW/2,y+5,{align:'center'});
+    const totalW=(ls.length-1)*bubbleStep;
+    const start=x+colW/2-totalW/2;
+    ls.forEach((lab,j)=>{
+      const cx=start+j*bubbleStep, cy=y+qH/2+bubbleYExtra;
+      // Bolhas maiores e com a letra fora do círculo para reduzir falsos positivos em fotos.
+      pdf.setDrawColor(20,20,20); pdf.setLineWidth(0.4); pdf.circle(cx,cy,optR);
+      pdf.setFont('helvetica','bold'); pdf.setFontSize(4.6); pdf.setTextColor(35,35,35);
+      pdf.text(String(lab),cx,cy+5.1,{align:'center'});
+    });
+  }
+
+  // Rodapé dentro da área segura.
+  const fy=285;
+  pdf.setDrawColor(170,170,170); pdf.setLineWidth(0.3); pdf.line(mx,fy,W-mx,fy);
+  pdf.setFont('helvetica','bold'); pdf.setFontSize(5.8); pdf.setTextColor(23,63,143);
+  pdf.text('NEW PROF. CORRETOR',W/2-18,292,{align:'right'});
+  pdf.setFont('helvetica','normal'); pdf.setTextColor(80,80,80); pdf.text(` · Cartão-resposta para correção automática por imagem · Código ${codigo}`,W/2-17,292);
+}
+
+async function exportCard(){
+  try{
+    if(!((window.jspdf&&window.jspdf.jsPDF)||window.jsPDF)){
+      alert('A exportação PDF ainda está carregando. Aguarde alguns segundos e tente novamente.');
+      return;
+    }
+
+    const turmaCard=document.getElementById('cardTurma')?.value||'';
+    const mode=document.getElementById('printMode')?.value||'blank';
+    const count=Math.max(1,Math.min(100,+document.getElementById('studentCount')?.value||1));
+    let names=mode==='named'?getStudentNames():Array(count).fill('');
+    if(mode==='named' && names.some((n)=>!n)){
+      const faltam=names.map((n,i)=>n?'':i+1).filter(Boolean);
+      if(!confirm(`Há ${faltam.length} nome(s) em branco. Deseja gerar mesmo assim?`)) return;
+    }
+
+    const JsPDF=(window.jspdf&&window.jspdf.jsPDF)||window.jsPDF;
+    const pdf=new JsPDF({orientation:'portrait',unit:'mm',format:'a4',compress:true});
+    for(let i=0;i<count;i++){
+      if(i>0) pdf.addPage('a4','portrait');
+      drawNativeCardPage(pdf,names[i]||'',turmaCard,i,count);
+    }
+
+    const safe=((document.getElementById('cardTitulo')?.value||titulo?.value||'cartao-resposta')
+      .trim().replace(/[^\wÀ-ÿ\-]+/g,'_')).replace(/^_+|_+$/g,'')||'cartao-resposta';
+    pdf.save(`${safe}-cartao.pdf`);
+  }catch(e){
+    console.error(e);
+    alert('Não foi possível gerar o PDF: '+e.message);
+  }
+}
+
+function setStatus(t,c){readStatus.textContent=t;readStatus.className='status '+c}
+function resetRead(){photo.value='';photoName.textContent='Ao selecionar a foto, a correção será iniciada automaticamente.';results.innerHTML='';diag.getContext('2d').clearRect(0,0,diag.width,diag.height);ultimaLeitura=null;summary.className='status info';summary.textContent='Nenhuma correção realizada nesta sessão.';setStatus('Aguardando fotografia.','info')}
+
+function loadImage(f){return new Promise((ok,no)=>{let im=new Image();im.onload=()=>ok(im);im.onerror=no;im.src=URL.createObjectURL(f)})}
+function orderPts(p){let s=p.map(a=>a.x+a.y),d=p.map(a=>a.x-a.y);return[p[s.indexOf(Math.min(...s))],p[d.indexOf(Math.max(...d))],p[s.indexOf(Math.max(...s))],p[d.indexOf(Math.min(...d))]]}
+function findMarkers(src){
+  // V16: localização robusta dos quatro marcadores por quadriláteros.
+  // Primeiro tentamos detectar o contorno real do quadrado (mais preciso que
+  // usar apenas o centro do bounding-box). Depois fazemos fallback para a
+  // detecção anterior, mantendo compatibilidade com cartões já impressos.
+  let gray=new cv.Mat(), bw=new cv.Mat(), cs=new cv.MatVector(), hier=new cv.Mat();
+  cv.cvtColor(src,gray,cv.COLOR_RGBA2GRAY);
+  cv.GaussianBlur(gray,gray,new cv.Size(5,5),0,0,cv.BORDER_DEFAULT);
+  cv.adaptiveThreshold(gray,bw,255,cv.ADAPTIVE_THRESH_GAUSSIAN_C,cv.THRESH_BINARY_INV,31,12);
+  cv.findContours(bw,cs,hier,cv.RETR_EXTERNAL,cv.CHAIN_APPROX_SIMPLE);
+  const imgArea=src.cols*src.rows;
+  const minArea=Math.max(150,imgArea*0.00006), maxArea=imgArea*0.045;
+  const cand=[];
+  for(let i=0;i<cs.size();i++){
+    const c=cs.get(i), peri=cv.arcLength(c,true), approx=new cv.Mat();
+    cv.approxPolyDP(c,approx,Math.max(2,0.035*peri),true);
+    const r=cv.boundingRect(c), area=cv.contourArea(c);
+    const ar=r.width/Math.max(1,r.height);
+    if(approx.rows===4 && area>=minArea && area<=maxArea && ar>0.60 && ar<1.60 && cv.isContourConvex(approx)){
+      const pts=[];
+      for(let k=0;k<4;k++){
+        const d=approx.intPtr(k,0); pts.push({x:d[0],y:d[1]});
+      }
+      // Perímetro e área relativa ajudam a eliminar texto, letras e linhas.
+      const fill=area/Math.max(1,r.width*r.height);
+      if(fill>0.45 && fill<1.25) cand.push({pts,area,cx:r.x+r.width/2,cy:r.y+r.height/2,w:r.width,h:r.height});
+    }
+    approx.delete(); c.delete();
+  }
+  cs.delete();hier.delete();bw.delete();gray.delete();
+
+  function centerScore(x,corner){
+    const dx=x.cx-corner.x,dy=x.cy-corner.y;
+    const d=Math.hypot(dx,dy), edge=Math.min(x.cx,x.cy,src.cols-x.cx,src.rows-x.cy);
+    return d - Math.min(220,edge)*0.35;
+  }
+  const corners=[{x:0,y:0},{x:src.cols,y:0},{x:src.cols,y:src.rows},{x:0,y:src.rows}];
+  const chosen=[];
+  for(const co of corners){
+    let best=null,bs=Infinity;
+    for(const x of cand){
+      if(chosen.includes(x))continue;
+      const sc=centerScore(x,co);
+      if(sc<bs){bs=sc;best=x}
+    }
+    if(best)chosen.push(best);
+  }
+  if(chosen.length===4){
+    const centers=chosen.map(x=>({x:x.cx,y:x.cy}));
+    return orderPts(centers);
+  }
+
+  // Fallback compatível com os cartões antigos de marcador sólido.
+  let g=new cv.Mat(),inv=new cv.Mat();
+  cv.cvtColor(src,g,cv.COLOR_RGBA2GRAY);cv.threshold(g,inv,135,255,cv.THRESH_BINARY_INV);
+  let c2=new cv.MatVector(),h2=new cv.Mat();cv.findContours(inv,c2,h2,cv.RETR_EXTERNAL,cv.CHAIN_APPROX_SIMPLE);
+  let old=[];
+  for(let i=0;i<c2.size();i++){
+    let c=c2.get(i),r=cv.boundingRect(c),ar=r.width*r.height,ratio=r.width/Math.max(1,r.height);
+    if(ar>=minArea&&ar<=maxArea&&r.width>=10&&r.height>=10&&ratio>=.65&&ratio<=1.45){
+      old.push({x:r.x+r.width/2,y:r.y+r.height/2,area:ar});
+    }
+    c.delete();
+  }
+  c2.delete();h2.delete();g.delete();inv.delete();
+  if(old.length<4)return null;
+  const q=[null,null,null,null],cx=src.cols/2,cy=src.rows/2;
+  for(const x of old){const k=(x.y<cy?0:2)+(x.x<cx?0:1);if(!q[k]||x.area>q[k].area)q[k]=x}
+  return q.every(Boolean)?orderPts(q):null;
+}
+function matPts(p){return cv.matFromArray(4,1,cv.CV_32FC2,p.flatMap(a=>[a.x,a.y]))}
+
+/* ===== OMR V17 — LEITURA DETERMINÍSTICA PELO MODELO DO PRÓPRIO CARTÃO =====
+   O cartão é gerado pelo sistema, portanto as posições das questões e alternativas
+   são conhecidas. Depois da homografia dos 4 marcadores, não procuramos círculos
+   nem usamos OCR: lemos somente a área interna de cada bolha.
+*/
+const OMR_A4_W=1200, OMR_A4_H=1697, OMR_MM=OMR_A4_W/210;
+const OMR_MARKER_OFFSET_MM=8, OMR_MARKER_SIZE_MM=7;
+
+function warpCard(src,m){
+  // O cartão V10 usa marcadores a 8 mm das bordas, com 7 mm de lado.
+  // O centro real de cada marcador é 11,5 mm a partir da borda.
+  const c=OMR_MARKER_OFFSET_MM + OMR_MARKER_SIZE_MM/2;
+  const dest=[
+    {x:c*OMR_MM,y:c*(OMR_A4_H/297)},
+    {x:OMR_A4_W-c*OMR_MM,y:c*(OMR_A4_H/297)},
+    {x:OMR_A4_W-c*OMR_MM,y:OMR_A4_H-c*(OMR_A4_H/297)},
+    {x:c*OMR_MM,y:OMR_A4_H-c*(OMR_A4_H/297)}
+  ];
+  const M=cv.getPerspectiveTransform(matPts(m),matPts(dest)),d=new cv.Mat();
+  cv.warpPerspective(src,d,M,new cv.Size(OMR_A4_W,OMR_A4_H),cv.INTER_LINEAR,cv.BORDER_CONSTANT,new cv.Scalar(255,255,255,255));
+  M.delete();
+  return d;
+}
+
+function fixedQuestionGeometry(count,alts){
+  const n=Math.max(1,Math.min(50,count));
+  // IMPORTANTE: estas medidas são exatamente as usadas em drawNativeCardPage().
+  // O leitor não procura círculos; ele lê as posições que o próprio gerador do
+  // cartão desenhou. Isso mantém a geometria sincronizada com o PDF A4.
+  const mx=15, contentW=180;
+  const gridY=92, gridH=166, gap=2, colGap=3;
+  const colW=(contentW-colGap)/2;
+  const rows=Math.ceil(Math.min(n,20)/2);
+  const qH=(gridH-(rows-1)*gap)/rows;
+  const bubbleStep=9;       // V17: mesma geometria do cartão, 9 mm entre centros
+  const out=[];
+  for(let i=0;i<n;i++){
+    const col=i<10?0:1;
+    const row=i<10?i:i-10;
+    const x=mx+col*(colW+colGap);
+    const y=gridY+row*(qH+gap);
+    const totalW=(alts-1)*bubbleStep;
+    const start=x+colW/2-totalW/2;
+    const pts=[];
+    for(let j=0;j<alts;j++){
+      // V17: drawNativeCardPage(): cy=y+qH/2+1.8
+      pts.push({
+        x:(start+j*bubbleStep)*OMR_MM,
+        y:(y+qH/2+1.8)*(OMR_A4_H/297)
+      });
+    }
+    out.push({q:i+1,pts});
+  }
+  return out;
+}
+
+function bubbleInkScore(gray,x,y){
+  // V17 OMR: leitura local e adaptativa. Comparamos a escuridão da região
+  // interna com o fundo imediatamente ao redor da bolha, reduzindo o efeito
+  // de sombras e iluminação irregular da fotografia.
+  const R=9, core=2.9, ringIn=4.6, ringOut=8.2;
+  const cx=Math.round(x),cy=Math.round(y);
+  let bgSum=0,bgN=0,coreDark=0,coreN=0,midDark=0,midN=0;
+  for(let yy=cy-R;yy<=cy+R;yy++){
+    for(let xx=cx-R;xx<=cx+R;xx++){
+      if(xx<0||yy<0||xx>=gray.cols||yy>=gray.rows)continue;
+      const d=Math.hypot(xx-cx,yy-cy),g=gray.ucharPtr(yy,xx)[0];
+      if(d>=ringIn&&d<=ringOut){bgSum+=g;bgN++}
+    }
+  }
+  const bg=bgN?bgSum/bgN:200;
+  const threshold=Math.max(70,bg-38);
+  for(let yy=cy-Math.ceil(core);yy<=cy+Math.ceil(core);yy++){
+    for(let xx=cx-Math.ceil(core);xx<=cx+Math.ceil(core);xx++){
+      if(xx<0||yy<0||xx>=gray.cols||yy>=gray.rows)continue;
+      const d=Math.hypot(xx-cx,yy-cy),g=gray.ucharPtr(yy,xx)[0];
+      if(d<=core){coreN++;if(g<threshold)coreDark++}
+      else if(d>core&&d<ringIn){midN++;if(g<threshold)midDark++}
+    }
+  }
+  const coreFrac=coreDark/Math.max(1,coreN),midFrac=midDark/Math.max(1,midN);
+  // A marca preenchida ocupa uma área grande dentro da bolha; a letra impressa
+  // sozinha ocupa apenas uma pequena fração do núcleo.
+  return .58*coreFrac+.42*midFrac;
+}
+
+function detectAnswersFixed(warp){
+  const gray=new cv.Mat();cv.cvtColor(warp,gray,cv.COLOR_RGBA2GRAY);
+  const alts=Math.max(3,Math.min(5,+na.value||5));
+  const ls=Array.from(L.slice(0,alts));
+  const geo=fixedQuestionGeometry(gabarito.length,alts);
+  const out=[],raw=[];
+  for(const q of geo){
+    const vals=q.pts.map(p=>bubbleInkScore(gray,p.x,p.y));
+    const ranked=vals.map((v,i)=>({v,i})).sort((a,b)=>b.v-a.v);
+    const max=ranked[0]?.v||0,second=ranked[1]?.v||0;
+    let ans='—',status='Em branco';
+    // Limiares adaptativos: exige preenchimento absoluto e vantagem clara
+    // sobre a segunda alternativa. Caso contrário, o resultado vai para revisão.
+    if(max>=0.28 && (max-second)>=0.08){
+      ans=ls[ranked[0].i]||'—';status='Marcada';
+    }else if(max>=0.20 && second>=0.20 && second/max>=0.72){
+      status='Dupla marcação / revisar';
+    }else if(max>=0.20){
+      status='Leitura duvidosa / revisar';
+    }
+    out.push({q:q.q,ans,status,vals,pts:q.pts});
+    raw.push(`Q${String(q.q).padStart(2,'0')}  ${ls.map((x,j)=>x+':'+Math.round((vals[j]||0)*100)+'%').join('  ')}  → ${ans}`);
+  }
+  gray.delete();
+  return {answers:out,raw:raw.join('\n')};
+}
+
+function detectAnswers(warp){return detectAnswersFixed(warp)}
+
+function drawDiagnostic(warp,a){
+ let out=new cv.Mat();warp.copyTo(out);
+ a.forEach(z=>z.pts.forEach((p,j)=>{
+   const labels=Array.from(L.slice(0,+na.value||5));
+   const chosen=z.ans===labels[j] && z.status==='Marcada';
+   cv.circle(out,new cv.Point(Math.round(p.x),Math.round(p.y)),12,
+     chosen?new cv.Scalar(40,180,80,255):new cv.Scalar(50,100,235,255),2)
+ }));
+ cv.imshow(diag,out);out.delete();
+}
+function renderResults(a,raw){
+ let ac=0,wr=0,bl=0,du=0,v=Math.max(.01,+valor.value||1);
+ let rows=a.map(x=>{let cls='',sit=x.status;if(x.status.startsWith('Dupla')){du++;cls='double'}else if(x.status==='Em branco'){bl++;cls='blank'}else if(x.ans===gabarito[x.q-1]){ac++;cls='correct';sit='✓ Correta'}else{wr++;cls='wrong';sit='✗ Incorreta'}return `<tr><td>${String(x.q).padStart(2,'0')}</td><td class="${cls}">${x.ans}</td><td>${gabarito[x.q-1]||'—'}</td><td class="${cls}">${sit}</td><td>${x.vals.map(z=>Math.round(z*100)+'%').join(' / ')}</td></tr>`}).join('');
+ let nota=ac*v;
+ results.innerHTML=`<h2>Respostas identificadas</h2><div class="status info"><b>Estudante:</b> ${esc(aluno.value)||'Não informado'} &nbsp; <b>Turma:</b> ${esc(turma.value)||'—'}</div><div class="keyline">${a.map(x=>x.ans).join(' | ')}</div><div class="grid"><div class="status ok">Acertos<br><b>${ac}</b></div><div class="status bad">Erros<br><b>${wr}</b></div><div class="status warn">Brancas<br><b>${bl}</b></div><div class="status warn">Revisar<br><b>${du}</b></div></div><div class="card"><div class="score">${nota.toFixed(1)}</div>Nota — ${ac} acertos × ${v.toFixed(2)}</div><details><summary><b>🔎 Leitura bruta para conferência</b></summary><pre class="raw">${esc(raw)}</pre></details><div style="overflow:auto"><table><thead><tr><th>Questão</th><th>Leitura</th><th>Gabarito</th><th>Situação</th><th>Índice das alternativas</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+ saveHistory({data:new Date().toLocaleString('pt-BR'),aluno:aluno.value||'Não informado',turma:turma.value||'—',avaliacao:titulo.value||'Avaliação',codigo:getAssessmentCode(),acertos:ac,erros:wr,brancas:bl,revisar:du,total:a.length,nota:Number(nota.toFixed(2)),respostas:a.map(x=>x.ans)});
+ summary.className='status ok';summary.innerHTML=`<b>${esc(aluno.value)||'Estudante'}</b> — ${esc(turma.value)||'Turma não informada'} — ${ac} acertos, ${wr} erros, ${bl} brancas, ${du} para revisar — Nota <b>${nota.toFixed(1)}</b>.`;
+}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+async function readPhoto(){
+ if(busy)return;busy=true;btnRead.disabled=true;results.innerHTML='';ultimaLeitura=null;
+ if(!photo.files[0]){setStatus('Selecione ou fotografe o cartão primeiro.','warn');finish();return}
+ if(typeof cv==='undefined'||!cv.Mat){setStatus('O leitor de imagem ainda está carregando. Aguarde alguns segundos.','warn');finish();return}
+ setStatus('Lendo cartão... resultado anterior apagado.','info');
+ try{
+  let im=await loadImage(photo.files[0]),scale=Math.min(1,1800/Math.max(im.naturalWidth,im.naturalHeight)),c=document.createElement('canvas');
+  c.width=Math.round(im.naturalWidth*scale);c.height=Math.round(im.naturalHeight*scale);c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+  let src=cv.imread(c),m=findMarkers(src);if(!m){src.delete();setStatus('Não encontrei os 4 marcadores. Fotografe o cartão inteiro, sem cortar os cantos.','bad');finish();return}
+  setStatus('✓ 4 marcadores encontrados. Corrigindo perspectiva e localizando cada quadro...','info');
+  let warp=warpCard(src,m),r=detectAnswers(warp);ultimaLeitura=r.answers;drawDiagnostic(warp,r.answers);renderResults(r.answers,r.raw);setStatus('✓ Leitura concluída. Confira a sequência e a leitura bruta antes de usar.','ok');src.delete();warp.delete();
+ }catch(e){console.error(e);setStatus('Erro na leitura: '+e.message,'bad')}finally{finish()}
+}
+function finish(){busy=false;btnRead.disabled=false}
+
+loadEvaluation();
+renderHistory();
+bindHistoryButtons();
+if(document.getElementById('dataAvaliacao')&&!document.getElementById('dataAvaliacao').value)document.getElementById('dataAvaliacao').value=new Date().toISOString().slice(0,10);
+if(document.getElementById('codigoAvaliacao'))document.getElementById('codigoAvaliacao').value=getAssessmentCode();
+buildKey();
+show('inicio');
+</script>
+
+
+<script>
+/* ===== ACESSO PÚBLICO — AUTORIZAÇÃO VIA WORKER + D1 ===== */
+const ACCESS_API="https://new-prof-corretor-api.parqueclube1bloco2d.workers.dev";
+const ADMIN_URL="https://new-prof-corretor-admin.parqueclube1bloco2d.workers.dev/";
+
+function accessPanel(name){
+  document.querySelectorAll(".access-panel").forEach(p=>p.classList.remove("active"));
+  const el=document.getElementById("access-"+name);
+  if(el)el.classList.add("active");
+  const lm=document.getElementById("loginMsg"), rm=document.getElementById("requestMsg");
+  if(lm)lm.style.display="none";
+  if(rm)rm.style.display="none";
+  if(name==="system")setTimeout(()=>document.getElementById("loginEmail")?.focus(),50);
+  if(name==="request")setTimeout(()=>document.getElementById("requestName")?.focus(),50);
+}
+
+function accessMessage(id,msg,type){
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.textContent=msg;
+  el.className="access-msg "+type;
+  el.style.display="block";
+  el.style.visibility="visible";
+  el.style.opacity="1";
+}
+
+async function accessApi(path,options={}){
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),10000);
+  try{
+    const r=await fetch(ACCESS_API+path,{
+      ...options,
+      mode:"cors",
+      signal:controller.signal,
+      headers:{"content-type":"application/json",...(options.headers||{})}
+    });
+    const txt=await r.text();
+    let d={}; try{d=txt?JSON.parse(txt):{};}catch{}
+    if(!r.ok || d.ok===false) throw new Error(d.message||d.error||("HTTP "+r.status));
+    return d;
+  }catch(e){
+    if(e.name==="AbortError") throw new Error("O servidor demorou para responder. Tente novamente.");
+    throw e;
+  }finally{
+    clearTimeout(timer);
+  }
+}
+
+function validEmail(email){
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i.test(email);
+}
+
+async function requestAccess(){
+  const nameEl=document.getElementById("requestName");
+  const emailEl=document.getElementById("requestEmail");
+  const schoolEl=document.getElementById("requestSchool");
+  const btn=document.getElementById("requestBtn");
+  const name=nameEl.value.trim(), email=emailEl.value.trim().toLowerCase(), school=schoolEl.value.trim();
+  [nameEl,emailEl,schoolEl].forEach(el=>{el.style.border="";el.removeAttribute("aria-invalid")});
+  const fail=(el,msg)=>{el.style.border="2px solid #dc2626";el.setAttribute("aria-invalid","true");accessMessage("requestMsg","⚠️ "+msg,"bad");el.focus()};
+  if(!name){fail(nameEl,"Informe seu nome completo.");return}
+  if(name.length<3){fail(nameEl,"Informe um nome completo válido.");return}
+  if(!email){fail(emailEl,"Informe seu e-mail.");return}
+  if(!validEmail(email)){fail(emailEl,"Informe um e-mail válido.");return}
+  if(!school){fail(schoolEl,"Informe o nome da escola.");return}
+  if(school.length<2){fail(schoolEl,"Informe um nome de escola válido.");return}
+  btn.disabled=true; const old=btn.textContent; btn.textContent="Enviando..."; accessMessage("requestMsg","Enviando sua solicitação...","warn");
+  try{
+    await accessApi("/api/access/request",{method:"POST",body:JSON.stringify({name,email,school})});
+    accessMessage("requestMsg","✅ Solicitação de acesso enviada com sucesso. Aguarde liberação.","ok");
+    nameEl.value=""; emailEl.value=""; schoolEl.value="";
+  }catch(e){accessMessage("requestMsg","❌ "+(e.message||"Não foi possível enviar a solicitação. Verifique os dados e tente novamente."),"bad")}
+  finally{btn.disabled=false;btn.textContent=old}
+}
+
+async function checkProfessorAccess(remember=true){
+  const emailEl=document.getElementById("loginEmail"), btn=document.getElementById("loginBtn"), email=(emailEl.value||"").trim().toLowerCase();
+  if(!email){accessMessage("loginMsg","⚠️ Informe o e-mail para acessar o sistema.","bad");emailEl.focus();return false}
+  if(!validEmail(email)){accessMessage("loginMsg","⚠️ Informe um e-mail válido.","bad");emailEl.focus();return false}
+  btn.disabled=true; const old=btn.textContent; btn.textContent="Verificando..."; accessMessage("loginMsg","Verificando seu acesso...","warn");
+  try{
+    const d=await accessApi("/api/access/status?email="+encodeURIComponent(email)), row=d.request||d, status=String(row.status||d.status||"").toUpperCase();
+    if(status==="LIBERADO"){
+      if(remember){localStorage.setItem("newProfCorretorAccessEmail",email);localStorage.setItem("newProfCorretorLoggedAt",String(Date.now()));}
+      accessMessage("loginMsg","✅ Acesso autorizado. Abrindo o sistema...","ok");
+      openProfessorApp(email);
+      return true;
+    }else if(status==="PENDENTE") accessMessage("loginMsg","⏳ Sua solicitação está aguardando autorização de acesso.","warn");
+    else if(status==="BLOQUEADO") accessMessage("loginMsg","❌ Seu acesso está bloqueado. Procure o administrador.","bad");
+    else if(status==="EXPIRADO") accessMessage("loginMsg","⚠️ Seu período de acesso terminou. Solicite uma renovação ao administrador.","warn");
+    else if(status==="RECUSADO") accessMessage("loginMsg","❌ Sua solicitação de acesso foi recusada.","bad");
+    else accessMessage("loginMsg","⚠️ E-mail não encontrado. Use “Solicitar acesso” para cadastrar-se.","warn");
+    return false;
+  }catch(e){accessMessage("loginMsg","❌ Não foi possível verificar o acesso. Tente novamente.","bad");return false}
+  finally{btn.disabled=false;btn.textContent=old}
+}
+
+function openProfessorApp(email){
+  const gate=document.getElementById("accessGate"), app=document.getElementById("appShell");
+  if(gate)gate.style.display="none";
+  if(app)app.style.display="block";
+  let info=document.getElementById("loginSessionInfo");
+  if(!info){info=document.createElement("div");info.id="loginSessionInfo";const header=app?.querySelector("header"); if(header) header.appendChild(info);}
+  if(info)info.textContent="👤 Acesso ativo: "+email;
+  try{if(typeof show==="function")show("inicio")}catch{}
+}
+
+async function restoreProfessorSession(){
+  const email=(localStorage.getItem("newProfCorretorAccessEmail")||"").trim().toLowerCase();
+  if(!email || !validEmail(email))return false;
+  try{
+    const d=await accessApi("/api/access/status?email="+encodeURIComponent(email)), row=d.request||d, status=String(row.status||d.status||"").toUpperCase();
+    if(status==="LIBERADO"){
+      localStorage.setItem("newProfCorretorLoggedAt",String(Date.now()));
+      openProfessorApp(email); return true;
+    }
+    if(status==="BLOQUEADO"||status==="EXPIRADO"||status==="RECUSADO"){
+      localStorage.removeItem("newProfCorretorAccessEmail");localStorage.removeItem("newProfCorretorLoggedAt");
+      accessMessage("loginMsg",status==="BLOQUEADO"?"❌ Seu acesso está bloqueado. Procure o administrador.":"⚠️ Seu acesso não está mais liberado. Faça uma nova solicitação ao administrador.",status==="BLOQUEADO"?"bad":"warn");
+    }
+  }catch(e){
+    // Se a API estiver temporariamente indisponível, mantém a tela de acesso por segurança.
+  }
+  return false;
+}
+
+function logoutProfessor(){
+  localStorage.removeItem("newProfCorretorAccessEmail");
+  localStorage.removeItem("newProfCorretorLoggedAt");
+  const app=document.getElementById("appShell"), gate=document.getElementById("accessGate"), info=document.getElementById("loginSessionInfo");
+  if(app)app.style.display="none";
+  if(info)info.remove();
+  if(gate)gate.style.display="flex";
+  accessPanel("system");
+  const email=document.getElementById("loginEmail"); if(email)email.value="";
+  accessMessage("loginMsg","Você saiu do sistema. Informe seu e-mail para entrar novamente.","info");
+}
+
+function openAdmin(){window.location.href=ADMIN_URL;}
+
+(async function(){
+  const app=document.getElementById("appShell"), gate=document.getElementById("accessGate");
+  if(app)app.style.display="none";
+  if(gate)gate.style.display="flex";
+  const restored=await restoreProfessorSession();
+  if(!restored && gate)gate.style.display="flex";
+})();
+</script>
+
+</body></html>
