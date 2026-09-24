@@ -72,6 +72,382 @@ export default {
 
     try {
 
+      // ALEXA - NEW GAMES
+      if (request.method === "POST" && path === "/api/alexa") {
+        const body = await request.json().catch(() => null);
+
+        if (!body) {
+          return json({
+            version: "1.0",
+            response: {
+              outputSpeech: {
+                type: "PlainText",
+                text: "Não consegui entender a solicitação."
+              },
+              shouldEndSession: true
+            }
+          }, 400);
+        }
+
+        const skillId = String(
+          body?.context?.System?.application?.applicationId ||
+          body?.session?.application?.applicationId ||
+          ""
+        ).trim();
+
+        const configuredSkillId = String(env.ALEXA_SKILL_ID || "").trim();
+
+        if (configuredSkillId && skillId !== configuredSkillId) {
+          return json({ error: "Skill ID não autorizado." }, 403);
+        }
+
+        const timestamp = body?.request?.timestamp;
+
+        if (timestamp) {
+          const requestTime = Date.parse(timestamp);
+
+          if (!Number.isNaN(requestTime)) {
+            const age = Date.now() - requestTime;
+
+            if (age > 150000 || age < -30000) {
+              return json({ error: "Requisição expirada." }, 400);
+            }
+          }
+        }
+
+        const requestType = String(body?.request?.type || "");
+        const intentName = String(body?.request?.intent?.name || "");
+
+        function alexaResponse(text, endSession = true) {
+          return json({
+            version: "1.0",
+            response: {
+              outputSpeech: {
+                type: "PlainText",
+                text
+              },
+              shouldEndSession: endSession
+            }
+          });
+        }
+
+        if (requestType === "LaunchRequest") {
+          return alexaResponse(
+            "Olá! Bem-vindo à NEW GAMES. Vamos jogar?",
+            false
+          );
+        }
+
+        if (
+          requestType === "IntentRequest" &&
+          intentName === "QuantidadeJogosIntent"
+        ) {
+          const total = await db.prepare(`
+            SELECT COUNT(*) AS total
+            FROM jogos
+          `).first();
+
+          const quantidade = Number(total?.total || 0);
+
+          const texto =
+            quantidade === 1
+              ? "Você tem 1 jogo cadastrado na sua coleção."
+              : `Você tem ${quantidade} jogos cadastrados na sua coleção.`;
+
+          return alexaResponse(texto, true);
+        }
+
+        if (
+          requestType === "IntentRequest" &&
+          intentName === "QuantidadePlataformaIntent"
+        ) {
+          const plataforma = String(
+            body?.request?.intent?.slots?.plataforma?.value || ""
+          ).trim().toUpperCase();
+
+          if (!["PS4", "PS5"].includes(plataforma)) {
+            return alexaResponse(
+              "Não consegui identificar se você está perguntando sobre PS4 ou PS5.",
+              true
+            );
+          }
+
+          const resultado = await db.prepare(`
+            SELECT COUNT(*) AS total
+            FROM jogos
+            WHERE UPPER(TRIM(plataforma)) = ?
+          `).bind(plataforma).first();
+
+          const quantidade = Number(resultado?.total || 0);
+
+          const texto =
+            quantidade === 1
+              ? `Você tem 1 jogo de ${plataforma} na sua coleção.`
+              : `Você tem ${quantidade} jogos de ${plataforma} na sua coleção.`;
+
+          return alexaResponse(texto, true);
+        }
+
+        if (
+          requestType === "IntentRequest" &&
+          intentName === "TenhoJogoIntent"
+        ) {
+          const nomeJogo = String(
+            body?.request?.intent?.slots?.jogo?.value || ""
+          ).trim();
+
+          if (!nomeJogo) {
+            return alexaResponse(
+              "Não consegui identificar o nome do jogo. Tente perguntar novamente.",
+              true
+            );
+          }
+
+          const resultado = await db.prepare(`
+            SELECT id, nome
+            FROM jogos
+            WHERE LOWER(nome) = LOWER(?)
+            LIMIT 1
+          `).bind(nomeJogo).first();
+
+          if (resultado) {
+            return alexaResponse(
+              `Sim. Você tem ${resultado.nome} na sua coleção.`,
+              true
+            );
+          }
+
+          const aproximado = await db.prepare(`
+            SELECT id, nome
+            FROM jogos
+            WHERE LOWER(nome) LIKE LOWER(?)
+            ORDER BY nome COLLATE NOCASE
+            LIMIT 1
+          `).bind(`%${nomeJogo}%`).first();
+
+          if (aproximado) {
+            return alexaResponse(
+              `Encontrei ${aproximado.nome} na sua coleção. Você tem esse jogo.`,
+              true
+            );
+          }
+
+          return alexaResponse(
+            `Não. O jogo ${nomeJogo} não está cadastrado na sua coleção.`,
+            true
+          );
+        }
+
+        if (
+          requestType === "IntentRequest" &&
+          intentName === "SorteioPlataformaNaoZeradoIntent"
+        ) {
+          const plataforma = String(
+            body?.request?.intent?.slots?.plataforma?.value || ""
+          ).trim().toUpperCase();
+
+          if (!["PS4", "PS5"].includes(plataforma)) {
+            return alexaResponse(
+              "Não consegui identificar se você quer um jogo de PS4 ou PS5.",
+              true
+            );
+          }
+
+          const resultado = await db.prepare(`
+            SELECT id, nome
+            FROM jogos
+            WHERE UPPER(TRIM(plataforma)) = ?
+              AND COALESCE(zerado, 0) = 0
+            ORDER BY RANDOM()
+            LIMIT 1
+          `).bind(plataforma).first();
+
+          if (!resultado) {
+            return alexaResponse(
+              `Não encontrei jogos de ${plataforma} que ainda não estejam marcados como zerados.`,
+              true
+            );
+          }
+
+          return alexaResponse(
+            `A máquina do sorteio encontrou seu próximo desafio! O escolhido é ${resultado.nome}, de ${plataforma}. Boa jogatina!`,
+            true
+          );
+        }
+
+        if (
+          requestType === "IntentRequest" &&
+          intentName === "SorteioNaoZeradoIntent"
+        ) {
+          const resultado = await db.prepare(`
+            SELECT id, nome, plataforma
+            FROM jogos
+            WHERE COALESCE(zerado, 0) = 0
+            ORDER BY RANDOM()
+            LIMIT 1
+          `).first();
+
+          if (!resultado) {
+            return alexaResponse(
+              "Todos os jogos da sua coleção estão marcados como zerados.",
+              true
+            );
+          }
+
+          return alexaResponse(
+            `Encontrei seu próximo desafio! O jogo escolhido é ${resultado.nome}. Boa jogatina!`,
+            true
+          );
+        }
+
+        if (
+          requestType === "IntentRequest" &&
+          intentName === "SorteioPlataformaIntent"
+        ) {
+          const plataforma = String(
+            body?.request?.intent?.slots?.plataforma?.value || ""
+          ).trim().toUpperCase();
+
+          if (!["PS4", "PS5"].includes(plataforma)) {
+            return alexaResponse(
+              "Não consegui identificar se você quer um jogo de PS4 ou PS5.",
+              true
+            );
+          }
+
+          const resultado = await db.prepare(`
+            SELECT id, nome
+            FROM jogos
+            WHERE UPPER(TRIM(plataforma)) = ?
+            ORDER BY RANDOM()
+            LIMIT 1
+          `).bind(plataforma).first();
+
+          if (!resultado) {
+            return alexaResponse(
+              `Não encontrei jogos de ${plataforma} na sua coleção.`,
+              true
+            );
+          }
+
+          return alexaResponse(
+            `A máquina escolheu... ${resultado.nome}! Um jogo de ${plataforma} para sua próxima aventura. Boa jogatina!`,
+            true
+          );
+        }
+
+        if (
+          requestType === "IntentRequest" &&
+          intentName === "SorteioCategoriaIntent"
+        ) {
+          const categoria = String(
+            body?.request?.intent?.slots?.categoria?.value || ""
+          ).trim();
+
+          if (!categoria) {
+            return alexaResponse(
+              "Não consegui identificar a categoria do jogo.",
+              true
+            );
+          }
+
+          const resultado = await db.prepare(`
+            SELECT j.id, j.nome, c.nome AS categoria
+            FROM jogos j
+            INNER JOIN categorias c
+              ON c.id = j.categoria_id
+            WHERE LOWER(c.nome) = LOWER(?)
+            ORDER BY RANDOM()
+            LIMIT 1
+          `).bind(categoria).first();
+
+          if (!resultado) {
+            return alexaResponse(
+              `Não encontrei jogos da categoria ${categoria} na sua coleção.`,
+              true
+            );
+          }
+
+          return alexaResponse(
+            `A máquina escolheu... ${resultado.nome}! Um jogo de ${resultado.categoria} para sua próxima aventura. Boa jogatina!`,
+            true
+          );
+        }
+
+        if (
+          requestType === "IntentRequest" &&
+          intentName === "SorteioJogoIntent"
+        ) {
+          const resultado = await db.prepare(`
+            SELECT id, nome
+            FROM jogos
+            ORDER BY RANDOM()
+            LIMIT 1
+          `).first();
+
+          if (!resultado) {
+            return alexaResponse(
+              "Sua coleção ainda não possui jogos cadastrados para sortear.",
+              true
+            );
+          }
+
+          return alexaResponse(
+            `Ligando a máquina do sorteio... E o jogo escolhido para sua próxima aventura é... ${resultado.nome}! Boa jogatina!`,
+            true
+          );
+        }
+
+        if (
+          requestType === "IntentRequest" &&
+          intentName === "AMAZON.HelpIntent"
+        ) {
+          return alexaResponse(
+            "Você pode perguntar quantos jogos eu tenho, quantos jogos de PS4 ou PS5 eu tenho, perguntar se eu tenho um jogo específico ou pedir para sortear um jogo para você.",
+            false
+          );
+        }
+
+        if (
+          requestType === "IntentRequest" &&
+          (
+            intentName === "AMAZON.CancelIntent" ||
+            intentName === "AMAZON.StopIntent"
+          )
+        ) {
+          return alexaResponse("Até mais.", true);
+        }
+
+        // ============================================================
+        // SORTEIO COMPLETO — CATEGORIA + PLATAFORMA + NÃO ZERADO
+        // ============================================================
+        if (requestType === "IntentRequest" && intentName === "SorteioCompletoIntent") {
+          const plataforma = String(body?.request?.intent?.slots?.plataforma?.value || "").trim().toUpperCase();
+          const categoria = String(body?.request?.intent?.slots?.categoria?.value || "").trim();
+          if (!["PS4", "PS5"].includes(plataforma)) return alexaResponse("Não consegui identificar se você quer um jogo de PS4 ou PS5.", true);
+          if (!categoria) return alexaResponse("Não consegui identificar a categoria do jogo.", true);
+          const cat = await db.prepare(`SELECT id, nome FROM categorias WHERE LOWER(TRIM(nome)) = LOWER(TRIM(?)) OR LOWER(TRIM(nome)) LIKE LOWER(TRIM(?)) ORDER BY CASE WHEN LOWER(TRIM(nome)) = LOWER(TRIM(?)) THEN 0 ELSE 1 END LIMIT 1`).bind(categoria, `%${categoria}%`, categoria).first();
+          if (!cat) return alexaResponse(`Não encontrei a categoria ${categoria} na sua coleção.`, true);
+          const resultado = await db.prepare(`SELECT j.id, j.nome, j.plataforma, c.nome AS categoria FROM jogos j INNER JOIN categorias c ON c.id = j.categoria_id WHERE UPPER(TRIM(j.plataforma)) = ? AND j.categoria_id = ? AND COALESCE(j.zerado, 0) = 0 ORDER BY RANDOM() LIMIT 1`).bind(plataforma, cat.id).first();
+          if (!resultado) return alexaResponse(`Não encontrei jogos de ${cat.nome} de ${plataforma} que você ainda não zerou na sua coleção.`, true);
+          return alexaResponse(`A máquina escolheu... ${resultado.nome}! Um jogo de ${resultado.categoria} de ${resultado.plataforma} que você ainda não zerou. Boa jogatina!`, true);
+        }
+
+        if (requestType === "SessionEndedRequest") {
+          return new Response("", {
+            status: 200,
+            headers: {
+              "Content-Type": "application/json; charset=utf-8"
+            }
+          });
+        }
+
+        return alexaResponse(
+          "Ainda estou aprendendo esse comando. Você pode perguntar se tem um jogo específico na sua coleção ou pedir para sortear um jogo.",
+          false
+        );
+      }
+
       // =====================================================
       // LOGIN ADMINISTRATIVO
       // =====================================================
