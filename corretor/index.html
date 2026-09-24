@@ -70,20 +70,6 @@
 /* V14 — correção direta e controles de histórico robustos no celular */
 .direct-photo-picker{display:block!important}.direct-photo-picker .picker-button{display:block!important;width:100%!important;text-align:center}.direct-photo-picker .file-name{margin-top:8px}.history-delete-btn{min-height:42px;padding:9px 14px!important;touch-action:manipulation;-webkit-tap-highlight-color:transparent}.history-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}@media(max-width:700px){.history-table-wrap table{min-width:760px}.history-delete-btn{font-size:14px!important}.actions{gap:8px!important}.actions button{min-height:44px!important}}
 </style>
-<style id="history-edit-fix">
-.history-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
-.history-edit-btn,.history-delete-btn{border:0;border-radius:8px;padding:7px 10px;font-weight:700;cursor:pointer;font-size:12px;touch-action:manipulation}
-.history-edit-btn{background:#2563eb;color:#fff}.history-delete-btn{background:#dc2626;color:#fff}
-.history-editor-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.58);display:flex;align-items:center;justify-content:center;padding:14px;z-index:99999}
-.history-editor{background:#fff;color:#111;width:min(760px,100%);max-height:92vh;overflow:auto;border-radius:16px;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
-.history-editor h3{margin:0 0 12px}.history-editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.history-editor-grid label{display:flex;flex-direction:column;gap:5px;font-weight:700;font-size:13px}.history-editor input,.history-editor select{padding:9px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px}
-.history-edit-q{display:grid;grid-template-columns:55px repeat(6,1fr);gap:5px;align-items:center;margin:5px 0}.history-edit-q strong{font-size:13px}
-.history-edit-q button{border:1px solid #cbd5e1;background:#f8fafc;border-radius:7px;padding:7px 3px;cursor:pointer;font-weight:700;touch-action:manipulation}.history-edit-q button.selected{background:#16a34a;color:#fff;border-color:#15803d}
-.history-editor-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:15px;position:sticky;bottom:0;background:#fff;padding-top:10px}.history-editor-actions button{border:0;border-radius:9px;padding:10px 14px;font-weight:700;cursor:pointer}.history-editor-cancel{background:#e5e7eb}.history-editor-save{background:#2563eb;color:#fff}
-@media(max-width:650px){.history-editor-grid{grid-template-columns:1fr}.history-edit-q{grid-template-columns:38px repeat(6,1fr)}.history-edit-q button{padding:8px 1px;font-size:11px}.history-actions{justify-content:flex-start}}
-</style>
-
 
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f2f5fa;color:#17243a}
@@ -686,7 +672,7 @@ Selecione uma alternativa em cada questão. A alternativa selecionada ficará ma
   <p>Marque manualmente as respostas do estudante. O funcionamento é igual ao gabarito da configuração da avaliação.</p>
   <div id="manualCorrectionKey" class="qgrid manual-correction-grid"></div>
   <div class="actions"><button type="button" class="primary" onclick="finishManualCorrection()">✅ Corrigir marcações</button><button type="button" class="secondary" onclick="resetManualCorrection()">Limpar marcações</button></div>
-  <div id="manualStatus" class="status info">Marque uma alternativa em cada questão. Questões sem marcação serão consideradas em branco.</div>
+  <div id="manualStatus" class="status info">Marque uma alternativa em cada questão. Questões sem marcação serão consideradas em branco.</div><div id="manualEditHint" class="status warn hidden" style="margin-top:8px">✏️ Você está editando uma correção existente. Ao concluir, o registro original será atualizado.</div>
 </div>
 
 <div id="results"></div>
@@ -738,6 +724,7 @@ photo.addEventListener('change',async()=>{
 
 let correctionMode='imagem';
 let manualAnswers=[];
+let editingHistoryIndex=-1;
 
 function setCorrectionMode(mode){
   correctionMode=mode==='marcacao'?'marcacao':'imagem';
@@ -749,7 +736,7 @@ function setCorrectionMode(mode){
   if(manualPanel)manualPanel.classList.toggle('hidden',correctionMode!=='marcacao');
   if(ib)ib.classList.toggle('active',correctionMode==='imagem');
   if(mb)mb.classList.toggle('active',correctionMode==='marcacao');
-  if(correctionMode==='marcacao')buildManualCorrection();
+  if(correctionMode==='marcacao'){buildManualCorrection(); const hint=document.getElementById('manualEditHint'); if(hint && editingHistoryIndex<0) hint.classList.add('hidden');}
 }
 
 function buildManualCorrection(){
@@ -1052,11 +1039,42 @@ function renderHistory(){
     h.map(x=>{
       const idx=all.indexOf(x);
       const safeIdx=idx>=0?idx:-1;
-      return `<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos}/${x.total}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td><td><div class="history-actions"><button type="button" class="history-edit-btn" data-history-edit="${safeIdx}" aria-label="Editar esta correção">✏️ Editar</button><button type="button" class="history-delete-btn" data-history-delete="${safeIdx}" aria-label="Excluir esta correção">🗑️ Excluir</button></div></td></tr>`;
+      return `<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos}/${x.total}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td><td><div class="history-actions"><button type="button" class="history-edit-btn" data-history-edit="${safeIdx}" aria-label="Editar esta correção" style="display:inline-flex!important;align-items:center;justify-content:center;background:#1769e8!important;color:#fff!important;border:0!important;visibility:visible!important;opacity:1!important;min-height:42px!important;padding:10px 14px!important;border-radius:8px!important;font-weight:800!important;touch-action:manipulation;">✏️ Editar</button><button type="button" class="history-delete-btn" data-history-delete="${safeIdx}" aria-label="Excluir esta correção">🗑️ Excluir</button></div></td></tr>`;
     }).join('')+
     '</tbody></table></div>';
   bindHistoryButtons();
 }
+function updateHistoryItem(index,item){
+  const h=getHistory();
+  index=Number(index);
+  if(!Number.isInteger(index)||index<0||index>=h.length){renderHistory();return false}
+  h[index]=item;
+  try{localStorage.setItem('newCorretorHistorico',JSON.stringify(h));renderHistory();return true}
+  catch(err){alert('Não foi possível atualizar a correção neste aparelho.');return false}
+}
+
+function editHistoryItem(index){
+  const h=getHistory();
+  index=Number(index);
+  if(!Number.isInteger(index)||index<0||index>=h.length){renderHistory();return}
+  const item=h[index]||{};
+  editingHistoryIndex=index;
+  const oldG=Array.isArray(item.gabarito)?item.gabarito:[];
+  if(oldG.length) gabarito=[...oldG];
+  const n=gabarito.length||Number(item.total)||10;
+  if(document.getElementById('nq')) document.getElementById('nq').value=String(n);
+  const alts=Math.max(3,Math.min(5,+document.getElementById('na')?.value||5));
+  manualAnswers=Array.from({length:n},(_,i)=>{const r=Array.isArray(item.respostas)?item.respostas[i]:'';return ['A','B','C','D','E'].slice(0,alts).includes(r)?r:''});
+  if(document.getElementById('aluno')) document.getElementById('aluno').value=item.aluno&&item.aluno!=='Não informado'?item.aluno:'';
+  if(document.getElementById('turma')) document.getElementById('turma').value=item.turma&&item.turma!=='—'?item.turma:'';
+  if(document.getElementById('titulo')) document.getElementById('titulo').value=item.avaliacao||'Avaliação';
+  show('corrigir');
+  setCorrectionMode('marcacao');
+  const st=document.getElementById('manualStatus');
+  if(st){st.className='status info';st.textContent='✏️ Editando esta correção. Ajuste as alternativas e clique em “Corrigir marcações” para salvar.'}
+  const hint=document.getElementById('manualEditHint'); if(hint) hint.classList.remove('hidden');
+}
+
 function deleteHistoryItem(index){
   const h=getHistory();
   index=Number(index);
@@ -1075,90 +1093,6 @@ function deleteHistoryItem(index){
   }
 }
 
-function ensureHistoryEditor(){
-  if(document.getElementById('historyEditorBackdrop')) return;
-  const el=document.createElement('div');
-  el.id='historyEditorBackdrop';
-  el.className='history-editor-backdrop';
-  el.style.display='none';
-  el.innerHTML=`<div class="history-editor" role="dialog" aria-modal="true" aria-labelledby="historyEditorTitle">
-    <h3 id="historyEditorTitle">✏️ Editar correção</h3>
-    <div class="history-editor-grid">
-      <label>Estudante<input id="historyEditAluno" type="text"></label>
-      <label>Turma<input id="historyEditTurma" type="text"></label>
-      <label>Avaliação<input id="historyEditAvaliacao" type="text"></label>
-      <label>Valor por questão<input id="historyEditValor" type="number" min="0.01" step="0.01"></label>
-    </div>
-    <p style="margin:14px 0 8px"><b>Respostas do estudante</b></p>
-    <div id="historyEditQuestions"></div>
-    <div class="history-editor-actions"><button type="button" class="history-editor-cancel" id="historyEditCancel">Cancelar</button><button type="button" class="history-editor-save" id="historyEditSave">💾 Salvar alterações</button></div>
-  </div>`;
-  document.body.appendChild(el);
-  document.getElementById('historyEditCancel').addEventListener('click',closeHistoryEditor);
-  document.getElementById('historyEditSave').addEventListener('click',saveHistoryEdit);
-  el.addEventListener('click',e=>{if(e.target===el)closeHistoryEditor()});
-}
-let historyEditingIndex=-1;
-function openHistoryEditor(index){
-  const h=getHistory(); index=Number(index);
-  if(!Number.isInteger(index)||index<0||index>=h.length)return;
-  const x=h[index]||{};
-  historyEditingIndex=index;
-  ensureHistoryEditor();
-  document.getElementById('historyEditAluno').value=x.aluno||'';
-  document.getElementById('historyEditTurma').value=x.turma||'';
-  document.getElementById('historyEditAvaliacao').value=x.avaliacao||'Avaliação';
-  document.getElementById('historyEditValor').value=Number(x.valorPorQuestao||((Number(x.total)||0)>0?(Number(x.nota||0)/Math.max(1,Number(x.acertos)||1)):1))||1;
-  const respostas=Array.isArray(x.respostas)?x.respostas:[];
-  const gab=Array.isArray(x.gabarito)&&x.gabarito.length?x.gabarito:(Array.isArray(gabarito)?gabarito:[]);
-  const total=Math.max(Number(x.total)||0,respostas.length,gab.length);
-  const alts=Array.from(L.slice(0,Math.max(3,Math.min(5,Number(x.alternativas||na.value||5)))));
-  const box=document.getElementById('historyEditQuestions');
-  box.innerHTML=Array.from({length:total},(_,i)=>{
-    const ans=respostas[i]||'—';
-    const options=[...alts,'—'];
-    return `<div class="history-edit-q"><strong>Q${String(i+1).padStart(2,'0')}</strong>${options.map(op=>`<button type="button" data-q="${i}" data-ans="${op}" class="${ans===op?'selected':''}">${op==='—'?'Branco':op}</button>`).join('')}</div>`;
-  }).join('');
-  box.querySelectorAll('button[data-q]').forEach(btn=>btn.addEventListener('click',()=>{
-    const q=btn.getAttribute('data-q');
-    box.querySelectorAll(`button[data-q="${q}"]`).forEach(b=>b.classList.remove('selected'));
-    btn.classList.add('selected');
-  }));
-  const modal=document.getElementById('historyEditorBackdrop');modal.style.display='flex';
-}
-function closeHistoryEditor(){
-  const modal=document.getElementById('historyEditorBackdrop');
-  if(modal)modal.style.display='none';
-  historyEditingIndex=-1;
-}
-function saveHistoryEdit(){
-  const h=getHistory();
-  const i=historyEditingIndex;
-  if(!Number.isInteger(i)||i<0||i>=h.length)return;
-  const x=h[i]||{};
-  const box=document.getElementById('historyEditQuestions');
-  const rows=[...box.querySelectorAll('.history-edit-q')];
-  const respostas=rows.map(row=>row.querySelector('button.selected')?.getAttribute('data-ans')||'—');
-  const gab=Array.isArray(x.gabarito)&&x.gabarito.length?x.gabarito:(Array.isArray(gabarito)?gabarito:[]);
-  const valor=Math.max(0.01,Number(document.getElementById('historyEditValor').value)||1);
-  let ac=0,er=0,br=0;
-  respostas.forEach((ans,j)=>{if(ans==='—')br++;else if(ans===gab[j])ac++;else er++});
-  const updated={...x,
-    aluno:document.getElementById('historyEditAluno').value.trim()||'Não informado',
-    turma:document.getElementById('historyEditTurma').value.trim()||'—',
-    avaliacao:document.getElementById('historyEditAvaliacao').value.trim()||'Avaliação',
-    respostas,acertos:ac,erros:er,brancas:br,revisar:0,total:respostas.length,nota:Number((ac*valor).toFixed(2)),valorPorQuestao:valor,
-    gabarito:Array.isArray(gab)?[...gab]:[]
-  };
-  h[i]=updated;
-  try{
-    localStorage.setItem('newCorretorHistorico',JSON.stringify(h));
-    closeHistoryEditor();
-    renderHistory();
-    if(typeof show==='function')show('historico');
-  }catch(err){alert('Não foi possível salvar a alteração neste aparelho.');}
-}
-
 // Histórico: ligação direta dos botões. Evita problemas de eventos delegados
 // em navegadores móveis/iOS depois que a tabela é reconstruída.
 function bindHistoryButtons(){
@@ -1168,7 +1102,7 @@ function bindHistoryButtons(){
     btn.addEventListener('click',function(ev){
       ev.preventDefault();
       ev.stopPropagation();
-      openHistoryEditor(this.getAttribute('data-history-edit'));
+      editHistoryItem(this.getAttribute('data-history-edit'));
     },{passive:false});
   });
   box.querySelectorAll('[data-history-delete]').forEach(btn=>{
@@ -1249,7 +1183,8 @@ function gerarRelatorioHistoricoPDF(){
     .no-print{margin-top:12px}
     .no-print button{padding:8px 12px;border:0;border-radius:6px;background:#1857c7;color:#fff;font-weight:700}
     @media print{.no-print{display:none}}
-  </style></head><body>
+  .history-actions{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap}.history-actions button{border:0;border-radius:8px;padding:9px 12px;font-weight:800;cursor:pointer;min-height:42px;display:inline-flex!important;align-items:center;justify-content:center;visibility:visible!important;opacity:1!important;touch-action:manipulation;-webkit-tap-highlight-color:transparent}.history-edit-btn{background:#1769e8!important;color:#fff!important}.history-delete-btn{background:#d62828!important;color:#fff!important}@media(max-width:700px){.history-actions{flex-direction:column;align-items:stretch}.history-actions button{width:100%;font-size:14px;padding:11px 12px}}
+</style></head><body>
   <div class="top">
     <div class="logo">NP</div>
     <div>
@@ -1764,7 +1699,8 @@ function renderResults(a,raw){
  let rows=a.map(x=>{let cls='',sit=x.status;if(x.status.startsWith('Dupla')){du++;cls='double'}else if(x.status==='Em branco'){bl++;cls='blank'}else if(x.ans===gabarito[x.q-1]){ac++;cls='correct';sit='✓ Correta'}else{wr++;cls='wrong';sit='✗ Incorreta'}return `<tr><td>${String(x.q).padStart(2,'0')}</td><td class="${cls}">${x.ans}</td><td>${gabarito[x.q-1]||'—'}</td><td class="${cls}">${sit}</td><td>${x.vals.map(z=>Math.round(z*100)+'%').join(' / ')}</td></tr>`}).join('');
  let nota=ac*v;
  results.innerHTML=`<h2>Respostas identificadas</h2><div class="status info"><b>Estudante:</b> ${esc(aluno.value)||'Não informado'} &nbsp; <b>Turma:</b> ${esc(turma.value)||'—'}</div><div class="keyline">${a.map(x=>x.ans).join(' | ')}</div><div class="grid"><div class="status ok">Acertos<br><b>${ac}</b></div><div class="status bad">Erros<br><b>${wr}</b></div><div class="status warn">Brancas<br><b>${bl}</b></div><div class="status warn">Revisar<br><b>${du}</b></div></div><div class="card"><div class="score">${nota.toFixed(1)}</div>Nota — ${ac} acertos × ${v.toFixed(2)}</div><details><summary><b>🔎 Leitura bruta para conferência</b></summary><pre class="raw">${esc(raw)}</pre></details><div style="overflow:auto"><table><thead><tr><th>Questão</th><th>Leitura</th><th>Gabarito</th><th>Situação</th><th>Índice das alternativas</th></tr></thead><tbody>${rows}</tbody></table></div>`;
- saveHistory({data:new Date().toLocaleString('pt-BR'),aluno:aluno.value||'Não informado',turma:turma.value||'—',avaliacao:titulo.value||'Avaliação',codigo:getAssessmentCode(),acertos:ac,erros:wr,brancas:bl,revisar:du,total:a.length,nota:Number(nota.toFixed(2)),respostas:a.map(x=>x.ans),gabarito:[...gabarito],alternativas:Number(na.value||5),valorPorQuestao:Number(valor.value||1)});
+ const historyItem={data:new Date().toLocaleString('pt-BR'),aluno:aluno.value||'Não informado',turma:turma.value||'—',avaliacao:titulo.value||'Avaliação',codigo:getAssessmentCode(),acertos:ac,erros:wr,brancas:bl,revisar:du,total:a.length,nota:Number(nota.toFixed(2)),respostas:a.map(x=>x.ans),gabarito:Array.isArray(gabarito)?[...gabarito]:[]};
+ if(editingHistoryIndex>=0){ updateHistoryItem(editingHistoryIndex,historyItem); editingHistoryIndex=-1; const hint=document.getElementById('manualEditHint'); if(hint) hint.classList.add('hidden'); } else { saveHistory(historyItem); }
  summary.className='status ok';summary.innerHTML=`<b>${esc(aluno.value)||'Estudante'}</b> — ${esc(turma.value)||'Turma não informada'} — ${ac} acertos, ${wr} erros, ${bl} brancas, ${du} para revisar — Nota <b>${nota.toFixed(1)}</b>.`;
 }
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
