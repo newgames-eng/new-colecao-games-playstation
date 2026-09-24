@@ -1,4 +1,4 @@
-const CACHE='new-prof-corretor-v22-v417';
+const CACHE='new-prof-corretor-v23-v417';
 const BASE='/new-colecao-games-playstation/corretor/';
 const SHELL=[BASE,BASE+'index.html',BASE+'manifest.webmanifest',BASE+'icon-192.png',BASE+'icon-512.png'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting())));
