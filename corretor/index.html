@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+<!-- BUILD: V21-HISTORICO-ACTIONS-FIX -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>New Prof. Corretor Inteligente de Avaliações</title>
@@ -1039,7 +1040,7 @@ function renderHistory(){
     h.map(x=>{
       const idx=all.indexOf(x);
       const safeIdx=idx>=0?idx:-1;
-      return `<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos}/${x.total}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td><td><div class="history-actions"><button type="button" class="history-edit-btn" data-history-edit="${safeIdx}" aria-label="Editar esta correção">✏️ Editar</button><button type="button" class="history-delete-btn" data-history-delete="${safeIdx}" aria-label="Excluir esta correção">🗑️ Excluir</button></div></td></tr>`;
+      return `<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos}/${x.total}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td><td><div class="history-actions"><button type="button" class="history-edit-btn" data-history-edit="${safeIdx}" onclick="window.editHistoryItem(${safeIdx});return false;" aria-label="Editar esta correção">✏️ Editar</button><button type="button" class="history-delete-btn" data-history-delete="${safeIdx}" onclick="window.deleteHistoryItem(${safeIdx});return false;" aria-label="Excluir esta correção">🗑️ Excluir</button></div></td></tr>`;
     }).join('')+
     '</tbody></table></div>';
   bindHistoryButtons();
@@ -1091,6 +1092,12 @@ function deleteHistoryItem(index){
   }
 }
 
+// Exposição explícita no objeto global: garante funcionamento também quando o
+// arquivo é aberto como PWA, em navegadores móveis ou após atualização do SW.
+window.editHistoryItem = editHistoryItem;
+window.deleteHistoryItem = deleteHistoryItem;
+window.renderHistory = renderHistory;
+
 // Histórico: ligação direta dos botões. Evita problemas de eventos delegados
 // em navegadores móveis/iOS depois que a tabela é reconstruída.
 function bindHistoryButtons(){
@@ -1100,14 +1107,14 @@ function bindHistoryButtons(){
     btn.addEventListener('click',function(ev){
       ev.preventDefault();
       ev.stopPropagation();
-      editHistoryItem(this.getAttribute('data-history-edit'));
+      window.editHistoryItem(Number(this.getAttribute('data-history-edit')));
     },{passive:false});
   });
   box.querySelectorAll('[data-history-delete]').forEach(btn=>{
     btn.addEventListener('click',function(ev){
       ev.preventDefault();
       ev.stopPropagation();
-      deleteHistoryItem(this.getAttribute('data-history-delete'));
+      window.deleteHistoryItem(Number(this.getAttribute('data-history-delete')));
     },{passive:false});
   });
   const clear=document.getElementById('btnClearHistory');
