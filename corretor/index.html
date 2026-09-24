@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NewProf. Corretor Inteligente de Avaliações</title>
+<title>New Prof. Corretor Inteligente de Avaliações</title>
+<!-- V18: duas modalidades de correção — por imagem e por marcação manual; base OMR V17 preservada -->
 <script async src="https://docs.opencv.org/4.x/opencv.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -30,7 +31,44 @@
 .access-msg.bad{display:block;background:#fee2e2;color:#991b1b}
 .access-loading{opacity:.65;pointer-events:none}
 #appShell{display:none}
-@media(max-width:560px){.access-tabs{grid-template-columns:1fr}.access-box{padding:19px}}
+@media(max-width:560px){
+  .access-box{padding:16px;border-radius:16px}
+  .access-tabs{grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:14px}
+  .access-tab{padding:9px 5px;font-size:12px;line-height:1.15;min-height:52px}
+  .access-brand{font-size:22px}
+  .access-sub{font-size:14px;margin-bottom:14px}
+  .access-panel h2{font-size:21px}
+}
+
+/* FINAL A4 SAFE AREA */
+.a4-sheet .ident-label{font-size:6pt!important;margin-bottom:.7mm!important}
+.a4-sheet .ident-value{font-size:7.2pt!important;min-height:3mm!important}
+.a4-sheet .card-head .main-title{font-size:16pt!important}
+.a4-sheet .card-head .brand{font-size:7pt!important}
+.a4-sheet .card-head .brand strong{font-size:9pt!important}
+
+.logout-btn{background:#e53935!important;border-color:#e53935!important;color:#fff!important;font-weight:900!important}
+#loginSessionInfo{font-size:13px;font-weight:800;margin:6px 0 0;color:#516078}
+@media(max-width:700px){nav{gap:6px!important;overflow-x:auto!important;flex-wrap:nowrap!important;padding-bottom:5px}nav button{font-size:13px!important;padding:8px 10px!important;white-space:nowrap!important}.logout-btn{margin-left:2px!important}}
+@media(max-width:700px){nav{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));overflow:visible!important;gap:6px!important;padding:6px!important}nav button{width:100%!important;min-height:42px!important;font-size:12px!important;padding:7px 5px!important;white-space:normal!important}.history-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}.history-delete-btn{min-height:42px;padding:8px 12px;font-size:13px}}
+.history-delete-btn{border:0;border-radius:7px;padding:6px 9px;background:#dc2626;color:#fff;font-weight:800;cursor:pointer;white-space:nowrap}.history-delete-btn:hover{filter:brightness(.92)}
+
+/* ===== V16 — editor de recorte antes da leitura ===== */
+.crop-editor{display:none!important;margin-top:14px;border:1px solid #cbd5e1;border-radius:16px;padding:12px;background:#f8fafc}
+.crop-head{display:flex;flex-direction:column;gap:3px;color:#12345b;margin-bottom:10px}
+.crop-head span{font-size:.88rem;color:#64748b}
+.crop-stage{position:relative;width:100%;max-width:760px;margin:auto;overflow:hidden;border-radius:12px;background:#111;touch-action:none;user-select:none}
+#cropCanvas{display:block;width:100%;height:auto;max-height:70vh;object-fit:contain}
+.crop-box{position:absolute;left:8%;top:8%;width:84%;height:84%;border:3px solid #1d70f7;box-shadow:0 0 0 9999px rgba(0,0,0,.38);touch-action:none;cursor:move}
+.crop-box:after{content:"";position:absolute;inset:33.333% 0;border-top:1px dashed rgba(255,255,255,.75);border-bottom:1px dashed rgba(255,255,255,.75);pointer-events:none}
+.crop-box:before{content:"";position:absolute;inset:0 33.333%;border-left:1px dashed rgba(255,255,255,.75);border-right:1px dashed rgba(255,255,255,.75);pointer-events:none}
+.crop-box i{position:absolute;width:22px;height:22px;border:3px solid #fff;border-radius:50%;background:#1d70f7;z-index:2}
+.crop-box i[data-h="nw"]{left:-11px;top:-11px;cursor:nwse-resize}.crop-box i[data-h="ne"]{right:-11px;top:-11px;cursor:nesw-resize}.crop-box i[data-h="sw"]{left:-11px;bottom:-11px;cursor:nesw-resize}.crop-box i[data-h="se"]{right:-11px;bottom:-11px;cursor:nwse-resize}
+.crop-actions{margin-top:10px}
+@media(max-width:700px){.photo-picker{gap:7px}.photo-picker button,.photo-picker .picker-button{width:auto;flex:1;min-width:0;padding:10px 9px;font-size:.9rem}.crop-editor{padding:9px}.crop-box i{width:26px;height:26px}.crop-box i[data-h="nw"]{left:-13px;top:-13px}.crop-box i[data-h="ne"]{right:-13px;top:-13px}.crop-box i[data-h="sw"]{left:-13px;bottom:-13px}.crop-box i[data-h="se"]{right:-13px;bottom:-13px}}
+
+/* V14 — correção direta e controles de histórico robustos no celular */
+.direct-photo-picker{display:block!important}.direct-photo-picker .picker-button{display:block!important;width:100%!important;text-align:center}.direct-photo-picker .file-name{margin-top:8px}.history-delete-btn{min-height:42px;padding:9px 14px!important;touch-action:manipulation;-webkit-tap-highlight-color:transparent}.history-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}@media(max-width:700px){.history-table-wrap table{min-width:760px}.history-delete-btn{font-size:14px!important}.actions{gap:8px!important}.actions button{min-height:44px!important}}
 </style>
 
 <style>
@@ -43,72 +81,56 @@ h1,h2,h3{margin-top:0}.grid{display:grid;grid-template-columns:repeat(auto-fit,m
 label{font-weight:700;font-size:14px}input,select{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;margin-top:5px;font-size:16px}
 button{cursor:pointer}.primary{background:#1764e8;color:#fff;border:0;border-radius:9px;padding:12px 17px;font-weight:800}.secondary{background:#e8eef7;color:#17345d;border:0;border-radius:9px;padding:12px 17px;font-weight:800}
 .actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.status{padding:13px;border-radius:11px;margin-top:12px;font-weight:700}.info{background:#e8f1ff;color:#174a96}.ok{background:#dcfce7;color:#166534}.warn{background:#fff4d6;color:#8a5a00}.bad{background:#fee2e2;color:#991b1b}
-.hidden{display:none}.preview{width:100%;max-height:650px;object-fit:contain;border:1px solid #d5dde8;border-radius:11px;margin-top:13px;background:#fafcff}
+.hidden{display:none}.preview{display:block;width:100%;height:auto;max-height:none;object-fit:contain;border:1px solid #d5dde8;border-radius:11px;margin-top:13px;background:#fafcff;box-sizing:border-box}
 table{width:100%;border-collapse:collapse;margin-top:13px;font-size:14px}th,td{border:1px solid #d9e1ea;padding:9px;text-align:center}th{background:#edf3fa}
 .correct{color:#16803d;font-weight:800}.wrong{color:#c62828;font-weight:800}.blank{color:#64748b;font-weight:800}.double{color:#a15c00;font-weight:800}
 .score{font-size:34px;color:#1764e8;font-weight:900}.keyline{font-family:monospace;background:#f1f5f9;padding:12px;border-radius:9px;font-size:18px;letter-spacing:3px;word-break:break-all}
 .qgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.qbox{border:1px solid #cbd5e1;border-radius:8px;padding:8px}.qopts{display:flex;gap:5px;margin-top:6px}.qopts button{width:30px;height:30px;border-radius:50%;border:1px solid #64748b;background:#fff}.qopts button.sel{background:#16a34a;color:#fff;border-color:#15803d;color:#fff}.gabarito-help{margin:0 0 12px;padding:10px 12px;border-radius:8px;background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;font-size:13px;line-height:1.45}.green-dot{color:#16a34a;font-weight:800}
 .raw{font:12px/1.5 monospace;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px;overflow:auto;white-space:pre}
-.history-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}.history-btn{border:0;border-radius:8px;padding:8px 10px;font-weight:800;cursor:pointer}.history-edit{background:#e8eef7;color:#17345d}.history-delete{background:#fee2e2;color:#991b1b}.history-edit:hover,.history-delete:hover{filter:brightness(.97)}
-#historyEditorModal{position:fixed;inset:0;background:rgba(15,23,42,.62);z-index:100000;display:none;align-items:center;justify-content:center;padding:16px;overflow:auto}.history-editor-box{width:min(900px,100%);max-height:94vh;overflow:auto;background:#fff;border-radius:18px;box-shadow:0 20px 70px #0006;padding:20px}.history-editor-head{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #e2e8f0;padding-bottom:12px;margin-bottom:14px}.history-editor-head h2{margin:0;color:#17345d}.history-close{border:0;background:#eef2f7;color:#17345d;border-radius:9px;padding:9px 12px;font-size:18px;font-weight:900;cursor:pointer}.history-editor-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.history-editor-grid label{display:block}.history-question-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:12px}.history-qbox{border:1px solid #d8e0ea;border-radius:10px;padding:9px;background:#f8fafc}.history-qtitle{font-weight:900;color:#17345d;margin-bottom:7px}.history-qopts{display:flex;gap:5px;flex-wrap:wrap}.history-qopts button{width:34px;height:34px;border-radius:50%;border:1px solid #94a3b8;background:#fff;font-weight:900;cursor:pointer}.history-qopts button.selected{background:#16a34a;color:#fff;border-color:#15803d}.history-qopts button.blank{width:auto;border-radius:8px;padding:0 9px;color:#475569}.history-editor-footer{display:flex;gap:9px;justify-content:flex-end;flex-wrap:wrap;margin-top:16px;padding-top:14px;border-top:1px solid #e2e8f0}@media(max-width:700px){.history-editor-grid{grid-template-columns:1fr}.history-question-grid{grid-template-columns:repeat(2,1fr)}}
-
-@media(max-width:600px){.brand{font-size:28px}.qgrid{grid-template-columns:repeat(2,1fr)}nav button{font-size:15px}}
+@media(max-width:600px){
+  .brand{font-size:24px}
+  .qgrid{grid-template-columns:repeat(2,1fr)}
+  nav{gap:6px;margin-top:12px}
+  nav button{font-size:13px;padding:9px 10px;border-radius:9px}
+  .actions{gap:7px}
+  .actions button{padding:10px 12px;font-size:14px}
+}
 
 /* ===== CARTÃO-RESPOSTA A4 V4.1 ===== */
 .card-config{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}
 .card-config label{font-weight:800;font-size:13px}
 .card-config label:first-child{grid-column:span 2}
 .card-config input,.card-config select{width:100%;margin-top:5px;padding:10px;border:1px solid #cbd5e1;border-radius:8px}
-.a4-wrap{width:210mm;margin:18px auto;overflow:visible}
-.a4-sheet{width:210mm;height:297mm;min-width:210mm;min-height:297mm;max-height:297mm;background:#fff;color:#111;position:relative;padding:13mm 12mm 12mm;border:1px solid #bbb;box-shadow:0 3px 18px #0002;font-family:Arial,Helvetica,sans-serif}
-.omr-marker{position:absolute;width:8mm;height:8mm;background:#000}
-.omr-tl{left:7mm;top:7mm}.omr-tr{right:7mm;top:7mm}.omr-bl{left:7mm;bottom:7mm}.omr-br{right:7mm;bottom:7mm}
-.card-head{border-bottom:2px solid #173f8f;padding:0 2mm 3mm;margin:0 2mm 3.5mm;display:flex;align-items:end;justify-content:space-between;gap:8mm}
-.card-head .main-title{font-size:21pt;font-weight:900;letter-spacing:.5px;color:#102a56}
-.card-head .brand{font-size:10pt;font-weight:800;color:#173f8f;text-align:right}
-.card-head .brand strong{display:block;font-size:13pt}
-.card-subtitle{text-align:center;font-size:10pt;font-weight:800;letter-spacing:1.5px;margin:-1mm 0 5mm;color:#26364d}
-.ident-box{border:1.5px solid #111;margin:0 2mm 4mm}
-.ident-title{background:#173f8f;color:#fff;font-size:10pt;font-weight:900;padding:2.5mm 3mm;letter-spacing:.5px}
+.a4-wrap{width:210mm;height:297mm;margin:10px auto;overflow:visible;box-sizing:border-box}
+.a4-sheet{width:210mm;height:297mm;min-width:210mm;min-height:297mm;max-width:210mm;max-height:297mm;box-sizing:border-box;background:#fff!important;background-color:#fff!important;color:#111;position:relative;padding:10mm 15mm 10mm;border:0;box-shadow:none!important;font-family:Arial,Helvetica,sans-serif;color-scheme:light;overflow:visible}
+.omr-marker{display:block;position:absolute;width:7mm;height:7mm;background:#000!important;box-sizing:border-box;z-index:100;opacity:1!important;filter:none!important;border:0!important}
+.omr-tl{left:5mm;top:5mm}.omr-tr{right:5mm;top:5mm}.omr-bl{left:5mm;bottom:5mm}.omr-br{right:5mm;bottom:5mm}
+.card-head{border-bottom:1.2px solid #173f8f;padding:0 1.5mm 1.8mm;margin:0 1.5mm 2mm;display:flex;align-items:end;justify-content:space-between;gap:5mm}
+.card-head .main-title{font-size:16pt;font-weight:900;letter-spacing:.2px;color:#102a56;line-height:1}
+.card-head .brand{font-size:7pt;font-weight:800;color:#173f8f;text-align:right;line-height:1}
+.card-head .brand strong{display:block;font-size:9pt}
+.card-subtitle{text-align:center;font-size:7.5pt;font-weight:800;letter-spacing:1.1px;margin:0 0 2mm;color:#26364d}
+.ident-box{border:1.2px solid #111;margin:0 1.5mm 2.5mm}
+.ident-title{background:#173f8f;color:#fff;font-size:7pt;font-weight:900;padding:1.4mm 2mm;letter-spacing:.4px}
 .ident-grid{display:block;min-width:0}
 .ident-row{display:grid;gap:0}
 .ident-row-top{grid-template-columns:2.2fr 1fr}
 .ident-row-student{grid-template-columns:1.75fr .72fr .72fr}
-.ident-cell{padding:2.2mm 2.7mm;border-right:1px solid #aaa;border-top:1px solid #aaa;min-height:15mm;min-width:0;overflow:hidden;background:#fff}
+.ident-cell{padding:1.2mm 1.8mm;border-right:1px solid #aaa;border-top:1px solid #aaa;min-height:8.5mm;min-width:0;overflow:hidden;background:#fff}
 .ident-row .ident-cell:last-child{border-right:0}
 .ident-label{font-size:7.5pt;font-weight:900;text-transform:uppercase;color:#173f8f;margin-bottom:2mm;letter-spacing:.2px}
 .ident-value{font-size:10.5pt;font-weight:700;min-height:5mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ident-label{font-size:7.5pt;font-weight:800;text-transform:uppercase;color:#4b5563;margin-bottom:2mm}
-.ident-value{font-size:10.5pt;font-weight:700;min-height:5mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ident-label{font-size:6pt;font-weight:800;text-transform:uppercase;color:#4b5563;margin-bottom:.7mm}
+.ident-value{font-size:7.2pt;font-weight:700;min-height:3mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .reg-code{font-family:"Courier New",monospace;letter-spacing:1.3px;font-size:10pt}
-.instructions{font-size:6pt;margin:0 2mm 1.5mm;border:1px solid #bbb;padding:1.8mm 2.2mm;line-height:1.25}
+.instructions{font-size:4.6pt;margin:0 1.5mm .8mm;border:1px solid #bbb;padding:.9mm 1.3mm;line-height:1.1}
 .instructions b{color:#173f8f}
-.answer-title{text-align:center;font-size:8pt;font-weight:900;margin:2.8mm 2mm 1.2mm;letter-spacing:.4px}
-.answer-help{text-align:center;font-size:5.3pt;margin:0 2mm 2mm;color:#444}
-.omr-grid{
-display:grid;
-grid-auto-flow:column;
-grid-template-rows:repeat(var(--rows,10),minmax(0,1fr));
-grid-template-columns:repeat(var(--cols,1),minmax(0,1fr));
-gap:1.8mm;
-margin:0 2mm;
-align-content:start;
-justify-content:stretch;
-height:var(--grid-h,122mm);
-}
-.omr-q{
-border:1px solid #111;
-min-height:0;
-height:auto;
-padding:1mm 1mm;
-text-align:center;
-break-inside:avoid;
-display:flex;
-flex-direction:column;
-justify-content:center;
-box-sizing:border-box;
-}
-.omr-qnum{font-size:5.8pt;font-weight:900;margin-bottom:.7mm;line-height:1}
+.answer-title{text-align:center;font-size:7pt;font-weight:900;margin:1.2mm 1.5mm .5mm;letter-spacing:.3px}
+.answer-help{text-align:center;font-size:4pt;margin:0 1.5mm .6mm;color:#444}
+.omr-grid-fixed{display:flex;gap:1.8mm;margin:0 1.5mm;height:165mm;align-items:stretch;overflow:visible}
+.omr-column{flex:1 1 0;min-width:0;height:160mm;display:flex;flex-direction:column;gap:1.2mm;overflow:visible}
+.omr-q{border:1px solid #111;height:15.6mm;min-height:15.6mm;max-height:15.6mm;flex:0 0 15.6mm;padding:.35mm .6mm;text-align:center;break-inside:avoid;display:flex;flex-direction:column;justify-content:center;align-items:center;box-sizing:border-box;background:#fff;overflow:hidden}
+.omr-qnum{font-size:4.6pt;font-weight:900;margin-bottom:.25mm;line-height:1}
 .omr-options{
 display:flex;
 justify-content:center;
@@ -116,16 +138,16 @@ align-items:center;
 gap:1.7mm;
 flex-wrap:nowrap;
 }
-.omr-opt{width:4.7mm;height:4.7mm;border:1px solid #111;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:6.2pt;font-weight:700;box-sizing:border-box}
-.card-footer{position:absolute;left:12mm;right:12mm;bottom:17mm;text-align:center;border-top:1px solid #aaa;padding-top:3mm;font-size:7pt;color:#555}
-.card-footer strong{font-size:8pt;color:#173f8f}
+.omr-opt{width:3.8mm;height:3.8mm;border:1px solid #111;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:4.8pt;font-weight:700;box-sizing:border-box}
+.card-footer{position:absolute;left:10mm;right:10mm;bottom:7mm;text-align:center;border-top:1px solid #aaa;padding-top:1.2mm;font-size:5pt;color:#555}
+.card-footer strong{font-size:6pt;color:#173f8f}
 @media print{
   body{background:#fff!important}
   header,main>.card:not(#cartao .card),#cartao>.card>h2,#cartao>.card>p,#cartao>.card>.status,#cartao>.card>.actions,.no-print{display:none!important}
   #cartao{display:block!important}
   #cartao>.card{border:0!important;box-shadow:none!important;padding:0!important;margin:0!important;background:#fff!important}
-  .a4-wrap{margin:0!important;width:210mm!important;overflow:visible!important}
-  .a4-sheet{box-shadow:none!important;border:0!important;margin:0!important}
+  .a4-wrap{margin:0!important;width:210mm!important;height:297mm!important;overflow:visible!important}
+  .a4-sheet{box-shadow:none!important;border:0!important;margin:0!important;width:210mm!important;height:297mm!important;overflow:visible!important}
   @page{size:A4 portrait;margin:0}
 }
 @media(max-width:700px){
@@ -134,6 +156,24 @@ flex-wrap:nowrap;
  .a4-wrap{width:100%;overflow-x:auto;margin-left:0;margin-right:0}
 }
 
+
+.correction-modes{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:14px 0 16px}
+.correction-mode{border:1px solid #cbd5e1;border-radius:11px;padding:13px 12px;background:#e8eef7;color:#17345d;font-weight:900;font-size:15px;cursor:pointer}
+.correction-mode.active{background:#1764e8;color:#fff;border-color:#1764e8}
+.manual-correction-grid{margin-top:12px;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.manual-correction-grid .qbox{padding:10px}
+.manual-correction-grid .qopts{justify-content:center;gap:7px}
+.manual-correction-grid .qopts button{width:38px;height:38px;font-size:15px;font-weight:900}
+.manual-correction-grid .qopts button.sel{background:#16a34a;color:#fff;border-color:#15803d}
+.manual-correction-grid .qbox.manual-empty{border-color:#f59e0b}
+@media(max-width:600px){
+ .correction-modes{grid-template-columns:1fr 1fr;gap:7px}
+ .correction-mode{padding:10px 7px;font-size:12px;min-height:48px}
+ .manual-correction-grid{grid-template-columns:1fr;gap:7px}
+ .manual-correction-grid .qbox{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px}
+ .manual-correction-grid .qopts{margin-top:0;gap:5px;flex-shrink:0}
+ .manual-correction-grid .qopts button{width:36px;height:36px}
+}
 .photo-picker{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}
 .picker-button{display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:12px 16px;border-radius:10px}
 .file-hidden{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
@@ -176,8 +216,248 @@ flex-wrap:nowrap;
 @media(max-width:700px){.guide-grid{grid-template-columns:1fr}.app-guide{padding:15px}}
 
 </style>
+
+<style id="final-a4-omr-fix">
+/* ===== CARTÃO A4 — DIMENSÕES FÍSICAS FIXAS ===== */
+.a4-wrap{
+  width:210mm!important;
+  height:297mm!important;
+  margin:0 auto!important;
+  overflow:visible!important;
+}
+.a4-sheet{
+  width:210mm!important;
+  height:297mm!important;
+  min-width:210mm!important;
+  min-height:297mm!important;
+  max-width:210mm!important;
+  max-height:297mm!important;
+  box-sizing:border-box!important;
+  padding:7mm 10mm 8mm!important;
+  margin:0!important;
+  overflow:visible!important;
+  position:relative!important;
+  background:#fff!important;
+}
+
+/* ===== 4 MARCADORES OMR — DENTRO DA FOLHA ===== */
+.a4-sheet .omr-marker{
+  width:7mm!important;
+  height:7mm!important;
+  background:#000!important;
+  display:block!important;
+  position:absolute!important;
+  z-index:9999!important;
+  opacity:1!important;
+  filter:none!important;
+}
+.a4-sheet .omr-tl{left:8mm!important;top:8mm!important}
+.a4-sheet .omr-tr{right:8mm!important;top:8mm!important}
+.a4-sheet .omr-bl{left:8mm!important;bottom:8mm!important}
+.a4-sheet .omr-br{right:8mm!important;bottom:8mm!important}
+
+/* ===== CABEÇALHO COMPACTO ===== */
+.a4-sheet .card-head{
+  margin:0 5mm 1.2mm!important;
+  padding:0 1mm 1.2mm!important;
+  gap:3mm!important;
+}
+.a4-sheet .card-head .main-title{
+  font-size:13pt!important;
+  line-height:1!important;
+}
+.a4-sheet .card-head .brand{
+  font-size:6pt!important;
+  line-height:1!important;
+}
+.a4-sheet .card-head .brand strong{
+  font-size:8pt!important;
+}
+.a4-sheet .card-subtitle{
+  font-size:6pt!important;
+  margin:0 0 1.5mm!important;
+}
+
+/* ===== IDENTIFICAÇÃO COMPACTA ===== */
+.a4-sheet .ident-box{
+  margin:0 1mm 1.8mm!important;
+}
+.a4-sheet .ident-title{
+  font-size:6.5pt!important;
+  padding:1.1mm 1.6mm!important;
+}
+.a4-sheet .ident-cell{
+  padding:1mm 1.4mm!important;
+  min-height:7mm!important;
+}
+.a4-sheet .ident-label{
+  font-size:5.5pt!important;
+  margin-bottom:.6mm!important;
+}
+.a4-sheet .ident-value{
+  font-size:6.8pt!important;
+  min-height:2.7mm!important;
+}
+
+/* ===== ÁREA DE QUESTÕES ===== */
+.a4-sheet .instructions{
+  font-size:4.4pt!important;
+  margin:0 1mm .8mm!important;
+  padding:.8mm 1.1mm!important;
+  line-height:1.05!important;
+}
+.a4-sheet .answer-title{
+  font-size:6.5pt!important;
+  margin:1.1mm 1mm .5mm!important;
+}
+.a4-sheet .answer-help{
+  font-size:4pt!important;
+  margin:0 1mm .8mm!important;
+}
+.a4-sheet .omr-grid-fixed{
+  margin:0 1mm!important;
+  height:116mm!important;
+  gap:1.1mm!important;
+}
+.a4-sheet .omr-column{
+  height:116mm!important;
+  gap:1.1mm!important;
+}
+.a4-sheet .omr-q{
+  height:10.8mm!important;
+  min-height:10.8mm!important;
+  max-height:10.8mm!important;
+  flex:0 0 10.8mm!important;
+  padding:.25mm .45mm!important;
+}
+.a4-sheet .omr-qnum{
+  font-size:4.4pt!important;
+  margin-bottom:.25mm!important;
+}
+.a4-sheet .omr-options{
+  gap:1.15mm!important;
+}
+.a4-sheet .omr-opt{
+  width:3.5mm!important;
+  height:3.5mm!important;
+  font-size:4.8pt!important;
+}
+
+/* ===== RODAPÉ DENTRO DA ÁREA SEGURA ===== */
+.a4-sheet .card-footer{
+  left:10mm!important;
+  right:10mm!important;
+  bottom:5mm!important;
+  padding-top:1mm!important;
+  font-size:4.8pt!important;
+}
+.a4-sheet .card-footer strong{font-size:5.5pt!important}
+
+@media print{
+  .a4-wrap{
+    width:210mm!important;
+    height:297mm!important;
+    margin:0!important;
+  }
+  .a4-sheet{
+    width:210mm!important;
+    height:297mm!important;
+    margin:0!important;
+    padding:7mm 10mm 8mm!important;
+    box-sizing:border-box!important;
+    overflow:visible!important;
+  }
+}
+
+@media(max-width:600px){
+  #accessGate{padding:10px}
+  .access-box{width:100%;padding:14px;border-radius:14px}
+  .access-tabs{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important}
+  .access-tab{width:auto!important;min-height:52px!important;padding:7px 3px!important;font-size:11px!important;line-height:1.1!important}
+}
+</style>
+
+
+<style>
+html,body{width:100%;max-width:100%;overflow-x:hidden}
+*{box-sizing:border-box}
+img,canvas,video{max-width:100%}
+button,input,select,textarea{font:inherit;max-width:100%}
+@media(max-width:900px){
+  .nav,.tabs,.access-tabs{display:flex;flex-wrap:wrap;gap:8px}
+  .nav button,.tabs button,.access-tab{flex:1 1 140px;min-height:46px}
+  .grid,.form-grid,.fields,.row{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  table{display:block;width:100%;overflow-x:auto}
+}
+@media(max-width:600px){
+  body{font-size:14px}
+  .nav,.tabs{flex-direction:column}
+  .nav button,.tabs button{width:100%}
+  .grid,.form-grid,.fields,.row{grid-template-columns:1fr!important}
+  input,select,textarea{width:100%!important;min-height:44px}
+  button{min-height:44px}
+  .actions{display:grid!important;grid-template-columns:1fr!important}
+  .actions button{width:100%!important}
+  .modal,.dialog{width:calc(100vw - 24px)!important;max-width:none!important}
+  .preview{width:100%!important;height:auto!important;max-height:none!important}
+  canvas{width:100%!important;height:auto!important}
+}
+#installAppBtn{display:none;position:fixed;right:16px;bottom:16px;z-index:99990;border:0;border-radius:999px;padding:13px 18px;background:#1769e8;color:#fff;font-weight:900;box-shadow:0 8px 25px rgba(0,0,0,.25);cursor:pointer}
+#installAppBtn.show{display:block}
+#installAppBtn.ready{box-shadow:0 8px 30px rgba(23,105,232,.45)}
+#installAppBtn.installed{background:#18864b}
+#installHelp{display:none;position:fixed;right:16px;bottom:78px;z-index:99991;width:min(420px,calc(100vw - 32px));background:#fff;color:#172033;border:1px solid #d6dce8;border-radius:16px;padding:18px;box-shadow:0 15px 45px rgba(0,0,0,.25);line-height:1.5}
+#installHelp.show{display:block}
+#installHelp button{margin-top:12px;padding:9px 14px;border:0;border-radius:8px;background:#1769e8;color:#fff;font-weight:800}
+</style>
+
+<link rel="manifest" href="/new-colecao-games-playstation/corretor/manifest.webmanifest">
+<meta name="theme-color" content="#1769e8">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="NEW PROF. CORRETOR">
+
+<link rel="apple-touch-icon" sizes="192x192" href="/new-colecao-games-playstation/corretor/icon-192.png">
+<style>
+/* ===== V16 — USO NO CELULAR ===== */
+@media(max-width:700px){
+  header{padding:10px 10px 9px;position:sticky;top:0}
+  .brand{font-size:21px;line-height:1.05}
+  .sub{font-size:12px;margin-top:3px}
+  nav{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px!important;margin-top:8px!important;overflow:visible!important;flex-wrap:initial!important;padding:0!important}
+  nav button{min-width:0!important;width:100%!important;font-size:11px!important;line-height:1.1;padding:8px 3px!important;border-radius:8px!important;white-space:normal!important}
+  main{padding:12px 9px 45px}
+  .card{padding:13px;border-radius:13px;margin-bottom:12px}
+  h1{font-size:22px}h2{font-size:20px}h3{font-size:17px}
+  .actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+  .actions button{width:100%;padding:10px 8px;font-size:13px}
+  .photo-picker{display:grid!important;grid-template-columns:1fr 1fr;gap:7px!important}
+  .photo-picker .picker-button,.photo-picker button{width:100%!important;min-width:0!important;padding:10px 7px!important;font-size:12px!important}
+  .photo-picker .file-name{grid-column:1/-1;padding:5px 2px;font-size:12px}
+  .crop-actions{display:grid!important;grid-template-columns:1fr 1fr 1fr!important}
+  .crop-actions button{font-size:11px!important;padding:9px 4px!important}
+  #diag{max-height:none!important;height:auto!important}
+  .history-table-wrap{overflow-x:visible!important}
+  #historyList table{font-size:13px;margin-top:9px}
+  #historyList table thead{display:none}
+  #historyList table,#historyList tbody,#historyList tr,#historyList td{display:block;width:100%;box-sizing:border-box}
+  #historyList tr{background:#f8fbff;border:1px solid #d7e1ee;border-radius:11px;margin:9px 0;padding:8px}
+  #historyList td{border:0!important;border-bottom:1px solid #e5ebf3!important;text-align:left;padding:7px 4px!important;min-height:28px}
+  #historyList td:last-child{border-bottom:0!important;padding-top:9px!important}
+  #historyList td:nth-child(1):before{content:'Data: ';font-weight:800}
+  #historyList td:nth-child(2):before{content:'Estudante: ';font-weight:800}
+  #historyList td:nth-child(3):before{content:'Turma: ';font-weight:800}
+  #historyList td:nth-child(4):before{content:'Avaliação: ';font-weight:800}
+  #historyList td:nth-child(5):before{content:'Acertos: ';font-weight:800}
+  #historyList td:nth-child(6):before{content:'Nota: ';font-weight:800}
+  #historyList td:nth-child(7){text-align:center}
+  .history-delete-btn{width:100%!important;padding:10px!important;font-size:13px!important}
+}
+</style>
 </head>
-<body>
+<body><button id="installAppBtn" type="button" aria-label="Instalar aplicativo">📲 Instalar aplicativo</button>
+<div id="installHelp" role="dialog" aria-live="polite" aria-label="Instalação do aplicativo"></div>
 
 <div id="accessGate">
   <div class="access-box">
@@ -232,9 +512,9 @@ flex-wrap:nowrap;
 <div id="appShell">
 
 <header><div class="brand">NEW <span>PROF. CORRETOR</span></div><div class="sub">Corretor Inteligente de Avaliações — OMR</div>
-<nav><button onclick="show('inicio')">🏠 Início</button><button onclick="show('avaliacao')">📝 Avaliação</button><button onclick="show('corrigir')">📷 Corrigir</button><button onclick="show('cartao')">📄 Cartão</button><button onclick="show('resultados')">📊 Resultados</button><button onclick="show('historico')">📚 Histórico</button></nav></header>
+<nav><button onclick="show('inicio')">🏠 Início</button><button onclick="show('avaliacao')">📝 Avaliação</button><button onclick="show('corrigir')">📷 Corrigir</button><button onclick="show('cartao')">📄 Cartão</button><button onclick="show('resultados')">📊 Resultados</button><button onclick="show('historico')">📚 Histórico</button><button class="logout-btn" onclick="logoutProfessor()">🚪 Sair</button></nav></header>
 <main>
-<section id="inicio" class="page"><div class="card"><h1>NEW PROF. CORRETOR INTELIGENTE</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V4.16:</b> Leitor OMR testado com fotografias reais. Histórico local e câmera integrados.<br><br><b>Base preservada:</b> o leitor calcula as posições das bolhas a partir dos próprios quadros das questões. A mesma leitura alimenta diagnóstico, sequência e tabela.</div>
+<section id="inicio" class="page"><div class="card"><h1>NEW PROF. CORRETOR INTELIGENTE</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V4.17:</b> Leitor OMR testado com fotografias reais. Histórico local e câmera integrados.<br><br><b>Base preservada:</b> o leitor calcula as posições das bolhas a partir dos próprios quadros das questões. A mesma leitura alimenta diagnóstico, sequência e tabela.</div>
 <div class="app-guide">
   <h2>📘 Como funciona o NEW PROF. CORRETOR?</h2>
   <p>
@@ -260,7 +540,7 @@ flex-wrap:nowrap;
 
     <div class="guide-item">
       <div class="guide-title">📷 Corrigir</div>
-      <p>Informe o estudante e a turma e selecione ou fotografe o cartão-resposta preenchido. O sistema analisa a imagem, identifica as alternativas marcadas e compara cada resposta com o gabarito.</p>
+      <p>Escolha <b>Correção por imagem</b> para ler o cartão fotografado ou <b>Correção por marcação</b> para selecionar manualmente as respostas do estudante.</p>
     </div>
 
     <div class="guide-item">
@@ -347,19 +627,13 @@ Selecione uma alternativa em cada questão. A alternativa selecionada ficará ma
   <div id="studentFields" class="student-list"></div>
   <div id="studentPreviewNote" class="print-preview-note"></div>
 
-  <label style="display:block;max-width:320px;margin-top:12px">
-    Formato de saída
-    <select id="cardFormato">
-      <option value="pdf" selected>PDF</option>
-      <option value="png">Imagem PNG — A4</option>
-      <option value="jpg">Imagem JPG — A4</option>
-      <option value="print">Imprimir diretamente</option>
-    </select>
-  </label>
+  <div class="status info" style="margin-top:12px">
+    📄 <b>Formato de saída:</b> PDF A4 para impressão do cartão-resposta.
+  </div>
   <div class="actions">
     <button class="primary" onclick="renderCard()">🔄 Atualizar cartão</button>
     <button class="secondary" onclick="newCardCode()">🔐 Novo código</button>
-    <button class="primary" onclick="exportCard()">⬇️ Gerar arquivo</button>
+    <button class="primary" onclick="exportCard()">📄 Gerar cartão-resposta em PDF</button>
   </div>
   <div class="status warn">⚠️ Imprima em <b>100%</b>. Não recorte, dobre ou cubra os quatro marcadores pretos dos cantos.</div>
 </div>
@@ -370,20 +644,38 @@ Selecione uma alternativa em cada questão. A alternativa selecionada ficará ma
 </section>
 
 <section id="corrigir" class="page hidden"><div class="card">
-<h2>📷 Corrigir cartão</h2>
-<p>Informe o estudante e abra a <b>galeria, câmera ou arquivos</b> do aparelho para escolher a foto do cartão inteiro.</p>
-<div class="grid"><label>Nome do estudante<input id="aluno" placeholder="Nome completo"></label><label>Turma<input id="turma" placeholder="Ex.: 5º A"></label></div>
+<h2>✏️ Correção</h2>
+<p>Escolha como deseja corrigir o cartão-resposta: <b>por imagem</b> ou <b>por marcação manual</b>.</p>
 
-<div class="photo-picker">
-  <label for="photo" class="primary picker-button">📷 Abrir galeria / câmera / arquivos</label>
-  <input id="photo" type="file" accept="image/*" class="file-hidden">
-  <div id="photoName" class="file-name">Nenhuma foto selecionada</div>
+<div class="correction-modes" role="tablist" aria-label="Modo de correção">
+  <button id="modeImageBtn" type="button" class="correction-mode active" onclick="setCorrectionMode('imagem')">📷 Correção por imagem</button>
+  <button id="modeManualBtn" type="button" class="correction-mode" onclick="setCorrectionMode('marcacao')">✏️ Correção por marcação</button>
 </div>
 
-<div class="small">No celular, o seletor do próprio aparelho poderá oferecer <b>Câmera</b>, <b>Fotos/Galeria</b> e <b>Arquivos</b>, inclusive serviços de nuvem disponíveis no aparelho. No computador, será aberto o seletor de arquivos.</div>
+<div class="grid"><label>Nome do estudante<input id="aluno" placeholder="Nome completo"></label><label>Turma<input id="turma" placeholder="Ex.: 5º A"></label></div>
 
-<div class="actions"><button id="btnRead" type="button" class="primary" onclick="readPhoto()">🔎 Ler cartão</button><button type="button" class="secondary" onclick="resetRead()">Limpar</button></div>
-<div id="readStatus" class="status info">Aguardando fotografia.</div><canvas id="diag" class="preview"></canvas><div id="results"></div>
+<div id="correcaoImagemPanel">
+  <h3>📷 Correção por imagem</h3>
+  <p>Fotografe ou selecione o cartão-resposta preenchido. O sistema fará o alinhamento e a leitura automática.</p>
+  <div class="photo-picker direct-photo-picker">
+    <label for="photo" class="primary picker-button">📷 Tirar foto / escolher imagem</label>
+    <input id="photo" type="file" accept="image/*" class="file-hidden">
+    <div id="photoName" class="file-name">Ao selecionar a foto, a correção será iniciada automaticamente.</div>
+  </div>
+  <div class="small">No celular, o seletor poderá oferecer <b>Câmera</b>, <b>Fotos/Galeria</b> e <b>Arquivos</b>. No computador, será aberto o seletor de arquivos.</div>
+  <div class="actions"><button id="btnRead" type="button" class="primary" onclick="readPhoto()">🔎 Corrigir por imagem</button><button type="button" class="secondary" onclick="resetRead()">Limpar</button></div>
+  <div id="readStatus" class="status info">Aguardando fotografia.</div><canvas id="diag" class="preview"></canvas>
+</div>
+
+<div id="correcaoMarcacaoPanel" class="hidden">
+  <h3>✏️ Correção por marcação</h3>
+  <p>Marque manualmente as respostas do estudante. O funcionamento é igual ao gabarito da configuração da avaliação.</p>
+  <div id="manualCorrectionKey" class="qgrid manual-correction-grid"></div>
+  <div class="actions"><button type="button" class="primary" onclick="finishManualCorrection()">✅ Corrigir marcações</button><button type="button" class="secondary" onclick="resetManualCorrection()">Limpar marcações</button></div>
+  <div id="manualStatus" class="status info">Marque uma alternativa em cada questão. Questões sem marcação serão consideradas em branco.</div>
+</div>
+
+<div id="results"></div>
 </div></section>
 
 <section id="resultados" class="page hidden"><div class="card"><h2>📊 Resultado</h2><div id="summary" class="status info">Nenhuma correção realizada nesta sessão.</div></div></section>
@@ -399,7 +691,7 @@ Selecione uma alternativa em cada questão. A alternativa selecionada ficará ma
     <div class="actions">
       <button class="primary" onclick="exportHistoryCSV()">⬇️ Exportar CSV</button>
       <button type="button" class="pdf-all-btn" onclick="gerarRelatorioHistoricoPDF()">📄 Exportar PDF</button>
-      <button class="secondary" onclick="clearHistory()">🗑️ Limpar histórico</button>
+      <button id="btnClearHistory" type="button" class="secondary">🗑️ Limpar histórico</button>
     </div>
     <div id="historyList"></div>
   </div>
@@ -409,11 +701,85 @@ Selecione uma alternativa em cada questão. A alternativa selecionada ficará ma
 <script>
 let gabarito=[],ultimaLeitura=null,busy=false;
 
-photo.addEventListener('change',()=>{
+let photoReadTimer=null;
+async function waitForCvAndRead(){
+  if(photoReadTimer)clearTimeout(photoReadTimer);
+  const started=Date.now();
+  while(typeof cv==='undefined'||!cv.Mat){
+    if(Date.now()-started>12000){setStatus('O leitor de imagem ainda está carregando. Toque em “Corrigir cartão” para tentar novamente.','warn');return}
+    await new Promise(r=>setTimeout(r,150));
+  }
+  await readPhoto();
+}
+photo.addEventListener('change',async()=>{
   const f=photo.files?.[0];
-  photoName.textContent=f?`✓ ${f.name}`:'Nenhuma foto selecionada';
-  if(f) setStatus('Foto selecionada. Clique em “Ler cartão”.','info');
+  photoName.textContent=f?`✓ ${f.name} — preparando correção automática...`:'Ao selecionar a foto, a correção será iniciada automaticamente.';
+  ultimaLeitura=null;
+  results.innerHTML='';
+  if(f){
+    setStatus('✓ Imagem recebida. Alinhando o cartão pelos 4 marcadores e iniciando a leitura...','info');
+    await waitForCvAndRead();
+  }
 });
+
+let correctionMode='imagem';
+let manualAnswers=[];
+
+function setCorrectionMode(mode){
+  correctionMode=mode==='marcacao'?'marcacao':'imagem';
+  const imgPanel=document.getElementById('correcaoImagemPanel');
+  const manualPanel=document.getElementById('correcaoMarcacaoPanel');
+  const ib=document.getElementById('modeImageBtn');
+  const mb=document.getElementById('modeManualBtn');
+  if(imgPanel)imgPanel.classList.toggle('hidden',correctionMode!=='imagem');
+  if(manualPanel)manualPanel.classList.toggle('hidden',correctionMode!=='marcacao');
+  if(ib)ib.classList.toggle('active',correctionMode==='imagem');
+  if(mb)mb.classList.toggle('active',correctionMode==='marcacao');
+  if(correctionMode==='marcacao')buildManualCorrection();
+}
+
+function buildManualCorrection(){
+  const box=document.getElementById('manualCorrectionKey');
+  if(!box)return;
+  const n=Math.max(1,Math.min(50,+document.getElementById('nq')?.value||gabarito.length||10));
+  const alts=Math.max(3,Math.min(5,+document.getElementById('na')?.value||5));
+  const ls=Array.from(L.slice(0,alts));
+  if(!Array.isArray(manualAnswers)||manualAnswers.length!==n){
+    const old=Array.isArray(manualAnswers)?manualAnswers:[];
+    manualAnswers=Array.from({length:n},(_,i)=>old[i]&&ls.includes(old[i])?old[i]:'');
+  }
+  box.innerHTML=manualAnswers.map((v,i)=>`<div class="qbox ${v?'':'manual-empty'}"><b style="font-size:12px">QUESTÃO ${String(i+1).padStart(2,'0')}</b><div class="qopts">${ls.map(x=>`<button type="button" class="${v===x?'sel':''}" data-manual-q="${i}" data-manual-a="${x}" aria-label="Questão ${i+1}, alternativa ${x}">${x}</button>`).join('')}</div></div>`).join('');
+  box.querySelectorAll('[data-manual-q]').forEach(btn=>btn.addEventListener('click',()=>{
+    const i=Number(btn.dataset.manualQ),x=btn.dataset.manualA;
+    manualAnswers[i]=x;
+    buildManualCorrection();
+  }));
+}
+
+function resetManualCorrection(){
+  const n=Math.max(1,Math.min(50,+document.getElementById('nq')?.value||gabarito.length||10));
+  manualAnswers=Array(n).fill('');
+  buildManualCorrection();
+  const st=document.getElementById('manualStatus');
+  if(st){st.className='status info';st.textContent='Marque uma alternativa em cada questão. Questões sem marcação serão consideradas em branco.'}
+}
+
+function finishManualCorrection(){
+  if(!Array.isArray(gabarito)||!gabarito.length){
+    const st=document.getElementById('manualStatus');
+    if(st){st.className='status warn';st.textContent='Configure e salve a avaliação com o gabarito antes de corrigir.'}
+    return;
+  }
+  const n=gabarito.length;
+  if(!Array.isArray(manualAnswers)||manualAnswers.length!==n)buildManualCorrection();
+  const answers=Array.from({length:n},(_,i)=>manualAnswers[i]||'—');
+  const alts=Math.max(3,Math.min(5,+document.getElementById('na')?.value||5));
+  const labels=Array.from(L.slice(0,alts));
+  const a=answers.map((ans,i)=>({q:i+1,ans,status:ans==='—'?'Em branco':'Marcada',vals:labels.map(x=>ans===x?1:0),pts:[]}));
+  renderResults(a,'Correção por marcação manual.\n'+a.map(x=>`Q${String(x.q).padStart(2,'0')} → ${x.ans}`).join('  '));
+  const st=document.getElementById('manualStatus');
+  if(st){st.className='status ok';st.textContent='✓ Correção por marcação concluída e salva no histórico.'}
+}
 
 const L='ABCDE';
 
@@ -421,6 +787,7 @@ function show(id){
   document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));
   document.getElementById(id).classList.remove('hidden');
   if(id==='avaliacao'){buildKey()}
+  if(id==='corrigir'){buildManualCorrection();setCorrectionMode(correctionMode)}
   if(id==='cartao'){syncCardFromAssessment();updateStudentFields();renderCard()}
   if(id==='historico'){renderHistory()}
 }
@@ -456,6 +823,7 @@ function buildKey(){
     key.appendChild(d);
   });
   syncCardFromAssessment();
+  if(document.getElementById('manualCorrectionKey')) buildManualCorrection();
 }
 function setKey(i,x){gabarito[i]=x;buildKey()}
 function saveEvaluation(){
@@ -537,14 +905,21 @@ function getStudentNames(){
 }
 function cardMarkup(alunoCard, turmaCard, pageClass=''){
  const n=Math.min(50,Math.max(1,+nq.value||10));
- const ls=L.slice(0,+na.value||5);
+ const ls=Array.from(L.slice(0,+na.value||5));
  const tituloCard=(titulo?.value||'AVALIAÇÃO').toUpperCase();
  const dataCard=getCardData();
  const codigo=getAssessmentCode();
- const rows=Math.min(10,n),cols=Math.ceil(n/10),gridH='122mm';
- let qs='';
- for(let i=0;i<n;i++){
-   qs+=`<div class="omr-q"><div class="omr-qnum">QUESTÃO ${String(i+1).padStart(2,'0')}</div><div class="omr-options">${[...ls].map(x=>`<span class="omr-opt">${x}</span>`).join('')}</div></div>`;
+ const perCol=10;
+ const cols=Math.ceil(n/perCol);
+ let columns='';
+ for(let c=0;c<cols;c++){
+   let items='';
+   const ini=c*perCol;
+   const fim=Math.min(ini+perCol,n);
+   for(let i=ini;i<fim;i++){
+     items+=`<div class="omr-q"><div class="omr-qnum">QUESTÃO ${String(i+1).padStart(2,'0')}</div><div class="omr-options">${[...ls].map(x=>`<span class="omr-opt">${x}</span>`).join('')}</div></div>`;
+   }
+   columns+=`<div class="omr-column">${items}</div>`;
  }
  return `<div class="a4-sheet ${pageClass}">
    <i class="omr-marker omr-tl"></i><i class="omr-marker omr-tr"></i>
@@ -571,11 +946,10 @@ function cardMarkup(alunoCard, turmaCard, pageClass=''){
    <div class="instructions"><b>ORIENTAÇÕES:</b> Preencha completamente apenas uma alternativa por questão. Use lápis ou caneta preta/azul. Não faça marcas fora dos círculos. Não dobre nem corte o cartão.</div>
    <div class="answer-title">MARQUE A ALTERNATIVA CORRESPONDENTE À SUA RESPOSTA</div>
    <div class="answer-help">Preencha o círculo escolhido de forma completa. Os marcadores pretos dos quatro cantos são utilizados pelo sistema para localizar e corrigir o cartão.</div>
-   <div class="omr-grid" style="--rows:${rows};--cols:${cols};--grid-h:${gridH}">${qs}</div>
+   <div class="omr-grid-fixed">${columns}</div>
    <div class="card-footer"><strong>NEW PROF. CORRETOR</strong> · Cartão-resposta para correção automática por imagem · Código ${esc(codigo)}</div>
  </div>`;
 }
-
 function getCardDate(){
   const mode=document.getElementById('cardDateMode')?.value||'blank';
   return mode==='choose' ? (document.getElementById('cardDate')?.value||'') : '';
@@ -657,105 +1031,62 @@ function renderHistory(){
   const box=document.getElementById('historyList'); if(!box)return;
   const busca=(document.getElementById('histBusca')?.value||'').toLowerCase().trim();
   const av=(document.getElementById('histAvaliacao')?.value||'').toLowerCase().trim();
-  const todos=getHistory();
-  const h=todos.map((x,i)=>({...x,__historyIndex:i})).filter(x=>(!busca||`${x.aluno} ${x.turma}`.toLowerCase().includes(busca))&&(!av||(x.avaliacao||'').toLowerCase().includes(av)));
-  if(!h.length){box.innerHTML='<div class="status info">Nenhuma correção encontrada.</div>';return}
-  box.innerHTML='<div style="overflow:auto"><table><thead><tr><th>Data</th><th>Estudante</th><th>Turma</th><th>Avaliação</th><th>Acertos</th><th>Nota</th><th>Ação</th></tr></thead><tbody>'+
-    h.map(x=>`<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos||0}/${x.total||0}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td><td><div class="history-actions"><button type="button" class="history-btn history-edit" data-history-edit="${x.__historyIndex}">✏️ Editar</button><button type="button" class="history-btn history-delete" data-history-delete="${x.__historyIndex}">🗑️ Excluir</button></div></td></tr>`).join('')+
+  const h=getHistory().filter(x=>(!busca||`${x.aluno} ${x.turma}`.toLowerCase().includes(busca))&&(!av||(x.avaliacao||'').toLowerCase().includes(av)));
+  if(!h.length){box.innerHTML='<div class="status info">Nenhuma correção encontrada.</div>'; bindHistoryButtons(); return}
+  const all=getHistory();
+  box.innerHTML='<div class="history-table-wrap"><table><thead><tr><th>Data</th><th>Estudante</th><th>Turma</th><th>Avaliação</th><th>Acertos</th><th>Nota</th><th>Ação</th></tr></thead><tbody>'+
+    h.map(x=>{
+      const idx=all.findIndex(item=>item===x);
+      return `<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos}/${x.total}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td><td><button type="button" class="history-delete-btn" data-history-delete="${idx}" aria-label="Excluir esta correção">🗑️ Excluir</button></td></tr>`;
+    }).join('')+
     '</tbody></table></div>';
   bindHistoryButtons();
 }
-function bindHistoryButtons(){
-  const box=document.getElementById('historyList'); if(!box)return;
-  box.querySelectorAll('[data-history-edit]').forEach(btn=>{
-    btn.addEventListener('click',function(ev){ev.preventDefault();ev.stopPropagation();openHistoryEditor(Number(this.dataset.historyEdit));},{passive:false});
-  });
-  box.querySelectorAll('[data-history-delete]').forEach(btn=>{
-    btn.addEventListener('click',function(ev){ev.preventDefault();ev.stopPropagation();deleteHistoryItem(Number(this.dataset.historyDelete));},{passive:false});
-  });
-}
 function deleteHistoryItem(index){
   const h=getHistory();
-  if(!Number.isInteger(index)||index<0||index>=h.length){renderHistory();return false}
+  index=Number(index);
+  if(!Number.isInteger(index) || index<0 || index>=h.length){alert('Não foi possível localizar este resultado.');return false}
+  const item=h[index];
+  const aluno=item.aluno||'Não informado';
+  const turma=item.turma||'—';
+  const avaliacao=item.avaliacao||'Avaliação';
+  const nota=Number(item.nota||0).toFixed(1);
+  const ok=window.confirm(`Excluir esta correção?\n\nEstudante: ${aluno}\nTurma: ${turma}\nAvaliação: ${avaliacao}\nNota: ${nota}`);
+  if(!ok)return false;
   h.splice(index,1);
-  localStorage.setItem('newCorretorHistorico',JSON.stringify(h));
-  renderHistory();
-  return true;
+  try{
+    localStorage.setItem('newCorretorHistorico',JSON.stringify(h));
+    renderHistory();
+    return true;
+  }catch(err){
+    alert('Não foi possível excluir o registro neste aparelho.');
+    return false;
+  }
 }
-function ensureHistoryEditor(){
-  if(document.getElementById('historyEditorModal'))return;
-  const m=document.createElement('div');m.id='historyEditorModal';m.innerHTML=`<div class="history-editor-box">
-    <div class="history-editor-head"><h2>✏️ Editar correção</h2><button type="button" class="history-close" id="historyEditorClose">×</button></div>
-    <div class="history-editor-grid">
-      <label>Nome do estudante<input id="heAluno"></label>
-      <label>Turma<input id="heTurma"></label>
-      <label>Avaliação<input id="heAvaliacao"></label>
-    </div>
-    <div class="status info" id="heInfo" style="margin-top:12px">Altere os dados ou as respostas. Ao salvar, a nota será recalculada pelo gabarito da avaliação.</div>
-    <div id="heQuestions" class="history-question-grid"></div>
-    <div class="history-editor-footer"><button type="button" class="secondary" id="historyEditorCancel">Cancelar</button><button type="button" class="primary" id="historyEditorSave">💾 Salvar alterações</button></div>
-  </div>`;
-  document.body.appendChild(m);
-  document.getElementById('historyEditorClose').addEventListener('click',closeHistoryEditor);
-  document.getElementById('historyEditorCancel').addEventListener('click',closeHistoryEditor);
-  m.addEventListener('click',e=>{if(e.target===m)closeHistoryEditor()});
-}
-let historyEditingIndex=-1,historyEditingAnswers=[];
-function openHistoryEditor(index){
-  const h=getHistory();
-  if(!Number.isInteger(index)||index<0||index>=h.length)return;
-  const item=h[index]; ensureHistoryEditor(); historyEditingIndex=index;
-  historyEditingAnswers=Array.isArray(item.respostas)?item.respostas.slice():[];
-  document.getElementById('heAluno').value=item.aluno||'';
-  document.getElementById('heTurma').value=item.turma||'';
-  document.getElementById('heAvaliacao').value=item.avaliacao||'';
-  const key=Array.isArray(item.gabarito)&&item.gabarito.length?item.gabarito:gabarito;
-  const alternativas=L.slice(0,+na.value||5);
-  const qCount=Math.max(historyEditingAnswers.length,Number(item.total||0),key.length);
-  const qbox=document.getElementById('heQuestions');
-  qbox.innerHTML=Array.from({length:qCount},(_,i)=>{
-    const val=historyEditingAnswers[i]||'—';
-    return `<div class="history-qbox"><div class="history-qtitle">Questão ${String(i+1).padStart(2,'0')}</div><div class="history-qopts">${alternativas.map(a=>`<button type="button" class="${val===a?'selected':''}" data-he-q="${i}" data-he-a="${a}">${a}</button>`).join('')}<button type="button" class="blank ${val==='—'||!val?'selected':''}" data-he-q="${i}" data-he-a="—">Em branco</button></div></div>`;
-  }).join('');
-  qbox.querySelectorAll('[data-he-q]').forEach(btn=>btn.addEventListener('click',function(){
-    const q=Number(this.dataset.heQ),a=this.dataset.heA; historyEditingAnswers[q]=a;
-    qbox.querySelectorAll(`[data-he-q="${q}"]`).forEach(b=>b.classList.toggle('selected',b.dataset.heA===a));
-  }));
-  document.getElementById('historyEditorSave').onclick=saveHistoryEdit;
-  document.getElementById('historyEditorModal').style.display='flex';
-}
-function closeHistoryEditor(){
-  const m=document.getElementById('historyEditorModal');if(m)m.style.display='none';historyEditingIndex=-1;historyEditingAnswers=[];
-}
-function saveHistoryEdit(){
-  const h=getHistory();
-  if(historyEditingIndex<0||historyEditingIndex>=h.length)return;
-  const item=h[historyEditingIndex];
-  const key=Array.isArray(item.gabarito)&&item.gabarito.length?item.gabarito.slice():gabarito.slice();
-  const valorItem=Number(item.valorPorQuestao||item.valor||valor.value||1);
-  const respostas=historyEditingAnswers.slice(0,Math.max(key.length,historyEditingAnswers.length));
-  let ac=0,erros=0,brancas=0,revisar=0;
-  respostas.forEach((ans,i)=>{
-    if(ans==='—'||!ans){brancas++;return}
-    if(ans===key[i])ac++;else erros++;
+
+// Histórico: ligação direta dos botões. Evita problemas de eventos delegados
+// em navegadores móveis/iOS depois que a tabela é reconstruída.
+function bindHistoryButtons(){
+  const box=document.getElementById('historyList');
+  if(!box)return;
+  box.querySelectorAll('[data-history-delete]').forEach(btn=>{
+    btn.addEventListener('click',function(ev){
+      ev.preventDefault();
+      ev.stopPropagation();
+      deleteHistoryItem(this.getAttribute('data-history-delete'));
+    },{passive:false});
   });
-  const total=Math.max(key.length,respostas.length,Number(item.total||0));
-  while(respostas.length<total)respostas.push('—');
-  brancas=respostas.filter(x=>x==='—'||!x).length;
-  erros=Math.max(0,total-ac-brancas);
-  const nota=Number((ac*valorItem).toFixed(2));
-  item.aluno=document.getElementById('heAluno').value.trim()||'Não informado';
-  item.turma=document.getElementById('heTurma').value.trim()||'—';
-  item.avaliacao=document.getElementById('heAvaliacao').value.trim()||'Avaliação';
-  item.acertos=ac;item.erros=erros;item.brancas=brancas;item.revisar=revisar;item.total=total;item.nota=nota;item.respostas=respostas;
-  item.editadoEm=new Date().toLocaleString('pt-BR');
-  item.gabarito=key;item.valorPorQuestao=valorItem;
-  h[historyEditingIndex]=item;
-  localStorage.setItem('newCorretorHistorico',JSON.stringify(h));
-  closeHistoryEditor();
-  renderHistory();
-  summary.className='status ok';summary.innerHTML=`<b>${esc(item.aluno)}</b> — ${esc(item.turma)} — correção atualizada — Nota <b>${nota.toFixed(1)}</b>.`;
+  const clear=document.getElementById('btnClearHistory');
+  if(clear && !clear.dataset.bound){
+    clear.dataset.bound='1';
+    clear.addEventListener('click',function(ev){
+      ev.preventDefault();
+      ev.stopPropagation();
+      clearHistory();
+    },{passive:false});
+  }
 }
+
 function gerarRelatorioHistoricoPDF(){
   const h=getHistory();
   if(!h.length){alert('Não há correções salvas no histórico.');return}
@@ -855,12 +1186,137 @@ function gerarRelatorioHistoricoPDF(){
   </div>
 
 
+
+
 </body></html>`);
   w.document.close();
 }
+</script>
+
+<script>
+(function(){
+  let deferredPrompt = null;
+  const btn = () => document.getElementById("installAppBtn");
+  const help = () => document.getElementById("installHelp");
+  const show = (msg) => {
+    const h = help();
+    if(!h) return;
+    h.innerHTML = msg;
+    h.classList.add("show");
+  };
+  const close = () => { const h=help(); if(h) h.classList.remove("show"); };
+
+  function isStandalone(){
+    return !!(
+      (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) ||
+      window.navigator.standalone === true ||
+      document.referrer.startsWith("android-app://")
+    );
+  }
+
+  function hideInstallButton(){
+    const b = btn();
+    if(!b) return;
+    b.style.display = "none";
+    b.setAttribute("aria-hidden", "true");
+  }
+
+  function showInstallButton(){
+    const b = btn();
+    if(!b || isStandalone()) return;
+    b.style.display = "block";
+    b.removeAttribute("aria-hidden");
+  }
+
+  // Se o sistema já estiver aberto como aplicativo instalado, não mostramos o botão.
+  if(isStandalone()) hideInstallButton();
+
+  window.addEventListener("beforeinstallprompt", (event) => {
+    event.preventDefault();
+    deferredPrompt = event;
+    showInstallButton();
+    const b = btn();
+    if(b){ b.classList.add("ready"); b.textContent = "📲 Instalar aplicativo"; }
+  });
+
+  // Chrome/Edge/Android: dispara depois que a instalação foi concluída.
+  window.addEventListener("appinstalled", () => {
+    deferredPrompt = null;
+    hideInstallButton();
+    close();
+    console.log("NEW PROF. CORRETOR — aplicativo instalado.");
+  });
+
+  document.addEventListener("click", async (event) => {
+    const b = event.target.closest("#installAppBtn");
+    if(!b) return;
+
+    if(isStandalone()){
+      hideInstallButton();
+      return;
+    }
+
+    if(deferredPrompt){
+      try {
+        deferredPrompt.prompt();
+        const choice = await deferredPrompt.userChoice;
+        if(choice && choice.outcome === "accepted"){
+          b.textContent = "⏳ Instalando...";
+        }
+      } catch(e) { console.warn("Instalação:", e); }
+      deferredPrompt = null;
+      return;
+    }
+
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    if(isIOS){
+      show("<b>Para instalar no iPhone/iPad:</b><br>Toque em <b>Compartilhar</b> → <b>Adicionar à Tela de Início</b>.<br><button type='button' id='closeInstallHelp'>Fechar</button>");
+      return;
+    }
+
+    show(`<b>O navegador ainda não liberou a instalação automática.</b><br><br>
+      <b>Chrome no computador:</b> abra o menu <b>⋮</b> e procure <b>Instalar NEW PROF. CORRETOR</b> ou <b>Instalar página como aplicativo</b>.<br><br>
+      <b>Chrome no Android:</b> abra o menu <b>⋮</b> e toque em <b>Instalar aplicativo</b> ou <b>Adicionar à tela inicial</b>.<br><br>
+      <small>Depois de instalado, ao abrir o aplicativo o botão não será exibido.</small><br><button type='button' id='closeInstallHelp'>Fechar</button>`);
+  });
+
+  document.addEventListener("click", event => {
+    if(event.target.id === "closeInstallHelp") close();
+  });
+
+  // Se o usuário mudar entre navegador e modo aplicativo enquanto a página estiver aberta.
+  if(window.matchMedia){
+    const media = window.matchMedia("(display-mode: standalone)");
+    const updateMode = () => isStandalone() ? hideInstallButton() : showInstallButton();
+    if(media.addEventListener) media.addEventListener("change", updateMode);
+  }
+
+  if("serviceWorker" in navigator){
+    window.addEventListener("load", async () => {
+      try {
+        const registration = await navigator.serviceWorker.register("/new-colecao-games-playstation/corretor/sw.js", {scope:"/new-colecao-games-playstation/corretor/"});
+        console.log("NEW PROF. CORRETOR — Service Worker ativo:", registration.scope);
+        if(isStandalone()) hideInstallButton();
+      } catch(error) {
+        console.error("NEW PROF. CORRETOR — erro no Service Worker:", error);
+      }
+    });
+  }
+})();
+</script>
+
+<script>
+
 function clearHistory(){
-  if(confirm('Apagar todo o histórico salvo neste aparelho?')){
-    localStorage.removeItem('newCorretorHistorico');renderHistory();
+  const h=getHistory();
+  if(!h.length){alert('Não há correções salvas no histórico.');return}
+  if(!window.confirm(`Apagar TODAS as ${h.length} correções salvas neste aparelho?`))return;
+  try{
+    localStorage.removeItem('newCorretorHistorico');
+    renderHistory();
+    alert('Histórico de correções excluído com sucesso.');
+  }catch(err){
+    alert('Não foi possível excluir o histórico neste aparelho.');
   }
 }
 function exportHistoryCSV(){
@@ -875,409 +1331,331 @@ function exportHistoryCSV(){
 }
 
 
-async function cardToCanvas(dpi=150){
-  const source=document.getElementById('printCard');
-  if(!source) throw new Error('Cartão não encontrado.');
+function drawNativeCardPage(pdf, alunoCard, turmaCard, pageIndex, totalPages){
+  const n=Math.min(50,Math.max(1,+nq.value||10));
+  const ls=Array.from(L.slice(0,+na.value||5));
+  const tituloCard=(titulo?.value||'AVALIAÇÃO').toUpperCase();
+  const dataCard=getCardData();
+  const codigo=getAssessmentCode();
 
-  const A4_W_MM=210, A4_H_MM=297;
-  const pxPerMm=dpi/25.4;
-  const outW=Math.round(A4_W_MM*pxPerMm);
-  const outH=Math.round(A4_H_MM*pxPerMm);
+  const W=210, H=297;
+  const mx=15, contentW=180;
+  const marker=7, markerX=8, markerY=8;
 
-  // Cria uma cópia isolada com exatamente o mesmo tamanho físico da folha A4.
-  // Assim, a imagem não depende da largura da tela, zoom ou layout responsivo.
-  const holder=document.createElement('div');
-  holder.style.position='fixed';
-  holder.style.left='-100000px';
-  holder.style.top='0';
-  holder.style.width='210mm';
-  holder.style.height='297mm';
-  holder.style.overflow='hidden';
-  holder.style.background='#fff';
-  holder.style.zIndex='-1';
+  // Fundo branco e quatro marcadores OMR em coordenadas físicas A4.
+  pdf.setFillColor(255,255,255); pdf.rect(0,0,W,H,'F');
+  pdf.setFillColor(0,0,0);
+  pdf.rect(markerX,markerY,marker,marker,'F');
+  pdf.rect(W-markerX-marker,markerY,marker,marker,'F');
+  pdf.rect(markerX,H-markerY-marker,marker,marker,'F');
+  pdf.rect(W-markerX-marker,H-markerY-marker,marker,marker,'F');
 
-  const clone=source.cloneNode(true);
-  clone.removeAttribute('id');
-  clone.style.width='210mm';
-  clone.style.height='297mm';
-  clone.style.minWidth='210mm';
-  clone.style.minHeight='297mm';
-  clone.style.maxWidth='210mm';
-  clone.style.maxHeight='297mm';
-  clone.style.margin='0';
-  clone.style.padding='13mm 12mm 12mm';
-  clone.style.boxSizing='border-box';
-  clone.style.overflow='hidden';
-  clone.style.background='#fff';
-  clone.style.boxShadow='none';
-  clone.style.border='0';
+  // Cabeçalho compacto.
+  pdf.setTextColor(18,45,86);
+  pdf.setFont('helvetica','bold'); pdf.setFontSize(17);
+  pdf.text('CARTÃO-RESPOSTA',mx,19);
+  pdf.setDrawColor(23,63,143); pdf.setLineWidth(0.45); pdf.line(mx,24,W-mx,24);
+  pdf.setFontSize(8); pdf.text(tituloCard,mx+contentW/2,30,{align:'center'});
 
-  holder.appendChild(clone);
-  document.body.appendChild(holder);
+  // Identificação.
+  const iy=35, ih=34, titleH=7;
+  pdf.setDrawColor(40,40,40); pdf.setLineWidth(0.3);
+  pdf.setFillColor(23,63,143); pdf.rect(mx,iy,contentW,titleH,'F');
+  pdf.setTextColor(255,255,255); pdf.setFontSize(8); pdf.setFont('helvetica','bold'); pdf.text('IDENTIFICAÇÃO',mx+3,iy+5);
+  pdf.setDrawColor(80,80,80); pdf.rect(mx,iy,contentW,ih);
+  pdf.line(mx,iy+titleH,W-mx,iy+titleH);
+  const split=mx+contentW*0.76;
+  pdf.line(split,iy+titleH,split,iy+22);
+  pdf.line(mx,iy+22,W-mx,iy+22);
+  const s2=mx+contentW*0.58, s3=mx+contentW*0.82;
+  pdf.line(s2,iy+22,s2,iy+ih); pdf.line(s3,iy+22,s3,iy+ih);
+  pdf.setTextColor(70,78,90); pdf.setFontSize(5.5);
+  pdf.text('AVALIAÇÃO',mx+2,iy+12); pdf.text('CÓDIGO DA AVALIAÇÃO',split+2,iy+12);
+  pdf.setTextColor(25,25,25); pdf.setFontSize(8); pdf.setFont('helvetica','bold');
+  pdf.text(tituloCard,mx+2,iy+18); pdf.text(codigo,split+2,iy+18);
+  pdf.setTextColor(70,78,90); pdf.setFontSize(5.5); pdf.setFont('helvetica','bold');
+  pdf.text('ESTUDANTE',mx+2,iy+27); pdf.text('ANO / TURMA',s2+2,iy+27); pdf.text('DATA',s3+2,iy+27);
+  pdf.setTextColor(25,25,25); pdf.setFontSize(7.5);
+  if(alunoCard) pdf.text(String(alunoCard).slice(0,45),mx+2,iy+32); else pdf.line(mx+2,iy+32,mx+contentW*0.57,iy+32);
+  if(turmaCard) pdf.text(String(turmaCard).slice(0,18),s2+2,iy+32); else pdf.line(s2+2,iy+32,s3-2,iy+32);
+  if(dataCard) pdf.text(fmtDate(dataCard),s3+2,iy+32); else pdf.line(s3+2,iy+32,W-mx-2,iy+32);
 
-  // Aguarda o navegador recalcular o layout do A4 antes da captura.
-  await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+  // Orientações.
+  const oy=73;
+  pdf.setDrawColor(170,170,170); pdf.rect(mx,oy,contentW,6);
+  pdf.setFontSize(4.8); pdf.setFont('helvetica','bold'); pdf.setTextColor(23,63,143); pdf.text('ORIENTAÇÕES:',mx+2,oy+4);
+  pdf.setFont('helvetica','normal'); pdf.setTextColor(55,55,55);
+  pdf.text('Preencha completamente apenas uma alternativa por questão. Use lápis ou caneta preta/azul. Não faça marcas fora dos círculos. Não dobre nem corte o cartão.',mx+22,oy+4);
 
-  let canvas;
-  try{
-    canvas=await html2canvas(clone,{
-      scale:1,
-      width:clone.offsetWidth,
-      height:clone.offsetHeight,
-      backgroundColor:'#ffffff',
-      useCORS:true,
-      logging:false,
-      scrollX:0,
-      scrollY:0,
-      windowWidth:Math.ceil(210*96/25.4),
-      windowHeight:Math.ceil(297*96/25.4)
+  const titleY=84;
+  pdf.setFont('helvetica','bold'); pdf.setFontSize(7.5); pdf.setTextColor(20,20,20);
+  pdf.text('MARQUE A ALTERNATIVA CORRESPONDENTE À SUA RESPOSTA',W/2,titleY,{align:'center'});
+  pdf.setFont('helvetica','normal'); pdf.setFontSize(4.7);
+  pdf.text('Preencha o círculo escolhido de forma completa. Os marcadores pretos dos quatro cantos são utilizados pelo sistema para localizar e corrigir o cartão.',W/2,titleY+5,{align:'center'});
+
+  // Duas colunas, dez questões por coluna. Altura total fixa e segura dentro do A4.
+  const gridY=92, gridH=166, gap=2, colGap=3, colW=(contentW-colGap)/2;
+  const rows=Math.ceil(Math.min(n,20)/2); // para o cartão padrão de 20 questões
+  const qH=(gridH-(rows-1)*gap)/rows;
+  const qFont=5.2, optR=3.5;
+  const bubbleStep=9;
+  const bubbleYExtra=1.8;
+  for(let i=0;i<Math.min(n,20);i++){
+    const col=i<10?0:1, row=i<10?i:i-10;
+    const x=mx+col*(colW+colGap), y=gridY+row*(qH+gap);
+    pdf.setDrawColor(70,70,70); pdf.setLineWidth(0.25); pdf.rect(x,y,colW,qH);
+    pdf.setFont('helvetica','bold'); pdf.setFontSize(qFont); pdf.setTextColor(25,25,25);
+    pdf.text(`QUESTÃO ${String(i+1).padStart(2,'0')}`,x+colW/2,y+5,{align:'center'});
+    const totalW=(ls.length-1)*bubbleStep;
+    const start=x+colW/2-totalW/2;
+    ls.forEach((lab,j)=>{
+      const cx=start+j*bubbleStep, cy=y+qH/2+bubbleYExtra;
+      // Bolhas maiores e com a letra fora do círculo para reduzir falsos positivos em fotos.
+      pdf.setDrawColor(20,20,20); pdf.setLineWidth(0.4); pdf.circle(cx,cy,optR);
+      pdf.setFont('helvetica','bold'); pdf.setFontSize(4.6); pdf.setTextColor(35,35,35);
+      pdf.text(String(lab),cx,cy+5.1,{align:'center'});
     });
-  }finally{
-    holder.remove();
   }
 
-  // Converte para uma imagem raster A4 exata.
-  const out=document.createElement('canvas');
-  out.width=outW;
-  out.height=outH;
-
-  const ctx=out.getContext('2d');
-  ctx.fillStyle='#fff';
-  ctx.fillRect(0,0,outW,outH);
-
-  // A proporção é exatamente 210:297, sem corte e sem deformação.
-  ctx.drawImage(canvas,0,0,outW,outH);
-
-  return out;
+  // Rodapé dentro da área segura.
+  const fy=285;
+  pdf.setDrawColor(170,170,170); pdf.setLineWidth(0.3); pdf.line(mx,fy,W-mx,fy);
+  pdf.setFont('helvetica','bold'); pdf.setFontSize(5.8); pdf.setTextColor(23,63,143);
+  pdf.text('NEW PROF. CORRETOR',W/2-18,292,{align:'right'});
+  pdf.setFont('helvetica','normal'); pdf.setTextColor(80,80,80); pdf.text(` · Cartão-resposta para correção automática por imagem · Código ${codigo}`,W/2-17,292);
 }
 
 async function exportCard(){
-  const fmt=document.getElementById('cardFormato')?.value||'pdf';
-  renderCard();
-
-  if(fmt==='print'){
-    window.print();
-    return;
-  }
-
   try{
-    if(typeof html2canvas==='undefined'){
-      alert('A exportação ainda está carregando. Aguarde alguns segundos e tente novamente.');
-      return;
-    }
-
-    // 150 DPI = 1240 × 1754 px para A4.
-    // A proporção e o tamanho físico correspondem à folha A4.
-    const canvas=await cardToCanvas(150);
-    const safe=((document.getElementById('cardTitulo')?.value||'cartao-resposta')
-      .trim().replace(/[^\wÀ-ÿ\-]+/g,'_')).replace(/^_+|_+$/g,'')||'cartao-resposta';
-
-    if(fmt==='png' || fmt==='jpg'){
-      const mime=fmt==='png'?'image/png':'image/jpeg';
-      const ext=fmt==='png'?'png':'jpg';
-      const a=document.createElement('a');
-      a.href=canvas.toDataURL(mime,0.95);
-      a.download=`${safe}-cartao-A4.${ext}`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      return;
-    }
-
-    if(!window.jspdf || !window.jspdf.jsPDF){
+    if(!((window.jspdf&&window.jspdf.jsPDF)||window.jsPDF)){
       alert('A exportação PDF ainda está carregando. Aguarde alguns segundos e tente novamente.');
       return;
     }
 
-    const pdf=new window.jspdf.jsPDF({
-      orientation:'portrait',
-      unit:'mm',
-      format:'a4',
-      compress:true
-    });
-    pdf.addImage(
-      canvas.toDataURL('image/jpeg',0.95),
-      'JPEG',0,0,210,297,undefined,'FAST'
-    );
+    const turmaCard=document.getElementById('cardTurma')?.value||'';
+    const mode=document.getElementById('printMode')?.value||'blank';
+    const count=Math.max(1,Math.min(100,+document.getElementById('studentCount')?.value||1));
+    let names=mode==='named'?getStudentNames():Array(count).fill('');
+    if(mode==='named' && names.some((n)=>!n)){
+      const faltam=names.map((n,i)=>n?'':i+1).filter(Boolean);
+      if(!confirm(`Há ${faltam.length} nome(s) em branco. Deseja gerar mesmo assim?`)) return;
+    }
+
+    const JsPDF=(window.jspdf&&window.jspdf.jsPDF)||window.jsPDF;
+    const pdf=new JsPDF({orientation:'portrait',unit:'mm',format:'a4',compress:true});
+    for(let i=0;i<count;i++){
+      if(i>0) pdf.addPage('a4','portrait');
+      drawNativeCardPage(pdf,names[i]||'',turmaCard,i,count);
+    }
+
+    const safe=((document.getElementById('cardTitulo')?.value||titulo?.value||'cartao-resposta')
+      .trim().replace(/[^\wÀ-ÿ\-]+/g,'_')).replace(/^_+|_+$/g,'')||'cartao-resposta';
     pdf.save(`${safe}-cartao.pdf`);
   }catch(e){
     console.error(e);
-    alert('Não foi possível gerar o arquivo: '+e.message);
+    alert('Não foi possível gerar o PDF: '+e.message);
   }
 }
 
 function setStatus(t,c){readStatus.textContent=t;readStatus.className='status '+c}
-function resetRead(){photo.value='';photoName.textContent='Nenhuma foto selecionada';results.innerHTML='';diag.getContext('2d').clearRect(0,0,diag.width,diag.height);ultimaLeitura=null;summary.className='status info';summary.textContent='Nenhuma correção realizada nesta sessão.';setStatus('Aguardando fotografia.','info')}
+function resetRead(){photo.value='';photoName.textContent='Ao selecionar a foto, a correção será iniciada automaticamente.';results.innerHTML='';diag.getContext('2d').clearRect(0,0,diag.width,diag.height);ultimaLeitura=null;summary.className='status info';summary.textContent='Nenhuma correção realizada nesta sessão.';setStatus('Aguardando fotografia.','info')}
 
 function loadImage(f){return new Promise((ok,no)=>{let im=new Image();im.onload=()=>ok(im);im.onerror=no;im.src=URL.createObjectURL(f)})}
 function orderPts(p){let s=p.map(a=>a.x+a.y),d=p.map(a=>a.x-a.y);return[p[s.indexOf(Math.min(...s))],p[d.indexOf(Math.max(...d))],p[s.indexOf(Math.max(...s))],p[d.indexOf(Math.min(...d))]]}
 function findMarkers(src){
-  // V3.4: detecção dos quatro marcadores mais tolerante a fotos pequenas,
-  // screenshots, compressão e iluminação. Procura quadrados pretos em toda
-  // a imagem e escolhe o melhor candidato em cada quadrante.
-  let g=new cv.Mat(), bw=new cv.Mat();
-  cv.cvtColor(src,g,cv.COLOR_RGBA2GRAY);
-  // Threshold um pouco mais permissivo para não perder marcadores por compressão.
-  cv.threshold(g,bw,125,255,cv.THRESH_BINARY_INV);
-  let cs=new cv.MatVector(), hi=new cv.Mat();
-  cv.findContours(bw,cs,hi,cv.RETR_EXTERNAL,cv.CHAIN_APPROX_SIMPLE);
-  let cand=[];
+  // V16: localização robusta dos quatro marcadores por quadriláteros.
+  // Primeiro tentamos detectar o contorno real do quadrado (mais preciso que
+  // usar apenas o centro do bounding-box). Depois fazemos fallback para a
+  // detecção anterior, mantendo compatibilidade com cartões já impressos.
+  let gray=new cv.Mat(), bw=new cv.Mat(), cs=new cv.MatVector(), hier=new cv.Mat();
+  cv.cvtColor(src,gray,cv.COLOR_RGBA2GRAY);
+  cv.GaussianBlur(gray,gray,new cv.Size(5,5),0,0,cv.BORDER_DEFAULT);
+  cv.adaptiveThreshold(gray,bw,255,cv.ADAPTIVE_THRESH_GAUSSIAN_C,cv.THRESH_BINARY_INV,31,12);
+  cv.findContours(bw,cs,hier,cv.RETR_EXTERNAL,cv.CHAIN_APPROX_SIMPLE);
   const imgArea=src.cols*src.rows;
-  const minArea=Math.max(120,imgArea*0.00008);
-  const maxArea=imgArea*0.035;
+  const minArea=Math.max(150,imgArea*0.00006), maxArea=imgArea*0.045;
+  const cand=[];
   for(let i=0;i<cs.size();i++){
-    let c=cs.get(i), r=cv.boundingRect(c);
-    let ar=r.width*r.height, ratio=r.width/Math.max(1,r.height);
-    // Marcador: aproximadamente quadrado, compacto e suficientemente grande.
-    if(ar>=minArea && ar<=maxArea && r.width>=10 && r.height>=10 &&
-       ratio>=0.65 && ratio<=1.45){
-      // Mede a ocupação preta dentro do retângulo para eliminar texto/linhas.
-      let roi=g.roi(r), mean=cv.mean(roi)[0]; roi.delete();
-      if(mean<125) cand.push({x:r.x+r.width/2,y:r.y+r.height/2,area:ar,w:r.width,h:r.height});
+    const c=cs.get(i), peri=cv.arcLength(c,true), approx=new cv.Mat();
+    cv.approxPolyDP(c,approx,Math.max(2,0.035*peri),true);
+    const r=cv.boundingRect(c), area=cv.contourArea(c);
+    const ar=r.width/Math.max(1,r.height);
+    if(approx.rows===4 && area>=minArea && area<=maxArea && ar>0.60 && ar<1.60 && cv.isContourConvex(approx)){
+      const pts=[];
+      for(let k=0;k<4;k++){
+        const d=approx.intPtr(k,0); pts.push({x:d[0],y:d[1]});
+      }
+      // Perímetro e área relativa ajudam a eliminar texto, letras e linhas.
+      const fill=area/Math.max(1,r.width*r.height);
+      if(fill>0.45 && fill<1.25) cand.push({pts,area,cx:r.x+r.width/2,cy:r.y+r.height/2,w:r.width,h:r.height});
+    }
+    approx.delete(); c.delete();
+  }
+  cs.delete();hier.delete();bw.delete();gray.delete();
+
+  function centerScore(x,corner){
+    const dx=x.cx-corner.x,dy=x.cy-corner.y;
+    const d=Math.hypot(dx,dy), edge=Math.min(x.cx,x.cy,src.cols-x.cx,src.rows-x.cy);
+    return d - Math.min(220,edge)*0.35;
+  }
+  const corners=[{x:0,y:0},{x:src.cols,y:0},{x:src.cols,y:src.rows},{x:0,y:src.rows}];
+  const chosen=[];
+  for(const co of corners){
+    let best=null,bs=Infinity;
+    for(const x of cand){
+      if(chosen.includes(x))continue;
+      const sc=centerScore(x,co);
+      if(sc<bs){bs=sc;best=x}
+    }
+    if(best)chosen.push(best);
+  }
+  if(chosen.length===4){
+    const centers=chosen.map(x=>({x:x.cx,y:x.cy}));
+    return orderPts(centers);
+  }
+
+  // Fallback compatível com os cartões antigos de marcador sólido.
+  let g=new cv.Mat(),inv=new cv.Mat();
+  cv.cvtColor(src,g,cv.COLOR_RGBA2GRAY);cv.threshold(g,inv,135,255,cv.THRESH_BINARY_INV);
+  let c2=new cv.MatVector(),h2=new cv.Mat();cv.findContours(inv,c2,h2,cv.RETR_EXTERNAL,cv.CHAIN_APPROX_SIMPLE);
+  let old=[];
+  for(let i=0;i<c2.size();i++){
+    let c=c2.get(i),r=cv.boundingRect(c),ar=r.width*r.height,ratio=r.width/Math.max(1,r.height);
+    if(ar>=minArea&&ar<=maxArea&&r.width>=10&&r.height>=10&&ratio>=.65&&ratio<=1.45){
+      old.push({x:r.x+r.width/2,y:r.y+r.height/2,area:ar});
     }
     c.delete();
   }
-  cs.delete();hi.delete();g.delete();bw.delete();
-
-  // Escolhe um marcador por quadrante, priorizando tamanho e proximidade
-  // das bordas. Isso também funciona quando a foto mostra margens ao redor do cartão.
-  let q=[null,null,null,null];
-  const cx=src.cols/2, cy=src.rows/2;
-  for(let x of cand){
-    let k=(x.y<cy?0:2)+(x.x<cx?0:1);
-    let edge=Math.min(x.x,x.y,src.cols-x.x,src.rows-x.y);
-    let score=x.area + Math.max(0,300-edge)*1.5;
-    if(!q[k] || score>q[k].score) q[k]={...x,score};
-  }
-
-  // Se um marcador caiu exatamente numa divisão de quadrante, tenta uma
-  // segunda seleção por distância aos quatro cantos.
-  if(!q.every(Boolean)){
-    const corners=[{x:0,y:0},{x:src.cols,y:0},{x:src.cols,y:src.rows},{x:0,y:src.rows}];
-    let chosen=[];
-    for(let co of corners){
-      let best=null,bestScore=Infinity;
-      for(let x of cand){
-        if(chosen.includes(x)) continue;
-        let d=Math.hypot(x.x-co.x,x.y-co.y);
-        if(d<bestScore){bestScore=d;best=x;}
-      }
-      if(best){chosen.push(best)}
-    }
-    if(chosen.length===4) q=chosen;
-  }
-
+  c2.delete();h2.delete();g.delete();inv.delete();
+  if(old.length<4)return null;
+  const q=[null,null,null,null],cx=src.cols/2,cy=src.rows/2;
+  for(const x of old){const k=(x.y<cy?0:2)+(x.x<cx?0:1);if(!q[k]||x.area>q[k].area)q[k]=x}
   return q.every(Boolean)?orderPts(q):null;
 }
 function matPts(p){return cv.matFromArray(4,1,cv.CV_32FC2,p.flatMap(a=>[a.x,a.y]))}
-function warpCard(src,m){let M=cv.getPerspectiveTransform(matPts(m),matPts([{x:45,y:35},{x:1155,y:35},{x:1155,y:1662},{x:45,y:1662}])),d=new cv.Mat();cv.warpPerspective(src,d,M,new cv.Size(1200,1697),cv.INTER_LINEAR,cv.BORDER_CONSTANT,new cv.Scalar(255,255,255,255));M.delete();return d}
 
-function findQuestionBoxes(warp){
-  // Localiza as molduras das questões no cartão V4.1/V4.
-  // O cartão pode ter 1 a 5 colunas, sempre com no máximo 10 questões por coluna.
-  let gray=new cv.Mat(),bw=new cv.Mat();
-  cv.cvtColor(warp,gray,cv.COLOR_RGBA2GRAY);
-  cv.threshold(gray,bw,205,255,cv.THRESH_BINARY_INV);
+/* ===== OMR V17 — LEITURA DETERMINÍSTICA PELO MODELO DO PRÓPRIO CARTÃO =====
+   O cartão é gerado pelo sistema, portanto as posições das questões e alternativas
+   são conhecidas. Depois da homografia dos 4 marcadores, não procuramos círculos
+   nem usamos OCR: lemos somente a área interna de cada bolha.
+*/
+const OMR_A4_W=1200, OMR_A4_H=1697, OMR_MM=OMR_A4_W/210;
+const OMR_MARKER_OFFSET_MM=8, OMR_MARKER_SIZE_MM=7;
 
-  let cs=new cv.MatVector(),hi=new cv.Mat();
-  cv.findContours(bw,cs,hi,cv.RETR_LIST,cv.CHAIN_APPROX_SIMPLE);
-  let cand=[];
-  for(let i=0;i<cs.size();i++){
-    let c=cs.get(i),r=cv.boundingRect(c);
-    let ratio=r.width/Math.max(1,r.height), area=r.width*r.height;
-    // A área das questões fica abaixo da identificação e acima do rodapé.
-    // Aceita caixas estreitas (muitas colunas) e largas (1 coluna).
-    if(r.y>=520 && r.y<=1400 &&
-       r.width>=140 && r.width<=1130 &&
-       r.height>=25 && r.height<=95 &&
-       ratio>=2.4 && ratio<=18 && area>=5000){
-      cand.push({x:r.x,y:r.y,w:r.width,h:r.height,area});
-    }
-    c.delete();
-  }
-  cs.delete();hi.delete();gray.delete();bw.delete();
-
-  // Remove duplicatas/nested contours.
-  cand.sort((a,b)=>a.y-b.y||a.x-b.x);
-  let unique=[];
-  for(const b of cand){
-    const dup=unique.some(o =>
-      Math.abs(o.x-b.x)<10 && Math.abs(o.y-b.y)<10 &&
-      Math.abs(o.w-b.w)<18 && Math.abs(o.h-b.h)<18);
-    if(!dup) unique.push(b);
-  }
-
-  // O DOM usa grid-auto-flow: column: Q1..Q10 na primeira coluna,
-  // depois Q11..Q20 na segunda etc. Ordenamos por coluna e depois por Y.
-  unique.sort((a,b)=>a.x-b.x||a.y-b.y);
-  return unique.slice(0,50);
+function warpCard(src,m){
+  // O cartão V10 usa marcadores a 8 mm das bordas, com 7 mm de lado.
+  // O centro real de cada marcador é 11,5 mm a partir da borda.
+  const c=OMR_MARKER_OFFSET_MM + OMR_MARKER_SIZE_MM/2;
+  const dest=[
+    {x:c*OMR_MM,y:c*(OMR_A4_H/297)},
+    {x:OMR_A4_W-c*OMR_MM,y:c*(OMR_A4_H/297)},
+    {x:OMR_A4_W-c*OMR_MM,y:OMR_A4_H-c*(OMR_A4_H/297)},
+    {x:c*OMR_MM,y:OMR_A4_H-c*(OMR_A4_H/297)}
+  ];
+  const M=cv.getPerspectiveTransform(matPts(m),matPts(dest)),d=new cv.Mat();
+  cv.warpPerspective(src,d,M,new cv.Size(OMR_A4_W,OMR_A4_H),cv.INTER_LINEAR,cv.BORDER_CONSTANT,new cv.Scalar(255,255,255,255));
+  M.delete();
+  return d;
 }
 
-function fallbackQuestionBoxes(count){
-  const cols=Math.ceil(count/10), rows=Math.min(10,count);
-  const left=80, right=1120, top=600, totalH=700, gap=10;
-  const colW=(right-left-(cols-1)*gap)/cols;
-  const rowH=(totalH-(rows-1)*gap)/rows;
+function fixedQuestionGeometry(count,alts){
+  const n=Math.max(1,Math.min(50,count));
+  // IMPORTANTE: estas medidas são exatamente as usadas em drawNativeCardPage().
+  // O leitor não procura círculos; ele lê as posições que o próprio gerador do
+  // cartão desenhou. Isso mantém a geometria sincronizada com o PDF A4.
+  const mx=15, contentW=180;
+  const gridY=92, gridH=166, gap=2, colGap=3;
+  const colW=(contentW-colGap)/2;
+  const rows=Math.ceil(Math.min(n,20)/2);
+  const qH=(gridH-(rows-1)*gap)/rows;
+  const bubbleStep=9;       // V17: mesma geometria do cartão, 9 mm entre centros
   const out=[];
-  for(let c=0;c<cols;c++){
-    const inCol=Math.min(10,Math.max(0,count-c*10));
-    for(let r=0;r<inCol;r++){
-      out.push({
-        x:Math.round(left+c*(colW+gap)),
-        y:Math.round(top+r*(rowH+gap)),
-        w:Math.round(colW),
-        h:Math.round(rowH)
+  for(let i=0;i<n;i++){
+    const col=i<10?0:1;
+    const row=i<10?i:i-10;
+    const x=mx+col*(colW+colGap);
+    const y=gridY+row*(qH+gap);
+    const totalW=(alts-1)*bubbleStep;
+    const start=x+colW/2-totalW/2;
+    const pts=[];
+    for(let j=0;j<alts;j++){
+      // V17: drawNativeCardPage(): cy=y+qH/2+1.8
+      pts.push({
+        x:(start+j*bubbleStep)*OMR_MM,
+        y:(y+qH/2+1.8)*(OMR_A4_H/297)
       });
     }
+    out.push({q:i+1,pts});
   }
   return out;
 }
 
-function localInk(gray,x,y,r){
- // V3.4: lê o centro da bolha, evitando bordas, linhas e textos próximos.
- // A busca de deslocamento é pequena para não "pular" para a bolha vizinha.
- let best=-1,bx=Math.round(x),by=Math.round(y);
- const rr=Math.max(5,Math.min(8,Math.round(r*.38)));
- for(let dy=-3;dy<=3;dy++)for(let dx=-3;dx<=3;dx++){
-  const cx=Math.round(x+dx),cy=Math.round(y+dy);
-  let dark=0,ink=0,n=0;
-  for(let yy=cy-rr;yy<=cy+rr;yy++)for(let xx=cx-rr;xx<=cx+rr;xx++){
-   if(xx<0||yy<0||xx>=gray.cols||yy>=gray.rows)continue;
-   const dd=(xx-cx)**2+(yy-cy)**2;
-   if(dd<=rr*rr){
-     const g=gray.ucharPtr(yy,xx)[0]; n++;
-     if(g<90) ink++;
-     dark += (255-g)/255;
-   }
-  }
-  // Combina tinta realmente escura com escuridão média do centro.
-  const score=(ink/Math.max(1,n))*0.75+(dark/Math.max(1,n))*0.25;
-  if(score>best){best=score;bx=cx;by=cy}
- }
- return {score:Math.max(0,best),x:bx,y:by}
-}
-
-
-// ===== OMR V4.4 — leitor calibrado para o cartão NEW CORRETOR de 10 questões =====
-// Esta geometria é a mesma do protótipo sem Python que passou nos testes com fotos reais.
-const OMR10_LETTERS=['A','B','C','D','E'];
-const OMR10_X=[547,584,621,658,694];
-const OMR10_Y=[677,750,822,894,964,1035,1107,1179,1253,1325];
-const OMR10_DEST=[{x:80,y:67},{x:1165,y:67},{x:1165,y:1698},{x:80,y:1698}];
-
-function warpCardOMR10(src,m){
-  const a=cv.matFromArray(4,1,cv.CV_32FC2,m.flatMap(p=>[p.x,p.y]));
-  const b=cv.matFromArray(4,1,cv.CV_32FC2,OMR10_DEST.flatMap(p=>[p.x,p.y]));
-  const M=cv.getPerspectiveTransform(a,b),d=new cv.Mat();
-  cv.warpPerspective(src,d,M,new cv.Size(1245,1754),cv.INTER_LINEAR,cv.BORDER_CONSTANT,new cv.Scalar(255,255,255,255));
-  a.delete();b.delete();M.delete();
-  return d;
-}
-
-function omr10Sample(gray,x,y){
-  const r=9; let n=0,dark=0,sum=0;
-  for(let yy=y-r;yy<=y+r;yy++) for(let xx=x-r;xx<=x+r;xx++){
-    if(xx<0||yy<0||xx>=gray.cols||yy>=gray.rows) continue;
-    if((xx-x)*(xx-x)+(yy-y)*(yy-y)<=r*r){
-      const v=gray.ucharPtr(yy,xx)[0]; n++; sum+=(255-v)/255; if(v<100) dark++;
+function bubbleInkScore(gray,x,y){
+  // V17 OMR: leitura local e adaptativa. Comparamos a escuridão da região
+  // interna com o fundo imediatamente ao redor da bolha, reduzindo o efeito
+  // de sombras e iluminação irregular da fotografia.
+  const R=9, core=2.9, ringIn=4.6, ringOut=8.2;
+  const cx=Math.round(x),cy=Math.round(y);
+  let bgSum=0,bgN=0,coreDark=0,coreN=0,midDark=0,midN=0;
+  for(let yy=cy-R;yy<=cy+R;yy++){
+    for(let xx=cx-R;xx<=cx+R;xx++){
+      if(xx<0||yy<0||xx>=gray.cols||yy>=gray.rows)continue;
+      const d=Math.hypot(xx-cx,yy-cy),g=gray.ucharPtr(yy,xx)[0];
+      if(d>=ringIn&&d<=ringOut){bgSum+=g;bgN++}
     }
   }
-  return .70*(dark/Math.max(1,n))+.30*(sum/Math.max(1,n));
+  const bg=bgN?bgSum/bgN:200;
+  const threshold=Math.max(70,bg-38);
+  for(let yy=cy-Math.ceil(core);yy<=cy+Math.ceil(core);yy++){
+    for(let xx=cx-Math.ceil(core);xx<=cx+Math.ceil(core);xx++){
+      if(xx<0||yy<0||xx>=gray.cols||yy>=gray.rows)continue;
+      const d=Math.hypot(xx-cx,yy-cy),g=gray.ucharPtr(yy,xx)[0];
+      if(d<=core){coreN++;if(g<threshold)coreDark++}
+      else if(d>core&&d<ringIn){midN++;if(g<threshold)midDark++}
+    }
+  }
+  const coreFrac=coreDark/Math.max(1,coreN),midFrac=midDark/Math.max(1,midN);
+  // A marca preenchida ocupa uma área grande dentro da bolha; a letra impressa
+  // sozinha ocupa apenas uma pequena fração do núcleo.
+  return .58*coreFrac+.42*midFrac;
 }
 
-function detectAnswersOMR10(warp){
-  const gray=new cv.Mat(); cv.cvtColor(warp,gray,cv.COLOR_RGBA2GRAY);
-  const ls=L.slice(0,+na.value||5).slice(0,5);
-  const count=Math.min(10,gabarito.length);
+function detectAnswersFixed(warp){
+  const gray=new cv.Mat();cv.cvtColor(warp,gray,cv.COLOR_RGBA2GRAY);
+  const alts=Math.max(3,Math.min(5,+na.value||5));
+  const ls=Array.from(L.slice(0,alts));
+  const geo=fixedQuestionGeometry(gabarito.length,alts);
   const out=[],raw=[];
-  for(let q=0;q<count;q++){
-    const vals=OMR10_X.slice(0,ls.length).map(x=>omr10Sample(gray,x,OMR10_Y[q]));
-    const sorted=[...vals].sort((a,b)=>b-a), max=sorted[0]||0, second=sorted[1]||0;
-    const idx=vals.indexOf(max); let ans='—', status='Em branco';
-    const margin=max-second;
-    // Regra aprovada no protótipo V3: aceita marca mais fraca quando há predominância clara.
-    if(max>=0.32 && margin>=0.10){
-      if(second/max>0.78) status='Dupla marcação / revisar';
-      else {ans=ls[idx]||'—'; status='Marcada';}
+  for(const q of geo){
+    const vals=q.pts.map(p=>bubbleInkScore(gray,p.x,p.y));
+    const ranked=vals.map((v,i)=>({v,i})).sort((a,b)=>b.v-a.v);
+    const max=ranked[0]?.v||0,second=ranked[1]?.v||0;
+    let ans='—',status='Em branco';
+    // Limiares adaptativos: exige preenchimento absoluto e vantagem clara
+    // sobre a segunda alternativa. Caso contrário, o resultado vai para revisão.
+    if(max>=0.28 && (max-second)>=0.08){
+      ans=ls[ranked[0].i]||'—';status='Marcada';
+    }else if(max>=0.20 && second>=0.20 && second/max>=0.72){
+      status='Dupla marcação / revisar';
+    }else if(max>=0.20){
+      status='Leitura duvidosa / revisar';
     }
-    const pts=OMR10_X.slice(0,ls.length).map((x,j)=>({x,y:OMR10_Y[q]}));
-    out.push({q:q+1,ans,status,vals,pts});
-    raw.push(`Q${String(q+1).padStart(2,'0')}  ${[...ls].map((x,j)=>x+':'+Math.round((vals[j]||0)*100)+'%').join('  ')}  → ${ans}`);
+    out.push({q:q.q,ans,status,vals,pts:q.pts});
+    raw.push(`Q${String(q.q).padStart(2,'0')}  ${ls.map((x,j)=>x+':'+Math.round((vals[j]||0)*100)+'%').join('  ')}  → ${ans}`);
   }
-  // Se houver menos de 10 questões, o restante não participa da leitura.
   gray.delete();
   return {answers:out,raw:raw.join('\n')};
 }
 
-function detectAnswers(warp){
-  if(gabarito.length===10) return detectAnswersOMR10(warp);
-  return detectAnswersLegacy(warp);
-}
+function detectAnswers(warp){return detectAnswersFixed(warp)}
 
-function detectAnswersLegacy(warp){
- let gray=new cv.Mat();cv.cvtColor(warp,gray,cv.COLOR_RGBA2GRAY);
- const count=gabarito.length, ls=L.slice(0,+na.value||5);
- let boxes=findQuestionBoxes(warp);
-
- // O cartão atual tem uma geometria conhecida após a perspectiva.
- // Se a foto não produzir contornos confiáveis, usamos a geometria do próprio cartão.
- if(boxes.length<count) boxes=fallbackQuestionBoxes(count);
-
- // Quando houver exatamente a quantidade esperada, preserva a ordem por coluna.
- boxes=boxes.slice(0,count);
-
- let out=[],raw=[];
- for(let i=0;i<count;i++){
-   const b=boxes[i];
-   const vals=[],pts=[];
-
-   // As bolhas ficam centralizadas horizontalmente dentro da moldura.
-   // Tamanho real do círculo: 5,2 mm; espaçamento: 1,9 mm.
-   const mm=1200/210;
-   const bubbleW=5.2*mm, gap=1.9*mm;
-   const total=ls.length*bubbleW+(ls.length-1)*gap;
-   const start=b.x+(b.w-total)/2+bubbleW/2;
-
-   // A caixa usa flex-column + justify-content:center.
-   // O centro da fileira de bolhas fica aproximadamente em 60% da altura.
-   const y=b.y+b.h*0.60;
-
-   for(let j=0;j<ls.length;j++){
-     const x=start+j*(bubbleW+gap);
-     const p=localInk(gray,x,y,bubbleW*.42);
-     vals.push(p.score);pts.push({x:p.x,y:p.y});
-   }
-
-   const sorted=[...vals].sort((a,b)=>b-a);
-   const max=sorted[0]||0, second=sorted[1]||0;
-   let ans='—',status='Em branco';
-
-   // Centro de bolha vazia contém apenas a letra impressa.
-   // Uma bolha preenchida tem área escura muito maior.
-   if(max>=0.34){
-     const idx=vals.indexOf(max);
-     // Só considera dupla marcação quando duas bolhas têm níveis altos
-     // e próximos; isso reduz falsos positivos causados pelas letras A-E.
-     if(second>=0.86*max && second>=0.34){
-       status='Dupla marcação / revisar';
-     }else{
-       ans=ls[idx];
-       status='Marcada';
-     }
-   }
-
-   out.push({q:i+1,ans,status,vals,pts});
-   raw.push(`Q${String(i+1).padStart(2,'0')}  ${[...ls].map((x,j)=>x+':'+Math.round(vals[j]*100)+'%').join('  ')}  → ${ans}`);
- }
- gray.delete();
- return {answers:out,raw:raw.join('\n')};
-}
 function drawDiagnostic(warp,a){
  let out=new cv.Mat();warp.copyTo(out);
  a.forEach(z=>z.pts.forEach((p,j)=>{
-   const chosen=z.ans===L.slice(0,+na.value||5)[j];
+   const labels=Array.from(L.slice(0,+na.value||5));
+   const chosen=z.ans===labels[j] && z.status==='Marcada';
    cv.circle(out,new cv.Point(Math.round(p.x),Math.round(p.y)),12,
-     chosen?new cv.Scalar(60,190,90,255):new cv.Scalar(60,100,235,255),2)
+     chosen?new cv.Scalar(40,180,80,255):new cv.Scalar(50,100,235,255),2)
  }));
  cv.imshow(diag,out);out.delete();
 }
@@ -1286,7 +1664,7 @@ function renderResults(a,raw){
  let rows=a.map(x=>{let cls='',sit=x.status;if(x.status.startsWith('Dupla')){du++;cls='double'}else if(x.status==='Em branco'){bl++;cls='blank'}else if(x.ans===gabarito[x.q-1]){ac++;cls='correct';sit='✓ Correta'}else{wr++;cls='wrong';sit='✗ Incorreta'}return `<tr><td>${String(x.q).padStart(2,'0')}</td><td class="${cls}">${x.ans}</td><td>${gabarito[x.q-1]||'—'}</td><td class="${cls}">${sit}</td><td>${x.vals.map(z=>Math.round(z*100)+'%').join(' / ')}</td></tr>`}).join('');
  let nota=ac*v;
  results.innerHTML=`<h2>Respostas identificadas</h2><div class="status info"><b>Estudante:</b> ${esc(aluno.value)||'Não informado'} &nbsp; <b>Turma:</b> ${esc(turma.value)||'—'}</div><div class="keyline">${a.map(x=>x.ans).join(' | ')}</div><div class="grid"><div class="status ok">Acertos<br><b>${ac}</b></div><div class="status bad">Erros<br><b>${wr}</b></div><div class="status warn">Brancas<br><b>${bl}</b></div><div class="status warn">Revisar<br><b>${du}</b></div></div><div class="card"><div class="score">${nota.toFixed(1)}</div>Nota — ${ac} acertos × ${v.toFixed(2)}</div><details><summary><b>🔎 Leitura bruta para conferência</b></summary><pre class="raw">${esc(raw)}</pre></details><div style="overflow:auto"><table><thead><tr><th>Questão</th><th>Leitura</th><th>Gabarito</th><th>Situação</th><th>Índice das alternativas</th></tr></thead><tbody>${rows}</tbody></table></div>`;
- saveHistory({data:new Date().toLocaleString('pt-BR'),aluno:aluno.value||'Não informado',turma:turma.value||'—',avaliacao:titulo.value||'Avaliação',codigo:getAssessmentCode(),acertos:ac,erros:wr,brancas:bl,revisar:du,total:a.length,nota:Number(nota.toFixed(2)),respostas:a.map(x=>x.ans),gabarito:[...gabarito],valorPorQuestao:Number(valor.value||1)});
+ saveHistory({data:new Date().toLocaleString('pt-BR'),aluno:aluno.value||'Não informado',turma:turma.value||'—',avaliacao:titulo.value||'Avaliação',codigo:getAssessmentCode(),acertos:ac,erros:wr,brancas:bl,revisar:du,total:a.length,nota:Number(nota.toFixed(2)),respostas:a.map(x=>x.ans)});
  summary.className='status ok';summary.innerHTML=`<b>${esc(aluno.value)||'Estudante'}</b> — ${esc(turma.value)||'Turma não informada'} — ${ac} acertos, ${wr} erros, ${bl} brancas, ${du} para revisar — Nota <b>${nota.toFixed(1)}</b>.`;
 }
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
@@ -1300,11 +1678,14 @@ async function readPhoto(){
   c.width=Math.round(im.naturalWidth*scale);c.height=Math.round(im.naturalHeight*scale);c.getContext('2d').drawImage(im,0,0,c.width,c.height);
   let src=cv.imread(c),m=findMarkers(src);if(!m){src.delete();setStatus('Não encontrei os 4 marcadores. Fotografe o cartão inteiro, sem cortar os cantos.','bad');finish();return}
   setStatus('✓ 4 marcadores encontrados. Corrigindo perspectiva e localizando cada quadro...','info');
-  let warp=(gabarito.length===10?warpCardOMR10(src,m):warpCard(src,m)),r=detectAnswers(warp);ultimaLeitura=r.answers;drawDiagnostic(warp,r.answers);renderResults(r.answers,r.raw);setStatus('✓ Leitura concluída. Confira a sequência e a leitura bruta antes de usar.','ok');src.delete();warp.delete();
+  let warp=warpCard(src,m),r=detectAnswers(warp);ultimaLeitura=r.answers;drawDiagnostic(warp,r.answers);renderResults(r.answers,r.raw);setStatus('✓ Leitura concluída. Confira a sequência e a leitura bruta antes de usar.','ok');src.delete();warp.delete();
  }catch(e){console.error(e);setStatus('Erro na leitura: '+e.message,'bad')}finally{finish()}
 }
 function finish(){busy=false;btnRead.disabled=false}
+
 loadEvaluation();
+renderHistory();
+bindHistoryButtons();
 if(document.getElementById('dataAvaliacao')&&!document.getElementById('dataAvaliacao').value)document.getElementById('dataAvaliacao').value=new Date().toISOString().slice(0,10);
 if(document.getElementById('codigoAvaliacao'))document.getElementById('codigoAvaliacao').value=getAssessmentCode();
 buildKey();
@@ -1321,14 +1702,21 @@ function accessPanel(name){
   document.querySelectorAll(".access-panel").forEach(p=>p.classList.remove("active"));
   const el=document.getElementById("access-"+name);
   if(el)el.classList.add("active");
-  document.getElementById("loginMsg").style.display="none";
-  document.getElementById("requestMsg").style.display="none";
+  const lm=document.getElementById("loginMsg"), rm=document.getElementById("requestMsg");
+  if(lm)lm.style.display="none";
+  if(rm)rm.style.display="none";
+  if(name==="system")setTimeout(()=>document.getElementById("loginEmail")?.focus(),50);
+  if(name==="request")setTimeout(()=>document.getElementById("requestName")?.focus(),50);
 }
 
 function accessMessage(id,msg,type){
   const el=document.getElementById(id);
+  if(!el)return;
   el.textContent=msg;
   el.className="access-msg "+type;
+  el.style.display="block";
+  el.style.visibility="visible";
+  el.style.opacity="1";
 }
 
 async function accessApi(path,options={}){
@@ -1354,82 +1742,103 @@ async function accessApi(path,options={}){
 }
 
 function validEmail(email){
-  return /^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/i.test(email);
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i.test(email);
 }
 
 async function requestAccess(){
-  const name=document.getElementById("requestName").value.trim();
-  const email=document.getElementById("requestEmail").value.trim().toLowerCase();
-  const school=document.getElementById("requestSchool").value.trim();
+  const nameEl=document.getElementById("requestName");
+  const emailEl=document.getElementById("requestEmail");
+  const schoolEl=document.getElementById("requestSchool");
   const btn=document.getElementById("requestBtn");
-
-  // Todos os campos são obrigatórios.
-  if(!name || !email || !school){
-    accessMessage("requestMsg","Todos os campos são obrigatórios. Preencha nome, e-mail e escola.","warn");
-    return;
-  }
-
-  // Validação do formato do e-mail.
-  if(!validEmail(email)){
-    accessMessage("requestMsg","Digite um e-mail válido, por exemplo: professor@escola.com.br","warn");
-    document.getElementById("requestEmail").focus();
-    return;
-  }
-
-  btn.disabled=true;
-  const originalText=btn.textContent;
-  btn.textContent="Enviando...";
-  accessMessage("requestMsg","Enviando sua solicitação...","warn");
-
+  const name=nameEl.value.trim(), email=emailEl.value.trim().toLowerCase(), school=schoolEl.value.trim();
+  [nameEl,emailEl,schoolEl].forEach(el=>{el.style.border="";el.removeAttribute("aria-invalid")});
+  const fail=(el,msg)=>{el.style.border="2px solid #dc2626";el.setAttribute("aria-invalid","true");accessMessage("requestMsg","⚠️ "+msg,"bad");el.focus()};
+  if(!name){fail(nameEl,"Informe seu nome completo.");return}
+  if(name.length<3){fail(nameEl,"Informe um nome completo válido.");return}
+  if(!email){fail(emailEl,"Informe seu e-mail.");return}
+  if(!validEmail(email)){fail(emailEl,"Informe um e-mail válido.");return}
+  if(!school){fail(schoolEl,"Informe o nome da escola.");return}
+  if(school.length<2){fail(schoolEl,"Informe um nome de escola válido.");return}
+  btn.disabled=true; const old=btn.textContent; btn.textContent="Enviando..."; accessMessage("requestMsg","Enviando sua solicitação...","warn");
   try{
-    const d=await accessApi("/api/access/request",{
-      method:"POST",
-      body:JSON.stringify({name,email,school})
-    });
-    accessMessage("requestMsg",d.message||"Solicitação enviada com sucesso. Aguarde a liberação do administrador.","ok");
-  }catch(e){
-    accessMessage("requestMsg",e.message||"Não foi possível enviar a solicitação. Tente novamente.","bad");
-  }finally{
-    btn.disabled=false;
-    btn.textContent=originalText;
-  }
+    await accessApi("/api/access/request",{method:"POST",body:JSON.stringify({name,email,school})});
+    accessMessage("requestMsg","✅ Solicitação de acesso enviada com sucesso. Aguarde liberação.","ok");
+    nameEl.value=""; emailEl.value=""; schoolEl.value="";
+  }catch(e){accessMessage("requestMsg","❌ "+(e.message||"Não foi possível enviar a solicitação. Verifique os dados e tente novamente."),"bad")}
+  finally{btn.disabled=false;btn.textContent=old}
 }
 
-async function checkProfessorAccess(){
-  const email=document.getElementById("loginEmail").value.trim().toLowerCase();
-  if(!email){accessMessage("loginMsg","Informe o e-mail.","warn");return;}
-  const btn=document.getElementById("loginBtn");
-  btn.disabled=true;
+async function checkProfessorAccess(remember=true){
+  const emailEl=document.getElementById("loginEmail"), btn=document.getElementById("loginBtn"), email=(emailEl.value||"").trim().toLowerCase();
+  if(!email){accessMessage("loginMsg","⚠️ Informe o e-mail para acessar o sistema.","bad");emailEl.focus();return false}
+  if(!validEmail(email)){accessMessage("loginMsg","⚠️ Informe um e-mail válido.","bad");emailEl.focus();return false}
+  btn.disabled=true; const old=btn.textContent; btn.textContent="Verificando..."; accessMessage("loginMsg","Verificando seu acesso...","warn");
   try{
-    const d=await accessApi("/api/access/status?email="+encodeURIComponent(email));
-    const row=d.request||d;
-    const status=String(row.status||d.status||"").toUpperCase();
+    const d=await accessApi("/api/access/status?email="+encodeURIComponent(email)), row=d.request||d, status=String(row.status||d.status||"").toUpperCase();
     if(status==="LIBERADO"){
-      localStorage.setItem("newProfCorretorAccessEmail",email);
-      document.getElementById("accessGate").style.display="none";
-      document.getElementById("appShell").style.display="block";
-      try{ if(typeof show==="function") show("inicio"); }catch{}
-    }else if(status==="PENDENTE"){
-      accessMessage("loginMsg","Sua solicitação está aguardando aprovação do administrador.","warn");
-    }else if(status==="BLOQUEADO"){
-      accessMessage("loginMsg","Seu acesso está bloqueado. Procure o administrador.","bad");
-    }else if(status==="EXPIRADO"){
-      accessMessage("loginMsg","Seu período de acesso terminou. Solicite uma renovação ao administrador.","warn");
-    }else if(status==="RECUSADO"){
-      accessMessage("loginMsg","Sua solicitação de acesso foi recusada.","bad");
-    }else{
-      accessMessage("loginMsg","E-mail não encontrado. Use “Solicitar acesso” para cadastrar-se.","warn");
+      if(remember){localStorage.setItem("newProfCorretorAccessEmail",email);localStorage.setItem("newProfCorretorLoggedAt",String(Date.now()));}
+      accessMessage("loginMsg","✅ Acesso autorizado. Abrindo o sistema...","ok");
+      openProfessorApp(email);
+      return true;
+    }else if(status==="PENDENTE") accessMessage("loginMsg","⏳ Sua solicitação está aguardando autorização de acesso.","warn");
+    else if(status==="BLOQUEADO") accessMessage("loginMsg","❌ Seu acesso está bloqueado. Procure o administrador.","bad");
+    else if(status==="EXPIRADO") accessMessage("loginMsg","⚠️ Seu período de acesso terminou. Solicite uma renovação ao administrador.","warn");
+    else if(status==="RECUSADO") accessMessage("loginMsg","❌ Sua solicitação de acesso foi recusada.","bad");
+    else accessMessage("loginMsg","⚠️ E-mail não encontrado. Use “Solicitar acesso” para cadastrar-se.","warn");
+    return false;
+  }catch(e){accessMessage("loginMsg","❌ Não foi possível verificar o acesso. Tente novamente.","bad");return false}
+  finally{btn.disabled=false;btn.textContent=old}
+}
+
+function openProfessorApp(email){
+  const gate=document.getElementById("accessGate"), app=document.getElementById("appShell");
+  if(gate)gate.style.display="none";
+  if(app)app.style.display="block";
+  let info=document.getElementById("loginSessionInfo");
+  if(!info){info=document.createElement("div");info.id="loginSessionInfo";const header=app?.querySelector("header"); if(header) header.appendChild(info);}
+  if(info)info.textContent="👤 Acesso ativo: "+email;
+  try{if(typeof show==="function")show("inicio")}catch{}
+}
+
+async function restoreProfessorSession(){
+  const email=(localStorage.getItem("newProfCorretorAccessEmail")||"").trim().toLowerCase();
+  if(!email || !validEmail(email))return false;
+  try{
+    const d=await accessApi("/api/access/status?email="+encodeURIComponent(email)), row=d.request||d, status=String(row.status||d.status||"").toUpperCase();
+    if(status==="LIBERADO"){
+      localStorage.setItem("newProfCorretorLoggedAt",String(Date.now()));
+      openProfessorApp(email); return true;
+    }
+    if(status==="BLOQUEADO"||status==="EXPIRADO"||status==="RECUSADO"){
+      localStorage.removeItem("newProfCorretorAccessEmail");localStorage.removeItem("newProfCorretorLoggedAt");
+      accessMessage("loginMsg",status==="BLOQUEADO"?"❌ Seu acesso está bloqueado. Procure o administrador.":"⚠️ Seu acesso não está mais liberado. Faça uma nova solicitação ao administrador.",status==="BLOQUEADO"?"bad":"warn");
     }
   }catch(e){
-    accessMessage("loginMsg","Não foi possível verificar o acesso. Tente novamente.","bad");
-  }finally{btn.disabled=false;}
+    // Se a API estiver temporariamente indisponível, mantém a tela de acesso por segurança.
+  }
+  return false;
+}
+
+function logoutProfessor(){
+  localStorage.removeItem("newProfCorretorAccessEmail");
+  localStorage.removeItem("newProfCorretorLoggedAt");
+  const app=document.getElementById("appShell"), gate=document.getElementById("accessGate"), info=document.getElementById("loginSessionInfo");
+  if(app)app.style.display="none";
+  if(info)info.remove();
+  if(gate)gate.style.display="flex";
+  accessPanel("system");
+  const email=document.getElementById("loginEmail"); if(email)email.value="";
+  accessMessage("loginMsg","Você saiu do sistema. Informe seu e-mail para entrar novamente.","info");
 }
 
 function openAdmin(){window.location.href=ADMIN_URL;}
 
-(function(){
-  document.getElementById("appShell").style.display="none";
-  document.getElementById("accessGate").style.display="flex";
+(async function(){
+  const app=document.getElementById("appShell"), gate=document.getElementById("accessGate");
+  if(app)app.style.display="none";
+  if(gate)gate.style.display="flex";
+  const restored=await restoreProfessorSession();
+  if(!restored && gate)gate.style.display="flex";
 })();
 </script>
 
