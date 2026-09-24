@@ -515,7 +515,11 @@ button,input,select,textarea{font:inherit;max-width:100%}
 <header><div class="brand">NEW <span>PROF. CORRETOR</span></div><div class="sub">Corretor Inteligente de Avaliações — OMR</div>
 <nav><button onclick="show('inicio')">🏠 Início</button><button onclick="show('avaliacao')">📝 Avaliação</button><button onclick="show('corrigir')">📷 Corrigir</button><button onclick="show('cartao')">📄 Cartão</button><button onclick="show('resultados')">📊 Resultados</button><button onclick="show('historico')">📚 Histórico</button><button class="logout-btn" onclick="logoutProfessor()">🚪 Sair</button></nav></header>
 <main>
-<section id="inicio" class="page"><div class="card"><h1>NEW PROF. CORRETOR INTELIGENTE</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info"><b>V4.17:</b> Leitor OMR testado com fotografias reais. Histórico local e câmera integrados.<br><br><b>Base preservada:</b> o leitor calcula as posições das bolhas a partir dos próprios quadros das questões. A mesma leitura alimenta diagnóstico, sequência e tabela.</div>
+<section id="inicio" class="page"><div class="card"><h1>NEW PROF. CORRETOR INTELIGENTE</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info">
+<b>V4.17:</b> Leitor OMR testado com fotografias reais. Histórico local e câmera integrados.<br><br>
+<b>Base preservada:</b> o leitor calcula as posições das bolhas a partir dos próprios quadros das questões. A mesma leitura alimenta diagnóstico, sequência e tabela.<br><br>
+<b>Sobre esta versão:</b> Desenvolvido pelo professor <b>New Cristian</b>, o NEW PROF. CORRETOR foi criado como uma ferramenta de suporte ao professor, pensada para tornar a correção e o acompanhamento das avaliações mais práticos, organizados e eficientes. A tecnologia apoia o trabalho docente, mantendo o professor no centro de cada decisão.
+</div>
 <div class="app-guide">
   <h2>📘 Como funciona o NEW PROF. CORRETOR?</h2>
   <p>
@@ -1040,7 +1044,7 @@ function renderHistory(){
     h.map(x=>{
       const idx=all.indexOf(x);
       const safeIdx=idx>=0?idx:-1;
-      return `<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos}/${x.total}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td><td><div class="history-actions"><button type="button" class="history-edit-btn" data-history-edit="${safeIdx}" onclick="window.editHistoryItem(${safeIdx});return false;" aria-label="Editar esta correção">✏️ Editar</button><button type="button" class="history-delete-btn" data-history-delete="${safeIdx}" onclick="window.deleteHistoryItem(${safeIdx});return false;" aria-label="Excluir esta correção">🗑️ Excluir</button></div></td></tr>`;
+      return `<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos}/${x.total}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td><td><div class="history-actions"><button type="button" class="history-edit-btn" data-history-action="edit" data-history-index="${safeIdx}" aria-label="Editar esta correção">✏️ Editar</button><button type="button" class="history-delete-btn" data-history-action="delete" data-history-index="${safeIdx}" aria-label="Excluir esta correção">🗑️ Excluir</button></div></td></tr>`;
     }).join('')+
     '</tbody></table></div>';
   bindHistoryButtons();
@@ -1060,20 +1064,36 @@ function editHistoryItem(index){
   if(!Number.isInteger(index)||index<0||index>=h.length){renderHistory();return}
   const item=h[index]||{};
   editingHistoryIndex=index;
+
   const oldG=Array.isArray(item.gabarito)?item.gabarito:[];
   if(oldG.length) gabarito=[...oldG];
-  const n=gabarito.length||Number(item.total)||10;
-  const alts=Math.max(3,Math.min(5,+document.getElementById('na')?.value||5));
-  manualAnswers=Array.from({length:n},(_,i)=>{const r=Array.isArray(item.respostas)?item.respostas[i]:'';return ['A','B','C','D','E'].slice(0,alts).includes(r)?r:''});
+
+  const n=Math.max(1, oldG.length || Number(item.total) || Number(document.getElementById('nq')?.value)||10);
+  const respostaList=Array.isArray(item.respostas)?item.respostas:[];
+  const maxAlt=respostaList.reduce((m,r)=>Math.max(m,'ABCDE'.indexOf(String(r||'').toUpperCase())+1),0);
+  const gabaritoMax=oldG.reduce((m,r)=>Math.max(m,'ABCDE'.indexOf(String(r||'').toUpperCase())+1),0);
+  const alts=Math.max(3,Math.min(5,Math.max(maxAlt,gabaritoMax,+document.getElementById('na')?.value||5)));
+
+  const nqEl=document.getElementById('nq');
+  const naEl=document.getElementById('na');
+  if(nqEl)nqEl.value=String(n);
+  if(naEl)naEl.value=String(alts);
+
+  manualAnswers=Array.from({length:n},(_,i)=>{
+    const r=String(respostaList[i]||'').toUpperCase();
+    return ['A','B','C','D','E'].slice(0,alts).includes(r)?r:'';
+  });
+
   if(document.getElementById('aluno')) document.getElementById('aluno').value=item.aluno&&item.aluno!=='Não informado'?item.aluno:'';
   if(document.getElementById('turma')) document.getElementById('turma').value=item.turma&&item.turma!=='—'?item.turma:'';
   if(document.getElementById('titulo')) document.getElementById('titulo').value=item.avaliacao||'Avaliação';
+
   show('corrigir');
   setCorrectionMode('marcacao');
+
   const st=document.getElementById('manualStatus');
   if(st){st.className='status info';st.textContent='✏️ Editando esta correção. Ajuste as alternativas e clique em “Corrigir marcações” para salvar.'}
 }
-
 function deleteHistoryItem(index){
   const h=getHistory();
   index=Number(index);
@@ -1103,20 +1123,23 @@ window.renderHistory = renderHistory;
 function bindHistoryButtons(){
   const box=document.getElementById('historyList');
   if(!box)return;
-  box.querySelectorAll('[data-history-edit]').forEach(btn=>{
-    btn.addEventListener('click',function(ev){
+
+  // Listener único e delegado: continua funcionando após a tabela ser reconstruída
+  // e evita problemas de escopo em celular/PWA.
+  if(!box.dataset.historyActionsBound){
+    box.dataset.historyActionsBound='1';
+    box.addEventListener('click',function(ev){
+      const btn=ev.target.closest('[data-history-action]');
+      if(!btn || !box.contains(btn)) return;
       ev.preventDefault();
       ev.stopPropagation();
-      window.editHistoryItem(Number(this.getAttribute('data-history-edit')));
-    },{passive:false});
-  });
-  box.querySelectorAll('[data-history-delete]').forEach(btn=>{
-    btn.addEventListener('click',function(ev){
-      ev.preventDefault();
-      ev.stopPropagation();
-      window.deleteHistoryItem(Number(this.getAttribute('data-history-delete')));
-    },{passive:false});
-  });
+      const index=Number(btn.getAttribute('data-history-index'));
+      if(!Number.isInteger(index)||index<0)return;
+      if(btn.getAttribute('data-history-action')==='edit') editHistoryItem(index);
+      else if(btn.getAttribute('data-history-action')==='delete') deleteHistoryItem(index);
+    },true);
+  }
+
   const clear=document.getElementById('btnClearHistory');
   if(clear && !clear.dataset.bound){
     clear.dataset.bound='1';
@@ -1124,7 +1147,7 @@ function bindHistoryButtons(){
       ev.preventDefault();
       ev.stopPropagation();
       clearHistory();
-    },{passive:false});
+    },true);
   }
 }
 
