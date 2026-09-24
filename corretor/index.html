@@ -1044,7 +1044,7 @@ function renderHistory(){
     h.map(x=>{
       const idx=all.indexOf(x);
       const safeIdx=idx>=0?idx:-1;
-      return `<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos}/${x.total}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td><td><div class="history-actions"><button type="button" class="history-edit-btn" data-history-index="${safeIdx}" aria-label="Editar esta correção" onclick="return window.__NEW_HIST_EDIT(${safeIdx});">✏️ Editar</button><button type="button" class="history-delete-btn" data-history-index="${safeIdx}" aria-label="Excluir esta correção" onclick="return window.__NEW_HIST_DELETE(${safeIdx});">🗑️ Excluir</button></div></td></tr>`;
+      return `<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos}/${x.total}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td><td><div class="history-actions"><button type="button" class="history-edit-btn" data-history-index="${safeIdx}" data-history-action="edit" aria-label="Editar esta correção">✏️ Editar</button><button type="button" class="history-delete-btn" data-history-index="${safeIdx}" data-history-action="delete" aria-label="Excluir esta correção">🗑️ Excluir</button></div></td></tr>`;
     }).join('')+
     '</tbody></table></div>';
   bindHistoryButtons();
@@ -1908,18 +1908,183 @@ function openAdmin(){window.location.href=ADMIN_URL;}
 <div id="historyEditModal" aria-hidden="true"><div class="hem-box"><h2 style="margin-top:0">✏️ Editar correção</h2><p style="color:#475569">Altere os dados ou as marcações desta correção. O registro original será atualizado.</p><div class="hem-grid"><label>Estudante<input id="hemAluno" type="text"></label><label>Turma<input id="hemTurma" type="text"></label><label style="grid-column:1/-1">Avaliação<input id="hemAvaliacao" type="text"></label></div><div id="hemQuestions"></div><div class="hem-actions"><button type="button" class="hem-close" id="hemClose">Fechar</button><button type="button" class="hem-save" id="hemSave">💾 Salvar alteração</button></div></div></div>
 <script>
 (function(){
- let idx=-1,ans=[];
- const read=()=>{try{const a=JSON.parse(localStorage.getItem('newCorretorHistorico')||'[]');return Array.isArray(a)?a:[]}catch(e){return[]}};
- const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- function openEdit(i){const h=read();i=Number(i);if(!Number.isInteger(i)||i<0||i>=h.length)return;idx=i;const x=h[i]||{};ans=Array.isArray(x.respostas)?x.respostas.slice():[];document.getElementById('hemAluno').value=x.aluno&&x.aluno!=='Não informado'?x.aluno:'';document.getElementById('hemTurma').value=x.turma&&x.turma!=='—'?x.turma:'';document.getElementById('hemAvaliacao').value=x.avaliacao||'';const gab=Array.isArray(x.gabarito)?x.gabarito:[],total=Math.max(Number(x.total)||ans.length,gab.length);let html='';for(let q=0;q<total;q++){const cur=String(ans[q]||'').toUpperCase();html+='<div class="hem-q"><b>Questão '+(q+1)+'</b> <span style="color:#64748b">Gabarito: '+esc(gab[q]||'—')+'</span><div class="hem-opts">';['A','B','C','D','E'].forEach(a=>{html+='<button type="button" class="'+(cur===a?'sel':'')+'" data-q="'+q+'" data-a="'+a+'" onclick="return window.__NEW_HIST_EDIT_CHOICE(this);">'+a+'</button>'});html+='<button type="button" class="'+(!cur?'sel':'')+'" data-q="'+q+'" data-a="" onclick="return window.__NEW_HIST_EDIT_CHOICE(this);">Em branco</button></div></div>'}document.getElementById('hemQuestions').innerHTML=html||'<div class="status info">Esta correção não possui respostas editáveis.</div>';document.getElementById('historyEditModal').style.display='flex'}
- function closeEdit(){document.getElementById('historyEditModal').style.display='none';idx=-1}
- function saveEdit(){if(idx<0)return;const h=read();const x=h[idx];if(!x)return;const gab=Array.isArray(x.gabarito)?x.gabarito:[],total=Math.max(Number(x.total)||ans.length,gab.length);let ac=0,er=0,br=0;for(let q=0;q<total;q++){const r=String(ans[q]||'').toUpperCase(),g=String(gab[q]||'').toUpperCase();if(!r)br++;else if(g&&r===g)ac++;else er++}x.aluno=document.getElementById('hemAluno').value.trim()||'Não informado';x.turma=document.getElementById('hemTurma').value.trim()||'—';x.avaliacao=document.getElementById('hemAvaliacao').value.trim()||'Avaliação';x.respostas=ans.slice(0,total);x.acertos=ac;x.erros=er;x.brancas=br;x.total=total;x.nota=Number((ac*Number(x.valorPorQuestao||1)).toFixed(1));x.revisar=0;localStorage.setItem('newCorretorHistorico',JSON.stringify(h));closeEdit();if(typeof renderHistory==='function')renderHistory()}
- window.__NEW_HIST_EDIT=function(i){openEdit(i);return false};
- window.__NEW_HIST_DELETE=function(i){const h=read();i=Number(i);if(!Number.isInteger(i)||i<0||i>=h.length)return false;h.splice(i,1);if(h.length)localStorage.setItem('newCorretorHistorico',JSON.stringify(h));else localStorage.removeItem('newCorretorHistorico');if(typeof renderHistory==='function')renderHistory();return false};
- window.__NEW_HIST_EDIT_CHOICE=function(btn){const q=Number(btn.getAttribute('data-q'));ans[q]=btn.getAttribute('data-a')||'';document.querySelectorAll('#hemQuestions button[data-q="'+q+'"]').forEach(b=>b.classList.toggle('sel',b===btn));return false};
- document.getElementById('hemClose').addEventListener('click',function(){closeEdit()});
- document.getElementById('hemSave').addEventListener('click',function(){saveEdit()});
- document.getElementById('historyEditModal').addEventListener('click',function(e){if(e.target===this)closeEdit()});
+  let editIndex = -1;
+  let editAnswers = [];
+
+  function historyRead(){
+    try{
+      const value = JSON.parse(localStorage.getItem('newCorretorHistorico') || '[]');
+      return Array.isArray(value) ? value : [];
+    }catch(e){ return []; }
+  }
+
+  function historyWrite(list){
+    if(list.length) localStorage.setItem('newCorretorHistorico', JSON.stringify(list));
+    else localStorage.removeItem('newCorretorHistorico');
+  }
+
+  function escapeHtml(value){
+    return String(value ?? '').replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  function openEditor(index){
+    const list = historyRead();
+    index = Number(index);
+    if(!Number.isInteger(index) || index < 0 || index >= list.length){
+      alert('Não foi possível localizar esta correção.');
+      return false;
+    }
+
+    const item = list[index] || {};
+    editIndex = index;
+    editAnswers = Array.isArray(item.respostas) ? item.respostas.slice() : [];
+
+    const gabarito = Array.isArray(item.gabarito) ? item.gabarito : [];
+    const total = Math.max(Number(item.total)||0, editAnswers.length, gabarito.length);
+    const alternatives = ['A','B','C','D','E'];
+
+    document.getElementById('hemAluno').value = item.aluno && item.aluno !== 'Não informado' ? item.aluno : '';
+    document.getElementById('hemTurma').value = item.turma && item.turma !== '—' ? item.turma : '';
+    document.getElementById('hemAvaliacao').value = item.avaliacao || '';
+
+    let html = '';
+    for(let q=0; q<total; q++){
+      const current = String(editAnswers[q] || '').toUpperCase();
+      html += '<div class="hem-q"><b>Questão '+(q+1)+'</b>';
+      html += ' <span style="color:#64748b">Gabarito: '+escapeHtml(gabarito[q] || '—')+'</span>';
+      html += '<div class="hem-opts">';
+      alternatives.forEach(function(letter){
+        html += '<button type="button" data-edit-q="'+q+'" data-edit-a="'+letter+'" class="'+(current===letter?'sel':'')+'">'+letter+'</button>';
+      });
+      html += '<button type="button" data-edit-q="'+q+'" data-edit-a="" class="'+(!current?'sel':'')+'">Em branco</button>';
+      html += '</div></div>';
+    }
+
+    document.getElementById('hemQuestions').innerHTML = html || '<div class="status info">Esta correção não possui respostas para editar.</div>';
+    const modal = document.getElementById('historyEditModal');
+    modal.style.display = 'flex';
+    modal.setAttribute('aria-hidden','false');
+    return false;
+  }
+
+  function closeEditor(){
+    const modal = document.getElementById('historyEditModal');
+    if(modal){ modal.style.display='none'; modal.setAttribute('aria-hidden','true'); }
+    editIndex = -1;
+    editAnswers = [];
+  }
+
+  function saveEditor(){
+    if(editIndex < 0) return false;
+    const list = historyRead();
+    if(editIndex >= list.length){
+      alert('Não foi possível localizar esta correção.');
+      closeEditor();
+      return false;
+    }
+
+    const item = Object.assign({}, list[editIndex]);
+    const gabarito = Array.isArray(item.gabarito) ? item.gabarito : [];
+    const total = Math.max(Number(item.total)||0, editAnswers.length, gabarito.length);
+    let acertos=0, erros=0, brancas=0;
+
+    for(let q=0; q<total; q++){
+      const resposta = String(editAnswers[q] || '').toUpperCase();
+      const correta = String(gabarito[q] || '').toUpperCase();
+      if(!resposta) brancas++;
+      else if(correta && resposta===correta) acertos++;
+      else erros++;
+    }
+
+    item.aluno = document.getElementById('hemAluno').value.trim() || 'Não informado';
+    item.turma = document.getElementById('hemTurma').value.trim() || '—';
+    item.avaliacao = document.getElementById('hemAvaliacao').value.trim() || 'Avaliação';
+    item.respostas = editAnswers.slice(0,total);
+    item.total = total;
+    item.acertos = acertos;
+    item.erros = erros;
+    item.brancas = brancas;
+    item.revisar = 0;
+    item.nota = Number((acertos * Number(item.valorPorQuestao || 1)).toFixed(1));
+    item.editadoEm = new Date().toLocaleString('pt-BR');
+
+    list[editIndex] = item;
+    try{
+      historyWrite(list);
+      closeEditor();
+      if(typeof window.renderHistory === 'function') window.renderHistory();
+      else if(typeof renderHistory === 'function') renderHistory();
+      return false;
+    }catch(e){
+      alert('Não foi possível salvar a alteração neste aparelho.');
+      return false;
+    }
+  }
+
+  function deleteOne(index){
+    const list = historyRead();
+    index = Number(index);
+    if(!Number.isInteger(index) || index<0 || index>=list.length){
+      alert('Não foi possível localizar esta correção.');
+      return false;
+    }
+    list.splice(index,1);
+    try{
+      historyWrite(list);
+      if(typeof window.renderHistory === 'function') window.renderHistory();
+      else if(typeof renderHistory === 'function') renderHistory();
+      return false;
+    }catch(e){
+      alert('Não foi possível excluir a correção neste aparelho.');
+      return false;
+    }
+  }
+
+  window.__NEW_HIST_EDIT = openEditor;
+  window.__NEW_HIST_DELETE = deleteOne;
+
+  // Usa addEventListener em vez de onclick inline. Isso é importante porque
+  // a página pode estar sob uma política CSP que bloqueia handlers inline.
+  document.addEventListener('click', function(event){
+    const historyButton = event.target.closest && event.target.closest('[data-history-action]');
+    if(historyButton){
+      event.preventDefault();
+      event.stopPropagation();
+      const index = Number(historyButton.getAttribute('data-history-index'));
+      const action = historyButton.getAttribute('data-history-action');
+      if(action === 'edit') openEditor(index);
+      else if(action === 'delete') deleteOne(index);
+      return;
+    }
+    const choice = event.target.closest && event.target.closest('#hemQuestions [data-edit-q]');
+    if(choice){
+      event.preventDefault();
+      const q = Number(choice.getAttribute('data-edit-q'));
+      const a = choice.getAttribute('data-edit-a') || '';
+      if(Number.isInteger(q)){
+        editAnswers[q] = a;
+        document.querySelectorAll('#hemQuestions [data-edit-q="'+q+'"]').forEach(function(btn){
+          btn.classList.toggle('sel', btn===choice);
+        });
+      }
+      return;
+    }
+
+    if(event.target.closest && event.target.closest('#hemSave')){
+      event.preventDefault();
+      saveEditor();
+      return;
+    }
+    if(event.target.closest && event.target.closest('#hemClose')){
+      event.preventDefault();
+      closeEditor();
+      return;
+    }
+    const modal=document.getElementById('historyEditModal');
+    if(modal && event.target===modal) closeEditor();
+  });
 })();
 </script>
 </body></html>
