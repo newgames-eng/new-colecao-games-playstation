@@ -516,7 +516,7 @@ button,input,select,textarea{font:inherit;max-width:100%}
 <nav><button onclick="show('inicio')">🏠 Início</button><button onclick="show('avaliacao')">📝 Avaliação</button><button onclick="show('corrigir')">📷 Corrigir</button><button onclick="show('cartao')">📄 Cartão</button><button onclick="show('resultados')">📊 Resultados</button><button onclick="show('historico')">📚 Histórico</button><button class="logout-btn" onclick="logoutProfessor()">🚪 Sair</button></nav></header>
 <main>
 <section id="inicio" class="page"><div class="card"><h1>NEW PROF. CORRETOR INTELIGENTE</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info">
-<b>V4.17:</b> Leitor OMR testado com fotografias reais. Histórico local e câmera integrados.<br><br>
+<b>V28:</b> Leitor OMR testado com fotografias reais. Histórico local e câmera integrados.<br><br>
 <b>Base preservada:</b> o leitor calcula as posições das bolhas a partir dos próprios quadros das questões. A mesma leitura alimenta diagnóstico, sequência e tabela.<br><br>
 <b>Sobre esta versão:</b> Desenvolvido pelo professor <b>New Cristian</b>, o NEW PROF. CORRETOR foi criado como uma ferramenta de suporte ao professor, pensada para tornar a correção e o acompanhamento das avaliações mais práticos, organizados e eficientes, mantendo o professor no centro das decisões pedagógicas.<br><br>
 </div>
@@ -1037,14 +1037,18 @@ function renderHistory(){
   const box=document.getElementById('historyList'); if(!box)return;
   const busca=(document.getElementById('histBusca')?.value||'').toLowerCase().trim();
   const av=(document.getElementById('histAvaliacao')?.value||'').toLowerCase().trim();
-  const h=getHistory().filter(x=>(!busca||`${x.aluno} ${x.turma}`.toLowerCase().includes(busca))&&(!av||(x.avaliacao||'').toLowerCase().includes(av)));
-  if(!h.length){box.innerHTML='<div class="status info">Nenhuma correção encontrada.</div>'; bindHistoryButtons(); return}
+  // IMPORTANTE: getHistory() faz JSON.parse a cada chamada, portanto os objetos
+  // retornados em duas chamadas diferentes não possuem a mesma identidade.
+  // A versão anterior usava all.indexOf(x), gerando -1 e quebrando Editar/Excluir.
   const all=getHistory();
+  const visible=all.map((x,index)=>({x,index})).filter(({x})=>
+    (!busca||`${x.aluno||''} ${x.turma||''}`.toLowerCase().includes(busca)) &&
+    (!av||(x.avaliacao||'').toLowerCase().includes(av))
+  );
+  if(!visible.length){box.innerHTML='<div class="status info">Nenhuma correção encontrada.</div>'; bindHistoryButtons(); return}
   box.innerHTML='<div class="history-table-wrap"><table><thead><tr><th>Data</th><th>Estudante</th><th>Turma</th><th>Avaliação</th><th>Acertos</th><th>Nota</th><th>Ação</th></tr></thead><tbody>'+
-    h.map(x=>{
-      const idx=all.indexOf(x);
-      const safeIdx=idx>=0?idx:-1;
-      return `<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos}/${x.total}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td><td><div class="history-actions"><button type="button" class="history-edit-btn" data-history-index="${safeIdx}" data-history-action="edit" aria-label="Editar esta correção">✏️ Editar</button><button type="button" class="history-delete-btn" data-history-index="${safeIdx}" data-history-action="delete" aria-label="Excluir esta correção">🗑️ Excluir</button></div></td></tr>`;
+    visible.map(({x,index})=>{
+      return `<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos}/${x.total}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td><td><div class="history-actions"><button type="button" class="history-edit-btn" data-history-index="${index}" data-history-action="edit" aria-label="Editar esta correção">✏️ Editar</button><button type="button" class="history-delete-btn" data-history-index="${index}" data-history-action="delete" aria-label="Excluir esta correção">🗑️ Excluir</button></div></td></tr>`;
     }).join('')+
     '</tbody></table></div>';
   bindHistoryButtons();
