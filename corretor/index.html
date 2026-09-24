@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>New Prof. Corretor Inteligente de Avaliações</title>
-<!-- V16: OMR determinístico com geometria sincronizada ao PDF A4 por coordenadas fixas + recorte + histórico com exclusão individual -->
+<!-- V18: duas modalidades de correção — por imagem e por marcação manual; base OMR V17 preservada -->
 <script async src="https://docs.opencv.org/4.x/opencv.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -156,6 +156,24 @@ flex-wrap:nowrap;
  .a4-wrap{width:100%;overflow-x:auto;margin-left:0;margin-right:0}
 }
 
+
+.correction-modes{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:14px 0 16px}
+.correction-mode{border:1px solid #cbd5e1;border-radius:11px;padding:13px 12px;background:#e8eef7;color:#17345d;font-weight:900;font-size:15px;cursor:pointer}
+.correction-mode.active{background:#1764e8;color:#fff;border-color:#1764e8}
+.manual-correction-grid{margin-top:12px;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.manual-correction-grid .qbox{padding:10px}
+.manual-correction-grid .qopts{justify-content:center;gap:7px}
+.manual-correction-grid .qopts button{width:38px;height:38px;font-size:15px;font-weight:900}
+.manual-correction-grid .qopts button.sel{background:#16a34a;color:#fff;border-color:#15803d}
+.manual-correction-grid .qbox.manual-empty{border-color:#f59e0b}
+@media(max-width:600px){
+ .correction-modes{grid-template-columns:1fr 1fr;gap:7px}
+ .correction-mode{padding:10px 7px;font-size:12px;min-height:48px}
+ .manual-correction-grid{grid-template-columns:1fr;gap:7px}
+ .manual-correction-grid .qbox{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px}
+ .manual-correction-grid .qopts{margin-top:0;gap:5px;flex-shrink:0}
+ .manual-correction-grid .qopts button{width:36px;height:36px}
+}
 .photo-picker{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}
 .picker-button{display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:12px 16px;border-radius:10px}
 .file-hidden{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
@@ -522,7 +540,7 @@ button,input,select,textarea{font:inherit;max-width:100%}
 
     <div class="guide-item">
       <div class="guide-title">📷 Corrigir</div>
-      <p>Informe o estudante e a turma e selecione ou fotografe o cartão-resposta preenchido. O sistema analisa a imagem, identifica as alternativas marcadas e compara cada resposta com o gabarito.</p>
+      <p>Escolha <b>Correção por imagem</b> para ler o cartão fotografado ou <b>Correção por marcação</b> para selecionar manualmente as respostas do estudante.</p>
     </div>
 
     <div class="guide-item">
@@ -626,20 +644,38 @@ Selecione uma alternativa em cada questão. A alternativa selecionada ficará ma
 </section>
 
 <section id="corrigir" class="page hidden"><div class="card">
-<h2>📷 Corrigir cartão</h2>
-<p>Informe o estudante e abra a <b>galeria, câmera ou arquivos</b> do aparelho para escolher a foto do cartão inteiro.</p>
-<div class="grid"><label>Nome do estudante<input id="aluno" placeholder="Nome completo"></label><label>Turma<input id="turma" placeholder="Ex.: 5º A"></label></div>
+<h2>✏️ Correção</h2>
+<p>Escolha como deseja corrigir o cartão-resposta: <b>por imagem</b> ou <b>por marcação manual</b>.</p>
 
-<div class="photo-picker direct-photo-picker">
-  <label for="photo" class="primary picker-button">📷 Tirar foto / escolher imagem</label>
-  <input id="photo" type="file" accept="image/*" class="file-hidden">
-  <div id="photoName" class="file-name">Ao selecionar a foto, a correção será iniciada automaticamente.</div>
+<div class="correction-modes" role="tablist" aria-label="Modo de correção">
+  <button id="modeImageBtn" type="button" class="correction-mode active" onclick="setCorrectionMode('imagem')">📷 Correção por imagem</button>
+  <button id="modeManualBtn" type="button" class="correction-mode" onclick="setCorrectionMode('marcacao')">✏️ Correção por marcação</button>
 </div>
 
-<div class="small">No celular, o seletor do próprio aparelho poderá oferecer <b>Câmera</b>, <b>Fotos/Galeria</b> e <b>Arquivos</b>, inclusive serviços de nuvem disponíveis no aparelho. No computador, será aberto o seletor de arquivos.</div>
+<div class="grid"><label>Nome do estudante<input id="aluno" placeholder="Nome completo"></label><label>Turma<input id="turma" placeholder="Ex.: 5º A"></label></div>
 
-<div class="actions"><button id="btnRead" type="button" class="primary" onclick="readPhoto()">🔎 Corrigir cartão</button><button type="button" class="secondary" onclick="resetRead()">Limpar</button></div>
-<div id="readStatus" class="status info">Aguardando fotografia.</div><canvas id="diag" class="preview"></canvas><div id="results"></div>
+<div id="correcaoImagemPanel">
+  <h3>📷 Correção por imagem</h3>
+  <p>Fotografe ou selecione o cartão-resposta preenchido. O sistema fará o alinhamento e a leitura automática.</p>
+  <div class="photo-picker direct-photo-picker">
+    <label for="photo" class="primary picker-button">📷 Tirar foto / escolher imagem</label>
+    <input id="photo" type="file" accept="image/*" class="file-hidden">
+    <div id="photoName" class="file-name">Ao selecionar a foto, a correção será iniciada automaticamente.</div>
+  </div>
+  <div class="small">No celular, o seletor poderá oferecer <b>Câmera</b>, <b>Fotos/Galeria</b> e <b>Arquivos</b>. No computador, será aberto o seletor de arquivos.</div>
+  <div class="actions"><button id="btnRead" type="button" class="primary" onclick="readPhoto()">🔎 Corrigir por imagem</button><button type="button" class="secondary" onclick="resetRead()">Limpar</button></div>
+  <div id="readStatus" class="status info">Aguardando fotografia.</div><canvas id="diag" class="preview"></canvas>
+</div>
+
+<div id="correcaoMarcacaoPanel" class="hidden">
+  <h3>✏️ Correção por marcação</h3>
+  <p>Marque manualmente as respostas do estudante. O funcionamento é igual ao gabarito da configuração da avaliação.</p>
+  <div id="manualCorrectionKey" class="qgrid manual-correction-grid"></div>
+  <div class="actions"><button type="button" class="primary" onclick="finishManualCorrection()">✅ Corrigir marcações</button><button type="button" class="secondary" onclick="resetManualCorrection()">Limpar marcações</button></div>
+  <div id="manualStatus" class="status info">Marque uma alternativa em cada questão. Questões sem marcação serão consideradas em branco.</div>
+</div>
+
+<div id="results"></div>
 </div></section>
 
 <section id="resultados" class="page hidden"><div class="card"><h2>📊 Resultado</h2><div id="summary" class="status info">Nenhuma correção realizada nesta sessão.</div></div></section>
@@ -686,12 +722,72 @@ photo.addEventListener('change',async()=>{
   }
 });
 
+let correctionMode='imagem';
+let manualAnswers=[];
+
+function setCorrectionMode(mode){
+  correctionMode=mode==='marcacao'?'marcacao':'imagem';
+  const imgPanel=document.getElementById('correcaoImagemPanel');
+  const manualPanel=document.getElementById('correcaoMarcacaoPanel');
+  const ib=document.getElementById('modeImageBtn');
+  const mb=document.getElementById('modeManualBtn');
+  if(imgPanel)imgPanel.classList.toggle('hidden',correctionMode!=='imagem');
+  if(manualPanel)manualPanel.classList.toggle('hidden',correctionMode!=='marcacao');
+  if(ib)ib.classList.toggle('active',correctionMode==='imagem');
+  if(mb)mb.classList.toggle('active',correctionMode==='marcacao');
+  if(correctionMode==='marcacao')buildManualCorrection();
+}
+
+function buildManualCorrection(){
+  const box=document.getElementById('manualCorrectionKey');
+  if(!box)return;
+  const n=Math.max(1,Math.min(50,+document.getElementById('nq')?.value||gabarito.length||10));
+  const alts=Math.max(3,Math.min(5,+document.getElementById('na')?.value||5));
+  const ls=Array.from(L.slice(0,alts));
+  if(!Array.isArray(manualAnswers)||manualAnswers.length!==n){
+    const old=Array.isArray(manualAnswers)?manualAnswers:[];
+    manualAnswers=Array.from({length:n},(_,i)=>old[i]&&ls.includes(old[i])?old[i]:'');
+  }
+  box.innerHTML=manualAnswers.map((v,i)=>`<div class="qbox ${v?'':'manual-empty'}"><b style="font-size:12px">QUESTÃO ${String(i+1).padStart(2,'0')}</b><div class="qopts">${ls.map(x=>`<button type="button" class="${v===x?'sel':''}" data-manual-q="${i}" data-manual-a="${x}" aria-label="Questão ${i+1}, alternativa ${x}">${x}</button>`).join('')}</div></div>`).join('');
+  box.querySelectorAll('[data-manual-q]').forEach(btn=>btn.addEventListener('click',()=>{
+    const i=Number(btn.dataset.manualQ),x=btn.dataset.manualA;
+    manualAnswers[i]=x;
+    buildManualCorrection();
+  }));
+}
+
+function resetManualCorrection(){
+  const n=Math.max(1,Math.min(50,+document.getElementById('nq')?.value||gabarito.length||10));
+  manualAnswers=Array(n).fill('');
+  buildManualCorrection();
+  const st=document.getElementById('manualStatus');
+  if(st){st.className='status info';st.textContent='Marque uma alternativa em cada questão. Questões sem marcação serão consideradas em branco.'}
+}
+
+function finishManualCorrection(){
+  if(!Array.isArray(gabarito)||!gabarito.length){
+    const st=document.getElementById('manualStatus');
+    if(st){st.className='status warn';st.textContent='Configure e salve a avaliação com o gabarito antes de corrigir.'}
+    return;
+  }
+  const n=gabarito.length;
+  if(!Array.isArray(manualAnswers)||manualAnswers.length!==n)buildManualCorrection();
+  const answers=Array.from({length:n},(_,i)=>manualAnswers[i]||'—');
+  const alts=Math.max(3,Math.min(5,+document.getElementById('na')?.value||5));
+  const labels=Array.from(L.slice(0,alts));
+  const a=answers.map((ans,i)=>({q:i+1,ans,status:ans==='—'?'Em branco':'Marcada',vals:labels.map(x=>ans===x?1:0),pts:[]}));
+  renderResults(a,'Correção por marcação manual.\n'+a.map(x=>`Q${String(x.q).padStart(2,'0')} → ${x.ans}`).join('  '));
+  const st=document.getElementById('manualStatus');
+  if(st){st.className='status ok';st.textContent='✓ Correção por marcação concluída e salva no histórico.'}
+}
+
 const L='ABCDE';
 
 function show(id){
   document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));
   document.getElementById(id).classList.remove('hidden');
   if(id==='avaliacao'){buildKey()}
+  if(id==='corrigir'){buildManualCorrection();setCorrectionMode(correctionMode)}
   if(id==='cartao'){syncCardFromAssessment();updateStudentFields();renderCard()}
   if(id==='historico'){renderHistory()}
 }
@@ -727,6 +823,7 @@ function buildKey(){
     key.appendChild(d);
   });
   syncCardFromAssessment();
+  if(document.getElementById('manualCorrectionKey')) buildManualCorrection();
 }
 function setKey(i,x){gabarito[i]=x;buildKey()}
 function saveEvaluation(){
