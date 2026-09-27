@@ -456,6 +456,12 @@ button,input,select,textarea{font:inherit;max-width:100%}
   .history-delete-btn{width:100%!important;padding:10px!important;font-size:13px!important}
 }
 </style>
+
+<style>
+.dashboard-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}.dash-card{border:1px solid #d7e1ee;border-radius:12px;padding:13px;background:#fff;box-shadow:0 3px 10px rgba(30,60,100,.05);display:grid;grid-template-columns:auto 1fr;column-gap:9px;align-items:center}.dash-card span{grid-row:1/3;font-size:24px}.dash-card b{font-size:22px;color:#1857c7}.dash-card small{color:#64748b}.dashboard-card{border:1px solid #d7e1ee;border-radius:12px;padding:14px;background:#f8fbff;margin-bottom:18px}.dashboard-card h3{margin-top:0}.recent-item{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #e5ebf3}.recent-item:last-child{border-bottom:0}.recent-main b{display:block}.recent-main small{color:#64748b}.recent-note{font-weight:800;color:#1857c7}.more-menu{position:fixed;top:72px;right:16px;z-index:9998;background:#fff;border:1px solid #cbd5e1;border-radius:12px;box-shadow:0 15px 40px rgba(0,0,0,.2);padding:7px;display:none;min-width:220px}.more-menu.show{display:block}.more-menu button{display:block;width:100%;text-align:left;background:#fff;border:0;border-radius:8px;padding:11px 12px;font-weight:700;cursor:pointer}.more-menu button:hover{background:#eef4ff}.analysis-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.analysis-box{background:#f8fbff;border:1px solid #d7e1ee;border-radius:10px;padding:11px}.analysis-box b{font-size:20px;color:#1857c7;display:block}.analysis-question{border:1px solid #d7e1ee;border-radius:10px;padding:10px;margin:8px 0}.analysis-bar{height:12px;background:#e5ebf3;border-radius:999px;overflow:hidden;margin:7px 0}.analysis-fill{height:100%;background:#d62828;border-radius:999px}.analysis-meta{display:flex;justify-content:space-between;gap:10px;font-size:13px}.student-row,.class-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px;border:1px solid #d7e1ee;border-radius:10px;margin-top:8px;background:#fff}.student-row small,.class-row small{color:#64748b}.row-actions{display:flex;gap:6px;flex-wrap:wrap}.row-actions button{border:0;border-radius:7px;padding:7px 9px;font-weight:700;cursor:pointer}.btn-gray{background:#6c757d;color:#fff}.btn-red{background:#d62828;color:#fff}.report-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.report-card{border:1px solid #d7e1ee;background:#fff;border-radius:12px;padding:16px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:7px}.report-card b{font-size:26px}.report-card span{font-size:17px;font-weight:800}.report-card small{color:#64748b;line-height:1.4}.file-backup-label{display:inline-flex;align-items:center;justify-content:center;background:#e8eef7;color:#183153;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer}.file-hidden{display:none!important}
+@media(max-width:850px){.dashboard-grid{grid-template-columns:repeat(2,1fr)}.report-grid{grid-template-columns:1fr}.analysis-summary{grid-template-columns:1fr 1fr}.more-menu{top:112px;right:9px}}
+@media(max-width:600px){.dashboard-grid{grid-template-columns:1fr 1fr}.dash-card{padding:10px}.dash-card b{font-size:18px}.dash-card small{font-size:11px}.student-row,.class-row{align-items:flex-start;flex-direction:column}.row-actions{width:100%}.row-actions button{flex:1}.analysis-summary{grid-template-columns:1fr}.more-menu{position:absolute;top:105px;left:9px;right:9px}}
+</style>
 </head>
 <body><button id="installAppBtn" type="button" aria-label="Instalar aplicativo">📲 Instalar aplicativo</button>
 <div id="installHelp" role="dialog" aria-live="polite" aria-label="Instalação do aplicativo"></div>
@@ -513,12 +519,27 @@ button,input,select,textarea{font:inherit;max-width:100%}
 <div id="appShell">
 
 <header><div class="brand">NEW <span>PROF. CORRETOR</span></div><div class="sub">Corretor Inteligente de Avaliações — OMR</div>
-<nav><button onclick="show('inicio')">🏠 Início</button><button onclick="show('avaliacao')">📝 Avaliação</button><button onclick="show('corrigir')">📷 Corrigir</button><button onclick="show('cartao')">📄 Cartão</button><button onclick="show('resultados')">📊 Resultados</button><button onclick="show('historico')">📚 Histórico</button><button class="logout-btn" onclick="logoutProfessor()">🚪 Sair</button></nav></header>
+<nav><button onclick="show('inicio')">🏠 Início</button><button onclick="show('avaliacao')">📝 Avaliação</button><button onclick="show('corrigir')">📷 Corrigir</button><button onclick="show('cartao')">📄 Cartão</button><button onclick="show('resultados')">📊 Resultados</button><button onclick="show('historico')">📚 Histórico</button><button id="moreMenuBtn" type="button" onclick="toggleMoreMenu()">☰ Mais</button><button class="logout-btn" onclick="logoutProfessor()">🚪 Sair</button></nav></header>
+<div id="moreMenu" class="more-menu" aria-hidden="true">
+  <button type="button" onclick="openMorePage('estudantes')">👥 Estudantes</button>
+  <button type="button" onclick="openMorePage('turmas')">🏫 Turmas</button>
+  <button type="button" onclick="openMorePage('analise')">🧠 Análise pedagógica</button>
+  <button type="button" onclick="openMorePage('relatorios')">📄 Relatórios</button>
+  <button type="button" onclick="openMorePage('configuracoes')">⚙️ Configurações</button>
+</div>
 <main>
 <section id="inicio" class="page"><div class="card"><h1>NEW PROF. CORRETOR INTELIGENTE</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info">
-<b>V28:</b> Leitor OMR testado com fotografias reais. Histórico local e câmera integrados.<br><br>
+<b>V29:</b> Leitor OMR testado com fotografias reais. Histórico local e câmera integrados.<br><br>
 <b>Desenvolvido pelo professor <b>New Cristian</b>, o NEW PROF. CORRETOR foi criado como uma ferramenta de suporte ao professor, pensada para tornar a correção e o acompanhamento das avaliações mais práticos, organizados e eficientes.</b><br><br>
 </div>
+<div class="dashboard-grid" id="dashboardStats">
+  <div class="dash-card"><span>📝</span><b id="dashCorrecoes">0</b><small>Correções realizadas</small></div>
+  <div class="dash-card"><span>👥</span><b id="dashEstudantes">0</b><small>Estudantes cadastrados</small></div>
+  <div class="dash-card"><span>🏫</span><b id="dashTurmas">0</b><small>Turmas cadastradas</small></div>
+  <div class="dash-card"><span>📊</span><b id="dashMedia">0,0</b><small>Média das notas</small></div>
+</div>
+<div class="dashboard-card" id="dashRecentes"><h3>🕐 Últimas correções</h3><div id="dashRecentesList" class="recent-list"><div class="status info">Nenhuma correção registrada.</div></div></div>
+
 <div class="app-guide">
   <h2>📘 Como funciona o NEW PROF. CORRETOR?</h2>
   <p>
@@ -698,6 +719,69 @@ Selecione uma alternativa em cada questão. A alternativa selecionada ficará ma
       <button id="btnClearHistory" type="button" class="secondary">🗑️ Limpar histórico</button>
     </div>
     <div id="historyList"></div>
+  </div>
+</section>
+
+<section id="estudantes" class="page hidden">
+  <div class="card">
+    <h2>👥 Estudantes</h2>
+    <p>Cadastre estudantes neste aparelho para agilizar cartões e correções.</p>
+    <div class="grid">
+      <label>Nome do estudante<input id="stuNome" placeholder="Nome completo"></label>
+      <label>Turma<input id="stuTurma" placeholder="Ex.: 5º A"></label>
+    </div>
+    <div class="actions"><button class="primary" type="button" onclick="saveStudent()">➕ Adicionar estudante</button><button class="secondary" type="button" onclick="clearStudentForm()">Limpar</button></div>
+    <label style="display:block;margin-top:12px">🔎 Pesquisar estudante<input id="stuBusca" oninput="renderStudents()" placeholder="Digite o nome ou turma"></label>
+    <div id="studentsList"></div>
+  </div>
+</section>
+
+<section id="turmas" class="page hidden">
+  <div class="card">
+    <h2>🏫 Turmas</h2>
+    <p>Organize as turmas utilizadas no aplicativo.</p>
+    <div class="grid"><label>Nova turma<input id="turmaNome" placeholder="Ex.: 5º A"></label></div>
+    <div class="actions"><button class="primary" type="button" onclick="saveClass()">➕ Adicionar turma</button></div>
+    <div id="classesList"></div>
+  </div>
+</section>
+
+<section id="analise" class="page hidden">
+  <div class="card">
+    <h2>🧠 Análise pedagógica</h2>
+    <p>Veja quais questões apresentam maior índice de erro nas correções armazenadas neste aparelho.</p>
+    <label>Avaliação<select id="analysisAssessment" onchange="renderPedagogicalAnalysis()"><option value="">Todas as avaliações</option></select></label>
+    <div id="analysisSummary" class="analysis-summary"></div>
+    <div id="analysisQuestions"></div>
+  </div>
+</section>
+
+<section id="relatorios" class="page hidden">
+  <div class="card">
+    <h2>📄 Relatórios</h2>
+    <p>Acesse rapidamente os relatórios disponíveis.</p>
+    <div class="report-grid">
+      <button class="report-card" type="button" onclick="show('historico');setTimeout(()=>gerarRelatorioHistoricoPDF(),80)"><b>📊</b><span>Relatório geral</span><small>Exporta as correções do Histórico em PDF.</small></button>
+      <button class="report-card" type="button" onclick="show('resultados')"><b>📈</b><span>Resultados</span><small>Consulta o último resultado da sessão.</small></button>
+      <button class="report-card" type="button" onclick="openMorePage('analise')"><b>🧠</b><span>Análise pedagógica</span><small>Identifica questões com maior índice de erro.</small></button>
+    </div>
+  </div>
+</section>
+
+<section id="configuracoes" class="page hidden">
+  <div class="card">
+    <h2>⚙️ Configurações</h2>
+    <p>Personalize as informações exibidas nos relatórios. Os dados ficam neste aparelho.</p>
+    <div class="grid">
+      <label>Nome do professor<input id="cfgProfessor" placeholder="Professor(a)"></label>
+      <label>Escola<input id="cfgEscola" placeholder="Nome da escola"></label>
+    </div>
+    <div class="actions"><button class="primary" type="button" onclick="saveSettings()">💾 Salvar configurações</button></div>
+    <hr style="margin:20px 0;border:0;border-top:1px solid #dbe3ef">
+    <h3>💾 Backup dos dados</h3>
+    <p>Exporte estudantes, turmas, avaliação atual e histórico para um arquivo JSON.</p>
+    <div class="actions"><button class="secondary" type="button" onclick="exportBackup()">📥 Fazer backup</button><label class="secondary file-backup-label" for="importBackupFile">📤 Restaurar backup</label><input id="importBackupFile" type="file" accept="application/json,.json" class="file-hidden"></div>
+    <div id="configMsg" class="status info">Os dados ficam armazenados localmente neste aparelho.</div>
   </div>
 </section>
 </main>
@@ -2088,6 +2172,46 @@ function openAdmin(){window.location.href=ADMIN_URL;}
     const modal=document.getElementById('historyEditModal');
     if(modal && event.target===modal) closeEditor();
   });
+})();
+</script>
+<script>
+/* ===== V29 — DASHBOARD, ESTUDANTES, TURMAS, ANÁLISE, RELATÓRIOS E CONFIGURAÇÕES ===== */
+(function(){
+  const KEY_STU='newProfCorretorEstudantes';
+  const KEY_CLS='newProfCorretorTurmas';
+  const KEY_CFG='newProfCorretorConfiguracoes';
+  function read(key,fallback=[]){try{const v=JSON.parse(localStorage.getItem(key)||'null');return v??fallback}catch(e){return fallback}}
+  function write(key,v){localStorage.setItem(key,JSON.stringify(v))}
+  function esc2(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+  window.toggleMoreMenu=function(){const m=document.getElementById('moreMenu');if(!m)return;m.classList.toggle('show');m.setAttribute('aria-hidden',m.classList.contains('show')?'false':'true')}
+  window.openMorePage=function(id){const m=document.getElementById('moreMenu');if(m){m.classList.remove('show');m.setAttribute('aria-hidden','true')}show(id);if(id==='estudantes')renderStudents();if(id==='turmas')renderClasses();if(id==='analise')renderAnalysisOptions()}
+  document.addEventListener('click',e=>{const m=document.getElementById('moreMenu');const b=document.getElementById('moreMenuBtn');if(m&&m.classList.contains('show')&&!m.contains(e.target)&&e.target!==b){m.classList.remove('show');m.setAttribute('aria-hidden','true')}})
+
+  window.saveStudent=function(){const n=document.getElementById('stuNome')?.value.trim();const t=document.getElementById('stuTurma')?.value.trim();if(!n){alert('Informe o nome do estudante.');return}const list=read(KEY_STU,[]);const exists=list.some(x=>x.nome.toLowerCase()===n.toLowerCase()&&x.turma.toLowerCase()===t.toLowerCase());if(exists){alert('Este estudante já está cadastrado nesta turma.');return}list.push({id:Date.now()+Math.random(),nome:n,turma:t||'—'});list.sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));write(KEY_STU,list);if(t)ensureClass(t);clearStudentForm();renderStudents();refreshDashboard()}
+  window.clearStudentForm=function(){const a=document.getElementById('stuNome'),b=document.getElementById('stuTurma');if(a)a.value='';if(b)b.value=''}
+  window.deleteStudent=function(id){const list=read(KEY_STU,[]).filter(x=>String(x.id)!==String(id));write(KEY_STU,list);renderStudents();refreshDashboard()}
+  window.renderStudents=function(){const box=document.getElementById('studentsList');if(!box)return;const q=(document.getElementById('stuBusca')?.value||'').toLowerCase().trim();const list=read(KEY_STU,[]).filter(x=>!q||`${x.nome} ${x.turma}`.toLowerCase().includes(q));if(!list.length){box.innerHTML='<div class="status info" style="margin-top:12px">Nenhum estudante encontrado.</div>';return}box.innerHTML=list.map(x=>`<div class="student-row"><div><b>${esc2(x.nome)}</b><br><small>${esc2(x.turma)}</small></div><div class="row-actions"><button class="btn-red" type="button" data-stu-del="${x.id}">🗑️ Excluir</button></div></div>`).join('')}
+
+  function ensureClass(t){if(!t)return;const list=read(KEY_CLS,[]);if(!list.some(x=>x.toLowerCase()===t.toLowerCase())){list.push(t);list.sort((a,b)=>a.localeCompare(b,'pt-BR'));write(KEY_CLS,list)}}
+  window.saveClass=function(){const el=document.getElementById('turmaNome');const t=el?.value.trim();if(!t){alert('Informe o nome da turma.');return}const list=read(KEY_CLS,[]);if(list.some(x=>x.toLowerCase()===t.toLowerCase())){alert('Esta turma já está cadastrada.');return}list.push(t);list.sort((a,b)=>a.localeCompare(b,'pt-BR'));write(KEY_CLS,list);el.value='';renderClasses();refreshDashboard()}
+  window.deleteClass=function(t){const students=read(KEY_STU,[]);if(students.some(x=>x.turma===t)){alert('Há estudantes cadastrados nesta turma. Exclua ou mova os estudantes antes de remover a turma.');return}write(KEY_CLS,read(KEY_CLS,[]).filter(x=>x!==t));renderClasses();refreshDashboard()}
+  window.renderClasses=function(){const box=document.getElementById('classesList');if(!box)return;let list=read(KEY_CLS,[]);const students=read(KEY_STU,[]);students.forEach(x=>ensureClass(x.turma==='—'?'':x.turma));list=read(KEY_CLS,[]);if(!list.length){box.innerHTML='<div class="status info" style="margin-top:12px">Nenhuma turma cadastrada.</div>';return}box.innerHTML=list.map(t=>{const n=students.filter(x=>x.turma===t).length;return `<div class="class-row"><div><b>${esc2(t)}</b><br><small>${n} estudante(s)</small></div><div class="row-actions"><button class="btn-red" type="button" data-cls-del="${esc2(t)}">🗑️ Excluir</button></div></div>`}).join('')}
+
+  window.renderAnalysisOptions=function(){const sel=document.getElementById('analysisAssessment');if(!sel)return;const h=typeof getHistory==='function'?getHistory():read('newCorretorHistorico',[]);const vals=[...new Set(h.map(x=>x.avaliacao).filter(Boolean))];sel.innerHTML='<option value="">Todas as avaliações</option>'+vals.map(v=>`<option value="${esc2(v)}">${esc2(v)}</option>`).join('');renderPedagogicalAnalysis()}
+  window.renderPedagogicalAnalysis=function(){const sum=document.getElementById('analysisSummary'),box=document.getElementById('analysisQuestions'),sel=document.getElementById('analysisAssessment');if(!sum||!box)return;const h=typeof getHistory==='function'?getHistory():read('newCorretorHistorico',[]);const chosen=sel?.value||'';const rows=h.filter(x=>!chosen||x.avaliacao===chosen);if(!rows.length){sum.innerHTML='';box.innerHTML='<div class="status info">Ainda não há correções suficientes para gerar uma análise.</div>';return}let totalQ=0,totalAc=0;const qs={};rows.forEach(x=>{const ans=Array.isArray(x.respostas)?x.respostas:[];const gab=Array.isArray(x.gabarito)?x.gabarito:[];const n=Math.max(Number(x.total)||0,ans.length,gab.length);totalQ+=n;totalAc+=Number(x.acertos||0);for(let i=0;i<n;i++){const r=String(ans[i]||'').toUpperCase(),g=String(gab[i]||'').toUpperCase();if(!qs[i])qs[i]={n:0,ac:0,blank:0,valid:0};qs[i].n++;if(!r)qs[i].blank++;else{qs[i].valid++;if(g&&r===g)qs[i].ac++}}});const avg=rows.reduce((s,x)=>s+Number(x.nota||0),0)/rows.length;sum.innerHTML=`<div class="analysis-box"><b>${rows.length}</b><small>Correções analisadas</small></div><div class="analysis-box"><b>${totalAc}/${totalQ}</b><small>Acertos totais</small></div><div class="analysis-box"><b>${avg.toFixed(1)}</b><small>Média das notas</small></div>`;const arr=Object.entries(qs).map(([i,v])=>({i:Number(i),...v,err:v.valid?100-(v.ac/v.valid*100):0})).sort((a,b)=>b.err-a.err);box.innerHTML='<h3>📌 Desempenho por questão</h3>'+arr.map(v=>`<div class="analysis-question"><div class="analysis-meta"><b>Questão ${v.i+1}</b><span>${v.ac}/${v.valid||0} acertos · ${v.blank} brancas</span></div><div class="analysis-bar"><div class="analysis-fill" style="width:${Math.min(100,Math.max(0,v.err)).toFixed(1)}%"></div></div><small>${v.valid? v.err.toFixed(1):'0.0'}% de erros entre respostas marcadas</small></div>`).join('')}
+
+  window.saveSettings=function(){const cfg={professor:document.getElementById('cfgProfessor')?.value.trim()||'',escola:document.getElementById('cfgEscola')?.value.trim()||''};write(KEY_CFG,cfg);const m=document.getElementById('configMsg');if(m){m.className='status ok';m.textContent='✓ Configurações salvas neste aparelho.'}refreshDashboard()}
+  function loadSettings(){const c=read(KEY_CFG,{});if(document.getElementById('cfgProfessor'))document.getElementById('cfgProfessor').value=c.professor||'';if(document.getElementById('cfgEscola'))document.getElementById('cfgEscola').value=c.escola||''}
+  window.exportBackup=function(){const payload={versao:'V29',geradoEm:new Date().toISOString(),estudantes:read(KEY_STU,[]),turmas:read(KEY_CLS,[]),configuracoes:read(KEY_CFG,{}),avaliacao:read('newCorretorAvaliacao',null),gabarito:read('newCorretorGabarito',[]),historico:read('newCorretorHistorico',[])};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='new-prof-corretor-backup-v29.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+  window.restoreBackup=function(file){const r=new FileReader();r.onload=()=>{try{const p=JSON.parse(r.result);if(Array.isArray(p.estudantes))write(KEY_STU,p.estudantes);if(Array.isArray(p.turmas))write(KEY_CLS,p.turmas);if(p.configuracoes)write(KEY_CFG,p.configuracoes);if(p.avaliacao)write('newCorretorAvaliacao',p.avaliacao);if(Array.isArray(p.gabarito))write('newCorretorGabarito',p.gabarito);if(Array.isArray(p.historico))write('newCorretorHistorico',p.historico);loadSettings();renderStudents();renderClasses();renderHistory();refreshDashboard();alert('Backup restaurado com sucesso.')}catch(e){alert('Arquivo de backup inválido.')}};r.readAsText(file)}
+
+  window.refreshDashboard=function(){const h=typeof getHistory==='function'?getHistory():read('newCorretorHistorico',[]),s=read(KEY_STU,[]),c=read(KEY_CLS,[]);const media=h.length?h.reduce((a,x)=>a+Number(x.nota||0),0)/h.length:0;const a=document.getElementById('dashCorrecoes'),b=document.getElementById('dashEstudantes'),d=document.getElementById('dashTurmas'),e=document.getElementById('dashMedia');if(a)a.textContent=h.length;if(b)b.textContent=s.length;if(d)d.textContent=c.length;if(e)e.textContent=media.toFixed(1).replace('.',',');const box=document.getElementById('dashRecentesList');if(box){const last=h.slice(0,5);box.innerHTML=last.length?last.map(x=>`<div class="recent-item"><div class="recent-main"><b>${esc2(x.aluno||'Não informado')}</b><small>${esc2(x.avaliacao||'Avaliação')} · ${esc2(x.turma||'—')}</small></div><div class="recent-note">${Number(x.nota||0).toFixed(1)}</div></div>`).join(''):'<div class="status info">Nenhuma correção registrada.</div>'}}
+
+  document.addEventListener('click',e=>{const sd=e.target.closest('[data-stu-del]');if(sd){e.preventDefault();deleteStudent(sd.dataset.stuDel);return}const cd=e.target.closest('[data-cls-del]');if(cd){e.preventDefault();deleteClass(cd.dataset.clsDel);return}})
+  const imp=document.getElementById('importBackupFile');if(imp)imp.addEventListener('change',e=>{if(e.target.files[0])restoreBackup(e.target.files[0]);e.target.value=''})
+  loadSettings();
+  setTimeout(()=>{refreshDashboard();renderStudents();renderClasses();},250);
+  const oldShow=window.show; if(typeof oldShow==='function'){window.show=function(id){oldShow(id);if(id==='inicio')refreshDashboard();if(id==='estudantes')renderStudents();if(id==='turmas')renderClasses();if(id==='analise')renderAnalysisOptions();if(id==='configuracoes')loadSettings();}}
 })();
 </script>
 </body></html>
