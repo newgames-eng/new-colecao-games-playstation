@@ -462,7 +462,7 @@ button,input,select,textarea{font:inherit;max-width:100%}
 @media(max-width:850px){.dashboard-grid{grid-template-columns:repeat(2,1fr)}.report-grid{grid-template-columns:1fr}.analysis-summary{grid-template-columns:1fr 1fr}.more-menu{top:112px;right:9px}}
 @media(max-width:600px){.dashboard-grid{grid-template-columns:1fr 1fr}.dash-card{padding:10px}.dash-card b{font-size:18px}.dash-card small{font-size:11px}.student-row,.class-row{align-items:flex-start;flex-direction:column}.row-actions{width:100%}.row-actions button{flex:1}.analysis-summary{grid-template-columns:1fr}.more-menu{position:absolute;top:105px;left:9px;right:9px}}
 </style>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script><style id="calendar-css">.calendar-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:16px 0}.calendar-grid label{font-weight:700}.calendar-grid input,.cal-block textarea{margin-top:7px;width:100%;box-sizing:border-box;padding:10px;border:1px solid #ccd6e2;border-radius:10px}.cal-block{margin:16px 0;padding:15px;border:1px solid #dce4ee;border-radius:14px;background:#f8fafc}.weekday-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.weekday-grid label{padding:10px;background:#fff;border:1px solid #dbe3ed;border-radius:9px}.cal-actions{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}@media(max-width:700px){.calendar-grid,.weekday-grid{grid-template-columns:1fr 1fr}.cal-actions button{width:100%}}</style></head>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script><script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script><style id="calendar-css">.calendar-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:16px 0}.calendar-grid label{font-weight:700}.calendar-grid input,.cal-block textarea{margin-top:7px;width:100%;box-sizing:border-box;padding:10px;border:1px solid #ccd6e2;border-radius:10px}.cal-block{margin:16px 0;padding:15px;border:1px solid #dce4ee;border-radius:14px;background:#f8fafc}.weekday-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.weekday-grid label{padding:10px;background:#fff;border:1px solid #dbe3ed;border-radius:9px}.cal-actions{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}@media(max-width:700px){.calendar-grid,.weekday-grid{grid-template-columns:1fr 1fr}.cal-actions button{width:100%}}</style></head>
 <body><button id="installAppBtn" type="button" aria-label="Instalar aplicativo">📲 Instalar aplicativo</button>
 <div id="installHelp" role="dialog" aria-live="polite" aria-label="Instalação do aplicativo"></div>
 
@@ -529,7 +529,7 @@ button,input,select,textarea{font:inherit;max-width:100%}
 </div>
 <main>
 <section id="inicio" class="page"><div class="card"><h1>NEW PROF. CORRETOR INTELIGENTE</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info">
-<b>V31:</b> Calendário de aulas em aba própria, com geração e exportação. Leitor OMR e histórico local integrados.<br><br>
+<b>V32:</b> Calendário de aulas em aba própria, com geração e exportação. Leitor OMR e histórico local integrados.<br><br>
 <b>Desenvolvido pelo professor <b>New Cristian</b>, o NEW PROF. CORRETOR foi criado como uma ferramenta de suporte ao professor, pensada para tornar a correção e o acompanhamento das avaliações mais práticos, organizados e eficientes.</b><br><br>
 </div>
 <div class="dashboard-grid" id="dashboardStats">
@@ -768,7 +768,7 @@ Selecione uma alternativa em cada questão. A alternativa selecionada ficará ma
   </div>
 </section>
 
-<section id="calendarioAulas" class="page"><div class="card"><h1>📅 Calendário de Aulas</h1><p>Gere as datas das aulas do bimestre considerando dias da semana, aulas por dia e dias sem aula.</p><div class="calendar-grid"><label>Início<input id="calInicio" type="date"></label><label>Fim<input id="calFim" type="date"></label><label>Aulas por dia<input id="calAulasDia" type="number" min="1" max="20" value="1"></label></div><div class="cal-block"><h3>📚 Dias com aula</h3><div class="weekday-grid"><label><input class="calWeekday" type="checkbox" value="0"> Domingo</label><label><input class="calWeekday" type="checkbox" value="1"> Segunda-feira</label><label><input class="calWeekday" type="checkbox" value="2"> Terça-feira</label><label><input class="calWeekday" type="checkbox" value="3"> Quarta-feira</label><label><input class="calWeekday" type="checkbox" value="4"> Quinta-feira</label><label><input class="calWeekday" type="checkbox" value="5"> Sexta-feira</label><label><input class="calWeekday" type="checkbox" value="6"> Sábado</label></div></div><div class="cal-block"><h3>🚫 Feriados / dias sem aula</h3><p>Digite uma data por linha no formato <b>dd/mm/aaaa</b>.</p><textarea id="calSemAula" rows="5" placeholder="07/09/2026&#10;12/10/2026"></textarea></div><div class="cal-actions"><button class="primary" id="calGerarBtn" type="button">📅 Gerar calendário</button><button class="secondary" id="calLimparBtn" type="button">🧹 Limpar</button></div><div id="calResumo" class="status info hidden"></div><div id="calResultado" class="hidden"><div class="cal-actions"><button class="secondary" id="calXlsxBtn" type="button">📊 Baixar Excel</button><button class="secondary" id="calCsvBtn" type="button">📥 Baixar CSV</button><button class="secondary" id="calPrintBtn" type="button">🖨️ Imprimir</button></div><div class="table-wrap"><table id="calTabela"><thead><tr><th>Nº Aula</th><th>Data</th><th>Dia da semana</th><th>Aula do dia</th></tr></thead><tbody></tbody></table></div></div></div></section><section id="configuracoes" class="page hidden">
+<section id="calendarioAulas" class="page"><div class="card"><h1>📅 Calendário de Aulas</h1><p>Gere as datas das aulas do bimestre considerando dias da semana, aulas por dia e dias sem aula.</p><div class="calendar-grid"><label>Início<input id="calInicio" type="date"></label><label>Fim<input id="calFim" type="date"></label><label>Aulas por dia<input id="calAulasDia" type="number" min="1" max="20" value="1"></label></div><div class="cal-block"><h3>📚 Dias com aula</h3><div class="weekday-grid"><label><input class="calWeekday" type="checkbox" value="0"> Domingo</label><label><input class="calWeekday" type="checkbox" value="1"> Segunda-feira</label><label><input class="calWeekday" type="checkbox" value="2"> Terça-feira</label><label><input class="calWeekday" type="checkbox" value="3"> Quarta-feira</label><label><input class="calWeekday" type="checkbox" value="4"> Quinta-feira</label><label><input class="calWeekday" type="checkbox" value="5"> Sexta-feira</label><label><input class="calWeekday" type="checkbox" value="6"> Sábado</label></div></div><div class="cal-block"><h3>🚫 Feriados / dias sem aula</h3><p>Digite uma data por linha no formato <b>dd/mm/aaaa</b>.</p><textarea id="calSemAula" rows="5" placeholder="07/09/2026&#10;12/10/2026"></textarea></div><div class="cal-actions"><button class="primary" id="calGerarBtn" type="button">📅 Gerar calendário</button><button class="secondary" id="calLimparBtn" type="button">🧹 Limpar</button></div><div id="calResumo" class="status info hidden"></div><div id="calResultado" class="hidden"><div class="cal-actions"><button class="secondary" id="calXlsxBtn" type="button">📊 Baixar Diário Excel</button><button class="secondary" id="calCsvBtn" type="button">📥 Baixar CSV</button><button class="secondary" id="calPrintBtn" type="button">🖨️ Imprimir</button></div><div class="table-wrap"><table id="calTabela"><thead><tr><th>Nº Aula</th><th>Data</th><th>Dia da semana</th><th>Aula do dia</th></tr></thead><tbody></tbody></table></div></div></div></section><section id="configuracoes" class="page hidden">
   <div class="card">
     <h2>⚙️ Configurações</h2>
     <p>Personalize as informações exibidas nos relatórios. Os dados ficam neste aparelho.</p>
@@ -1340,121 +1340,53 @@ function calF(d){return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMont
 function calLoad(){try{let s=JSON.parse(localStorage.getItem('newCorretorCalendario')||'null');if(!s)return;calInicio.value=s.i||'';calFim.value=s.f||'';calAulasDia.value=s.a||1;document.querySelectorAll('.calWeekday').forEach(x=>x.checked=(s.d||[]).includes(+x.value));calSemAula.value=s.s||''}catch(e){}}
 function calGenerate(){let i=calD(calInicio.value),f=calD(calFim.value),a=Math.max(1,+calAulasDia.value||1),days=[...document.querySelectorAll('.calWeekday:checked')].map(x=>+x.value),bad=new Set(),inv=[];calSemAula.value.split(/[\n,;]+/).map(x=>x.trim()).filter(Boolean).forEach(x=>{let d=calBR(x);d?bad.add(calK(d)):inv.push(x)});if(!i||!f)return alert('Informe o início e o fim do bimestre.');if(f<i)return alert('O fim deve ser posterior ao início.');if(!days.length)return alert('Selecione pelo menos um dia da semana.');if(inv.length)return alert('Datas inválidas:\n'+inv.join('\n'));localStorage.setItem('newCorretorCalendario',JSON.stringify({i:calInicio.value,f:calFim.value,a,d:days,s:calSemAula.value}));calData=[];let n=0;for(let d=new Date(i);d<=f;d.setDate(d.getDate()+1)){if(!days.includes(d.getDay())||bad.has(calK(d)))continue;for(let j=1;j<=a;j++)calData.push({n:++n,data:calF(d),dia:CALD[d.getDay()],aula:j})}document.querySelector('#calTabela tbody').innerHTML=calData.map(x=>`<tr><td>${x.n}</td><td>${x.data}</td><td>${x.dia}</td><td>${x.aula}ª aula</td></tr>`).join('');calResumo.classList.remove('hidden');calResumo.innerHTML='<b>Calendário gerado:</b> '+calData.length+' aula(s).';calResultado.classList.remove('hidden')}
 function calCSV(){let r=[['Nº Aula','Data','Dia da semana','Aula do dia'],...calData.map(x=>[x.n,x.data,x.dia,x.aula+'ª aula'])],c='\ufeff'+r.map(a=>a.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(';')).join('\n'),b=new Blob([c],{type:'text/csv'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='calendario-de-aulas.csv';a.click()}
-function calXLSX(){if(!calData.length)return alert('Gere o calendário primeiro.');if(!window.XLSX)return alert('Excel ainda não foi carregado.');let ws=XLSX.utils.json_to_sheet(calData.map(x=>({'Nº Aula':x.n,'Data':x.data,'Dia da semana':x.dia,'Aula do dia':x.aula+'ª aula'})));let wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Calendário');XLSX.writeFile(wb,'calendario-de-aulas.xlsx')}
-function calClear(){calInicio.value='';calFim.value='';calAulasDia.value=1;calSemAula.value='';document.querySelectorAll('.calWeekday').forEach(x=>x.checked=false);calData=[];calResultado.classList.add('hidden');calResumo.classList.add('hidden')}
-document.addEventListener('DOMContentLoaded',()=>{calLoad();calGerarBtn.addEventListener('click',calGenerate);calLimparBtn.addEventListener('click',calClear);calCsvBtn.addEventListener('click',calCSV);calXlsxBtn.addEventListener('click',calXLSX);calPrintBtn.addEventListener('click',()=>window.print())});
-</script>
-
-<script>
-(function(){
-  let deferredPrompt = null;
-  const btn = () => document.getElementById("installAppBtn");
-  const help = () => document.getElementById("installHelp");
-  const show = (msg) => {
-    const h = help();
-    if(!h) return;
-    h.innerHTML = msg;
-    h.classList.add("show");
-  };
-  const close = () => { const h=help(); if(h) h.classList.remove("show"); };
-
-  function isStandalone(){
-    return !!(
-      (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) ||
-      window.navigator.standalone === true ||
-      document.referrer.startsWith("android-app://")
-    );
-  }
-
-  function hideInstallButton(){
-    const b = btn();
-    if(!b) return;
-    b.style.display = "none";
-    b.setAttribute("aria-hidden", "true");
-  }
-
-  function showInstallButton(){
-    const b = btn();
-    if(!b || isStandalone()) return;
-    b.style.display = "block";
-    b.removeAttribute("aria-hidden");
-  }
-
-  // Se o sistema já estiver aberto como aplicativo instalado, não mostramos o botão.
-  if(isStandalone()) hideInstallButton();
-
-  window.addEventListener("beforeinstallprompt", (event) => {
-    event.preventDefault();
-    deferredPrompt = event;
-    showInstallButton();
-    const b = btn();
-    if(b){ b.classList.add("ready"); b.textContent = "📲 Instalar aplicativo"; }
-  });
-
-  // Chrome/Edge/Android: dispara depois que a instalação foi concluída.
-  window.addEventListener("appinstalled", () => {
-    deferredPrompt = null;
-    hideInstallButton();
-    close();
-    console.log("NEW PROF. CORRETOR — aplicativo instalado.");
-  });
-
-  document.addEventListener("click", async (event) => {
-    const b = event.target.closest("#installAppBtn");
-    if(!b) return;
-
-    if(isStandalone()){
-      hideInstallButton();
-      return;
+async function calXLSX(){
+  if(!calData.length)return alert('Gere o calendário primeiro.');
+  if(!window.ExcelJS)return alert('O módulo do Excel ainda não foi carregado. Verifique sua conexão com a internet e tente novamente.');
+  if(calData.length>50)return alert('O modelo do diário possui espaço para até 50 aulas no cabeçalho. Reduza o período ou as aulas por dia.');
+  try{
+    const resp=await fetch('./diario-template.xlsx',{cache:'no-store'});
+    if(!resp.ok)throw new Error('Modelo do diário não encontrado.');
+    const buffer=await resp.arrayBuffer();
+    const workbook=new ExcelJS.Workbook();
+    await workbook.xlsx.load(buffer);
+    const ws=workbook.getWorksheet('4º ano D - FREQUÊNCIA - 1º BIM') || workbook.worksheets[0];
+    if(!ws)throw new Error('A aba de frequência não foi encontrada no modelo.');
+    // Limpa as datas/números antigos do modelo (C:AZ).
+    for(let col=3;col<=52;col++){
+      ws.getCell(7,col).value=null;
+      ws.getCell(8,col).value=null;
     }
-
-    if(deferredPrompt){
-      try {
-        deferredPrompt.prompt();
-        const choice = await deferredPrompt.userChoice;
-        if(choice && choice.outcome === "accepted"){
-          b.textContent = "⏳ Instalando...";
-        }
-      } catch(e) { console.warn("Instalação:", e); }
-      deferredPrompt = null;
-      return;
-    }
-
-    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-    if(isIOS){
-      show("<b>Para instalar no iPhone/iPad:</b><br>Toque em <b>Compartilhar</b> → <b>Adicionar à Tela de Início</b>.<br><button type='button' id='closeInstallHelp'>Fechar</button>");
-      return;
-    }
-
-    show(`<b>O navegador ainda não liberou a instalação automática.</b><br><br>
-      <b>Chrome no computador:</b> abra o menu <b>⋮</b> e procure <b>Instalar NEW PROF. CORRETOR</b> ou <b>Instalar página como aplicativo</b>.<br><br>
-      <b>Chrome no Android:</b> abra o menu <b>⋮</b> e toque em <b>Instalar aplicativo</b> ou <b>Adicionar à tela inicial</b>.<br><br>
-      <small>Depois de instalado, ao abrir o aplicativo o botão não será exibido.</small><br><button type='button' id='closeInstallHelp'>Fechar</button>`);
-  });
-
-  document.addEventListener("click", event => {
-    if(event.target.id === "closeInstallHelp") close();
-  });
-
-  // Se o usuário mudar entre navegador e modo aplicativo enquanto a página estiver aberta.
-  if(window.matchMedia){
-    const media = window.matchMedia("(display-mode: standalone)");
-    const updateMode = () => isStandalone() ? hideInstallButton() : showInstallButton();
-    if(media.addEventListener) media.addEventListener("change", updateMode);
-  }
-
-  if("serviceWorker" in navigator){
-    window.addEventListener("load", async () => {
-      try {
-        const registration = await navigator.serviceWorker.register("/new-colecao-games-playstation/corretor/sw.js", {scope:"/new-colecao-games-playstation/corretor/"});
-        console.log("NEW PROF. CORRETOR — Service Worker ativo:", registration.scope);
-        if(isStandalone()) hideInstallButton();
-      } catch(error) {
-        console.error("NEW PROF. CORRETOR — erro no Service Worker:", error);
-      }
+    // Insere as datas das aulas e a numeração sequencial.
+    calData.forEach((item,i)=>{
+      const col=3+i; // C = 3
+      const [d,m,y]=item.data.split('/').map(Number);
+      const cell=ws.getCell(7,col);
+      cell.value=new Date(y,m-1,d);
+      cell.numFmt='dd/mm/yyyy';
+      ws.getCell(8,col).value=item.n;
     });
+    // Atualiza o período exibido no cabeçalho do diário.
+    const ini=document.getElementById('calInicio').value;
+    const fim=document.getElementById('calFim').value;
+    if(ini&&fim){
+      const fmt=v=>{const [y,m,d]=v.split('-');return `${d}/${m}/${y}`};
+      ws.getCell('B7').value=`PERÍODO ${fmt(ini)} a ${fmt(fim)}`;
+    }
+    // Mantém o total de faltas no final do modelo.
+    const out=await workbook.xlsx.writeBuffer();
+    const blob=new Blob([out],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download='diario-frequencia-com-calendario.xlsx';
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+  }catch(err){
+    console.error(err);
+    alert('Não foi possível gerar o Diário Excel. '+(err?.message||''));
   }
-})();
+}
 </script>
 
 <script>
