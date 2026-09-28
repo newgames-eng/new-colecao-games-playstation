@@ -519,7 +519,7 @@ button,input,select,textarea{font:inherit;max-width:100%}
 <div id="appShell">
 
 <header><div class="brand">NEW <span>PROF. CORRETOR</span></div><div class="sub">Corretor Inteligente de Avaliações — OMR</div>
-<nav><button onclick="show('inicio')">🏠 Início</button><button onclick="show('avaliacao')">📝 Avaliação</button><button onclick="show('corrigir')">📷 Corrigir</button><button onclick="show('cartao')">📄 Cartão</button><button onclick="show('resultados')">📊 Resultados</button><button onclick="show('historico')">📚 Histórico</button><button id="moreMenuBtn" type="button" onclick="toggleMoreMenu()">☰ Mais</button><button class="logout-btn" onclick="logoutProfessor()">🚪 Sair</button></nav></header>
+<nav><button onclick="show('inicio')">🏠 Início</button><button onclick="show('avaliacao')">📝 Avaliação</button><button onclick="show('corrigir')">📷 Corrigir</button><button onclick="show('cartao')">📄 Cartão</button><button onclick="show('resultados')">📊 Resultados</button><button onclick="show('historico')">📚 Histórico</button><button onclick="show('calendarioAulas')">📅 Calendário</button><button id="moreMenuBtn" type="button" onclick="toggleMoreMenu()">☰ Mais</button><button class="logout-btn" onclick="logoutProfessor()">🚪 Sair</button></nav></header>
 <div id="moreMenu" class="more-menu" aria-hidden="true">
   <button type="button" onclick="openMorePage('estudantes')">👥 Estudantes</button>
   <button type="button" onclick="openMorePage('turmas')">🏫 Turmas</button>
@@ -529,7 +529,7 @@ button,input,select,textarea{font:inherit;max-width:100%}
 </div>
 <main>
 <section id="inicio" class="page"><div class="card"><h1>NEW PROF. CORRETOR INTELIGENTE</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info">
-<b>V30:</b> Leitor OMR testado com fotografias reais. Histórico local e câmera integrados.<br><br>
+<b>V31:</b> Calendário de aulas em aba própria, com geração e exportação. Leitor OMR e histórico local integrados.<br><br>
 <b>Desenvolvido pelo professor <b>New Cristian</b>, o NEW PROF. CORRETOR foi criado como uma ferramenta de suporte ao professor, pensada para tornar a correção e o acompanhamento das avaliações mais práticos, organizados e eficientes.</b><br><br>
 </div>
 <div class="dashboard-grid" id="dashboardStats">
@@ -878,7 +878,8 @@ function show(id){
   if(id==='avaliacao'){buildKey()}
   if(id==='corrigir'){buildManualCorrection();setCorrectionMode(correctionMode)}
   if(id==='cartao'){syncCardFromAssessment();updateStudentFields();renderCard()}
-  if(id==='historico'){renderHistory()}\n  if(id==='calendarioAulas'){calLoad()}
+  if(id==='historico'){renderHistory()}
+  if(id==='calendarioAulas'){calLoad()}
 }
 
 function getAssessmentCode(){
@@ -1325,6 +1326,10 @@ function gerarRelatorioHistoricoPDF(){
 
 
 
+</body></html>`);
+  w.document.close();
+}
+</script>
 
 <script>
 const CALD=['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];let calData=[];
@@ -1338,9 +1343,6 @@ function calCSV(){let r=[['Nº Aula','Data','Dia da semana','Aula do dia'],...ca
 function calXLSX(){if(!calData.length)return alert('Gere o calendário primeiro.');if(!window.XLSX)return alert('Excel ainda não foi carregado.');let ws=XLSX.utils.json_to_sheet(calData.map(x=>({'Nº Aula':x.n,'Data':x.data,'Dia da semana':x.dia,'Aula do dia':x.aula+'ª aula'})));let wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Calendário');XLSX.writeFile(wb,'calendario-de-aulas.xlsx')}
 function calClear(){calInicio.value='';calFim.value='';calAulasDia.value=1;calSemAula.value='';document.querySelectorAll('.calWeekday').forEach(x=>x.checked=false);calData=[];calResultado.classList.add('hidden');calResumo.classList.add('hidden')}
 document.addEventListener('DOMContentLoaded',()=>{calLoad();calGerarBtn.addEventListener('click',calGenerate);calLimparBtn.addEventListener('click',calClear);calCsvBtn.addEventListener('click',calCSV);calXlsxBtn.addEventListener('click',calXLSX);calPrintBtn.addEventListener('click',()=>window.print())});
-</script></body></html>`);
-  w.document.close();
-}
 </script>
 
 <script>
