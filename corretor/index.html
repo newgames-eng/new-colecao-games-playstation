@@ -2121,6 +2121,21 @@ function openAdmin(){window.location.href=ADMIN_URL;}
 })();
 </script>
 <script>
+// ===== CALENDÁRIO — EVENTOS DOS BOTÕES =====
+(function(){
+  function bindCalendarButtons(){
+    const gerar=document.getElementById('calGerarBtn'), limpar=document.getElementById('calLimparBtn'), xlsx=document.getElementById('calXlsxBtn'), csv=document.getElementById('calCsvBtn'), print=document.getElementById('calPrintBtn');
+    if(gerar && !gerar.dataset.bound){gerar.dataset.bound='1';gerar.addEventListener('click',e=>{e.preventDefault();try{calGenerate()}catch(err){console.error(err);alert('Não foi possível gerar o calendário. '+(err?.message||''))}})}
+    if(limpar && !limpar.dataset.bound){limpar.dataset.bound='1';limpar.addEventListener('click',e=>{e.preventDefault();document.getElementById('calInicio').value='';document.getElementById('calFim').value='';document.getElementById('calAulasDia').value='1';document.querySelectorAll('.calWeekday').forEach(x=>x.checked=false);document.getElementById('calSemAula').value='';document.getElementById('calResultado')?.classList.add('hidden');const st=document.getElementById('calResumo');if(st){st.className='status info hidden';st.textContent=''}const tb=document.querySelector('#calTabela tbody');if(tb)tb.innerHTML='';calData=[];localStorage.removeItem('newCorretorCalendario')})}
+    if(xlsx && !xlsx.dataset.bound){xlsx.dataset.bound='1';xlsx.addEventListener('click',e=>{e.preventDefault();calXLSX()})}
+    if(csv && !csv.dataset.bound){csv.dataset.bound='1';csv.addEventListener('click',e=>{e.preventDefault();calCSV()})}
+    if(print && !print.dataset.bound){print.dataset.bound='1';print.addEventListener('click',e=>{e.preventDefault();if(!calData.length)return alert('Gere o calendário primeiro.');const rows=calData.map(x=>`<tr><td>${x.n}</td><td>${x.data}</td><td>${x.dia}</td><td>${x.aula}ª aula</td></tr>`).join('');const w=window.open('','_blank','width=900,height=700');if(!w)return alert('Permita pop-ups para imprimir o calendário.');w.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Calendário de Aulas</title><style>body{font-family:Arial;padding:24px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #999;padding:7px}th{background:#eee}</style></head><body><h1>Calendário de Aulas</h1><table><thead><tr><th>Nº Aula</th><th>Data</th><th>Dia da semana</th><th>Aula do dia</th></tr></thead><tbody>${rows}</tbody></table><script>window.onload=function(){setTimeout(function(){window.print()},200)}<\/script></body></html>`);w.document.close()})}
+  }
+  window.bindCalendarButtons=bindCalendarButtons;
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindCalendarButtons);else bindCalendarButtons();
+})();
+</script>
+<script>
 /* ===== V29 — DASHBOARD, ESTUDANTES, TURMAS, ANÁLISE, RELATÓRIOS E CONFIGURAÇÕES ===== */
 (function(){
   const KEY_STU='newProfCorretorEstudantes';
