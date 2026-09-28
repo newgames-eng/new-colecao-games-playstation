@@ -462,7 +462,7 @@ button,input,select,textarea{font:inherit;max-width:100%}
 @media(max-width:850px){.dashboard-grid{grid-template-columns:repeat(2,1fr)}.report-grid{grid-template-columns:1fr}.analysis-summary{grid-template-columns:1fr 1fr}.more-menu{top:112px;right:9px}}
 @media(max-width:600px){.dashboard-grid{grid-template-columns:1fr 1fr}.dash-card{padding:10px}.dash-card b{font-size:18px}.dash-card small{font-size:11px}.student-row,.class-row{align-items:flex-start;flex-direction:column}.row-actions{width:100%}.row-actions button{flex:1}.analysis-summary{grid-template-columns:1fr}.more-menu{position:absolute;top:105px;left:9px;right:9px}}
 </style>
-</head>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script><style id="calendar-css">.calendar-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:16px 0}.calendar-grid label{font-weight:700}.calendar-grid input,.cal-block textarea{margin-top:7px;width:100%;box-sizing:border-box;padding:10px;border:1px solid #ccd6e2;border-radius:10px}.cal-block{margin:16px 0;padding:15px;border:1px solid #dce4ee;border-radius:14px;background:#f8fafc}.weekday-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.weekday-grid label{padding:10px;background:#fff;border:1px solid #dbe3ed;border-radius:9px}.cal-actions{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}@media(max-width:700px){.calendar-grid,.weekday-grid{grid-template-columns:1fr 1fr}.cal-actions button{width:100%}}</style></head>
 <body><button id="installAppBtn" type="button" aria-label="Instalar aplicativo">📲 Instalar aplicativo</button>
 <div id="installHelp" role="dialog" aria-live="polite" aria-label="Instalação do aplicativo"></div>
 
@@ -529,7 +529,7 @@ button,input,select,textarea{font:inherit;max-width:100%}
 </div>
 <main>
 <section id="inicio" class="page"><div class="card"><h1>NEW PROF. CORRETOR INTELIGENTE</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info">
-<b>V29:</b> Leitor OMR testado com fotografias reais. Histórico local e câmera integrados.<br><br>
+<b>V30:</b> Leitor OMR testado com fotografias reais. Histórico local e câmera integrados.<br><br>
 <b>Desenvolvido pelo professor <b>New Cristian</b>, o NEW PROF. CORRETOR foi criado como uma ferramenta de suporte ao professor, pensada para tornar a correção e o acompanhamento das avaliações mais práticos, organizados e eficientes.</b><br><br>
 </div>
 <div class="dashboard-grid" id="dashboardStats">
@@ -768,7 +768,7 @@ Selecione uma alternativa em cada questão. A alternativa selecionada ficará ma
   </div>
 </section>
 
-<section id="configuracoes" class="page hidden">
+<section id="calendarioAulas" class="page"><div class="card"><h1>📅 Calendário de Aulas</h1><p>Gere as datas das aulas do bimestre considerando dias da semana, aulas por dia e dias sem aula.</p><div class="calendar-grid"><label>Início<input id="calInicio" type="date"></label><label>Fim<input id="calFim" type="date"></label><label>Aulas por dia<input id="calAulasDia" type="number" min="1" max="20" value="1"></label></div><div class="cal-block"><h3>📚 Dias com aula</h3><div class="weekday-grid"><label><input class="calWeekday" type="checkbox" value="0"> Domingo</label><label><input class="calWeekday" type="checkbox" value="1"> Segunda-feira</label><label><input class="calWeekday" type="checkbox" value="2"> Terça-feira</label><label><input class="calWeekday" type="checkbox" value="3"> Quarta-feira</label><label><input class="calWeekday" type="checkbox" value="4"> Quinta-feira</label><label><input class="calWeekday" type="checkbox" value="5"> Sexta-feira</label><label><input class="calWeekday" type="checkbox" value="6"> Sábado</label></div></div><div class="cal-block"><h3>🚫 Feriados / dias sem aula</h3><p>Digite uma data por linha no formato <b>dd/mm/aaaa</b>.</p><textarea id="calSemAula" rows="5" placeholder="07/09/2026&#10;12/10/2026"></textarea></div><div class="cal-actions"><button class="primary" id="calGerarBtn" type="button">📅 Gerar calendário</button><button class="secondary" id="calLimparBtn" type="button">🧹 Limpar</button></div><div id="calResumo" class="status info hidden"></div><div id="calResultado" class="hidden"><div class="cal-actions"><button class="secondary" id="calXlsxBtn" type="button">📊 Baixar Excel</button><button class="secondary" id="calCsvBtn" type="button">📥 Baixar CSV</button><button class="secondary" id="calPrintBtn" type="button">🖨️ Imprimir</button></div><div class="table-wrap"><table id="calTabela"><thead><tr><th>Nº Aula</th><th>Data</th><th>Dia da semana</th><th>Aula do dia</th></tr></thead><tbody></tbody></table></div></div></div></section><section id="configuracoes" class="page hidden">
   <div class="card">
     <h2>⚙️ Configurações</h2>
     <p>Personalize as informações exibidas nos relatórios. Os dados ficam neste aparelho.</p>
@@ -878,7 +878,7 @@ function show(id){
   if(id==='avaliacao'){buildKey()}
   if(id==='corrigir'){buildManualCorrection();setCorrectionMode(correctionMode)}
   if(id==='cartao'){syncCardFromAssessment();updateStudentFields();renderCard()}
-  if(id==='historico'){renderHistory()}
+  if(id==='historico'){renderHistory()}\n  if(id==='calendarioAulas'){calLoad()}
 }
 
 function getAssessmentCode(){
@@ -1326,7 +1326,19 @@ function gerarRelatorioHistoricoPDF(){
 
 
 
-</body></html>`);
+<script>
+const CALD=['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];let calData=[];
+function calD(v){const p=String(v||'').split('-').map(Number);if(p.length!==3)return null;return new Date(p[0],p[1]-1,p[2])}
+function calBR(v){const m=String(v).trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);if(!m)return null;const d=new Date(+m[3],+m[2]-1,+m[1]);return d.getFullYear()==+m[3]&&d.getMonth()==+m[2]-1&&d.getDate()==+m[1]?d:null}
+function calK(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function calF(d){return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear()}
+function calLoad(){try{let s=JSON.parse(localStorage.getItem('newCorretorCalendario')||'null');if(!s)return;calInicio.value=s.i||'';calFim.value=s.f||'';calAulasDia.value=s.a||1;document.querySelectorAll('.calWeekday').forEach(x=>x.checked=(s.d||[]).includes(+x.value));calSemAula.value=s.s||''}catch(e){}}
+function calGenerate(){let i=calD(calInicio.value),f=calD(calFim.value),a=Math.max(1,+calAulasDia.value||1),days=[...document.querySelectorAll('.calWeekday:checked')].map(x=>+x.value),bad=new Set(),inv=[];calSemAula.value.split(/[\n,;]+/).map(x=>x.trim()).filter(Boolean).forEach(x=>{let d=calBR(x);d?bad.add(calK(d)):inv.push(x)});if(!i||!f)return alert('Informe o início e o fim do bimestre.');if(f<i)return alert('O fim deve ser posterior ao início.');if(!days.length)return alert('Selecione pelo menos um dia da semana.');if(inv.length)return alert('Datas inválidas:\n'+inv.join('\n'));localStorage.setItem('newCorretorCalendario',JSON.stringify({i:calInicio.value,f:calFim.value,a,d:days,s:calSemAula.value}));calData=[];let n=0;for(let d=new Date(i);d<=f;d.setDate(d.getDate()+1)){if(!days.includes(d.getDay())||bad.has(calK(d)))continue;for(let j=1;j<=a;j++)calData.push({n:++n,data:calF(d),dia:CALD[d.getDay()],aula:j})}document.querySelector('#calTabela tbody').innerHTML=calData.map(x=>`<tr><td>${x.n}</td><td>${x.data}</td><td>${x.dia}</td><td>${x.aula}ª aula</td></tr>`).join('');calResumo.classList.remove('hidden');calResumo.innerHTML='<b>Calendário gerado:</b> '+calData.length+' aula(s).';calResultado.classList.remove('hidden')}
+function calCSV(){let r=[['Nº Aula','Data','Dia da semana','Aula do dia'],...calData.map(x=>[x.n,x.data,x.dia,x.aula+'ª aula'])],c='\ufeff'+r.map(a=>a.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(';')).join('\n'),b=new Blob([c],{type:'text/csv'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='calendario-de-aulas.csv';a.click()}
+function calXLSX(){if(!calData.length)return alert('Gere o calendário primeiro.');if(!window.XLSX)return alert('Excel ainda não foi carregado.');let ws=XLSX.utils.json_to_sheet(calData.map(x=>({'Nº Aula':x.n,'Data':x.data,'Dia da semana':x.dia,'Aula do dia':x.aula+'ª aula'})));let wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Calendário');XLSX.writeFile(wb,'calendario-de-aulas.xlsx')}
+function calClear(){calInicio.value='';calFim.value='';calAulasDia.value=1;calSemAula.value='';document.querySelectorAll('.calWeekday').forEach(x=>x.checked=false);calData=[];calResultado.classList.add('hidden');calResumo.classList.add('hidden')}
+document.addEventListener('DOMContentLoaded',()=>{calLoad();calGerarBtn.addEventListener('click',calGenerate);calLimparBtn.addEventListener('click',calClear);calCsvBtn.addEventListener('click',calCSV);calXlsxBtn.addEventListener('click',calXLSX);calPrintBtn.addEventListener('click',()=>window.print())});
+</script></body></html>`);
   w.document.close();
 }
 </script>
