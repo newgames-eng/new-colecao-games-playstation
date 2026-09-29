@@ -70,6 +70,7 @@
 
 /* V14 — correção direta e controles de histórico robustos no celular */
 .direct-photo-picker{display:block!important}.direct-photo-picker .picker-button{display:block!important;width:100%!important;text-align:center}.direct-photo-picker .file-name{margin-top:8px}.history-delete-btn{min-height:42px;padding:9px 14px!important;touch-action:manipulation;-webkit-tap-highlight-color:transparent}.history-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}@media(max-width:700px){.history-table-wrap table{min-width:0!important;width:100%!important}.history-delete-btn{font-size:14px!important}.history-actions{gap:8px!important}.history-actions button{min-height:44px!important;width:100%!important;box-sizing:border-box}.history-edit-btn,.history-delete-btn{display:block!important;position:static!important;transform:none!important}}
+.input-error{border-color:#d93025 !important;box-shadow:0 0 0 2px rgba(217,48,37,.12)}
 </style>
 
 <style>
@@ -768,7 +769,7 @@ Selecione uma alternativa em cada questão. A alternativa selecionada ficará ma
   </div>
 </section>
 
-<section id="calendarioAulas" class="page"><div class="card"><h1>📅 Calendário de Aulas</h1><p>Gere as datas das aulas do bimestre considerando dias da semana, aulas por dia e dias sem aula.</p><div class="calendar-grid"><label>Início<input id="calInicio" type="date"></label><label>Fim<input id="calFim" type="date"></label><label>Aulas por dia<input id="calAulasDia" type="number" min="1" max="20" value="1"></label></div><div class="cal-block"><h3>📚 Dias com aula</h3><div class="weekday-grid"><label><input class="calWeekday" type="checkbox" value="0"> Domingo</label><label><input class="calWeekday" type="checkbox" value="1"> Segunda-feira</label><label><input class="calWeekday" type="checkbox" value="2"> Terça-feira</label><label><input class="calWeekday" type="checkbox" value="3"> Quarta-feira</label><label><input class="calWeekday" type="checkbox" value="4"> Quinta-feira</label><label><input class="calWeekday" type="checkbox" value="5"> Sexta-feira</label><label><input class="calWeekday" type="checkbox" value="6"> Sábado</label></div></div><div class="cal-block"><h3>🚫 Feriados / dias sem aula</h3><p>Digite uma data por linha no formato <b>dd/mm/aaaa</b>.</p><textarea id="calSemAula" rows="5" placeholder="07/09/2026&#10;12/10/2026"></textarea></div><div class="cal-actions"><button class="primary" id="calGerarBtn" type="button">📅 Gerar calendário</button><button class="secondary" id="calLimparBtn" type="button">🧹 Limpar</button></div><div id="calResumo" class="status info hidden"></div><div id="calResultado" class="hidden"><div class="cal-actions"><button class="secondary" id="calXlsxBtn" type="button">📊 Baixar Diário Excel</button><button class="secondary" id="calCsvBtn" type="button">📥 Baixar CSV</button><button class="secondary" id="calPrintBtn" type="button">🖨️ Imprimir</button></div><div class="table-wrap"><table id="calTabela"><thead><tr><th>Nº Aula</th><th>Data</th><th>Dia da semana</th><th>Aula do dia</th></tr></thead><tbody></tbody></table></div></div></div></section><section id="configuracoes" class="page hidden">
+<section id="calendarioAulas" class="page"><div class="card"><h1>📅 Calendário de Aulas</h1><p>Gere as datas das aulas do bimestre considerando dias da semana, aulas por dia e dias sem aula.</p><div class="calendar-grid"><label>Início<input id="calInicio" type="text" inputmode="numeric" maxlength="10" placeholder="dd/mm/aaaa" autocomplete="off"></label><label>Fim<input id="calFim" type="text" inputmode="numeric" maxlength="10" placeholder="dd/mm/aaaa" autocomplete="off"></label><label>Aulas por dia<input id="calAulasDia" type="number" min="1" max="20" value="1"></label></div><div class="cal-block"><h3>📚 Dias com aula</h3><div class="weekday-grid"><label><input class="calWeekday" type="checkbox" value="0"> Domingo</label><label><input class="calWeekday" type="checkbox" value="1"> Segunda-feira</label><label><input class="calWeekday" type="checkbox" value="2"> Terça-feira</label><label><input class="calWeekday" type="checkbox" value="3"> Quarta-feira</label><label><input class="calWeekday" type="checkbox" value="4"> Quinta-feira</label><label><input class="calWeekday" type="checkbox" value="5"> Sexta-feira</label><label><input class="calWeekday" type="checkbox" value="6"> Sábado</label></div></div><div class="cal-block"><h3>🚫 Feriados / dias sem aula</h3><p>Digite uma data por linha no formato <b>dd/mm/aaaa</b>.</p><textarea id="calSemAula" rows="5" placeholder="07/09/2026&#10;12/10/2026"></textarea></div><div class="cal-actions"><button class="primary" id="calGerarBtn" type="button">📅 Gerar calendário</button><button class="secondary" id="calLimparBtn" type="button">🧹 Limpar</button></div><div id="calResumo" class="status info hidden"></div><div id="calResultado" class="hidden"><div class="cal-actions"><button class="secondary" id="calXlsxBtn" type="button">📊 Baixar Diário Excel</button><button class="secondary" id="calCsvBtn" type="button">📥 Baixar CSV</button><button class="secondary" id="calPrintBtn" type="button">🖨️ Imprimir</button></div><div class="table-wrap"><table id="calTabela"><thead><tr><th>Nº Aula</th><th>Data</th><th>Dia da semana</th><th>Aula do dia</th></tr></thead><tbody></tbody></table></div></div></div></section><section id="configuracoes" class="page hidden">
   <div class="card">
     <h2>⚙️ Configurações</h2>
     <p>Personalize as informações exibidas nos relatórios. Os dados ficam neste aparelho.</p>
@@ -1333,11 +1334,44 @@ function gerarRelatorioHistoricoPDF(){
 
 <script>
 const CALD=['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];let calData=[];
-function calD(v){const p=String(v||'').split('-').map(Number);if(p.length!==3)return null;return new Date(p[0],p[1]-1,p[2])}
+function calD(v){const s=String(v||'').trim();let p;if(/^\d{4}-\d{2}-\d{2}$/.test(s)){p=s.split('-').map(Number);return new Date(p[0],p[1]-1,p[2])}if(/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(s)){p=s.split('/').map(Number);const d=new Date(p[2],p[1]-1,p[0]);return d.getFullYear()===p[2]&&d.getMonth()===p[1]-1&&d.getDate()===p[0]?d:null}return null}
 function calBR(v){const m=String(v).trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);if(!m)return null;const d=new Date(+m[3],+m[2]-1,+m[1]);return d.getFullYear()==+m[3]&&d.getMonth()==+m[2]-1&&d.getDate()==+m[1]?d:null}
 function calK(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function calF(d){return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear()}
-function calLoad(){try{let s=JSON.parse(localStorage.getItem('newCorretorCalendario')||'null');if(!s)return;calInicio.value=s.i||'';calFim.value=s.f||'';calAulasDia.value=s.a||1;document.querySelectorAll('.calWeekday').forEach(x=>x.checked=(s.d||[]).includes(+x.value));calSemAula.value=s.s||''}catch(e){}}
+function calMascaraData(el){
+  if(!el)return;
+  let v=String(el.value||'').replace(/\D/g,'').slice(0,8);
+  if(v.length>4)v=v.slice(0,2)+'/'+v.slice(2,4)+'/'+v.slice(4);
+  else if(v.length>2)v=v.slice(0,2)+'/'+v.slice(2);
+  el.value=v;
+}
+function calValidaDataCampo(el){
+  if(!el)return true;
+  const v=String(el.value||'').trim();
+  if(!v)return true;
+  return !!calBR(v);
+}
+function bindCalendarDateMasks(){
+  ['calInicio','calFim'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el||el.dataset.maskBound)return;
+    el.dataset.maskBound='1';
+    el.addEventListener('input',()=>calMascaraData(el));
+    el.addEventListener('blur',()=>{
+      if(el.value && !calValidaDataCampo(el)){
+        el.classList.add('input-error');
+        el.title='Digite uma data válida no formato dd/mm/aaaa.';
+      }else{
+        el.classList.remove('input-error');
+        el.title='';
+      }
+    });
+  });
+}
+function calLoad(){try{let s=JSON.parse(localStorage.getItem('newCorretorCalendario')||'null');if(!s)return;calInicio.value=s.i||'';calFim.value=s.f||'';
+    if(/^\d{4}-\d{2}-\d{2}$/.test(calInicio.value)){const [y,m,d]=calInicio.value.split('-');calInicio.value=`${d}/${m}/${y}`}
+    if(/^\d{4}-\d{2}-\d{2}$/.test(calFim.value)){const [y,m,d]=calFim.value.split('-');calFim.value=`${d}/${m}/${y}`}
+    calMascaraData(calInicio);calMascaraData(calFim);calAulasDia.value=s.a||1;document.querySelectorAll('.calWeekday').forEach(x=>x.checked=(s.d||[]).includes(+x.value));calSemAula.value=s.s||''}catch(e){}}
 function calGenerate(){let i=calD(calInicio.value),f=calD(calFim.value),a=Math.max(1,+calAulasDia.value||1),days=[...document.querySelectorAll('.calWeekday:checked')].map(x=>+x.value),bad=new Set(),inv=[];calSemAula.value.split(/[\n,;]+/).map(x=>x.trim()).filter(Boolean).forEach(x=>{let d=calBR(x);d?bad.add(calK(d)):inv.push(x)});if(!i||!f)return alert('Informe o início e o fim do bimestre.');if(f<i)return alert('O fim deve ser posterior ao início.');if(!days.length)return alert('Selecione pelo menos um dia da semana.');if(inv.length)return alert('Datas inválidas:\n'+inv.join('\n'));localStorage.setItem('newCorretorCalendario',JSON.stringify({i:calInicio.value,f:calFim.value,a,d:days,s:calSemAula.value}));calData=[];let n=0;for(let d=new Date(i);d<=f;d.setDate(d.getDate()+1)){if(!days.includes(d.getDay())||bad.has(calK(d)))continue;for(let j=1;j<=a;j++)calData.push({n:++n,data:calF(d),dia:CALD[d.getDay()],aula:j})}document.querySelector('#calTabela tbody').innerHTML=calData.map(x=>`<tr><td>${x.n}</td><td>${x.data}</td><td>${x.dia}</td><td>${x.aula}ª aula</td></tr>`).join('');calResumo.classList.remove('hidden');calResumo.innerHTML='<b>Calendário gerado:</b> '+calData.length+' aula(s).';calResultado.classList.remove('hidden')}
 function calCSV(){let r=[['Nº Aula','Data','Dia da semana','Aula do dia'],...calData.map(x=>[x.n,x.data,x.dia,x.aula+'ª aula'])],c='\ufeff'+r.map(a=>a.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(';')).join('\n'),b=new Blob([c],{type:'text/csv'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='calendario-de-aulas.csv';a.click()}
 async function calXLSX(){
@@ -1370,8 +1404,7 @@ async function calXLSX(){
     const ini=document.getElementById('calInicio').value;
     const fim=document.getElementById('calFim').value;
     if(ini&&fim){
-      const fmt=v=>{const [y,m,d]=v.split('-');return `${d}/${m}/${y}`};
-      ws.getCell('B7').value=`PERÍODO ${fmt(ini)} a ${fmt(fim)}`;
+      ws.getCell('B7').value=`PERÍODO ${ini} a ${fim}`;
     }
     // Mantém o total de faltas no final do modelo.
     const out=await workbook.xlsx.writeBuffer();
@@ -2124,6 +2157,7 @@ function openAdmin(){window.location.href=ADMIN_URL;}
 // ===== CALENDÁRIO — EVENTOS DOS BOTÕES =====
 (function(){
   function bindCalendarButtons(){
+    bindCalendarDateMasks();
     const gerar=document.getElementById('calGerarBtn'), limpar=document.getElementById('calLimparBtn'), xlsx=document.getElementById('calXlsxBtn'), csv=document.getElementById('calCsvBtn'), print=document.getElementById('calPrintBtn');
     if(gerar && !gerar.dataset.bound){gerar.dataset.bound='1';gerar.addEventListener('click',e=>{e.preventDefault();try{calGenerate()}catch(err){console.error(err);alert('Não foi possível gerar o calendário. '+(err?.message||''))}})}
     if(limpar && !limpar.dataset.bound){limpar.dataset.bound='1';limpar.addEventListener('click',e=>{e.preventDefault();document.getElementById('calInicio').value='';document.getElementById('calFim').value='';document.getElementById('calAulasDia').value='1';document.querySelectorAll('.calWeekday').forEach(x=>x.checked=false);document.getElementById('calSemAula').value='';document.getElementById('calResultado')?.classList.add('hidden');const st=document.getElementById('calResumo');if(st){st.className='status info hidden';st.textContent=''}const tb=document.querySelector('#calTabela tbody');if(tb)tb.innerHTML='';calData=[];localStorage.removeItem('newCorretorCalendario')})}
