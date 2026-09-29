@@ -73,11 +73,10 @@
 .input-error{border-color:#d93025 !important;box-shadow:0 0 0 2px rgba(217,48,37,.12)}
 </style>
 <style>
-.cal-date-field{display:flex;align-items:center;gap:6px;width:100%;position:relative}
-.cal-date-field>input[type="text"]{flex:1;min-width:0}
-.cal-date-picker-btn{height:42px;min-width:44px;border:1px solid #cbd6e5;border-radius:8px;background:#f3f6fb;color:#12345b;font-size:18px;cursor:pointer;padding:0 10px}
-.cal-date-picker-btn:hover{background:#e7eef8}
-.cal-date-native{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;left:calc(100% - 45px);top:50%;}
+.cal-date-field{position:relative;width:100%}
+.cal-date-field>input[type="text"]{width:100%;min-width:0;padding-right:44px;cursor:pointer}
+.cal-date-field::after{content:"📅";position:absolute;right:13px;top:50%;transform:translateY(-50%);font-size:18px;pointer-events:none;z-index:2}
+.cal-date-native{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;left:0;top:0;}
 .cal-holiday-input{font-variant-numeric:tabular-nums}
 </style>
 
@@ -1361,39 +1360,26 @@ function calValidaDataCampo(el){
 }
 function bindCalendarDateMasks(){
   ['calInicio','calFim'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(!el||el.dataset.maskBound)return;
-    el.dataset.maskBound='1';
-    el.addEventListener('input',()=>calMascaraData(el));
-    el.addEventListener('blur',()=>{
-      if(el.value && !calValidaDataCampo(el)){
-        el.classList.add('input-error');
-        el.title='Digite uma data válida no formato dd/mm/aaaa.';
-      }else{
-        el.classList.remove('input-error');
-        el.title='';
-      }
-    });
-  });
-
-  ['calInicio','calFim'].forEach(id=>{
     const picker=document.getElementById(id+'Picker');
-    const btn=document.querySelector('[data-picker="'+id+'Picker"]');
     const text=document.getElementById(id);
-    if(!picker||!btn||btn.dataset.bound)return;
-    btn.dataset.bound='1';
-    btn.addEventListener('click',e=>{
-      e.preventDefault();
+    if(!picker||!text||text.dataset.pickerBound)return;
+    text.dataset.pickerBound='1';
+    const abrirCalendario=()=>{
       try{
-        if(text && calBR(text.value)) picker.value=calK(calBR(text.value));
+        const atual=calBR(text.value);
+        if(atual) picker.value=calK(atual);
         if(typeof picker.showPicker==='function') picker.showPicker();
         else picker.click();
-      }catch(err){try{picker.click()}catch(_){}}
-    });
+      }catch(err){
+        try{picker.focus();picker.click()}catch(_){}
+      }
+    };
+    // O próprio campo abre o calendário, inclusive no celular.
+    text.addEventListener('click',abrirCalendario);
     picker.addEventListener('change',()=>{
       if(picker.value){
         const d=calD(picker.value);
-        if(d) text.value=calF(d);
+        if(d){text.value=calF(d);text.classList.remove('input-error');}
       }
     });
   });
