@@ -537,7 +537,7 @@ button,input,select,textarea{font:inherit;max-width:100%}
 </div>
 <main>
 <section id="inicio" class="page"><div class="card"><h1>NEW PROF. CORRETOR INTELIGENTE</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info">
-<b>V41:</b> Leitor OMR alinhado às bolhas do cartão. Calendário e histórico integrados.<br><br>
+<b>V42:</b> Câmera Android com fallback nativo e leitura OMR. Calendário e histórico integrados.<br><br>
 <b>Desenvolvido pelo professor <b>New Cristian</b>, o NEW PROF. CORRETOR foi criado como uma ferramenta de suporte ao professor, pensada para tornar a correção e o acompanhamento das avaliações mais práticos, organizados e eficientes.</b><br><br>
 </div>
 <div class="dashboard-grid" id="dashboardStats">
@@ -696,9 +696,11 @@ Selecione uma alternativa em cada questão. A alternativa selecionada ficará ma
       <label for="photo" class="secondary picker-button">🖼️ Escolher imagem</label>
     </div>
     <input id="photo" type="file" accept="image/*" class="file-hidden">
+     <input id="photoCamera" type="file" accept="image/*" capture="environment" class="file-hidden">
     <div id="photoName" class="file-name">Abra a câmera para fotografar o cartão ou escolha uma imagem da galeria.</div>
   </div>
-  <div class="small">No celular, <b>Abrir câmera</b> usa a câmera traseira diretamente. <b>Escolher imagem</b> abre Fotos/Galeria/Arquivos.</div>
+  <div class="small">No celular, <b>Abrir câmera</b> tenta abrir a câmera dentro do aplicativo. Se o navegador não oferecer acesso direto, use a opção abaixo para abrir a câmera nativa do aparelho.</div>
+   <button id="btnNativeCamera" type="button" class="secondary picker-button" style="display:none;margin-top:8px;width:100%">📷 Usar câmera do aparelho</button>
 
   <div id="cameraModal" class="camera-modal hidden" aria-hidden="true">
     <div class="camera-dialog">
@@ -821,28 +823,47 @@ const cameraModal=document.getElementById('cameraModal');
 const cameraVideo=document.getElementById('cameraVideo');
 const cameraCanvas=document.getElementById('cameraCanvas');
 const btnCamera=document.getElementById('btnCamera');
+const photoCamera=document.getElementById('photoCamera');
+const btnNativeCamera=document.getElementById('btnNativeCamera');
 const btnCameraClose=document.getElementById('btnCameraClose');
 const btnCameraCancel=document.getElementById('btnCameraCancel');
 const btnCameraCapture=document.getElementById('btnCameraCapture');
 
 async function openCamera(){
-  if(!navigator.mediaDevices?.getUserMedia){
-    setStatus('A câmera não está disponível neste navegador. Use “Escolher imagem”.','warn');
+  // Primeiro tenta a câmera integrada via getUserMedia. Em navegadores Android
+  // que não oferecem essa API (ou estão em um WebView), liberamos o fallback
+  // nativo <input capture="environment">.
+  const nativeFallback=()=>{
+    if(btnNativeCamera)btnNativeCamera.style.display='block';
+    setStatus('Este navegador não liberou a câmera integrada. Toque em “Usar câmera do aparelho”.','warn');
+  };
+  if(!window.isSecureContext || !navigator.mediaDevices?.getUserMedia){
+    nativeFallback();
+    // Em uma ação direta do usuário, tenta abrir imediatamente a câmera nativa.
+    try{ photoCamera?.click(); }catch(e){}
     return;
   }
   try{
     stopCamera();
+    if(btnNativeCamera)btnNativeCamera.style.display='none';
     cameraModal.classList.remove('hidden');
     cameraModal.setAttribute('aria-hidden','false');
     cameraMsg.textContent='Solicitando acesso à câmera...';
-    cameraStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}},audio:false});
+    cameraStream=await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}},audio:false
+    });
     cameraVideo.srcObject=cameraStream;
     await cameraVideo.play();
     cameraMsg.textContent='Posicione o cartão inteiro dentro da imagem, incluindo os 4 marcadores pretos.';
   }catch(e){
     console.error(e);
     closeCamera();
-    const msg=e?.name==='NotAllowedError'?'Permissão da câmera negada. Autorize a câmera nas configurações do navegador.':e?.name==='NotFoundError'?'Nenhuma câmera disponível neste aparelho.':'Não foi possível abrir a câmera: '+(e?.message||'erro desconhecido');
+    if(btnNativeCamera)btnNativeCamera.style.display='block';
+    const msg=e?.name==='NotAllowedError'
+      ?'A câmera integrada foi bloqueada. Toque em “Usar câmera do aparelho” ou autorize a câmera nas configurações do navegador.'
+      :e?.name==='NotFoundError'
+        ?'Nenhuma câmera disponível. Tente “Usar câmera do aparelho”.'
+        :'Não foi possível abrir a câmera integrada. Tente “Usar câmera do aparelho”.';
     setStatus(msg,'warn');
   }
 }
@@ -872,6 +893,17 @@ async function captureCamera(){
   },'image/jpeg',0.94);
 }
 btnCamera?.addEventListener('click',openCamera);
+btnNativeCamera?.addEventListener('click',()=>photoCamera?.click());
+photoCamera?.addEventListener('change',()=>{
+  const f=photoCamera.files?.[0];
+  if(!f)return;
+  cameraCapturedBlob=null;
+  if(photo)photo.value='';
+  photoName.textContent='✓ Foto feita pela câmera do aparelho — pronta para correção.';
+  ultimaLeitura=null;
+  results.innerHTML='';
+  setStatus('✓ Foto recebida da câmera do aparelho. Toque em “Corrigir por imagem”.','info');
+});
 btnCameraClose?.addEventListener('click',closeCamera);
 btnCameraCancel?.addEventListener('click',closeCamera);
 btnCameraCapture?.addEventListener('click',captureCamera);
@@ -1796,7 +1828,7 @@ function fixedQuestionGeometry(count,alts){
     const start=x+colW/2-totalW/2;
     const pts=[];
     for(let j=0;j<alts;j++){
-      // V41: usa as coordenadas físicas A4 do cartão após a correção de perspectiva;
+      // V42: usa as coordenadas físicas A4 do cartão após a correção de perspectiva;
       // o centro da leitura coincide diretamente com o centro das bolhas impressas.
       pts.push({
         x:(start+j*bubbleStep)*OMR_MM,
@@ -1889,7 +1921,7 @@ function renderResults(a,raw){
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 async function readPhoto(){
  if(busy)return;busy=true;btnRead.disabled=true;results.innerHTML='';ultimaLeitura=null;
- const imageSource=cameraCapturedBlob || photo.files?.[0];
+ const imageSource=cameraCapturedBlob || photoCamera?.files?.[0] || photo.files?.[0];
  if(!imageSource){setStatus('Abra a câmera ou escolha uma imagem do cartão primeiro.','warn');finish();return}
  if(typeof cv==='undefined'||!cv.Mat){setStatus('O leitor de imagem ainda está carregando. Aguarde alguns segundos.','warn');finish();return}
  setStatus('Lendo cartão... resultado anterior apagado.','info');
