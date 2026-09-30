@@ -1712,10 +1712,11 @@ function fixedQuestionGeometry(count,alts){
     const start=x+colW/2-totalW/2;
     const pts=[];
     for(let j=0;j<alts;j++){
-      // V17: drawNativeCardPage(): cy=y+qH/2+1.8
+      // V39: compensa o deslocamento vertical introduzido pela referência dos marcadores na perspectiva;
+      // a geometria final do conteúdo do cartão fica alinhada ao centro real das bolhas.
       pts.push({
         x:(start+j*bubbleStep)*OMR_MM,
-        y:(y+qH/2+1.8)*(OMR_A4_H/297)
+        y:(y+qH/2+1.8-OMR_MARKER_OFFSET_MM)*(OMR_A4_H/297)
       });
     }
     out.push({q:i+1,pts});
