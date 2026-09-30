@@ -537,7 +537,7 @@ button,input,select,textarea{font:inherit;max-width:100%}
 </div>
 <main>
 <section id="inicio" class="page"><div class="card"><h1>NEW PROF. CORRETOR INTELIGENTE</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info">
-<b>V42:</b> Câmera Android com fallback nativo e leitura OMR. Calendário e histórico integrados.<br><br>
+<b style="font-size:1.08em;background:#fff3cd;color:#8a5a00;padding:4px 8px;border-radius:6px;display:inline-block">V43: OMR corrigido para cartões de 20 questões e alinhamento das bolhas. Câmera Android com fallback nativo. Calendário e histórico integrados.</b><br><br>
 <b>Desenvolvido pelo professor <b>New Cristian</b>, o NEW PROF. CORRETOR foi criado como uma ferramenta de suporte ao professor, pensada para tornar a correção e o acompanhamento das avaliações mais práticos, organizados e eficientes.</b><br><br>
 </div>
 <div class="dashboard-grid" id="dashboardStats">
@@ -1809,15 +1809,17 @@ function warpCard(src,m){
 
 function fixedQuestionGeometry(count,alts){
   const n=Math.max(1,Math.min(50,count));
-  // IMPORTANTE: estas medidas são exatamente as usadas em drawNativeCardPage().
-  // O leitor não procura círculos; ele lê as posições que o próprio gerador do
-  // cartão desenhou. Isso mantém a geometria sincronizada com o PDF A4.
+  // V43: o cartão fotografado possui 10 linhas por coluna (20 questões no total)
+  // e pode ter 4 ou 5 alternativas. O leitor não pode usar a quantidade atual
+  // do gabarito para decidir a geometria física, pois isso desloca as marcações
+  // quando o cartão tem mais questões que a avaliação carregada.
   const mx=15, contentW=180;
   const gridY=92, gridH=166, gap=2, colGap=3;
   const colW=(contentW-colGap)/2;
-  const rows=Math.ceil(Math.min(n,20)/2);
+  const rows=10;
   const qH=(gridH-(rows-1)*gap)/rows;
-  const bubbleStep=9;       // V17: mesma geometria do cartão, 9 mm entre centros
+  // Geometria do cartão físico mostrado nas versões anteriores: centros a 10 mm.
+  const bubbleStep=10;
   const out=[];
   for(let i=0;i<n;i++){
     const col=i<10?0:1;
@@ -1828,16 +1830,27 @@ function fixedQuestionGeometry(count,alts){
     const start=x+colW/2-totalW/2;
     const pts=[];
     for(let j=0;j<alts;j++){
-      // V42: usa as coordenadas físicas A4 do cartão após a correção de perspectiva;
-      // o centro da leitura coincide diretamente com o centro das bolhas impressas.
       pts.push({
         x:(start+j*bubbleStep)*OMR_MM,
-        y:(y+qH/2+1.8)*(OMR_A4_H/297)
+        y:(y+qH/2)*(OMR_A4_H/297)
       });
     }
     out.push({q:i+1,pts});
   }
   return out;
+}
+
+function inferCardLayout(){
+  // V43: o cartão padrão possui 20 questões, 10 por coluna. Para não deslocar
+  // o leitor quando a avaliação carregada tiver 10 questões, a geometria física
+  // do cartão continua sendo de 20 questões.
+  // O modelo visual atual do cartão fotografado usa 4 bolhas. Mantemos 4 como
+  // padrão físico; avaliações com 5 alternativas continuam suportadas quando
+  // o cartão for gerado novamente com essa configuração.
+  const nqCfg=Number(document.getElementById('nq')?.value||0);
+  const count=20;
+  const alts=(nqCfg>=20 && Number(document.getElementById('na')?.value||0)===5)?5:4;
+  return {count,alts};
 }
 
 function bubbleInkScore(gray,x,y){
@@ -1872,9 +1885,10 @@ function bubbleInkScore(gray,x,y){
 
 function detectAnswersFixed(warp){
   const gray=new cv.Mat();cv.cvtColor(warp,gray,cv.COLOR_RGBA2GRAY);
-  const alts=Math.max(3,Math.min(5,+na.value||5));
+  const layout=inferCardLayout();
+  const alts=layout.alts;
   const ls=Array.from(L.slice(0,alts));
-  const geo=fixedQuestionGeometry(gabarito.length,alts);
+  const geo=fixedQuestionGeometry(layout.count,alts);
   const out=[],raw=[];
   for(const q of geo){
     const vals=q.pts.map(p=>bubbleInkScore(gray,p.x,p.y));
