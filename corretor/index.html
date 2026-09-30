@@ -69,7 +69,11 @@
 @media(max-width:700px){.photo-picker{gap:7px}.photo-picker button,.photo-picker .picker-button{width:auto;flex:1;min-width:0;padding:10px 9px;font-size:.9rem}.crop-editor{padding:9px}.crop-box i{width:26px;height:26px}.crop-box i[data-h="nw"]{left:-13px;top:-13px}.crop-box i[data-h="ne"]{right:-13px;top:-13px}.crop-box i[data-h="sw"]{left:-13px;bottom:-13px}.crop-box i[data-h="se"]{right:-13px;bottom:-13px}}
 
 /* V14 — correção direta e controles de histórico robustos no celular */
-.direct-photo-picker{display:block!important}.direct-photo-picker .picker-button{display:block!important;width:100%!important;text-align:center}.direct-photo-picker .file-name{margin-top:8px}.history-delete-btn{min-height:42px;padding:9px 14px!important;touch-action:manipulation;-webkit-tap-highlight-color:transparent}.history-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}@media(max-width:700px){.history-table-wrap table{min-width:760px}.history-delete-btn{font-size:14px!important}.actions{gap:8px!important}.actions button{min-height:44px!important}}
+.direct-photo-picker{display:block!important}.direct-photo-picker .picker-button{display:block!important;width:100%!important;text-align:center}.direct-photo-picker .file-name{margin-top:8px}.history-delete-btn{min-height:42px;padding:9px 14px!important;touch-action:manipulation;-webkit-tap-highlight-color:transparent}.history-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}@media(max-width:700px){.history-table-wrap table{min-width:0!important;width:100%!important}.history-delete-btn{font-size:14px!important}.history-actions{gap:8px!important}.history-actions button{min-height:44px!important;width:100%!important;box-sizing:border-box}.history-edit-btn,.history-delete-btn{display:block!important;position:static!important;transform:none!important}}
+.input-error{border-color:#d93025 !important;box-shadow:0 0 0 2px rgba(217,48,37,.12)}
+</style>
+<style>
+.cal-date-field{position:relative;width:100%}.cal-date-native-main{width:100%;min-width:0;cursor:pointer;appearance:none;-webkit-appearance:none;color:#17243a;background:#fff}.cal-date-native-main::-webkit-calendar-picker-indicator{display:none;-webkit-appearance:none}.cal-date-native-main::-webkit-inner-spin-button{display:none}.cal-date-native-main::-webkit-clear-button{display:none}.cal-holiday-input{font-variant-numeric:tabular-nums}
 </style>
 
 <style>
@@ -439,7 +443,7 @@ button,input,select,textarea{font:inherit;max-width:100%}
   .crop-actions{display:grid!important;grid-template-columns:1fr 1fr 1fr!important}
   .crop-actions button{font-size:11px!important;padding:9px 4px!important}
   #diag{max-height:none!important;height:auto!important}
-  .history-table-wrap{overflow-x:visible!important}
+  .history-table-wrap{overflow-x:visible!important;width:100%!important}
   #historyList table{font-size:13px;margin-top:9px}
   #historyList table thead{display:none}
   #historyList table,#historyList tbody,#historyList tr,#historyList td{display:block;width:100%;box-sizing:border-box}
@@ -455,6 +459,16 @@ button,input,select,textarea{font:inherit;max-width:100%}
   #historyList td:nth-child(7){text-align:center}
   .history-delete-btn{width:100%!important;padding:10px!important;font-size:13px!important}
 }
+</style>
+
+<style>
+.dashboard-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}.dash-card{border:1px solid #d7e1ee;border-radius:12px;padding:13px;background:#fff;box-shadow:0 3px 10px rgba(30,60,100,.05);display:grid;grid-template-columns:auto 1fr;column-gap:9px;align-items:center}.dash-card span{grid-row:1/3;font-size:24px}.dash-card b{font-size:22px;color:#1857c7}.dash-card small{color:#64748b}.dashboard-card{border:1px solid #d7e1ee;border-radius:12px;padding:14px;background:#f8fbff;margin-bottom:18px}.dashboard-card h3{margin-top:0}.recent-item{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #e5ebf3}.recent-item:last-child{border-bottom:0}.recent-main b{display:block}.recent-main small{color:#64748b}.recent-note{font-weight:800;color:#1857c7}.more-menu{position:fixed;top:72px;right:16px;z-index:9998;background:#fff;border:1px solid #cbd5e1;border-radius:12px;box-shadow:0 15px 40px rgba(0,0,0,.2);padding:7px;display:none;min-width:220px}.more-menu.show{display:block}.more-menu button{display:block;width:100%;text-align:left;background:#fff;border:0;border-radius:8px;padding:11px 12px;font-weight:700;cursor:pointer}.more-menu button:hover{background:#eef4ff}.analysis-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.analysis-box{background:#f8fbff;border:1px solid #d7e1ee;border-radius:10px;padding:11px}.analysis-box b{font-size:20px;color:#1857c7;display:block}.analysis-question{border:1px solid #d7e1ee;border-radius:10px;padding:10px;margin:8px 0}.analysis-bar{height:12px;background:#e5ebf3;border-radius:999px;overflow:hidden;margin:7px 0}.analysis-fill{height:100%;background:#d62828;border-radius:999px}.analysis-meta{display:flex;justify-content:space-between;gap:10px;font-size:13px}.student-row,.class-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px;border:1px solid #d7e1ee;border-radius:10px;margin-top:8px;background:#fff}.student-row small,.class-row small{color:#64748b}.row-actions{display:flex;gap:6px;flex-wrap:wrap}.row-actions button{border:0;border-radius:7px;padding:7px 9px;font-weight:700;cursor:pointer}.btn-gray{background:#6c757d;color:#fff}.btn-red{background:#d62828;color:#fff}.report-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.report-card{border:1px solid #d7e1ee;background:#fff;border-radius:12px;padding:16px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:7px}.report-card b{font-size:26px}.report-card span{font-size:17px;font-weight:800}.report-card small{color:#64748b;line-height:1.4}.file-backup-label{display:inline-flex;align-items:center;justify-content:center;background:#e8eef7;color:#183153;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer}.file-hidden{display:none!important}
+@media(max-width:850px){.dashboard-grid{grid-template-columns:repeat(2,1fr)}.report-grid{grid-template-columns:1fr}.analysis-summary{grid-template-columns:1fr 1fr}.more-menu{top:112px;right:9px}}
+@media(max-width:600px){.dashboard-grid{grid-template-columns:1fr 1fr}.dash-card{padding:10px}.dash-card b{font-size:18px}.dash-card small{font-size:11px}.student-row,.class-row{align-items:flex-start;flex-direction:column}.row-actions{width:100%}.row-actions button{flex:1}.analysis-summary{grid-template-columns:1fr}.more-menu{position:absolute;top:105px;left:9px;right:9px}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script><script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script><style id="calendar-css">.calendar-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:16px 0}.calendar-grid label{font-weight:700}.calendar-grid input,.cal-block textarea{margin-top:7px;width:100%;box-sizing:border-box;padding:10px;border:1px solid #ccd6e2;border-radius:10px}.cal-block{margin:16px 0;padding:15px;border:1px solid #dce4ee;border-radius:14px;background:#f8fafc}.weekday-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.weekday-grid label{padding:10px;background:#fff;border:1px solid #dbe3ed;border-radius:9px}.cal-actions{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}@media(max-width:700px){.calendar-grid,.weekday-grid{grid-template-columns:1fr 1fr}.cal-actions button{width:100%}}</style>
+<style id="camera-fix-css">
+.camera-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.camera-actions .picker-button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;box-sizing:border-box;cursor:pointer}.camera-modal{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.78);display:flex;align-items:center;justify-content:center;padding:14px;box-sizing:border-box}.camera-modal.hidden{display:none}.camera-dialog{width:min(760px,100%);max-height:94vh;overflow:auto;background:#fff;border-radius:18px;padding:14px;box-sizing:border-box;box-shadow:0 18px 50px rgba(0,0,0,.35)}.camera-head{display:flex;align-items:center;justify-content:space-between;font-size:18px;margin-bottom:10px}.camera-close{border:0;background:#eef2f7;border-radius:10px;width:42px;height:42px;font-size:20px;cursor:pointer}.camera-video{display:block;width:100%;max-height:68vh;object-fit:contain;background:#111;border-radius:12px}.camera-msg{margin-top:8px}.camera-bottom{margin-top:12px}.camera-bottom button{flex:1}.camera-modal .hidden{display:none!important}@media(max-width:600px){.camera-actions .picker-button,.camera-bottom button{width:100%}.camera-dialog{padding:10px}.camera-video{max-height:65vh}}
 </style>
 </head>
 <body><button id="installAppBtn" type="button" aria-label="Instalar aplicativo">📲 Instalar aplicativo</button>
@@ -513,13 +527,27 @@ button,input,select,textarea{font:inherit;max-width:100%}
 <div id="appShell">
 
 <header><div class="brand">NEW <span>PROF. CORRETOR</span></div><div class="sub">Corretor Inteligente de Avaliações — OMR</div>
-<nav><button onclick="show('inicio')">🏠 Início</button><button onclick="show('avaliacao')">📝 Avaliação</button><button onclick="show('corrigir')">📷 Corrigir</button><button onclick="show('cartao')">📄 Cartão</button><button onclick="show('resultados')">📊 Resultados</button><button onclick="show('historico')">📚 Histórico</button><button class="logout-btn" onclick="logoutProfessor()">🚪 Sair</button></nav></header>
+<nav><button onclick="show('inicio')">🏠 Início</button><button onclick="show('avaliacao')">📝 Avaliação</button><button onclick="show('corrigir')">📷 Corrigir</button><button onclick="show('cartao')">📄 Cartão</button><button onclick="show('resultados')">📊 Resultados</button><button onclick="show('historico')">📚 Histórico</button><button onclick="show('calendarioAulas')">📅 Calendário</button><button id="moreMenuBtn" type="button" onclick="toggleMoreMenu()">☰ Mais</button><button class="logout-btn" onclick="logoutProfessor()">🚪 Sair</button></nav></header>
+<div id="moreMenu" class="more-menu" aria-hidden="true">
+  <button type="button" onclick="openMorePage('estudantes')">👥 Estudantes</button>
+  <button type="button" onclick="openMorePage('turmas')">🏫 Turmas</button>
+  <button type="button" onclick="openMorePage('analise')">🧠 Análise pedagógica</button>
+  <button type="button" onclick="openMorePage('relatorios')">📄 Relatórios</button>
+  <button type="button" onclick="openMorePage('configuracoes')">⚙️ Configurações</button>
+</div>
 <main>
 <section id="inicio" class="page"><div class="card"><h1>NEW PROF. CORRETOR INTELIGENTE</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info">
-<b>V4.17:</b> Leitor OMR testado com fotografias reais. Histórico local e câmera integrados.<br><br>
-<b>Base preservada:</b> o leitor calcula as posições das bolhas a partir dos próprios quadros das questões. A mesma leitura alimenta diagnóstico, sequência e tabela.<br><br>
-<b>Sobre esta versão:</b> Desenvolvido pelo professor <b>New Cristian</b>, o NEW PROF. CORRETOR foi criado como uma ferramenta de suporte ao professor, pensada para tornar a correção e o acompanhamento das avaliações mais práticos, organizados e eficientes. A tecnologia apoia o trabalho docente, mantendo o professor no centro de cada decisão.
+<b>V41:</b> Leitor OMR alinhado às bolhas do cartão. Calendário e histórico integrados.<br><br>
+<b>Desenvolvido pelo professor <b>New Cristian</b>, o NEW PROF. CORRETOR foi criado como uma ferramenta de suporte ao professor, pensada para tornar a correção e o acompanhamento das avaliações mais práticos, organizados e eficientes.</b><br><br>
 </div>
+<div class="dashboard-grid" id="dashboardStats">
+  <div class="dash-card"><span>📝</span><b id="dashCorrecoes">0</b><small>Correções realizadas</small></div>
+  <div class="dash-card"><span>👥</span><b id="dashEstudantes">0</b><small>Estudantes cadastrados</small></div>
+  <div class="dash-card"><span>🏫</span><b id="dashTurmas">0</b><small>Turmas cadastradas</small></div>
+  <div class="dash-card"><span>📊</span><b id="dashMedia">0,0</b><small>Média das notas</small></div>
+</div>
+<div class="dashboard-card" id="dashRecentes"><h3>🕐 Últimas correções</h3><div id="dashRecentesList" class="recent-list"><div class="status info">Nenhuma correção registrada.</div></div></div>
+
 <div class="app-guide">
   <h2>📘 Como funciona o NEW PROF. CORRETOR?</h2>
   <p>
@@ -663,11 +691,27 @@ Selecione uma alternativa em cada questão. A alternativa selecionada ficará ma
   <h3>📷 Correção por imagem</h3>
   <p>Fotografe ou selecione o cartão-resposta preenchido. O sistema fará o alinhamento e a leitura automática.</p>
   <div class="photo-picker direct-photo-picker">
-    <label for="photo" class="primary picker-button">📷 Tirar foto / escolher imagem</label>
+    <div class="camera-actions">
+      <button id="btnCamera" type="button" class="primary picker-button">📷 Abrir câmera</button>
+      <label for="photo" class="secondary picker-button">🖼️ Escolher imagem</label>
+    </div>
     <input id="photo" type="file" accept="image/*" class="file-hidden">
-    <div id="photoName" class="file-name">Ao selecionar a foto, a correção será iniciada automaticamente.</div>
+    <div id="photoName" class="file-name">Abra a câmera para fotografar o cartão ou escolha uma imagem da galeria.</div>
   </div>
-  <div class="small">No celular, o seletor poderá oferecer <b>Câmera</b>, <b>Fotos/Galeria</b> e <b>Arquivos</b>. No computador, será aberto o seletor de arquivos.</div>
+  <div class="small">No celular, <b>Abrir câmera</b> usa a câmera traseira diretamente. <b>Escolher imagem</b> abre Fotos/Galeria/Arquivos.</div>
+
+  <div id="cameraModal" class="camera-modal hidden" aria-hidden="true">
+    <div class="camera-dialog">
+      <div class="camera-head"><b>📷 Fotografar cartão</b><button id="btnCameraClose" type="button" class="camera-close">✕</button></div>
+      <video id="cameraVideo" class="camera-video" autoplay playsinline muted></video>
+      <div id="cameraMsg" class="small camera-msg">Posicione o cartão inteiro dentro da imagem, incluindo os 4 marcadores pretos.</div>
+      <div class="camera-actions camera-bottom">
+        <button id="btnCameraCapture" type="button" class="primary">📸 Capturar foto</button>
+        <button id="btnCameraCancel" type="button" class="secondary">Cancelar</button>
+      </div>
+      <canvas id="cameraCanvas" class="hidden"></canvas>
+    </div>
+  </div>
   <div class="actions"><button id="btnRead" type="button" class="primary" onclick="readPhoto()">🔎 Corrigir por imagem</button><button type="button" class="secondary" onclick="resetRead()">Limpar</button></div>
   <div id="readStatus" class="status info">Aguardando fotografia.</div><canvas id="diag" class="preview"></canvas>
 </div>
@@ -701,12 +745,138 @@ Selecione uma alternativa em cada questão. A alternativa selecionada ficará ma
     <div id="historyList"></div>
   </div>
 </section>
+
+<section id="estudantes" class="page hidden">
+  <div class="card">
+    <h2>👥 Estudantes</h2>
+    <p>Cadastre estudantes neste aparelho para agilizar cartões e correções.</p>
+    <div class="grid">
+      <label>Nome do estudante<input id="stuNome" placeholder="Nome completo"></label>
+      <label>Turma<input id="stuTurma" placeholder="Ex.: 5º A"></label>
+    </div>
+    <div class="actions"><button class="primary" type="button" onclick="saveStudent()">➕ Adicionar estudante</button><button class="secondary" type="button" onclick="clearStudentForm()">Limpar</button></div>
+    <label style="display:block;margin-top:12px">🔎 Pesquisar estudante<input id="stuBusca" oninput="renderStudents()" placeholder="Digite o nome ou turma"></label>
+    <div id="studentsList"></div>
+  </div>
+</section>
+
+<section id="turmas" class="page hidden">
+  <div class="card">
+    <h2>🏫 Turmas</h2>
+    <p>Organize as turmas utilizadas no aplicativo.</p>
+    <div class="grid"><label>Nova turma<input id="turmaNome" placeholder="Ex.: 5º A"></label></div>
+    <div class="actions"><button class="primary" type="button" onclick="saveClass()">➕ Adicionar turma</button></div>
+    <div id="classesList"></div>
+  </div>
+</section>
+
+<section id="analise" class="page hidden">
+  <div class="card">
+    <h2>🧠 Análise pedagógica</h2>
+    <p>Veja quais questões apresentam maior índice de erro nas correções armazenadas neste aparelho.</p>
+    <label>Avaliação<select id="analysisAssessment" onchange="renderPedagogicalAnalysis()"><option value="">Todas as avaliações</option></select></label>
+    <div id="analysisSummary" class="analysis-summary"></div>
+    <div id="analysisQuestions"></div>
+  </div>
+</section>
+
+<section id="relatorios" class="page hidden">
+  <div class="card">
+    <h2>📄 Relatórios</h2>
+    <p>Acesse rapidamente os relatórios disponíveis.</p>
+    <div class="report-grid">
+      <button class="report-card" type="button" onclick="show('historico');setTimeout(()=>gerarRelatorioHistoricoPDF(),80)"><b>📊</b><span>Relatório geral</span><small>Exporta as correções do Histórico em PDF.</small></button>
+      <button class="report-card" type="button" onclick="show('resultados')"><b>📈</b><span>Resultados</span><small>Consulta o último resultado da sessão.</small></button>
+      <button class="report-card" type="button" onclick="openMorePage('analise')"><b>🧠</b><span>Análise pedagógica</span><small>Identifica questões com maior índice de erro.</small></button>
+    </div>
+  </div>
+</section>
+
+<section id="calendarioAulas" class="page"><div class="card"><h1>📅 Calendário de Aulas</h1><p>Gere as datas das aulas do bimestre considerando dias da semana, aulas por dia e dias sem aula.</p><div class="calendar-grid"><label>Início do Bimestre<div class="cal-date-field"><input id="calInicio" class="cal-date-native-main" type="date" aria-label="Início do Bimestre"></div></label><label>Término do Bimestre<div class="cal-date-field"><input id="calFim" class="cal-date-native-main" type="date" aria-label="Término do Bimestre"></div></label><label>Aulas por dia<input id="calAulasDia" type="number" min="1" max="20" value="1"></label></div><div class="cal-block"><h3>📚 Dias com aula</h3><div class="weekday-grid"><label><input class="calWeekday" type="checkbox" value="0"> Domingo</label><label><input class="calWeekday" type="checkbox" value="1"> Segunda-feira</label><label><input class="calWeekday" type="checkbox" value="2"> Terça-feira</label><label><input class="calWeekday" type="checkbox" value="3"> Quarta-feira</label><label><input class="calWeekday" type="checkbox" value="4"> Quinta-feira</label><label><input class="calWeekday" type="checkbox" value="5"> Sexta-feira</label><label><input class="calWeekday" type="checkbox" value="6"> Sábado</label></div></div><div class="cal-block"><h3>🚫 Feriados / dias sem aula</h3><p>Digite uma data por linha no formato <b>dd/mm/aaaa</b>.</p><textarea id="calSemAula" class="cal-holiday-input" rows="5" placeholder="07/09/2026&#10;12/10/2026"></textarea></div><div class="cal-actions"><button class="primary" id="calGerarBtn" type="button">📅 Gerar calendário</button><button class="secondary" id="calLimparBtn" type="button">🧹 Limpar</button></div><div id="calResumo" class="status info hidden"></div><div id="calResultado" class="hidden"><div class="cal-actions"><button class="secondary" id="calXlsxBtn" type="button">📊 Baixar Diário Excel</button><button class="secondary" id="calCsvBtn" type="button">📥 Baixar CSV</button><button class="secondary" id="calPrintBtn" type="button">🖨️ Imprimir</button></div><div class="table-wrap"><table id="calTabela"><thead><tr><th>Nº Aula</th><th>Data</th><th>Dia da semana</th><th>Aula do dia</th></tr></thead><tbody></tbody></table></div></div></div></section><section id="configuracoes" class="page hidden">
+  <div class="card">
+    <h2>⚙️ Configurações</h2>
+    <p>Personalize as informações exibidas nos relatórios. Os dados ficam neste aparelho.</p>
+    <div class="grid">
+      <label>Nome do professor<input id="cfgProfessor" placeholder="Professor(a)"></label>
+      <label>Escola<input id="cfgEscola" placeholder="Nome da escola"></label>
+    </div>
+    <div class="actions"><button class="primary" type="button" onclick="saveSettings()">💾 Salvar configurações</button></div>
+    <hr style="margin:20px 0;border:0;border-top:1px solid #dbe3ef">
+    <h3>💾 Backup dos dados</h3>
+    <p>Exporte estudantes, turmas, avaliação atual e histórico para um arquivo JSON.</p>
+    <div class="actions"><button class="secondary" type="button" onclick="exportBackup()">📥 Fazer backup</button><label class="secondary file-backup-label" for="importBackupFile">📤 Restaurar backup</label><input id="importBackupFile" type="file" accept="application/json,.json" class="file-hidden"></div>
+    <div id="configMsg" class="status info">Os dados ficam armazenados localmente neste aparelho.</div>
+  </div>
+</section>
 </main>
 
 <script>
 let gabarito=[],ultimaLeitura=null,busy=false;
 
 let photoReadTimer=null;
+let cameraStream=null;
+let cameraCapturedBlob=null;
+
+const cameraModal=document.getElementById('cameraModal');
+const cameraVideo=document.getElementById('cameraVideo');
+const cameraCanvas=document.getElementById('cameraCanvas');
+const btnCamera=document.getElementById('btnCamera');
+const btnCameraClose=document.getElementById('btnCameraClose');
+const btnCameraCancel=document.getElementById('btnCameraCancel');
+const btnCameraCapture=document.getElementById('btnCameraCapture');
+
+async function openCamera(){
+  if(!navigator.mediaDevices?.getUserMedia){
+    setStatus('A câmera não está disponível neste navegador. Use “Escolher imagem”.','warn');
+    return;
+  }
+  try{
+    stopCamera();
+    cameraModal.classList.remove('hidden');
+    cameraModal.setAttribute('aria-hidden','false');
+    cameraMsg.textContent='Solicitando acesso à câmera...';
+    cameraStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}},audio:false});
+    cameraVideo.srcObject=cameraStream;
+    await cameraVideo.play();
+    cameraMsg.textContent='Posicione o cartão inteiro dentro da imagem, incluindo os 4 marcadores pretos.';
+  }catch(e){
+    console.error(e);
+    closeCamera();
+    const msg=e?.name==='NotAllowedError'?'Permissão da câmera negada. Autorize a câmera nas configurações do navegador.':e?.name==='NotFoundError'?'Nenhuma câmera disponível neste aparelho.':'Não foi possível abrir a câmera: '+(e?.message||'erro desconhecido');
+    setStatus(msg,'warn');
+  }
+}
+function stopCamera(){
+  if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null;}
+  if(cameraVideo)cameraVideo.srcObject=null;
+}
+function closeCamera(){
+  stopCamera();
+  if(cameraModal){cameraModal.classList.add('hidden');cameraModal.setAttribute('aria-hidden','true');}
+}
+async function captureCamera(){
+  if(!cameraStream||!cameraVideo.videoWidth){setStatus('A câmera ainda não está pronta. Aguarde um instante.','warn');return}
+  const maxW=1800, scale=Math.min(1,maxW/cameraVideo.videoWidth);
+  cameraCanvas.width=Math.round(cameraVideo.videoWidth*scale);cameraCanvas.height=Math.round(cameraVideo.videoHeight*scale);
+  const ctx=cameraCanvas.getContext('2d',{alpha:false});
+  ctx.drawImage(cameraVideo,0,0,cameraCanvas.width,cameraCanvas.height);
+  cameraCanvas.toBlob(async blob=>{
+    if(!blob){setStatus('Não foi possível capturar a foto.','bad');return;}
+    cameraCapturedBlob=blob;
+    photo.value='';
+    photoName.textContent='✓ Foto capturada pela câmera — preparando correção automática...';
+    ultimaLeitura=null;results.innerHTML='';
+    closeCamera();
+    setStatus('✓ Foto capturada. Alinhando o cartão pelos 4 marcadores e iniciando a leitura...','info');
+    await waitForCvAndRead();
+  },'image/jpeg',0.94);
+}
+btnCamera?.addEventListener('click',openCamera);
+btnCameraClose?.addEventListener('click',closeCamera);
+btnCameraCancel?.addEventListener('click',closeCamera);
+btnCameraCapture?.addEventListener('click',captureCamera);
+cameraModal?.addEventListener('click',e=>{if(e.target===cameraModal)closeCamera()});
+
 async function waitForCvAndRead(){
   if(photoReadTimer)clearTimeout(photoReadTimer);
   const started=Date.now();
@@ -718,6 +888,7 @@ async function waitForCvAndRead(){
 }
 photo.addEventListener('change',async()=>{
   const f=photo.files?.[0];
+  cameraCapturedBlob=null;
   photoName.textContent=f?`✓ ${f.name} — preparando correção automática...`:'Ao selecionar a foto, a correção será iniciada automaticamente.';
   ultimaLeitura=null;
   results.innerHTML='';
@@ -796,6 +967,7 @@ function show(id){
   if(id==='corrigir'){buildManualCorrection();setCorrectionMode(correctionMode)}
   if(id==='cartao'){syncCardFromAssessment();updateStudentFields();renderCard()}
   if(id==='historico'){renderHistory()}
+  if(id==='calendarioAulas'){calLoad()}
 }
 
 function getAssessmentCode(){
@@ -1037,14 +1209,18 @@ function renderHistory(){
   const box=document.getElementById('historyList'); if(!box)return;
   const busca=(document.getElementById('histBusca')?.value||'').toLowerCase().trim();
   const av=(document.getElementById('histAvaliacao')?.value||'').toLowerCase().trim();
-  const h=getHistory().filter(x=>(!busca||`${x.aluno} ${x.turma}`.toLowerCase().includes(busca))&&(!av||(x.avaliacao||'').toLowerCase().includes(av)));
-  if(!h.length){box.innerHTML='<div class="status info">Nenhuma correção encontrada.</div>'; bindHistoryButtons(); return}
+  // IMPORTANTE: getHistory() faz JSON.parse a cada chamada, portanto os objetos
+  // retornados em duas chamadas diferentes não possuem a mesma identidade.
+  // A versão anterior usava all.indexOf(x), gerando -1 e quebrando Editar/Excluir.
   const all=getHistory();
+  const visible=all.map((x,index)=>({x,index})).filter(({x})=>
+    (!busca||`${x.aluno||''} ${x.turma||''}`.toLowerCase().includes(busca)) &&
+    (!av||(x.avaliacao||'').toLowerCase().includes(av))
+  );
+  if(!visible.length){box.innerHTML='<div class="status info">Nenhuma correção encontrada.</div>'; bindHistoryButtons(); return}
   box.innerHTML='<div class="history-table-wrap"><table><thead><tr><th>Data</th><th>Estudante</th><th>Turma</th><th>Avaliação</th><th>Acertos</th><th>Nota</th><th>Ação</th></tr></thead><tbody>'+
-    h.map(x=>{
-      const idx=all.indexOf(x);
-      const safeIdx=idx>=0?idx:-1;
-      return `<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos}/${x.total}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td><td><div class="history-actions"><button type="button" class="history-edit-btn" data-history-action="edit" data-history-index="${safeIdx}" aria-label="Editar esta correção">✏️ Editar</button><button type="button" class="history-delete-btn" data-history-action="delete" data-history-index="${safeIdx}" aria-label="Excluir esta correção">🗑️ Excluir</button></div></td></tr>`;
+    visible.map(({x,index})=>{
+      return `<tr><td>${esc(x.data||'')}</td><td>${esc(x.aluno||'Não informado')}</td><td>${esc(x.turma||'—')}</td><td>${esc(x.avaliacao||'—')}</td><td>${x.acertos}/${x.total}</td><td><b>${Number(x.nota||0).toFixed(1)}</b></td><td><div class="history-actions"><button type="button" class="history-edit-btn" data-history-index="${index}" data-history-action="edit" aria-label="Editar esta correção">✏️ Editar</button><button type="button" class="history-delete-btn" data-history-index="${index}" data-history-action="delete" aria-label="Excluir esta correção">🗑️ Excluir</button></div></td></tr>`;
     }).join('')+
     '</tbody></table></div>';
   bindHistoryButtons();
@@ -1093,6 +1269,7 @@ function editHistoryItem(index){
 
   const st=document.getElementById('manualStatus');
   if(st){st.className='status info';st.textContent='✏️ Editando esta correção. Ajuste as alternativas e clique em “Corrigir marcações” para salvar.'}
+  return true;
 }
 function deleteHistoryItem(index){
   const h=getHistory();
@@ -1103,7 +1280,11 @@ function deleteHistoryItem(index){
   }
   h.splice(index,1);
   try{
-    localStorage.setItem('newCorretorHistorico',JSON.stringify(h));
+    if(h.length){
+      localStorage.setItem('newCorretorHistorico',JSON.stringify(h));
+    }else{
+      localStorage.removeItem('newCorretorHistorico');
+    }
     renderHistory();
     return true;
   }catch(err){
@@ -1121,25 +1302,6 @@ window.renderHistory = renderHistory;
 // Histórico: ligação direta dos botões. Evita problemas de eventos delegados
 // em navegadores móveis/iOS depois que a tabela é reconstruída.
 function bindHistoryButtons(){
-  const box=document.getElementById('historyList');
-  if(!box)return;
-
-  // Listener único e delegado: continua funcionando após a tabela ser reconstruída
-  // e evita problemas de escopo em celular/PWA.
-  if(!box.dataset.historyActionsBound){
-    box.dataset.historyActionsBound='1';
-    box.addEventListener('click',function(ev){
-      const btn=ev.target.closest('[data-history-action]');
-      if(!btn || !box.contains(btn)) return;
-      ev.preventDefault();
-      ev.stopPropagation();
-      const index=Number(btn.getAttribute('data-history-index'));
-      if(!Number.isInteger(index)||index<0)return;
-      if(btn.getAttribute('data-history-action')==='edit') editHistoryItem(index);
-      else if(btn.getAttribute('data-history-action')==='delete') deleteHistoryItem(index);
-    },true);
-  }
-
   const clear=document.getElementById('btnClearHistory');
   if(clear && !clear.dataset.bound){
     clear.dataset.bound='1';
@@ -1147,7 +1309,7 @@ function bindHistoryButtons(){
       ev.preventDefault();
       ev.stopPropagation();
       clearHistory();
-    },true);
+    });
   }
 }
 
@@ -1211,7 +1373,7 @@ function gerarRelatorioHistoricoPDF(){
     .no-print{margin-top:12px}
     .no-print button{padding:8px 12px;border:0;border-radius:6px;background:#1857c7;color:#fff;font-weight:700}
     @media print{.no-print{display:none}}
-  .history-actions{display:flex;gap:6px;justify-content:center;align-items:center;flex-wrap:wrap}.history-actions button{border:0;border-radius:8px;padding:8px 10px;font-weight:700;cursor:pointer;min-height:40px}.history-edit-btn{background:#1769e8;color:#fff}.history-delete-btn{background:#d62828;color:#fff}@media(max-width:700px){.history-actions{flex-direction:column;align-items:stretch}.history-actions button{width:100%;font-size:14px;padding:10px 12px}}
+  .history-actions{display:flex;gap:6px;justify-content:center;align-items:center;flex-wrap:wrap}.history-actions button{border:0;border-radius:8px;padding:8px 10px;font-weight:700;cursor:pointer;min-height:40px}.history-edit-btn{background:#6c757d;color:#fff;border:0}.history-delete-btn{background:#d62828;color:#fff}@media(max-width:700px){.history-actions{flex-direction:column;align-items:stretch}.history-actions button{width:100%;font-size:14px;padding:10px 12px}}
 </style></head><body>
   <div class="top">
     <div class="logo">NP</div>
@@ -1252,122 +1414,114 @@ function gerarRelatorioHistoricoPDF(){
 
 
 
-
 </body></html>`);
   w.document.close();
 }
 </script>
 
 <script>
-(function(){
-  let deferredPrompt = null;
-  const btn = () => document.getElementById("installAppBtn");
-  const help = () => document.getElementById("installHelp");
-  const show = (msg) => {
-    const h = help();
-    if(!h) return;
-    h.innerHTML = msg;
-    h.classList.add("show");
-  };
-  const close = () => { const h=help(); if(h) h.classList.remove("show"); };
-
-  function isStandalone(){
-    return !!(
-      (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) ||
-      window.navigator.standalone === true ||
-      document.referrer.startsWith("android-app://")
-    );
-  }
-
-  function hideInstallButton(){
-    const b = btn();
-    if(!b) return;
-    b.style.display = "none";
-    b.setAttribute("aria-hidden", "true");
-  }
-
-  function showInstallButton(){
-    const b = btn();
-    if(!b || isStandalone()) return;
-    b.style.display = "block";
-    b.removeAttribute("aria-hidden");
-  }
-
-  // Se o sistema já estiver aberto como aplicativo instalado, não mostramos o botão.
-  if(isStandalone()) hideInstallButton();
-
-  window.addEventListener("beforeinstallprompt", (event) => {
-    event.preventDefault();
-    deferredPrompt = event;
-    showInstallButton();
-    const b = btn();
-    if(b){ b.classList.add("ready"); b.textContent = "📲 Instalar aplicativo"; }
-  });
-
-  // Chrome/Edge/Android: dispara depois que a instalação foi concluída.
-  window.addEventListener("appinstalled", () => {
-    deferredPrompt = null;
-    hideInstallButton();
-    close();
-    console.log("NEW PROF. CORRETOR — aplicativo instalado.");
-  });
-
-  document.addEventListener("click", async (event) => {
-    const b = event.target.closest("#installAppBtn");
-    if(!b) return;
-
-    if(isStandalone()){
-      hideInstallButton();
-      return;
-    }
-
-    if(deferredPrompt){
-      try {
-        deferredPrompt.prompt();
-        const choice = await deferredPrompt.userChoice;
-        if(choice && choice.outcome === "accepted"){
-          b.textContent = "⏳ Instalando...";
-        }
-      } catch(e) { console.warn("Instalação:", e); }
-      deferredPrompt = null;
-      return;
-    }
-
-    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-    if(isIOS){
-      show("<b>Para instalar no iPhone/iPad:</b><br>Toque em <b>Compartilhar</b> → <b>Adicionar à Tela de Início</b>.<br><button type='button' id='closeInstallHelp'>Fechar</button>");
-      return;
-    }
-
-    show(`<b>O navegador ainda não liberou a instalação automática.</b><br><br>
-      <b>Chrome no computador:</b> abra o menu <b>⋮</b> e procure <b>Instalar NEW PROF. CORRETOR</b> ou <b>Instalar página como aplicativo</b>.<br><br>
-      <b>Chrome no Android:</b> abra o menu <b>⋮</b> e toque em <b>Instalar aplicativo</b> ou <b>Adicionar à tela inicial</b>.<br><br>
-      <small>Depois de instalado, ao abrir o aplicativo o botão não será exibido.</small><br><button type='button' id='closeInstallHelp'>Fechar</button>`);
-  });
-
-  document.addEventListener("click", event => {
-    if(event.target.id === "closeInstallHelp") close();
-  });
-
-  // Se o usuário mudar entre navegador e modo aplicativo enquanto a página estiver aberta.
-  if(window.matchMedia){
-    const media = window.matchMedia("(display-mode: standalone)");
-    const updateMode = () => isStandalone() ? hideInstallButton() : showInstallButton();
-    if(media.addEventListener) media.addEventListener("change", updateMode);
-  }
-
-  if("serviceWorker" in navigator){
-    window.addEventListener("load", async () => {
-      try {
-        const registration = await navigator.serviceWorker.register("/new-colecao-games-playstation/corretor/sw.js", {scope:"/new-colecao-games-playstation/corretor/"});
-        console.log("NEW PROF. CORRETOR — Service Worker ativo:", registration.scope);
-        if(isStandalone()) hideInstallButton();
-      } catch(error) {
-        console.error("NEW PROF. CORRETOR — erro no Service Worker:", error);
-      }
+const CALD=['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];let calData=[];
+function calD(v){const s=String(v||'').trim();let p;if(/^\d{4}-\d{2}-\d{2}$/.test(s)){p=s.split('-').map(Number);return new Date(p[0],p[1]-1,p[2])}if(/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(s)){p=s.split('/').map(Number);const d=new Date(p[2],p[1]-1,p[0]);return d.getFullYear()===p[2]&&d.getMonth()===p[1]-1&&d.getDate()===p[0]?d:null}return null}
+function calBR(v){const m=String(v).trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);if(!m)return null;const d=new Date(+m[3],+m[2]-1,+m[1]);return d.getFullYear()==+m[3]&&d.getMonth()==+m[2]-1&&d.getDate()==+m[1]?d:null}
+function calK(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function calF(d){return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear()}
+function calMascaraData(el){
+  if(!el)return;
+  let v=String(el.value||'').replace(/\D/g,'').slice(0,8);
+  if(v.length>4)v=v.slice(0,2)+'/'+v.slice(2,4)+'/'+v.slice(4);
+  else if(v.length>2)v=v.slice(0,2)+'/'+v.slice(2);
+  el.value=v;
+}
+function calValidaDataCampo(el){
+  if(!el)return true;
+  const v=String(el.value||'').trim();
+  if(!v)return true;
+  return !!calBR(v);
+}
+function bindCalendarDateMasks(){
+  ['calInicio','calFim'].forEach(id=>{
+    const field=document.getElementById(id);
+    if(!field||field.dataset.dateBound)return;
+    field.dataset.dateBound='1';
+    // O próprio input nativo de data abre o calendário do Android/iPhone ao tocar no campo.
+    field.addEventListener('change',()=>{
+      if(field.value) field.classList.remove('input-error');
     });
+  });
+  const ta=document.getElementById('calSemAula');
+  if(ta&&!ta.dataset.maskBound){
+    ta.dataset.maskBound='1';
+    ta.addEventListener('input',()=>calMascaraListaDatas(ta));
+    ta.addEventListener('blur',()=>calMascaraListaDatas(ta));
   }
-})();
+}
+function calMascaraListaDatas(el){
+  if(!el)return;
+  const old=String(el.value||'');
+  const pos=typeof el.selectionStart==='number'?el.selectionStart:old.length;
+  const lineStart=old.lastIndexOf('\n',Math.max(0,pos-1))+1;
+  const lineEnd=old.indexOf('\n',pos);
+  const end=lineEnd<0?old.length:lineEnd;
+  const line=old.slice(lineStart,end);
+  const digits=line.replace(/\D/g,'').slice(0,8);
+  let formatted=digits;
+  if(digits.length>4)formatted=digits.slice(0,2)+'/'+digits.slice(2,4)+'/'+digits.slice(4);
+  else if(digits.length>2)formatted=digits.slice(0,2)+'/'+digits.slice(2);
+  if(formatted===line)return;
+  el.value=old.slice(0,lineStart)+formatted+old.slice(end);
+  const newPos=Math.min(lineStart+formatted.length,lineStart+Math.max(0,pos-lineStart)+(formatted.length-line.length));
+  try{el.setSelectionRange(newPos,newPos)}catch(e){}
+}
+
+function calLoad(){try{let s=JSON.parse(localStorage.getItem('newCorretorCalendario')||'null');if(!s)return;let di=calD(s.i||''),df=calD(s.f||'');calInicio.value=di?calK(di):'';calFim.value=df?calK(df):'';calMascaraListaDatas(calSemAula);calAulasDia.value=s.a||1;document.querySelectorAll('.calWeekday').forEach(x=>x.checked=(s.d||[]).includes(+x.value));calSemAula.value=s.s||''}catch(e){}}
+function calGenerate(){let i=calD(calInicio.value),f=calD(calFim.value),a=Math.max(1,+calAulasDia.value||1),days=[...document.querySelectorAll('.calWeekday:checked')].map(x=>+x.value),bad=new Set(),inv=[];calSemAula.value.split(/[\n,;]+/).map(x=>x.trim()).filter(Boolean).forEach(x=>{let d=calBR(x);d?bad.add(calK(d)):inv.push(x)});if(!i||!f)return alert('Informe o início e o fim do bimestre.');if(f<i)return alert('O fim deve ser posterior ao início.');if(!days.length)return alert('Selecione pelo menos um dia da semana.');if(inv.length)return alert('Datas inválidas:\n'+inv.join('\n'));localStorage.setItem('newCorretorCalendario',JSON.stringify({i:calInicio.value,f:calFim.value,a,d:days,s:calSemAula.value}));calData=[];let n=0;for(let d=new Date(i);d<=f;d.setDate(d.getDate()+1)){if(!days.includes(d.getDay())||bad.has(calK(d)))continue;for(let j=1;j<=a;j++)calData.push({n:++n,data:calF(d),dia:CALD[d.getDay()],aula:j})}document.querySelector('#calTabela tbody').innerHTML=calData.map(x=>`<tr><td>${x.n}</td><td>${x.data}</td><td>${x.dia}</td><td>${x.aula}ª aula</td></tr>`).join('');calResumo.classList.remove('hidden');calResumo.innerHTML='<b>Calendário gerado:</b> '+calData.length+' aula(s).';calResultado.classList.remove('hidden')}
+function calCSV(){let r=[['Nº Aula','Data','Dia da semana','Aula do dia'],...calData.map(x=>[x.n,x.data,x.dia,x.aula+'ª aula'])],c='\ufeff'+r.map(a=>a.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(';')).join('\n'),b=new Blob([c],{type:'text/csv'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='calendario-de-aulas.csv';a.click()}
+async function calXLSX(){
+  if(!calData.length)return alert('Gere o calendário primeiro.');
+  if(!window.ExcelJS)return alert('O módulo do Excel ainda não foi carregado. Verifique sua conexão com a internet e tente novamente.');
+  if(calData.length>50)return alert('O modelo do diário possui espaço para até 50 aulas no cabeçalho. Reduza o período ou as aulas por dia.');
+  try{
+    const resp=await fetch('./diario-template.xlsx',{cache:'no-store'});
+    if(!resp.ok)throw new Error('Modelo do diário não encontrado.');
+    const buffer=await resp.arrayBuffer();
+    const workbook=new ExcelJS.Workbook();
+    await workbook.xlsx.load(buffer);
+    const ws=workbook.getWorksheet('4º ano D - FREQUÊNCIA - 1º BIM') || workbook.worksheets[0];
+    if(!ws)throw new Error('A aba de frequência não foi encontrada no modelo.');
+    // Limpa as datas/números antigos do modelo (C:AZ).
+    for(let col=3;col<=52;col++){
+      ws.getCell(7,col).value=null;
+      ws.getCell(8,col).value=null;
+    }
+    // Insere as datas das aulas e a numeração sequencial.
+    calData.forEach((item,i)=>{
+      const col=3+i; // C = 3
+      const [d,m,y]=item.data.split('/').map(Number);
+      const cell=ws.getCell(7,col);
+      cell.value=new Date(y,m-1,d);
+      cell.numFmt='dd/mm/yyyy';
+      ws.getCell(8,col).value=item.n;
+    });
+    // Atualiza o período exibido no cabeçalho do diário.
+    const ini=document.getElementById('calInicio').value;
+    const fim=document.getElementById('calFim').value;
+    if(ini&&fim){
+      ws.getCell('B7').value=`PERÍODO ${calF(calD(ini))} a ${calF(calD(fim))}`;
+    }
+    // Mantém o total de faltas no final do modelo.
+    const out=await workbook.xlsx.writeBuffer();
+    const blob=new Blob([out],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download='diario-frequencia-com-calendario.xlsx';
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+  }catch(err){
+    console.error(err);
+    alert('Não foi possível gerar o Diário Excel. '+(err?.message||''));
+  }
+}
 </script>
 
 <script>
@@ -1642,7 +1796,8 @@ function fixedQuestionGeometry(count,alts){
     const start=x+colW/2-totalW/2;
     const pts=[];
     for(let j=0;j<alts;j++){
-      // V17: drawNativeCardPage(): cy=y+qH/2+1.8
+      // V41: usa as coordenadas físicas A4 do cartão após a correção de perspectiva;
+      // o centro da leitura coincide diretamente com o centro das bolhas impressas.
       pts.push({
         x:(start+j*bubbleStep)*OMR_MM,
         y:(y+qH/2+1.8)*(OMR_A4_H/297)
@@ -1734,11 +1889,12 @@ function renderResults(a,raw){
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 async function readPhoto(){
  if(busy)return;busy=true;btnRead.disabled=true;results.innerHTML='';ultimaLeitura=null;
- if(!photo.files[0]){setStatus('Selecione ou fotografe o cartão primeiro.','warn');finish();return}
+ const imageSource=cameraCapturedBlob || photo.files?.[0];
+ if(!imageSource){setStatus('Abra a câmera ou escolha uma imagem do cartão primeiro.','warn');finish();return}
  if(typeof cv==='undefined'||!cv.Mat){setStatus('O leitor de imagem ainda está carregando. Aguarde alguns segundos.','warn');finish();return}
  setStatus('Lendo cartão... resultado anterior apagado.','info');
  try{
-  let im=await loadImage(photo.files[0]),scale=Math.min(1,1800/Math.max(im.naturalWidth,im.naturalHeight)),c=document.createElement('canvas');
+  let im=await loadImage(imageSource),scale=Math.min(1,1800/Math.max(im.naturalWidth,im.naturalHeight)),c=document.createElement('canvas');
   c.width=Math.round(im.naturalWidth*scale);c.height=Math.round(im.naturalHeight*scale);c.getContext('2d').drawImage(im,0,0,c.width,c.height);
   let src=cv.imread(c),m=findMarkers(src);if(!m){src.delete();setStatus('Não encontrei os 4 marcadores. Fotografe o cartão inteiro, sem cortar os cantos.','bad');finish();return}
   setStatus('✓ 4 marcadores encontrados. Corrigindo perspectiva e localizando cada quadro...','info');
@@ -1906,4 +2062,255 @@ function openAdmin(){window.location.href=ADMIN_URL;}
 })();
 </script>
 
+<style>
+.history-edit-btn{background:#6c757d!important;color:#fff!important;border:0!important;border-radius:8px!important;padding:8px 10px!important;font-weight:700!important;cursor:pointer!important;min-height:40px!important}
+.history-delete-btn{background:#d62828!important;color:#fff!important;border:0!important;border-radius:8px!important;padding:8px 10px!important;font-weight:700!important;cursor:pointer!important;min-height:40px!important}
+.history-edit-btn,.history-delete-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+#historyEditModal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:99999;padding:16px;box-sizing:border-box}
+#historyEditModal .hem-box{background:#fff;border-radius:14px;max-width:760px;width:100%;max-height:90vh;overflow:auto;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+#historyEditModal .hem-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#historyEditModal label{font-weight:700;font-size:14px;display:block}
+#historyEditModal input{width:100%;box-sizing:border-box;padding:10px;border:1px solid #cbd5e1;border-radius:8px;margin-top:5px}
+.hem-q{border:1px solid #dbe3ef;border-radius:10px;padding:10px;margin-top:8px}.hem-opts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.hem-opts button{border:1px solid #adb5bd;background:#f1f3f5;color:#111;border-radius:7px;padding:8px 12px;font-weight:700;cursor:pointer}.hem-opts button.sel{background:#198754;color:#fff;border-color:#198754}
+.hem-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}.hem-actions button{border:0;border-radius:8px;padding:10px 15px;font-weight:700;cursor:pointer}.hem-save{background:#198754;color:#fff}.hem-close{background:#6c757d;color:#fff}
+@media(max-width:600px){#historyEditModal .hem-grid{grid-template-columns:1fr}.hem-actions button{width:100%}}
+</style>
+<div id="historyEditModal" aria-hidden="true"><div class="hem-box"><h2 style="margin-top:0">✏️ Editar correção</h2><p style="color:#475569">Altere os dados ou as marcações desta correção. O registro original será atualizado.</p><div class="hem-grid"><label>Estudante<input id="hemAluno" type="text"></label><label>Turma<input id="hemTurma" type="text"></label><label style="grid-column:1/-1">Avaliação<input id="hemAvaliacao" type="text"></label></div><div id="hemQuestions"></div><div class="hem-actions"><button type="button" class="hem-close" id="hemClose">Fechar</button><button type="button" class="hem-save" id="hemSave">💾 Salvar alteração</button></div></div></div>
+<script>
+(function(){
+  let editIndex = -1;
+  let editAnswers = [];
+
+  function historyRead(){
+    try{
+      const value = JSON.parse(localStorage.getItem('newCorretorHistorico') || '[]');
+      return Array.isArray(value) ? value : [];
+    }catch(e){ return []; }
+  }
+
+  function historyWrite(list){
+    if(list.length) localStorage.setItem('newCorretorHistorico', JSON.stringify(list));
+    else localStorage.removeItem('newCorretorHistorico');
+  }
+
+  function escapeHtml(value){
+    return String(value ?? '').replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  function openEditor(index){
+    const list = historyRead();
+    index = Number(index);
+    if(!Number.isInteger(index) || index < 0 || index >= list.length){
+      alert('Não foi possível localizar esta correção.');
+      return false;
+    }
+
+    const item = list[index] || {};
+    editIndex = index;
+    editAnswers = Array.isArray(item.respostas) ? item.respostas.slice() : [];
+
+    const gabarito = Array.isArray(item.gabarito) ? item.gabarito : [];
+    const total = Math.max(Number(item.total)||0, editAnswers.length, gabarito.length);
+    const alternatives = ['A','B','C','D','E'];
+
+    document.getElementById('hemAluno').value = item.aluno && item.aluno !== 'Não informado' ? item.aluno : '';
+    document.getElementById('hemTurma').value = item.turma && item.turma !== '—' ? item.turma : '';
+    document.getElementById('hemAvaliacao').value = item.avaliacao || '';
+
+    let html = '';
+    for(let q=0; q<total; q++){
+      const current = String(editAnswers[q] || '').toUpperCase();
+      html += '<div class="hem-q"><b>Questão '+(q+1)+'</b>';
+      html += ' <span style="color:#64748b">Gabarito: '+escapeHtml(gabarito[q] || '—')+'</span>';
+      html += '<div class="hem-opts">';
+      alternatives.forEach(function(letter){
+        html += '<button type="button" data-edit-q="'+q+'" data-edit-a="'+letter+'" class="'+(current===letter?'sel':'')+'">'+letter+'</button>';
+      });
+      html += '<button type="button" data-edit-q="'+q+'" data-edit-a="" class="'+(!current?'sel':'')+'">Em branco</button>';
+      html += '</div></div>';
+    }
+
+    document.getElementById('hemQuestions').innerHTML = html || '<div class="status info">Esta correção não possui respostas para editar.</div>';
+    const modal = document.getElementById('historyEditModal');
+    modal.style.display = 'flex';
+    modal.setAttribute('aria-hidden','false');
+    return false;
+  }
+
+  function closeEditor(){
+    const modal = document.getElementById('historyEditModal');
+    if(modal){ modal.style.display='none'; modal.setAttribute('aria-hidden','true'); }
+    editIndex = -1;
+    editAnswers = [];
+  }
+
+  function saveEditor(){
+    if(editIndex < 0) return false;
+    const list = historyRead();
+    if(editIndex >= list.length){
+      alert('Não foi possível localizar esta correção.');
+      closeEditor();
+      return false;
+    }
+
+    const item = Object.assign({}, list[editIndex]);
+    const gabarito = Array.isArray(item.gabarito) ? item.gabarito : [];
+    const total = Math.max(Number(item.total)||0, editAnswers.length, gabarito.length);
+    let acertos=0, erros=0, brancas=0;
+
+    for(let q=0; q<total; q++){
+      const resposta = String(editAnswers[q] || '').toUpperCase();
+      const correta = String(gabarito[q] || '').toUpperCase();
+      if(!resposta) brancas++;
+      else if(correta && resposta===correta) acertos++;
+      else erros++;
+    }
+
+    item.aluno = document.getElementById('hemAluno').value.trim() || 'Não informado';
+    item.turma = document.getElementById('hemTurma').value.trim() || '—';
+    item.avaliacao = document.getElementById('hemAvaliacao').value.trim() || 'Avaliação';
+    item.respostas = editAnswers.slice(0,total);
+    item.total = total;
+    item.acertos = acertos;
+    item.erros = erros;
+    item.brancas = brancas;
+    item.revisar = 0;
+    item.nota = Number((acertos * Number(item.valorPorQuestao || 1)).toFixed(1));
+    item.editadoEm = new Date().toLocaleString('pt-BR');
+
+    list[editIndex] = item;
+    try{
+      historyWrite(list);
+      closeEditor();
+      if(typeof window.renderHistory === 'function') window.renderHistory();
+      else if(typeof renderHistory === 'function') renderHistory();
+      return false;
+    }catch(e){
+      alert('Não foi possível salvar a alteração neste aparelho.');
+      return false;
+    }
+  }
+
+  function deleteOne(index){
+    const list = historyRead();
+    index = Number(index);
+    if(!Number.isInteger(index) || index<0 || index>=list.length){
+      alert('Não foi possível localizar esta correção.');
+      return false;
+    }
+    list.splice(index,1);
+    try{
+      historyWrite(list);
+      if(typeof window.renderHistory === 'function') window.renderHistory();
+      else if(typeof renderHistory === 'function') renderHistory();
+      return false;
+    }catch(e){
+      alert('Não foi possível excluir a correção neste aparelho.');
+      return false;
+    }
+  }
+
+  window.__NEW_HIST_EDIT = openEditor;
+  window.__NEW_HIST_DELETE = deleteOne;
+
+  // Usa addEventListener em vez de onclick inline. Isso é importante porque
+  // a página pode estar sob uma política CSP que bloqueia handlers inline.
+  document.addEventListener('click', function(event){
+    const historyButton = event.target.closest && event.target.closest('[data-history-action]');
+    if(historyButton){
+      event.preventDefault();
+      event.stopPropagation();
+      const index = Number(historyButton.getAttribute('data-history-index'));
+      const action = historyButton.getAttribute('data-history-action');
+      if(action === 'edit') openEditor(index);
+      else if(action === 'delete') deleteOne(index);
+      return;
+    }
+    const choice = event.target.closest && event.target.closest('#hemQuestions [data-edit-q]');
+    if(choice){
+      event.preventDefault();
+      const q = Number(choice.getAttribute('data-edit-q'));
+      const a = choice.getAttribute('data-edit-a') || '';
+      if(Number.isInteger(q)){
+        editAnswers[q] = a;
+        document.querySelectorAll('#hemQuestions [data-edit-q="'+q+'"]').forEach(function(btn){
+          btn.classList.toggle('sel', btn===choice);
+        });
+      }
+      return;
+    }
+
+    if(event.target.closest && event.target.closest('#hemSave')){
+      event.preventDefault();
+      saveEditor();
+      return;
+    }
+    if(event.target.closest && event.target.closest('#hemClose')){
+      event.preventDefault();
+      closeEditor();
+      return;
+    }
+    const modal=document.getElementById('historyEditModal');
+    if(modal && event.target===modal) closeEditor();
+  });
+})();
+</script>
+<script>
+// ===== CALENDÁRIO — EVENTOS DOS BOTÕES =====
+(function(){
+  function bindCalendarButtons(){
+    bindCalendarDateMasks();
+    const gerar=document.getElementById('calGerarBtn'), limpar=document.getElementById('calLimparBtn'), xlsx=document.getElementById('calXlsxBtn'), csv=document.getElementById('calCsvBtn'), print=document.getElementById('calPrintBtn');
+    if(gerar && !gerar.dataset.bound){gerar.dataset.bound='1';gerar.addEventListener('click',e=>{e.preventDefault();try{calGenerate()}catch(err){console.error(err);alert('Não foi possível gerar o calendário. '+(err?.message||''))}})}
+    if(limpar && !limpar.dataset.bound){limpar.dataset.bound='1';limpar.addEventListener('click',e=>{e.preventDefault();document.getElementById('calInicio').value='';document.getElementById('calFim').value='';document.getElementById('calAulasDia').value='1';document.querySelectorAll('.calWeekday').forEach(x=>x.checked=false);document.getElementById('calSemAula').value='';document.getElementById('calResultado')?.classList.add('hidden');const st=document.getElementById('calResumo');if(st){st.className='status info hidden';st.textContent=''}const tb=document.querySelector('#calTabela tbody');if(tb)tb.innerHTML='';calData=[];localStorage.removeItem('newCorretorCalendario')})}
+    if(xlsx && !xlsx.dataset.bound){xlsx.dataset.bound='1';xlsx.addEventListener('click',e=>{e.preventDefault();calXLSX()})}
+    if(csv && !csv.dataset.bound){csv.dataset.bound='1';csv.addEventListener('click',e=>{e.preventDefault();calCSV()})}
+    if(print && !print.dataset.bound){print.dataset.bound='1';print.addEventListener('click',e=>{e.preventDefault();if(!calData.length)return alert('Gere o calendário primeiro.');const rows=calData.map(x=>`<tr><td>${x.n}</td><td>${x.data}</td><td>${x.dia}</td><td>${x.aula}ª aula</td></tr>`).join('');const w=window.open('','_blank','width=900,height=700');if(!w)return alert('Permita pop-ups para imprimir o calendário.');w.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Calendário de Aulas</title><style>body{font-family:Arial;padding:24px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #999;padding:7px}th{background:#eee}</style></head><body><h1>Calendário de Aulas</h1><table><thead><tr><th>Nº Aula</th><th>Data</th><th>Dia da semana</th><th>Aula do dia</th></tr></thead><tbody>${rows}</tbody></table><script>window.onload=function(){setTimeout(function(){window.print()},200)}<\/script></body></html>`);w.document.close()})}
+  }
+  window.bindCalendarButtons=bindCalendarButtons;
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindCalendarButtons);else bindCalendarButtons();
+})();
+</script>
+<script>
+/* ===== V29 — DASHBOARD, ESTUDANTES, TURMAS, ANÁLISE, RELATÓRIOS E CONFIGURAÇÕES ===== */
+(function(){
+  const KEY_STU='newProfCorretorEstudantes';
+  const KEY_CLS='newProfCorretorTurmas';
+  const KEY_CFG='newProfCorretorConfiguracoes';
+  function read(key,fallback=[]){try{const v=JSON.parse(localStorage.getItem(key)||'null');return v??fallback}catch(e){return fallback}}
+  function write(key,v){localStorage.setItem(key,JSON.stringify(v))}
+  function esc2(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+  window.toggleMoreMenu=function(){const m=document.getElementById('moreMenu');if(!m)return;m.classList.toggle('show');m.setAttribute('aria-hidden',m.classList.contains('show')?'false':'true')}
+  window.openMorePage=function(id){const m=document.getElementById('moreMenu');if(m){m.classList.remove('show');m.setAttribute('aria-hidden','true')}show(id);if(id==='estudantes')renderStudents();if(id==='turmas')renderClasses();if(id==='analise')renderAnalysisOptions()}
+  document.addEventListener('click',e=>{const m=document.getElementById('moreMenu');const b=document.getElementById('moreMenuBtn');if(m&&m.classList.contains('show')&&!m.contains(e.target)&&e.target!==b){m.classList.remove('show');m.setAttribute('aria-hidden','true')}})
+
+  window.saveStudent=function(){const n=document.getElementById('stuNome')?.value.trim();const t=document.getElementById('stuTurma')?.value.trim();if(!n){alert('Informe o nome do estudante.');return}const list=read(KEY_STU,[]);const exists=list.some(x=>x.nome.toLowerCase()===n.toLowerCase()&&x.turma.toLowerCase()===t.toLowerCase());if(exists){alert('Este estudante já está cadastrado nesta turma.');return}list.push({id:Date.now()+Math.random(),nome:n,turma:t||'—'});list.sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));write(KEY_STU,list);if(t)ensureClass(t);clearStudentForm();renderStudents();refreshDashboard()}
+  window.clearStudentForm=function(){const a=document.getElementById('stuNome'),b=document.getElementById('stuTurma');if(a)a.value='';if(b)b.value=''}
+  window.deleteStudent=function(id){const list=read(KEY_STU,[]).filter(x=>String(x.id)!==String(id));write(KEY_STU,list);renderStudents();refreshDashboard()}
+  window.renderStudents=function(){const box=document.getElementById('studentsList');if(!box)return;const q=(document.getElementById('stuBusca')?.value||'').toLowerCase().trim();const list=read(KEY_STU,[]).filter(x=>!q||`${x.nome} ${x.turma}`.toLowerCase().includes(q));if(!list.length){box.innerHTML='<div class="status info" style="margin-top:12px">Nenhum estudante encontrado.</div>';return}box.innerHTML=list.map(x=>`<div class="student-row"><div><b>${esc2(x.nome)}</b><br><small>${esc2(x.turma)}</small></div><div class="row-actions"><button class="btn-red" type="button" data-stu-del="${x.id}">🗑️ Excluir</button></div></div>`).join('')}
+
+  function ensureClass(t){if(!t)return;const list=read(KEY_CLS,[]);if(!list.some(x=>x.toLowerCase()===t.toLowerCase())){list.push(t);list.sort((a,b)=>a.localeCompare(b,'pt-BR'));write(KEY_CLS,list)}}
+  window.saveClass=function(){const el=document.getElementById('turmaNome');const t=el?.value.trim();if(!t){alert('Informe o nome da turma.');return}const list=read(KEY_CLS,[]);if(list.some(x=>x.toLowerCase()===t.toLowerCase())){alert('Esta turma já está cadastrada.');return}list.push(t);list.sort((a,b)=>a.localeCompare(b,'pt-BR'));write(KEY_CLS,list);el.value='';renderClasses();refreshDashboard()}
+  window.deleteClass=function(t){const students=read(KEY_STU,[]);if(students.some(x=>x.turma===t)){alert('Há estudantes cadastrados nesta turma. Exclua ou mova os estudantes antes de remover a turma.');return}write(KEY_CLS,read(KEY_CLS,[]).filter(x=>x!==t));renderClasses();refreshDashboard()}
+  window.renderClasses=function(){const box=document.getElementById('classesList');if(!box)return;let list=read(KEY_CLS,[]);const students=read(KEY_STU,[]);students.forEach(x=>ensureClass(x.turma==='—'?'':x.turma));list=read(KEY_CLS,[]);if(!list.length){box.innerHTML='<div class="status info" style="margin-top:12px">Nenhuma turma cadastrada.</div>';return}box.innerHTML=list.map(t=>{const n=students.filter(x=>x.turma===t).length;return `<div class="class-row"><div><b>${esc2(t)}</b><br><small>${n} estudante(s)</small></div><div class="row-actions"><button class="btn-red" type="button" data-cls-del="${esc2(t)}">🗑️ Excluir</button></div></div>`}).join('')}
+
+  window.renderAnalysisOptions=function(){const sel=document.getElementById('analysisAssessment');if(!sel)return;const h=typeof getHistory==='function'?getHistory():read('newCorretorHistorico',[]);const vals=[...new Set(h.map(x=>x.avaliacao).filter(Boolean))];sel.innerHTML='<option value="">Todas as avaliações</option>'+vals.map(v=>`<option value="${esc2(v)}">${esc2(v)}</option>`).join('');renderPedagogicalAnalysis()}
+  window.renderPedagogicalAnalysis=function(){const sum=document.getElementById('analysisSummary'),box=document.getElementById('analysisQuestions'),sel=document.getElementById('analysisAssessment');if(!sum||!box)return;const h=typeof getHistory==='function'?getHistory():read('newCorretorHistorico',[]);const chosen=sel?.value||'';const rows=h.filter(x=>!chosen||x.avaliacao===chosen);if(!rows.length){sum.innerHTML='';box.innerHTML='<div class="status info">Ainda não há correções suficientes para gerar uma análise.</div>';return}let totalQ=0,totalAc=0;const qs={};rows.forEach(x=>{const ans=Array.isArray(x.respostas)?x.respostas:[];const gab=Array.isArray(x.gabarito)?x.gabarito:[];const n=Math.max(Number(x.total)||0,ans.length,gab.length);totalQ+=n;totalAc+=Number(x.acertos||0);for(let i=0;i<n;i++){const r=String(ans[i]||'').toUpperCase(),g=String(gab[i]||'').toUpperCase();if(!qs[i])qs[i]={n:0,ac:0,blank:0,valid:0};qs[i].n++;if(!r)qs[i].blank++;else{qs[i].valid++;if(g&&r===g)qs[i].ac++}}});const avg=rows.reduce((s,x)=>s+Number(x.nota||0),0)/rows.length;sum.innerHTML=`<div class="analysis-box"><b>${rows.length}</b><small>Correções analisadas</small></div><div class="analysis-box"><b>${totalAc}/${totalQ}</b><small>Acertos totais</small></div><div class="analysis-box"><b>${avg.toFixed(1)}</b><small>Média das notas</small></div>`;const arr=Object.entries(qs).map(([i,v])=>({i:Number(i),...v,err:v.valid?100-(v.ac/v.valid*100):0})).sort((a,b)=>b.err-a.err);box.innerHTML='<h3>📌 Desempenho por questão</h3>'+arr.map(v=>`<div class="analysis-question"><div class="analysis-meta"><b>Questão ${v.i+1}</b><span>${v.ac}/${v.valid||0} acertos · ${v.blank} brancas</span></div><div class="analysis-bar"><div class="analysis-fill" style="width:${Math.min(100,Math.max(0,v.err)).toFixed(1)}%"></div></div><small>${v.valid? v.err.toFixed(1):'0.0'}% de erros entre respostas marcadas</small></div>`).join('')}
+
+  window.saveSettings=function(){const cfg={professor:document.getElementById('cfgProfessor')?.value.trim()||'',escola:document.getElementById('cfgEscola')?.value.trim()||''};write(KEY_CFG,cfg);const m=document.getElementById('configMsg');if(m){m.className='status ok';m.textContent='✓ Configurações salvas neste aparelho.'}refreshDashboard()}
+  function loadSettings(){const c=read(KEY_CFG,{});if(document.getElementById('cfgProfessor'))document.getElementById('cfgProfessor').value=c.professor||'';if(document.getElementById('cfgEscola'))document.getElementById('cfgEscola').value=c.escola||''}
+  window.exportBackup=function(){const payload={versao:'V29',geradoEm:new Date().toISOString(),estudantes:read(KEY_STU,[]),turmas:read(KEY_CLS,[]),configuracoes:read(KEY_CFG,{}),avaliacao:read('newCorretorAvaliacao',null),gabarito:read('newCorretorGabarito',[]),historico:read('newCorretorHistorico',[])};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='new-prof-corretor-backup-v29.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+  window.restoreBackup=function(file){const r=new FileReader();r.onload=()=>{try{const p=JSON.parse(r.result);if(Array.isArray(p.estudantes))write(KEY_STU,p.estudantes);if(Array.isArray(p.turmas))write(KEY_CLS,p.turmas);if(p.configuracoes)write(KEY_CFG,p.configuracoes);if(p.avaliacao)write('newCorretorAvaliacao',p.avaliacao);if(Array.isArray(p.gabarito))write('newCorretorGabarito',p.gabarito);if(Array.isArray(p.historico))write('newCorretorHistorico',p.historico);loadSettings();renderStudents();renderClasses();renderHistory();refreshDashboard();alert('Backup restaurado com sucesso.')}catch(e){alert('Arquivo de backup inválido.')}};r.readAsText(file)}
+
+  window.refreshDashboard=function(){const h=typeof getHistory==='function'?getHistory():read('newCorretorHistorico',[]),s=read(KEY_STU,[]),c=read(KEY_CLS,[]);const media=h.length?h.reduce((a,x)=>a+Number(x.nota||0),0)/h.length:0;const a=document.getElementById('dashCorrecoes'),b=document.getElementById('dashEstudantes'),d=document.getElementById('dashTurmas'),e=document.getElementById('dashMedia');if(a)a.textContent=h.length;if(b)b.textContent=s.length;if(d)d.textContent=c.length;if(e)e.textContent=media.toFixed(1).replace('.',',');const box=document.getElementById('dashRecentesList');if(box){const last=h.slice(0,5);box.innerHTML=last.length?last.map(x=>`<div class="recent-item"><div class="recent-main"><b>${esc2(x.aluno||'Não informado')}</b><small>${esc2(x.avaliacao||'Avaliação')} · ${esc2(x.turma||'—')}</small></div><div class="recent-note">${Number(x.nota||0).toFixed(1)}</div></div>`).join(''):'<div class="status info">Nenhuma correção registrada.</div>'}}
+
+  document.addEventListener('click',e=>{const sd=e.target.closest('[data-stu-del]');if(sd){e.preventDefault();deleteStudent(sd.dataset.stuDel);return}const cd=e.target.closest('[data-cls-del]');if(cd){e.preventDefault();deleteClass(cd.dataset.clsDel);return}})
+  const imp=document.getElementById('importBackupFile');if(imp)imp.addEventListener('change',e=>{if(e.target.files[0])restoreBackup(e.target.files[0]);e.target.value=''})
+  loadSettings();
+  setTimeout(()=>{refreshDashboard();renderStudents();renderClasses();},250);
+  const oldShow=window.show; if(typeof oldShow==='function'){window.show=function(id){oldShow(id);if(id==='inicio')refreshDashboard();if(id==='estudantes')renderStudents();if(id==='turmas')renderClasses();if(id==='analise')renderAnalysisOptions();if(id==='configuracoes')loadSettings();}}
+})();
+</script>
 </body></html>
