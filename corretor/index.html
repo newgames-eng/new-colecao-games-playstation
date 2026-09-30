@@ -533,7 +533,7 @@ button,input,select,textarea{font:inherit;max-width:100%}
 </div>
 <main>
 <section id="inicio" class="page"><div class="card"><h1>NEW PROF. CORRETOR INTELIGENTE</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info">
-<b>V38:</b> Calendário de aulas com seleção de datas diretamente nos campos. Leitor OMR e histórico local integrados.<br><br>
+<b>V40:</b> Leitor OMR alinhado às bolhas do cartão. Calendário e histórico integrados.<br><br>
 <b>Desenvolvido pelo professor <b>New Cristian</b>, o NEW PROF. CORRETOR foi criado como uma ferramenta de suporte ao professor, pensada para tornar a correção e o acompanhamento das avaliações mais práticos, organizados e eficientes.</b><br><br>
 </div>
 <div class="dashboard-grid" id="dashboardStats">
@@ -1712,11 +1712,11 @@ function fixedQuestionGeometry(count,alts){
     const start=x+colW/2-totalW/2;
     const pts=[];
     for(let j=0;j<alts;j++){
-      // V39: compensa o deslocamento vertical introduzido pela referência dos marcadores na perspectiva;
-      // a geometria final do conteúdo do cartão fica alinhada ao centro real das bolhas.
+      // V40: usa as coordenadas físicas A4 do cartão após a correção de perspectiva;
+      // o centro da leitura coincide diretamente com o centro das bolhas impressas.
       pts.push({
         x:(start+j*bubbleStep)*OMR_MM,
-        y:(y+qH/2+1.8-OMR_MARKER_OFFSET_MM)*(OMR_A4_H/297)
+        y:(y+qH/2+1.8)*(OMR_A4_H/297)
       });
     }
     out.push({q:i+1,pts});
