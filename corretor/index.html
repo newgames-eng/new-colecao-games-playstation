@@ -466,7 +466,11 @@ button,input,select,textarea{font:inherit;max-width:100%}
 @media(max-width:850px){.dashboard-grid{grid-template-columns:repeat(2,1fr)}.report-grid{grid-template-columns:1fr}.analysis-summary{grid-template-columns:1fr 1fr}.more-menu{top:112px;right:9px}}
 @media(max-width:600px){.dashboard-grid{grid-template-columns:1fr 1fr}.dash-card{padding:10px}.dash-card b{font-size:18px}.dash-card small{font-size:11px}.student-row,.class-row{align-items:flex-start;flex-direction:column}.row-actions{width:100%}.row-actions button{flex:1}.analysis-summary{grid-template-columns:1fr}.more-menu{position:absolute;top:105px;left:9px;right:9px}}
 </style>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script><script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script><style id="calendar-css">.calendar-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:16px 0}.calendar-grid label{font-weight:700}.calendar-grid input,.cal-block textarea{margin-top:7px;width:100%;box-sizing:border-box;padding:10px;border:1px solid #ccd6e2;border-radius:10px}.cal-block{margin:16px 0;padding:15px;border:1px solid #dce4ee;border-radius:14px;background:#f8fafc}.weekday-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.weekday-grid label{padding:10px;background:#fff;border:1px solid #dbe3ed;border-radius:9px}.cal-actions{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}@media(max-width:700px){.calendar-grid,.weekday-grid{grid-template-columns:1fr 1fr}.cal-actions button{width:100%}}</style></head>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script><script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script><style id="calendar-css">.calendar-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:16px 0}.calendar-grid label{font-weight:700}.calendar-grid input,.cal-block textarea{margin-top:7px;width:100%;box-sizing:border-box;padding:10px;border:1px solid #ccd6e2;border-radius:10px}.cal-block{margin:16px 0;padding:15px;border:1px solid #dce4ee;border-radius:14px;background:#f8fafc}.weekday-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.weekday-grid label{padding:10px;background:#fff;border:1px solid #dbe3ed;border-radius:9px}.cal-actions{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}@media(max-width:700px){.calendar-grid,.weekday-grid{grid-template-columns:1fr 1fr}.cal-actions button{width:100%}}</style>
+<style id="camera-fix-css">
+.camera-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.camera-actions .picker-button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;box-sizing:border-box;cursor:pointer}.camera-modal{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.78);display:flex;align-items:center;justify-content:center;padding:14px;box-sizing:border-box}.camera-modal.hidden{display:none}.camera-dialog{width:min(760px,100%);max-height:94vh;overflow:auto;background:#fff;border-radius:18px;padding:14px;box-sizing:border-box;box-shadow:0 18px 50px rgba(0,0,0,.35)}.camera-head{display:flex;align-items:center;justify-content:space-between;font-size:18px;margin-bottom:10px}.camera-close{border:0;background:#eef2f7;border-radius:10px;width:42px;height:42px;font-size:20px;cursor:pointer}.camera-video{display:block;width:100%;max-height:68vh;object-fit:contain;background:#111;border-radius:12px}.camera-msg{margin-top:8px}.camera-bottom{margin-top:12px}.camera-bottom button{flex:1}.camera-modal .hidden{display:none!important}@media(max-width:600px){.camera-actions .picker-button,.camera-bottom button{width:100%}.camera-dialog{padding:10px}.camera-video{max-height:65vh}}
+</style>
+</head>
 <body><button id="installAppBtn" type="button" aria-label="Instalar aplicativo">📲 Instalar aplicativo</button>
 <div id="installHelp" role="dialog" aria-live="polite" aria-label="Instalação do aplicativo"></div>
 
@@ -533,7 +537,7 @@ button,input,select,textarea{font:inherit;max-width:100%}
 </div>
 <main>
 <section id="inicio" class="page"><div class="card"><h1>NEW PROF. CORRETOR INTELIGENTE</h1><p>Correção de cartões-resposta por fotografia.</p><div class="status info">
-<b>V40:</b> Leitor OMR alinhado às bolhas do cartão. Calendário e histórico integrados.<br><br>
+<b style="font-size:1.08em;background:#fff3cd;color:#8a5a00;padding:4px 8px;border-radius:6px;display:inline-block">V44: OMR corrigido para cartões de 20 questões e alinhamento das bolhas. Câmera Android com fallback nativo. Calendário e histórico integrados.</b><br><br>
 <b>Desenvolvido pelo professor <b>New Cristian</b>, o NEW PROF. CORRETOR foi criado como uma ferramenta de suporte ao professor, pensada para tornar a correção e o acompanhamento das avaliações mais práticos, organizados e eficientes.</b><br><br>
 </div>
 <div class="dashboard-grid" id="dashboardStats">
@@ -687,11 +691,30 @@ Selecione uma alternativa em cada questão. A alternativa selecionada ficará ma
   <h3>📷 Correção por imagem</h3>
   <p>Fotografe ou selecione o cartão-resposta preenchido. O sistema fará o alinhamento e a leitura automática.</p>
   <div class="photo-picker direct-photo-picker">
-    <label for="photo" class="primary picker-button">📷 Tirar foto / escolher imagem</label>
+    <div class="camera-actions">
+      <button id="btnCamera" type="button" class="primary picker-button">📷 Abrir câmera</button>
+      <label for="photo" class="secondary picker-button">🖼️ Escolher imagem</label>
+    </div>
     <input id="photo" type="file" accept="image/*" class="file-hidden">
-    <div id="photoName" class="file-name">Ao selecionar a foto, a correção será iniciada automaticamente.</div>
+     <input id="photoCamera" type="file" accept="image/*" capture="environment" class="file-hidden">
+    <input id="photoCameraFront" type="file" accept="image/*" capture="camera" class="file-hidden">
+    <div id="photoName" class="file-name">Abra a câmera para fotografar o cartão ou escolha uma imagem da galeria.</div>
   </div>
-  <div class="small">No celular, o seletor poderá oferecer <b>Câmera</b>, <b>Fotos/Galeria</b> e <b>Arquivos</b>. No computador, será aberto o seletor de arquivos.</div>
+  <div class="small">No celular, <b>Abrir câmera</b> tenta abrir a câmera dentro do aplicativo. Se o navegador não oferecer acesso direto, use a opção abaixo para abrir a câmera nativa do aparelho.</div>
+   <button id="btnNativeCamera" type="button" class="secondary picker-button" style="display:none;margin-top:8px;width:100%">📷 Tirar foto com a câmera do aparelho</button>
+
+  <div id="cameraModal" class="camera-modal hidden" aria-hidden="true">
+    <div class="camera-dialog">
+      <div class="camera-head"><b>📷 Fotografar cartão</b><button id="btnCameraClose" type="button" class="camera-close">✕</button></div>
+      <video id="cameraVideo" class="camera-video" autoplay playsinline muted></video>
+      <div id="cameraMsg" class="small camera-msg">Posicione o cartão inteiro dentro da imagem, incluindo os 4 marcadores pretos.</div>
+      <div class="camera-actions camera-bottom">
+        <button id="btnCameraCapture" type="button" class="primary">📸 Capturar foto</button>
+        <button id="btnCameraCancel" type="button" class="secondary">Cancelar</button>
+      </div>
+      <canvas id="cameraCanvas" class="hidden"></canvas>
+    </div>
+  </div>
   <div class="actions"><button id="btnRead" type="button" class="primary" onclick="readPhoto()">🔎 Corrigir por imagem</button><button type="button" class="secondary" onclick="resetRead()">Limpar</button></div>
   <div id="readStatus" class="status info">Aguardando fotografia.</div><canvas id="diag" class="preview"></canvas>
 </div>
@@ -794,6 +817,106 @@ Selecione uma alternativa em cada questão. A alternativa selecionada ficará ma
 let gabarito=[],ultimaLeitura=null,busy=false;
 
 let photoReadTimer=null;
+let cameraStream=null;
+let cameraCapturedBlob=null;
+
+const cameraModal=document.getElementById('cameraModal');
+const cameraVideo=document.getElementById('cameraVideo');
+const cameraCanvas=document.getElementById('cameraCanvas');
+const btnCamera=document.getElementById('btnCamera');
+const photoCamera=document.getElementById('photoCamera');
+const photoCameraFront=document.getElementById('photoCameraFront');
+const btnNativeCamera=document.getElementById('btnNativeCamera');
+const btnCameraClose=document.getElementById('btnCameraClose');
+const btnCameraCancel=document.getElementById('btnCameraCancel');
+const btnCameraCapture=document.getElementById('btnCameraCapture');
+
+async function openCamera(){
+  // A primeira tentativa é sempre a câmera real do navegador (getUserMedia).
+  // Isso evita que Android abra somente a galeria.
+  const showNativeCameraOption=()=>{
+    if(btnNativeCamera)btnNativeCamera.style.display='flex';
+    setStatus('A câmera integrada não pôde ser aberta neste navegador. Toque em “Tirar foto com a câmera do aparelho”.','warn');
+  };
+  if(!window.isSecureContext || !navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia!=='function'){
+    showNativeCameraOption();
+    return;
+  }
+  try{
+    stopCamera();
+    if(btnNativeCamera)btnNativeCamera.style.display='none';
+    cameraModal.classList.remove('hidden');
+    cameraModal.setAttribute('aria-hidden','false');
+    cameraMsg.textContent='Solicitando acesso à câmera...';
+    cameraStream=await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:{exact:'environment'},width:{ideal:1920},height:{ideal:1080}},
+      audio:false
+    }).catch(async()=>navigator.mediaDevices.getUserMedia({
+      video:{facingMode:'environment',width:{ideal:1920},height:{ideal:1080}},audio:false
+    }));
+    cameraVideo.srcObject=cameraStream;
+    await cameraVideo.play();
+    cameraMsg.textContent='Posicione o cartão inteiro dentro da imagem, incluindo os 4 marcadores pretos.';
+  }catch(e){
+    console.error('Câmera:',e);
+    closeCamera();
+    showNativeCameraOption();
+    const msg=e?.name==='NotAllowedError'
+      ?'A câmera foi bloqueada. Autorize o acesso à câmera nas configurações do navegador e tente novamente.'
+      :e?.name==='NotFoundError'
+        ?'Nenhuma câmera foi encontrada neste aparelho.'
+        :'Não foi possível abrir a câmera neste navegador. Use “Tirar foto com a câmera do aparelho”.';
+    setStatus(msg,'warn');
+  }
+}
+function stopCamera(){
+  if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null;}
+  if(cameraVideo)cameraVideo.srcObject=null;
+}
+function closeCamera(){
+  stopCamera();
+  if(cameraModal){cameraModal.classList.add('hidden');cameraModal.setAttribute('aria-hidden','true');}
+}
+async function captureCamera(){
+  if(!cameraStream||!cameraVideo.videoWidth){setStatus('A câmera ainda não está pronta. Aguarde um instante.','warn');return}
+  const maxW=1800, scale=Math.min(1,maxW/cameraVideo.videoWidth);
+  cameraCanvas.width=Math.round(cameraVideo.videoWidth*scale);cameraCanvas.height=Math.round(cameraVideo.videoHeight*scale);
+  const ctx=cameraCanvas.getContext('2d',{alpha:false});
+  ctx.drawImage(cameraVideo,0,0,cameraCanvas.width,cameraCanvas.height);
+  cameraCanvas.toBlob(async blob=>{
+    if(!blob){setStatus('Não foi possível capturar a foto.','bad');return;}
+    cameraCapturedBlob=blob;
+    photo.value='';
+    photoName.textContent='✓ Foto capturada pela câmera — preparando correção automática...';
+    ultimaLeitura=null;results.innerHTML='';
+    closeCamera();
+    setStatus('✓ Foto capturada. Alinhando o cartão pelos 4 marcadores e iniciando a leitura...','info');
+    await waitForCvAndRead();
+  },'image/jpeg',0.94);
+}
+btnCamera?.addEventListener('click',openCamera);
+btnNativeCamera?.addEventListener('click',()=>{
+  // Duas tentativas nativas: environment é preferida no Android; camera é fallback para navegadores que ignoram environment.
+  try{photoCamera?.click();}catch(e){try{photoCameraFront?.click()}catch(_){}}
+});
+function handleNativeCameraFile(input){
+  const f=input?.files?.[0];
+  if(!f)return;
+  cameraCapturedBlob=null;
+  if(photo)photo.value='';
+  photoName.textContent='✓ Foto feita pela câmera do aparelho — pronta para correção.';
+  ultimaLeitura=null;
+  results.innerHTML='';
+  if(btnNativeCamera)btnNativeCamera.style.display='none';
+  setStatus('✓ Foto recebida da câmera do aparelho. Toque em “Corrigir por imagem”.','info');
+}
+photoCamera?.addEventListener('change',()=>handleNativeCameraFile(photoCamera));
+photoCameraFront?.addEventListener('change',()=>handleNativeCameraFile(photoCameraFront));
+btnCameraClose?.addEventListener('click',closeCamera);
+btnCameraCancel?.addEventListener('click',closeCamera);
+btnCameraCapture?.addEventListener('click',captureCamera);
+cameraModal?.addEventListener('click',e=>{if(e.target===cameraModal)closeCamera()});
+
 async function waitForCvAndRead(){
   if(photoReadTimer)clearTimeout(photoReadTimer);
   const started=Date.now();
@@ -805,6 +928,7 @@ async function waitForCvAndRead(){
 }
 photo.addEventListener('change',async()=>{
   const f=photo.files?.[0];
+  cameraCapturedBlob=null;
   photoName.textContent=f?`✓ ${f.name} — preparando correção automática...`:'Ao selecionar a foto, a correção será iniciada automaticamente.';
   ultimaLeitura=null;
   results.innerHTML='';
@@ -1693,15 +1817,17 @@ function warpCard(src,m){
 
 function fixedQuestionGeometry(count,alts){
   const n=Math.max(1,Math.min(50,count));
-  // IMPORTANTE: estas medidas são exatamente as usadas em drawNativeCardPage().
-  // O leitor não procura círculos; ele lê as posições que o próprio gerador do
-  // cartão desenhou. Isso mantém a geometria sincronizada com o PDF A4.
+  // V44: o cartão fotografado possui 10 linhas por coluna (20 questões no total)
+  // e pode ter 4 ou 5 alternativas. O leitor não pode usar a quantidade atual
+  // do gabarito para decidir a geometria física, pois isso desloca as marcações
+  // quando o cartão tem mais questões que a avaliação carregada.
   const mx=15, contentW=180;
   const gridY=92, gridH=166, gap=2, colGap=3;
   const colW=(contentW-colGap)/2;
-  const rows=Math.ceil(Math.min(n,20)/2);
+  const rows=10;
   const qH=(gridH-(rows-1)*gap)/rows;
-  const bubbleStep=9;       // V17: mesma geometria do cartão, 9 mm entre centros
+  // Geometria do cartão físico mostrado nas versões anteriores: centros a 10 mm.
+  const bubbleStep=10;
   const out=[];
   for(let i=0;i<n;i++){
     const col=i<10?0:1;
@@ -1712,16 +1838,27 @@ function fixedQuestionGeometry(count,alts){
     const start=x+colW/2-totalW/2;
     const pts=[];
     for(let j=0;j<alts;j++){
-      // V40: usa as coordenadas físicas A4 do cartão após a correção de perspectiva;
-      // o centro da leitura coincide diretamente com o centro das bolhas impressas.
       pts.push({
         x:(start+j*bubbleStep)*OMR_MM,
-        y:(y+qH/2+1.8)*(OMR_A4_H/297)
+        y:(y+qH/2)*(OMR_A4_H/297)
       });
     }
     out.push({q:i+1,pts});
   }
   return out;
+}
+
+function inferCardLayout(){
+  // V44: o cartão padrão possui 20 questões, 10 por coluna. Para não deslocar
+  // o leitor quando a avaliação carregada tiver 10 questões, a geometria física
+  // do cartão continua sendo de 20 questões.
+  // O modelo visual atual do cartão fotografado usa 4 bolhas. Mantemos 4 como
+  // padrão físico; avaliações com 5 alternativas continuam suportadas quando
+  // o cartão for gerado novamente com essa configuração.
+  const nqCfg=Number(document.getElementById('nq')?.value||0);
+  const count=20;
+  const alts=(nqCfg>=20 && Number(document.getElementById('na')?.value||0)===5)?5:4;
+  return {count,alts};
 }
 
 function bubbleInkScore(gray,x,y){
@@ -1756,9 +1893,10 @@ function bubbleInkScore(gray,x,y){
 
 function detectAnswersFixed(warp){
   const gray=new cv.Mat();cv.cvtColor(warp,gray,cv.COLOR_RGBA2GRAY);
-  const alts=Math.max(3,Math.min(5,+na.value||5));
+  const layout=inferCardLayout();
+  const alts=layout.alts;
   const ls=Array.from(L.slice(0,alts));
-  const geo=fixedQuestionGeometry(gabarito.length,alts);
+  const geo=fixedQuestionGeometry(layout.count,alts);
   const out=[],raw=[];
   for(const q of geo){
     const vals=q.pts.map(p=>bubbleInkScore(gray,p.x,p.y));
@@ -1805,11 +1943,12 @@ function renderResults(a,raw){
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 async function readPhoto(){
  if(busy)return;busy=true;btnRead.disabled=true;results.innerHTML='';ultimaLeitura=null;
- if(!photo.files[0]){setStatus('Selecione ou fotografe o cartão primeiro.','warn');finish();return}
+ const imageSource=cameraCapturedBlob || photoCamera?.files?.[0] || photo.files?.[0];
+ if(!imageSource){setStatus('Abra a câmera ou escolha uma imagem do cartão primeiro.','warn');finish();return}
  if(typeof cv==='undefined'||!cv.Mat){setStatus('O leitor de imagem ainda está carregando. Aguarde alguns segundos.','warn');finish();return}
  setStatus('Lendo cartão... resultado anterior apagado.','info');
  try{
-  let im=await loadImage(photo.files[0]),scale=Math.min(1,1800/Math.max(im.naturalWidth,im.naturalHeight)),c=document.createElement('canvas');
+  let im=await loadImage(imageSource),scale=Math.min(1,1800/Math.max(im.naturalWidth,im.naturalHeight)),c=document.createElement('canvas');
   c.width=Math.round(im.naturalWidth*scale);c.height=Math.round(im.naturalHeight*scale);c.getContext('2d').drawImage(im,0,0,c.width,c.height);
   let src=cv.imread(c),m=findMarkers(src);if(!m){src.delete();setStatus('Não encontrei os 4 marcadores. Fotografe o cartão inteiro, sem cortar os cantos.','bad');finish();return}
   setStatus('✓ 4 marcadores encontrados. Corrigindo perspectiva e localizando cada quadro...','info');
